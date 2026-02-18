@@ -13,7 +13,11 @@
     "expensePerSecond": 7058.077806804065,
     "socialContributions": 180000000000,
     "contributoryDeficit": 42735996196,
-    "reserveFund": 2100000000
+    "reserveFund": 2100000000,
+    "cumulativeDeficit": {
+      "base": 300000000000,
+      "baseDate": "2026-01-01"
+    }
   },
   "historical": [
     {

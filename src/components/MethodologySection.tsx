@@ -134,6 +134,14 @@ export function MethodologySection() {
                   Cotizaciones sociales y Fondo de Reserva: estimaciones basadas en Presupuestos
                   Generales del Estado
                 </li>
+                <li>
+                  Déficit contributivo acumulado: suma de déficits anuales (gasto pensiones −
+                  cotizaciones sociales) desde 2011, cuando el sistema entró en déficit. Fuentes:
+                  informes trimestrales UV-Eje (Universidades de Valencia, Extremadura y Rey Juan
+                  Carlos I), Willis Towers Watson, Instituto Santalucía, y series S.S.A. de Fedea.
+                  Punto de partida: ~300 mm€ a 1 enero 2026, extrapolado en tiempo real al ritmo del
+                  déficit anual actual.
+                </li>
               </ul>
             </div>
 

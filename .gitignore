@@ -9,3 +9,4 @@ tsconfig.tsbuildinfo
 PHASES.md
 PROMPT-dashboard-fiscal-espana.md
 *.png
+!public/og-image.png

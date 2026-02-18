@@ -2,26 +2,26 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/cuentas-publicas/favicon-32.png" />
+    <link rel="icon" type="image/png" href="/favicon-32.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Fiscal de España — Deuda y Pensiones en Tiempo Real</title>
+    <title>Cuentas Públicas de España en Tiempo Real</title>
     <meta name="description" content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real. Datos del Banco de España, INE y Seguridad Social." />
-    <meta property="og:title" content="Dashboard Fiscal de España — Deuda y Pensiones en Tiempo Real" />
-    <meta property="og:description" content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real." />
+    <meta property="og:title" content="Cuentas Públicas de España en Tiempo Real" />
+    <meta property="og:description" content="Deuda pública, pensiones y gasto público de España. Datos oficiales del Banco de España, INE y Seguridad Social, actualizados en tiempo real." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://jenarvaezg.github.io/cuentas-publicas/" />
-    <meta property="og:image" content="https://jenarvaezg.github.io/cuentas-publicas/og-image.jpg" />
+    <meta property="og:url" content="https://cuentas-publicas.es/" />
+    <meta property="og:image" content="https://cuentas-publicas.es/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:locale" content="es_ES" />
-    <meta property="og:site_name" content="Cuentas Públicas de España" />
+    <meta property="og:site_name" content="cuentas-publicas.es" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Dashboard Fiscal de España — Deuda y Pensiones en Tiempo Real" />
-    <meta name="twitter:description" content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real." />
-    <meta name="twitter:image" content="https://jenarvaezg.github.io/cuentas-publicas/og-image.jpg" />
+    <meta name="twitter:title" content="Cuentas Públicas de España en Tiempo Real" />
+    <meta name="twitter:description" content="Deuda pública, pensiones y gasto público de España. Datos oficiales actualizados en tiempo real." />
+    <meta name="twitter:image" content="https://cuentas-publicas.es/og-image.png" />
     <meta name="theme-color" content="#1e3a5f" />
-    <link rel="canonical" href="https://jenarvaezg.github.io/cuentas-publicas/" />
+    <link rel="canonical" href="https://cuentas-publicas.es/" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -41,9 +41,8 @@
         var redirect = sessionStorage.getItem('spa-redirect');
         if (redirect) {
           sessionStorage.removeItem('spa-redirect');
-          var base = '/cuentas-publicas/';
-          if (window.location.pathname === base || window.location.pathname === base.slice(0, -1)) {
-            window.history.replaceState(null, '', base + redirect);
+          if (window.location.pathname === '/') {
+            window.history.replaceState(null, '', '/' + redirect);
           }
         }
       })();

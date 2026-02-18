@@ -10,7 +10,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "Dashboard Fiscal de España — Deuda y Pensiones en Tiempo Real",
+        name: "Cuentas Públicas de España en Tiempo Real",
         short_name: "Cuentas Públicas",
         description:
           "Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España en tiempo real.",

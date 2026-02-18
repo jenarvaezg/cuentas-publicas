@@ -207,7 +207,11 @@ const REFERENCE_DATA = {
   averagePensionRetirement: 1_563.56,   // Jan 2026 Excel
   affiliates: 21_300_000,              // Estimated
   socialContributions: 180_000_000_000, // PGE estimate
-  reserveFund: 2_100_000_000           // Estimated
+  reserveFund: 2_100_000_000,          // Estimated
+  // Accumulated contributory deficit (pension expense − social contributions) since 2011
+  // Sources: UV-Eje quarterly reports, WTW, Instituto Santalucía, Fedea SSA series
+  // Methodology: sum of annual deficits 2011-2025 (~290B€ narrow) + Clases Pasivas gap
+  cumulativeDeficit: { base: 300_000_000_000, baseDate: '2026-01-01' }
 }
 
 /**
@@ -361,7 +365,8 @@ function buildPensionResult(liveData) {
       expensePerSecond,
       socialContributions,
       contributoryDeficit,
-      reserveFund: REFERENCE_DATA.reserveFund
+      reserveFund: REFERENCE_DATA.reserveFund,
+      cumulativeDeficit: REFERENCE_DATA.cumulativeDeficit
     },
     historical,
     regression: {

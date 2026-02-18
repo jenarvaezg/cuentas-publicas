@@ -41,6 +41,10 @@ export interface PensionData {
     socialContributions: number;
     contributoryDeficit: number;
     reserveFund: number;
+    cumulativeDeficit?: {
+      base: number;
+      baseDate: string;
+    };
   };
   historical: Array<{
     date: string;

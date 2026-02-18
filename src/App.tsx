@@ -10,12 +10,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BDE_BE11B, CALCULO_DERIVADO, SS_NOMINA } from "@/data/sources";
 import { useData } from "@/hooks/useData";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
-import { formatDate, formatNumber } from "@/utils/formatters";
+import { formatCompact, formatDate, formatNumber } from "@/utils/formatters";
 
 function App() {
   useDocumentMeta(
-    "Dashboard Fiscal de España - Deuda y Pensiones en Tiempo Real",
-    "Visualización en tiempo real de la deuda pública, pensiones y gasto público en España",
+    "Cuentas Públicas de España en Tiempo Real",
+    "Deuda pública, pensiones y gasto público de España. Datos oficiales actualizados en tiempo real.",
   );
 
   const { debt, pensions } = useData();
@@ -24,6 +24,14 @@ function App() {
   const debtPerSecond = debt.regression.debtPerSecond;
 
   const deficitPerSecond = pensions.current.contributoryDeficit / (365.25 * 86_400);
+
+  // Cumulative deficit since 2011 (base + time elapsed since baseDate)
+  const cumDef = pensions.current.cumulativeDeficit;
+  const cumulativeBase = cumDef
+    ? cumDef.base + deficitPerSecond * ((Date.now() - new Date(cumDef.baseDate).getTime()) / 1000)
+    : 0;
+
+  // Year-to-date deficit
   const yearStart = new Date(new Date().getFullYear(), 0, 1).getTime();
   const secondsSinceYearStart = (Date.now() - yearStart) / 1000;
   const accumulatedDeficit = deficitPerSecond * secondsSinceYearStart;
@@ -71,20 +79,40 @@ function App() {
               style={{ animationDelay: "0.05s" }}
             >
               <div className="text-sm font-medium text-muted-foreground mb-1">
-                Déficit de las Pensiones
+                Déficit Contributivo Acumulado
               </div>
               <RealtimeCounter
-                baseValue={accumulatedDeficit}
+                baseValue={cumulativeBase}
                 perSecond={deficitPerSecond}
                 suffix=" €"
                 size="xl"
                 decimals={0}
                 label=""
               />
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                {formatNumber(deficitPerSecond, 2)} €/s — diferencia entre gasto anual (
-                {formatNumber(pensions.current.annualExpense / 1e9, 1)} mm€) y cotizaciones (
-                {formatNumber(pensions.current.socialContributions / 1e9, 0)} mm€) —{" "}
+              <p className="text-xs text-muted-foreground text-center">
+                Desde 2011 — ritmo actual: {formatCompact(pensions.current.contributoryDeficit)}/año
+                ({formatNumber(deficitPerSecond, 2)} €/s)
+              </p>
+              <div className="w-full border-t pt-3 flex flex-col items-center gap-1">
+                <div className="flex gap-6 text-center">
+                  <div>
+                    <div className="text-sm font-semibold tabular-nums">
+                      {formatCompact(accumulatedDeficit)}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground">
+                      en {new Date().getFullYear()}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold tabular-nums">
+                      {formatCompact(pensions.current.contributoryDeficit)}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground">déficit anual</div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground/70 text-center">
+                UV-Eje, Fedea SSA, BdE —{" "}
                 <a
                   href={SS_NOMINA.url}
                   target="_blank"
