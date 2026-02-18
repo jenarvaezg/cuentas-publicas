@@ -67,9 +67,9 @@ export const StatCard = memo(function StatCard({
 
           {sources && sources.length > 0 && (
             <div className="pt-2 border-t border-border/50 space-y-1">
-              {sources.map((src, i) => (
+              {sources.map((src) => (
                 <div
-                  key={i}
+                  key={src.name ?? src.note ?? src.url}
                   className="text-[10px] leading-tight text-muted-foreground/70 text-center"
                 >
                   <span className="font-medium">

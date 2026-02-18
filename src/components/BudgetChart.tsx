@@ -107,11 +107,7 @@ export function BudgetChart({
   const isChangeMode = compareMode === "cambio" && hasComparison;
   const isWeightMode = compareMode === "pesos" && hasComparison;
 
-  const primaryKey = isChangeMode
-    ? "change"
-    : isWeightMode
-      ? "percentage"
-      : "amount";
+  const primaryKey = isChangeMode ? "change" : isWeightMode ? "percentage" : "amount";
   const secondaryKey = isWeightMode ? "comparisonPercentage" : "comparison";
 
   const formatAxis = (v: number) => {
@@ -144,9 +140,7 @@ export function BudgetChart({
           {d.change !== undefined && (
             <p
               className={
-                d.change >= 0
-                  ? "text-emerald-600 font-medium"
-                  : "text-red-500 font-medium"
+                d.change >= 0 ? "text-emerald-600 font-medium" : "text-red-500 font-medium"
               }
             >
               {d.change >= 0 ? "+" : ""}
@@ -162,8 +156,7 @@ export function BudgetChart({
         <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
           <p className="font-semibold text-foreground">{d.name}</p>
           <p className="text-muted-foreground">
-            {selectedYear}: {formatNumber(d.percentage, 1)}% (
-            {formatNumber(d.amount, 0)} M€)
+            {selectedYear}: {formatNumber(d.percentage, 1)}% ({formatNumber(d.amount, 0)} M€)
           </p>
           {hasComparison && d.comparisonPercentage !== undefined && (
             <p className="text-muted-foreground">
@@ -179,8 +172,7 @@ export function BudgetChart({
       <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
         <p className="font-semibold text-foreground">{d.name}</p>
         <p className="text-muted-foreground">
-          {selectedYear}: {formatNumber(d.amount, 0)} M€ (
-          {formatNumber(d.percentage, 1)}%)
+          {selectedYear}: {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
         </p>
         {hasComparison && d.comparison !== undefined && (
           <p className="text-muted-foreground">
@@ -206,8 +198,7 @@ export function BudgetChart({
           </button>
           <span className="text-muted-foreground">&rsaquo;</span>
           <span className="text-foreground font-medium">
-            {categories.find((c) => c.code === drilldownCategory)?.name ||
-              drilldownCategory}
+            {categories.find((c) => c.code === drilldownCategory)?.name || drilldownCategory}
           </span>
         </div>
       )}
@@ -237,18 +228,12 @@ export function BudgetChart({
             <span className="inline-block w-3 h-3 rounded-sm bg-[hsl(0,65%,50%)]" />
             Descenso
           </span>
-          {euroLabel && (
-            <span className="text-muted-foreground/60">({euroLabel})</span>
-          )}
+          {euroLabel && <span className="text-muted-foreground/60">({euroLabel})</span>}
         </div>
       )}
 
       <ResponsiveContainer width="100%" height={data.length > 6 ? 480 : 400}>
-        <BarChart
-          data={data}
-          layout="vertical"
-          margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-        >
+        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
           <XAxis
             type="number"
             tickFormatter={formatAxis}
@@ -264,9 +249,7 @@ export function BudgetChart({
             stroke="hsl(var(--muted-foreground))"
           />
           <Tooltip content={<CustomTooltip />} />
-          {isChangeMode && (
-            <ReferenceLine x={0} stroke="hsl(var(--muted-foreground))" />
-          )}
+          {isChangeMode && <ReferenceLine x={0} stroke="hsl(var(--muted-foreground))" />}
           <Bar
             dataKey={primaryKey}
             name={primaryKey}
@@ -295,12 +278,7 @@ export function BudgetChart({
             ))}
           </Bar>
           {hasComparison && !isChangeMode && (
-            <Bar
-              dataKey={secondaryKey}
-              name={secondaryKey}
-              radius={[0, 4, 4, 0]}
-              fillOpacity={0.4}
-            >
+            <Bar dataKey={secondaryKey} name={secondaryKey} radius={[0, 4, 4, 0]} fillOpacity={0.4}>
               {data.map((entry) => (
                 <Cell key={entry.code} fill={getColor(entry.code)} />
               ))}

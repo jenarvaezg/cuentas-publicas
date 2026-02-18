@@ -17,9 +17,7 @@ function deflateCategory(
   return {
     ...cat,
     amount: deflatedAmount,
-    children: cat.children?.map((child) =>
-      deflateCategory(child, deflate, year),
-    ),
+    children: cat.children?.map((child) => deflateCategory(child, deflate, year)),
   };
 }
 
@@ -32,16 +30,12 @@ export function BudgetBlock() {
 
   const [selectedYear, setSelectedYear] = useState(latestYear);
   const [comparisonYear, setComparisonYear] = useState<number | null>(null);
-  const [drilldownCategory, setDrilldownCategory] = useState<string | null>(
-    null,
-  );
+  const [drilldownCategory, setDrilldownCategory] = useState<string | null>(null);
   const [realTerms, setRealTerms] = useState(true);
   const [compareMode, setCompareMode] = useState<CompareMode>("absoluto");
 
   const yearData = budget.byYear[String(selectedYear)];
-  const comparisonData = comparisonYear
-    ? budget.byYear[String(comparisonYear)]
-    : undefined;
+  const comparisonData = comparisonYear ? budget.byYear[String(comparisonYear)] : undefined;
 
   const isDeflating = realTerms && cpiAvailable && !!comparisonYear;
 
@@ -49,9 +43,7 @@ export function BudgetBlock() {
   const displayCategories = useMemo(() => {
     if (!yearData?.categories) return [];
     if (!isDeflating) return yearData.categories;
-    return yearData.categories.map((cat) =>
-      deflateCategory(cat, deflate, selectedYear),
-    );
+    return yearData.categories.map((cat) => deflateCategory(cat, deflate, selectedYear));
   }, [yearData, isDeflating, deflate, selectedYear]);
 
   const displayComparisonCategories = useMemo(() => {
@@ -83,9 +75,7 @@ export function BudgetBlock() {
 
   const largestCategory = useMemo(() => {
     if (!displayCategories.length) return null;
-    return displayCategories.reduce((max, cat) =>
-      cat.amount > max.amount ? cat : max,
-    );
+    return displayCategories.reduce((max, cat) => (cat.amount > max.amount ? cat : max));
   }, [displayCategories]);
 
   // Source attributions
@@ -93,8 +83,7 @@ export function BudgetBlock() {
     ? fromAttribution(budget.sourceAttribution.budget)
     : IGAE_COFOG;
 
-  const euroLabel =
-    isDeflating && baseYear ? `euros de ${baseYear}` : "euros corrientes";
+  const euroLabel = isDeflating && baseYear ? `euros de ${baseYear}` : "euros corrientes";
 
   return (
     <Card>
@@ -194,19 +183,13 @@ export function BudgetBlock() {
             label="Gasto per cápita"
             value={`${formatNumber(perCapita, 0)} €`}
             delay={0.1}
-            sources={[
-              { ...CALCULO_DERIVADO, note: "Gasto total / población" },
-              igaeSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: "Gasto total / población" }, igaeSource]}
           />
           <StatCard
             label="Gasto / PIB"
             value={formatPercent(gdpRatio)}
             delay={0.15}
-            sources={[
-              { ...CALCULO_DERIVADO, note: "Gasto total / PIB nominal" },
-              igaeSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: "Gasto total / PIB nominal" }, igaeSource]}
           />
           {largestCategory && (
             <StatCard
