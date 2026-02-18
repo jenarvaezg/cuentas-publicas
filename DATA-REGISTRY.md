@@ -1,0 +1,307 @@
+# Data Registry — Dashboard Fiscal de España
+
+Inventario completo de todos los datos del dashboard: clasificación, fuentes, fragilidad, bugs conocidos, wishlist y recomendaciones.
+
+> **Última auditoría**: febrero 2026
+
+## Resumen Ejecutivo
+
+El dashboard utiliza 4 fuentes de datos oficiales descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Los datos se almacenan como JSON en `src/data/` y se importan en build time (no hay API calls en runtime). Cada fuente tiene fallback hardcodeado para garantizar que la app siempre funcione.
+
+**Estado general**: De ~35 métricas mostradas, **~15 son automatizadas**, **~8 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~5 son derivadas** por cálculo.
+
+---
+
+## 1. BANCO DE ESPAÑA — Deuda Pública
+
+**Script**: `scripts/sources/bde.mjs` | **Output**: `src/data/debt.json`
+
+| Dato | Clasificación | Método | Frecuencia | Fragilidad |
+|------|---------------|--------|------------|------------|
+| Deuda total PDE | **AUTOMATIZADO** | CSV `be11b.csv` descarga directa | Mensual (~15d retraso) | MEDIA — parsing columnas por keyword |
+| Desglose por subsector (Estado, CCAA, CCLL, SS) | **AUTOMATIZADO** | CSV `be11b.csv` columnas | Mensual | MEDIA — keyword matching en headers |
+| Ratio deuda/PIB | **ROTO** (vale 0) | CSV `be1101.csv` — se extrae pero no se asigna | Trimestral | ALTA |
+| Variación interanual | **DERIVADO** | (mes actual - mismo mes año anterior) / anterior × 100 | Mensual | BAJA |
+| Gasto en intereses | **ROTO** (vale 0) | Debería venir de PGE pero no se extrae | Anual | ALTA |
+| Pendiente regresión (€/segundo) | **DERIVADO** | Regresión lineal últimos 24 meses | Mensual | BAJA |
+| Serie histórica | **AUTOMATIZADO** | CSV completo | 373 puntos (dic 1994 - dic 2025) | BAJA |
+
+**URLs** (estables):
+- `https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv`
+- `https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1101.csv`
+- API: `https://app.bde.es/bierest/resources/srdatosapp?series=DTNPDE2010_P0000P_PS_APU`
+
+**Problemas detectados**:
+1. **`debtToGDP` = 0**: El script extrae el dato de `be1101.csv` pero la lógica de asignación falla silenciosamente. El campo llega vacío al JSON.
+2. **`interestExpense` = 0**: El sourceAttribution dice "~39.000 M€ (estimación ~2,3% coste medio)" pero el valor real es 0. La estimación no se aplica.
+3. CSV transposed format: BdE usa formato invertido (series como columnas). Si cambian la estructura, falla el parser.
+4. Meses en español hardcodeados (`ENE, FEB...DIC`). Si BdE cambia formato, falla el date parsing.
+
+---
+
+## 2. INE — Demografía y Economía
+
+**Script**: `scripts/sources/ine.mjs` | **Output**: `src/data/demographics.json`
+
+| Dato | Clasificación | Serie INE | Frecuencia real | Dato actual | Fragilidad |
+|------|---------------|-----------|-----------------|-------------|------------|
+| Población total | **AUTOMATIZADO** | `ECP320` (Tabla 56934) | Anual | 49.570.725 (dic 2025) | MEDIA — serie conocida por dar datos antiguos |
+| Población activa (EPA) | **AUTOMATIZADO** | `EPA387794` (Tabla 65080) | Trimestral | 24.940.400 (Q3 2025) | BAJA |
+| PIB nominal | **AUTOMATIZADO** | `CNTR6597` (Tabla 30679) | Trimestral (suma 4Q) | 1,686 B€ | BAJA |
+| Salario medio | **AUTOMATIZADO** pero MUY DESFASADO | `EAES741` (Tabla 28191) | Anual (~2 años lag) | 28.050€ (**dato 2022**) | ALTA |
+| SMI | **HARDCODEADO** | — (BOE) | Anual | 1.134€/mes (2025) | ALTA — actualizar a mano cada enero |
+| IPC (30 años) | **AUTOMATIZADO** | `IPC278296` + `IPC290750` | Anual | 1995-2024, base 2024 | MEDIA |
+
+**URLs** (estables — API Tempus):
+- Base: `https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/{SERIE}?nult=N`
+
+**Problemas detectados**:
+1. **Salario medio con 3+ años de retraso**: El dato actual (28.050€) es de 2022. INE publica la Encuesta de Estructura Salarial con ~2 años de lag.
+2. **SMI requiere actualización manual** cada enero cuando se publica en el BOE.
+3. **Población (ECP320)**: Tabla 56934 conocida por devolver datos antiguos. Sanity check (40M-60M) no detecta datos viejos.
+4. **CPI solo hasta 2024**: Media anual se publica al cerrar el año. Limita deflación a euros de 2024.
+
+---
+
+## 3. SEGURIDAD SOCIAL — Pensiones
+
+**Script**: `scripts/sources/seguridad-social.mjs` | **Output**: `src/data/pensions.json`
+
+| Dato | Clasificación | Fuente real | Dato actual | Fragilidad |
+|------|---------------|-------------|-------------|------------|
+| Nómina mensual SS | **SEMI-AUTOMATIZADO** | Excel scrapeado de seg-social.es | 14.250 M€ (ene 2026) | MUY ALTA — UUID URLs |
+| Nómina Clases Pasivas | **HARDCODEADO** | Ministerio Hacienda (sin API) | 1.659 M€ (estimación) | MUY ALTA |
+| N.° pensiones | **SEMI-AUTOMATIZADO** | Mismo Excel SS | 10.452.674 | MUY ALTA |
+| Pensión media jubilación | **SEMI-AUTOMATIZADO** | Mismo Excel SS | 1.563,56€ | MUY ALTA |
+| N.° afiliados | **HARDCODEADO** | No hay API pública | 21.300.000 (estimación) | MUY ALTA |
+| Cotizaciones sociales | **HARDCODEADO** | PGE 2025 | 180.000 M€/año | ALTA |
+| Déficit contributivo anual | **DERIVADO** | gasto anual - cotizaciones | 42.736 M€ | MEDIA |
+| Déficit acumulado (desde 2011) | **HARDCODEADO** | UV-Eje, Fedea SSA, BdE | 300.000 M€ (base ene 2026) | MUY ALTA |
+| Fondo de Reserva | **HARDCODEADO** | Ministerio | 2.100 M€ | ALTA |
+| Gasto por segundo | **DERIVADO** | nómina × 14 / 365,25 / 86400 | 7.058 €/s | BAJA |
+| Serie histórica | **HARDCODEADA** | 11 puntos interpolados a mano | 2020-2026 | MUY ALTA |
+
+**Proceso de scraping** (el más frágil del pipeline):
+```
+1. GET https://www.seg-social.es/.../EST24  (HTML)
+2. Regex: /href=['"]([^'"]*REG\d{6}\.xlsx[^'"]*)['"]/i
+3. GET Excel encontrado (UUID URL cambia cada mes)
+4. Parse hoja "Régimen_clase", fila "Total sistema"
+5. Columnas: [1]=pensiones, [2]=nómina, [3]=pensión media
+```
+
+**Problemas detectados**:
+1. **UUID URLs**: Las URLs del Excel cambian cada mes. Si cambian el patrón `REG*.xlsx`, el regex falla.
+2. **HTML scraping frágil**: Depende de la estructura HTML de seg-social.es.
+3. **Índices de columna hardcodeados** (`[1]`, `[2]`, `[3]`) — si SS reordena columnas, valores erróneos sin error visible.
+4. **"Total sistema" como ancla**: Si cambian a "TOTAL SISTEMA" o "Total del Sistema", no encuentra la fila.
+5. **Clases Pasivas sin fuente**: No hay API ni archivo descargable. Se estima como ~11,6% de la nómina SS.
+6. **Serie histórica inventada**: Los 11 puntos (2020-2025) son valores interpolados a mano, no descargados.
+7. **Afiliados sin fuente**: 21.3M es estimación. SS publica afiliados pero no en formato fácilmente automatizable.
+8. **Cotizaciones sociales**: 180.000 M€ del PGE 2025. Actualizar manualmente con cada PGE.
+9. **Déficit acumulado 300.000 M€**: Estimación conservadora basada en literatura. Requiere revisión manual periódica.
+
+---
+
+## 4. IGAE — Gasto Público COFOG
+
+**Script**: `scripts/sources/igae.mjs` | **Output**: `src/data/budget.json`
+
+| Dato | Clasificación | Método | Cobertura | Fragilidad |
+|------|---------------|--------|-----------|------------|
+| Gasto total por año | **AUTOMATIZADO** | Excel COFOG, fila "GASTO TOTAL" | 30 años (1995-2024) | ALTA — índice de fila hardcodeado |
+| 10 divisiones COFOG | **AUTOMATIZADO** | Columnas hardcodeadas | 30 años | MUY ALTA — 10 índices |
+| ~70 subcategorías | **SEMI-AUTOMATIZADO** | Rangos de columnas hardcodeados | 30 años | MUY ALTA |
+| Nombres de categorías | **HARDCODEADO** | Mapa estático | Fijo | BAJA |
+| Porcentajes | **DERIVADO** | (categoría / total) × 100 | — | BAJA |
+
+**URL** (estable): `https://www.igae.pap.hacienda.gob.es/.../COFOG_A_AAPP.xlsx`
+
+**Columnas hardcodeadas** (mayor punto de fragilidad):
+```
+Div 01 total=col10  02=col16  03=col23  04=col33  05=col40
+Div 06 total=col47  07=col54  08=col61  09=col70  10=col80
+Gran total = col 81
+```
+
+**Problemas detectados**:
+1. **Índices de columna extremadamente frágiles**: Si IGAE añade UNA columna, TODOS los índices posteriores se desplazan.
+2. **Fila 8 hardcodeada** para "GASTO TOTAL". Si añaden/quitan filas cabecera, lee fila errónea.
+3. **Hojas por año**: Busca `/^\d{4}$/`. Si IGAE usa "2024(P)" (provisional), no la detecta.
+4. **Sin validación cruzada**: No verifica que suma divisiones = total general.
+
+---
+
+## 5. INFRAESTRUCTURA CI/CD
+
+| Workflow | Trigger | Qué hace |
+|----------|---------|----------|
+| `deploy.yml` | Push a main | lint -> test -> build -> deploy a GitHub Pages |
+| `update-data.yml` | Lunes 08:00 UTC + manual | `npm run download-data` -> auto-commit si hay cambios |
+
+- Auto-commit solo si exit code 0 (todas las fuentes OK)
+- Pattern: `src/data/*.json`
+- Sin secretos necesarios (todas las fuentes públicas)
+- El push a main dispara deploy automáticamente
+
+---
+
+## 6. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+
+### AUTOMATIZADOS (se actualizan solos cada lunes)
+| Dato | Fuente | Frescura | Confiabilidad |
+|------|--------|----------|---------------|
+| Deuda total PDE | BdE CSV | Mensual (~15d lag) | Alta |
+| Deuda por subsector | BdE CSV | Mensual | Alta |
+| Variación interanual deuda | Derivado | Mensual | Alta |
+| Regresión deuda (€/s) | Derivado | Mensual | Alta |
+| Población total | INE API ECP320 | Anual | Media |
+| Población activa (EPA) | INE API EPA387794 | Trimestral | Alta |
+| PIB nominal | INE API CNTR6597 | Trimestral | Alta |
+| IPC (1995-2024) | INE API IPC278296+290750 | Anual | Alta |
+| Gasto COFOG (10 div × 30 años) | IGAE Excel | Anual | Media (índices frágiles) |
+
+### SEMI-AUTOMATIZADOS (se descargan pero con riesgo de rotura)
+| Dato | Fuente | Riesgo |
+|------|--------|--------|
+| Nómina pensiones SS | Seg. Social Excel | MUY ALTO — UUID URLs + scraping |
+| N.° pensiones | Seg. Social Excel | MUY ALTO |
+| Pensión media jubilación | Seg. Social Excel | MUY ALTO |
+| Subcategorías COFOG (~70) | IGAE Excel | ALTO — rangos columnas hardcodeados |
+| Salario medio | INE API EAES741 | MEDIO — dato de hace 3 años |
+
+### HARDCODEADOS / MANUALES (requieren intervención humana)
+| Dato | Valor actual | Cuándo actualizar | Dónde |
+|------|-------------|-------------------|-------|
+| SMI | 1.134€/mes (2025) | Cada enero (BOE) | `ine.mjs` -> `SMI_MONTHLY` |
+| Clases Pasivas | 1.659 M€/mes | Cuando haya datos | `seguridad-social.mjs` -> `REFERENCE_DATA` |
+| N.° afiliados | 21.300.000 | Trimestralmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
+| Cotizaciones sociales | 180.000 M€/año | Con cada PGE | `seguridad-social.mjs` -> `REFERENCE_DATA` |
+| Fondo de Reserva | 2.100 M€ | Cuando se publique | `seguridad-social.mjs` -> `REFERENCE_DATA` |
+| Déficit acumulado (base) | 300.000 M€ (ene 2026) | Anualmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
+| Gasto en intereses | 0 (**ROTO**) | Debería automatizarse | `bde.mjs` |
+| Ratio deuda/PIB | 0 (**ROTO**) | Debería automatizarse | `bde.mjs` |
+| Serie hist. pensiones | 11 puntos interpolados | Con cada descarga exitosa | `seguridad-social.mjs` |
+
+### DERIVADOS (calculados a partir de otros datos)
+| Dato | Fórmula | Depende de |
+|------|---------|-----------|
+| Deuda per cápita | totalDebt / población | Automatizados |
+| Deuda por contribuyente | totalDebt / poblaciónActiva | Automatizados |
+| Déficit contributivo anual | gastoAnual - cotizaciones | Semi-auto + hardcodeado |
+| Gasto anual pensiones | nómina × 14 pagas | Semi-automatizado |
+| Contribuyentes/pensionista | afiliados / pensionistas | Hardcodeado / semi-auto |
+| Gasto por segundo (pensiones) | gastoAnual / 365,25 / 86400 | Derivado |
+| Deuda por segundo | Regresión lineal 24 meses | Automatizado |
+| Porcentajes COFOG | categoría / total × 100 | Automatizado |
+| Deflación (€ reales) | nominal × (IPC[base] / IPC[año]) | Automatizado |
+
+---
+
+## 7. BUGS / DATOS ROTOS
+
+| Bug | Impacto | Causa |
+|-----|---------|-------|
+| `debt.current.debtToGDP = 0` | No se muestra ratio deuda/PIB calculado dinámicamente | Script extrae be1101.csv pero la asignación falla silenciosamente |
+| `debt.current.interestExpense = 0` | No se muestra coste de la deuda | Estimación (~39B€) en sourceAttribution pero no aplicada al campo |
+
+---
+
+## 8. WISHLIST — Datos que vendría bien tener
+
+### Prioridad ALTA (mejoran métricas existentes)
+
+| Dato | Por qué | Fuente potencial | Dificultad |
+|------|---------|-------------------|------------|
+| **Ratio deuda/PIB real** (fix bug) | Campo existe pero vale 0; métrica clave | Ya se descarga de `be1101.csv` — arreglar parsing | BAJA |
+| **Gasto en intereses real** (fix bug) | Campo existe pero vale 0 | PGE o BdE series de tipos de interés | MEDIA |
+| **Afiliados SS automatizados** | Dato crucial para ratio cotizantes/pensionista | SS `EST211` — scraping similar al de pensiones | ALTA (UUID) |
+| **Cotizaciones sociales reales** | Base del déficit contributivo | AEAT recaudación o liquidación presupuestaria SS | ALTA |
+| **Serie histórica pensiones real** | Los 11 puntos actuales son interpolados | Histórico EST24 o Anuario Estadístico SS | MEDIA |
+| **SMI automático** | Actualización manual cada enero | Tabla INE si existe, o historial hardcodeado | MEDIA |
+| **CPI 2025** | Solo llega hasta 2024; limita deflación | INE publica media anual en enero del año siguiente | BAJA (esperar) |
+
+### Prioridad MEDIA (nuevas métricas interesantes)
+
+| Dato | Por qué | Fuente potencial | Dificultad |
+|------|---------|-------------------|------------|
+| **Déficit/superávit público total** | Complementa deuda — explica por qué crece | IGAE/Eurostat — Capacidad/Necesidad financiación AAPP | MEDIA |
+| **Ingresos tributarios** (IRPF, IVA, Sociedades) | Entender de dónde viene el dinero | AEAT informe mensual recaudación (PDF/Excel) | ALTA |
+| **Tipo interés medio de la deuda** | Calcular coste intereses dinámicamente | Tesoro Público — tipos medios emisión | MEDIA |
+| **Presión fiscal** (ingresos/PIB) | Indicador macro clave | Derivable de ingresos + PIB | MEDIA |
+| **Deuda por CCAA desglosada** | Hoy solo total CCAA | BdE be11b — ya lo descargamos pero no extraemos por CCAA | BAJA-MEDIA |
+| **Tasa de paro** | Contexto laboral junto a EPA | INE API — serie desempleo EPA | BAJA |
+| **Inflación anual actual** | Dato de contexto muy demandado | INE API — IPC variación anual (ya tenemos serie) | BAJA |
+| **Población por tramos de edad** | Pirámide demográfica, ratio dependencia | INE API — tablas demográficas | MEDIA |
+
+### Prioridad BAJA (nice to have)
+
+| Dato | Por qué | Fuente potencial | Dificultad |
+|------|---------|-------------------|------------|
+| **Comparativa EU** | Contextualizar vs Eurozona | Eurostat API (gratuita, documentada) | MEDIA |
+| **Proyecciones demográficas** | Futuro del sistema pensiones | INE proyecciones largo plazo | MEDIA |
+| **Rating crediticio** | Indicador confianza deuda | Moody's/S&P/Fitch — sin API pública | MUY ALTA |
+| **Deuda hogares/empresas** | Deuda total no solo pública | BdE cuentas financieras | MEDIA |
+
+---
+
+## 9. RECOMENDACIONES DE MEJORA
+
+### Robustez (reducir fragilidad)
+
+1. **IGAE: Detectar columnas por header en vez de por índice** — Leer fila cabecera, buscar códigos COFOG (01, 02...) y calcular índices dinámicamente. Elimina el problema de desplazamiento.
+
+2. **SS: Fallback de URLs alternativas** — Mantener últimas 3-4 URLs conocidas del Excel y probarlas si scraping falla. Alertar (GitHub Issue automática) si ninguna funciona.
+
+3. **BdE: Arreglar debtToGDP e interestExpense** — Dos campos que ya se descargan pero no se populan. Fix de baja complejidad y alto impacto.
+
+4. **Validación cruzada COFOG** — Verificar que suma de 10 divisiones = total general. Si no cuadra, log warning + mantener datos anteriores.
+
+### Automatización (reducir hardcodeados)
+
+5. **Afiliados SS**: Scrapear EST211 con mismo patrón que pensiones.
+
+6. **Cotizaciones sociales**: Explorar liquidación presupuestaria SS en formato descargable.
+
+7. **SMI**: Tabla de valores históricos en el código (2020:950, 2021:965, 2022:1000, 2023:1080, 2024:1134, 2025:1134) y actualizar anualmente. Buscar serie INE.
+
+8. **Déficit acumulado**: Script que lo recalcule a partir de datos anuales gasto vs cotizaciones.
+
+### Monitorización
+
+9. **Alertas de datos stale**: Si un dato > X meses de antigüedad, crear GitHub Issue automática.
+
+10. **Ampliar meta.json**: Incluir "último dato real" (no último download) para cada métrica. Mostrar en UI cuándo se actualizó realmente cada dato.
+
+11. **Tests de integridad**: Tests que verifiquen `debtToGDP > 0`, `interestExpense > 0`, suma COFOG cuadre, etc.
+
+---
+
+## 10. MAPA DE ARCHIVOS
+
+```
+scripts/
+  download-data.mjs              # Orquestador (Promise.allSettled)
+  sources/
+    bde.mjs                      # Banco de España (CSV + API)
+    ine.mjs                      # INE Tempus API (5 series + CPI)
+    seguridad-social.mjs         # SS (HTML scraping + Excel)
+    igae.mjs                     # IGAE (Excel COFOG)
+  lib/
+    fetch-utils.mjs              # fetchWithRetry (backoff + timeout)
+    csv-parser.mjs               # Parser CSV formato español
+    regression.mjs               # Regresión lineal OLS
+
+src/data/
+  debt.json                      # 373 puntos mensuales + regresión
+  demographics.json              # Población, PIB, salarios, CPI (30 años)
+  pensions.json                  # Nómina, pensiones, déficit + 12 hist.
+  budget.json                    # COFOG 30 años × 10 div × ~7 subcats
+  meta.json                      # Estado última descarga
+  types.ts                       # Interfaces TypeScript
+  sources.ts                     # Atribución fuentes (URLs, nombres)
+
+.github/workflows/
+  deploy.yml                     # CI: lint -> test -> build -> GitHub Pages
+  update-data.yml                # Datos: lunes 08:00 UTC -> download -> auto-commit
+```

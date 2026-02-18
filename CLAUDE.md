@@ -73,6 +73,7 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 - **Fallback pattern**: Every data source has reference data so the app works even if all downloads fail.
 - **Methodology sync**: When adding/modifying a data source or derived metric, update `src/components/MethodologySection.tsx` to reflect the change. This section is the user-facing documentation of all sources and calculations.
 - **README sync**: When changing architecture, data sources, tech stack, or commands, update `README.md` to match. README mirrors CLAUDE.md content in user-facing format.
+- **Data registry sync**: When adding, removing, or modifying a data source, metric, or hardcoded value in `scripts/sources/`, update `DATA-REGISTRY.md` to reflect the change. This file is the single source of truth for what data we have, how it's obtained, and what's hardcoded vs automated.
 
 ## CI/CD
 
