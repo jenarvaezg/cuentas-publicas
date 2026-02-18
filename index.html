@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/cuentas-publicas/favicon-32.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Fiscal de España — Deuda y Pensiones en Tiempo Real</title>
+    <meta name="description" content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real. Datos del Banco de España, INE y Seguridad Social." />
+    <meta property="og:title" content="Dashboard Fiscal de España — Deuda y Pensiones en Tiempo Real" />
+    <meta property="og:description" content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jenarvaezg.github.io/cuentas-publicas/" />
+    <meta property="og:image" content="https://jenarvaezg.github.io/cuentas-publicas/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content="Cuentas Públicas de España" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dashboard Fiscal de España — Deuda y Pensiones en Tiempo Real" />
+    <meta name="twitter:description" content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real." />
+    <meta name="twitter:image" content="https://jenarvaezg.github.io/cuentas-publicas/og-image.jpg" />
+    <meta name="theme-color" content="#1e3a5f" />
+    <link rel="canonical" href="https://jenarvaezg.github.io/cuentas-publicas/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <noscript>
+      <div style="padding:2rem;text-align:center;font-family:system-ui">
+        <h1>Dashboard Fiscal de España</h1>
+        <p>Esta aplicación necesita JavaScript para funcionar.</p>
+        <p>Por favor, activa JavaScript en tu navegador.</p>
+      </div>
+    </noscript>
+    <script>try{var t=localStorage.getItem('cuentas-publicas-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}</script>
+    <div id="root"></div>
+    <script>
+      (function() {
+        var redirect = sessionStorage.getItem('spa-redirect');
+        if (redirect) {
+          sessionStorage.removeItem('spa-redirect');
+          var base = '/cuentas-publicas/';
+          if (window.location.pathname === base || window.location.pathname === base.slice(0, -1)) {
+            window.history.replaceState(null, '', base + redirect);
+          }
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

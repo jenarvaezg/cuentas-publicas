@@ -1,0 +1,152 @@
+{
+  "lastUpdated": "2026-02-18T15:23:13.149Z",
+  "current": {
+    "monthlyPayroll": 15909714014,
+    "monthlyPayrollSS": 14250714014,
+    "monthlyPayrollClasesPasivas": 1659000000,
+    "annualExpense": 222735996196,
+    "totalPensions": 10452674,
+    "averagePensionRetirement": 1563.56,
+    "affiliates": 21300000,
+    "pensioners": 10452674,
+    "contributorsPerPensioner": 2.037756080405837,
+    "expensePerSecond": 7058.077806804065,
+    "socialContributions": 180000000000,
+    "contributoryDeficit": 42735996196,
+    "reserveFund": 2100000000
+  },
+  "historical": [
+    {
+      "date": "2020-12-31",
+      "monthlyPayroll": 10200000000,
+      "totalPensions": 9800000
+    },
+    {
+      "date": "2021-06-30",
+      "monthlyPayroll": 10600000000,
+      "totalPensions": 9900000
+    },
+    {
+      "date": "2021-12-31",
+      "monthlyPayroll": 10900000000,
+      "totalPensions": 9950000
+    },
+    {
+      "date": "2022-06-30",
+      "monthlyPayroll": 11300000000,
+      "totalPensions": 10050000
+    },
+    {
+      "date": "2022-12-31",
+      "monthlyPayroll": 11700000000,
+      "totalPensions": 10100000
+    },
+    {
+      "date": "2023-06-30",
+      "monthlyPayroll": 12200000000,
+      "totalPensions": 10150000
+    },
+    {
+      "date": "2023-12-31",
+      "monthlyPayroll": 12600000000,
+      "totalPensions": 10200000
+    },
+    {
+      "date": "2024-06-30",
+      "monthlyPayroll": 13100000000,
+      "totalPensions": 10250000
+    },
+    {
+      "date": "2024-12-31",
+      "monthlyPayroll": 13500000000,
+      "totalPensions": 10280000
+    },
+    {
+      "date": "2025-06-30",
+      "monthlyPayroll": 14000000000,
+      "totalPensions": 10290000
+    },
+    {
+      "date": "2025-12-31",
+      "monthlyPayroll": 14500000000,
+      "totalPensions": 10300000
+    },
+    {
+      "date": "2026-01-01",
+      "monthlyPayroll": 15909714014,
+      "totalPensions": 10452674
+    }
+  ],
+  "regression": {
+    "slope": 0.03062368414181591,
+    "intercept": -39357686252.5603,
+    "lastDataTimestamp": 1767225600000,
+    "expensePerSecond": 0.000013585683891849277
+  },
+  "sourceAttribution": {
+    "monthlyPayroll": {
+      "source": "Seg. Social — Pensiones en vigor (enero 2026)",
+      "type": "csv",
+      "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
+      "date": "2026-01-01",
+      "note": "Datos Excel Seg. Social enero 2026"
+    },
+    "monthlyPayrollSS": {
+      "source": "Seg. Social — Excel REG (enero 2026)",
+      "type": "csv",
+      "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
+      "date": "2026-01-01",
+      "note": "Datos Excel Seg. Social enero 2026"
+    },
+    "monthlyPayrollClasesPasivas": {
+      "source": "Estimación Clases Pasivas",
+      "type": "fallback",
+      "note": "Clases Pasivas: ministerio separado, dato estimado"
+    },
+    "annualExpense": {
+      "source": "Cálculo derivado",
+      "type": "derived",
+      "note": "Nómina mensual × 14 pagas"
+    },
+    "totalPensions": {
+      "source": "Seg. Social — Excel REG (enero 2026)",
+      "type": "csv",
+      "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
+      "date": "2026-01-01",
+      "note": "Datos Excel Seg. Social enero 2026"
+    },
+    "averagePensionRetirement": {
+      "source": "Seg. Social — Excel REG (enero 2026)",
+      "type": "csv",
+      "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
+      "date": "2026-01-01",
+      "note": "Datos Excel Seg. Social enero 2026"
+    },
+    "affiliates": {
+      "source": "Estimación afiliados SS",
+      "type": "fallback",
+      "note": "Afiliados estimados feb 2026"
+    },
+    "contributorsPerPensioner": {
+      "source": "Cálculo derivado",
+      "type": "derived",
+      "note": "Afiliados / pensionistas"
+    },
+    "socialContributions": {
+      "source": "PGE — Cotizaciones sociales",
+      "type": "fallback",
+      "url": "https://www.sepg.pap.hacienda.gob.es/sitios/sepg/es-ES/Presupuestos/PGE/Paginas/PGE2025.aspx",
+      "note": "Cotizaciones estimadas 2025"
+    },
+    "contributoryDeficit": {
+      "source": "Cálculo derivado",
+      "type": "derived",
+      "note": "Gasto anual - cotizaciones sociales"
+    },
+    "reserveFund": {
+      "source": "Estimación Fondo de Reserva",
+      "type": "fallback",
+      "note": "Fondo de reserva estimado feb 2026"
+    }
+  }
+}

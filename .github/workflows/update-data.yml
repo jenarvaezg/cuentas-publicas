@@ -1,0 +1,26 @@
+name: Update Fiscal Data
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Monday 8:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run download-data
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: success()
+        with:
+          commit_message: "chore: update fiscal data"
+          file_pattern: src/data/*.json

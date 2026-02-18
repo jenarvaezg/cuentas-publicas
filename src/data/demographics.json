@@ -1,0 +1,83 @@
+{
+  "lastUpdated": "2026-02-18T15:23:12.780Z",
+  "population": 49570725,
+  "activePopulation": 24940400,
+  "gdp": 1685783000000,
+  "averageSalary": 28050,
+  "smi": 1134,
+  "cpi": {
+    "baseYear": 2024,
+    "byYear": {
+      "1995": 58.24,
+      "1996": 60.32,
+      "1997": 61.51,
+      "1998": 62.64,
+      "1999": 64.08,
+      "2000": 66.29,
+      "2001": 68.67,
+      "2002": 71.09,
+      "2003": 73.25,
+      "2004": 75.48,
+      "2005": 78.02,
+      "2006": 80.77,
+      "2007": 83.02,
+      "2008": 86.4,
+      "2009": 86.15,
+      "2010": 87.7,
+      "2011": 90.5,
+      "2012": 92.72,
+      "2013": 94.02,
+      "2014": 93.88,
+      "2015": 93.41,
+      "2016": 93.22,
+      "2017": 95.05,
+      "2018": 96.64,
+      "2019": 97.31,
+      "2020": 97,
+      "2021": 100,
+      "2022": 108.39,
+      "2023": 112.22,
+      "2024": 115.33,
+      "2025": 118.42
+    }
+  },
+  "sourceAttribution": {
+    "population": {
+      "source": "INE — Cifras de Población (serie ECP320)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=56934",
+      "date": "2025-12-31"
+    },
+    "activePopulation": {
+      "source": "INE — EPA (serie EPA387794)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=65080",
+      "date": "2025-09-30"
+    },
+    "gdp": {
+      "source": "INE — Contabilidad Nacional Trimestral (serie CNTR6597)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=30679",
+      "date": "2025-09-30",
+      "note": "Suma 4 trimestres: 2024-12-31 a 2025-09-30"
+    },
+    "averageSalary": {
+      "source": "INE — Encuesta Anual Estructura Salarial (serie EAES741)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=28191",
+      "date": "2022-12-31"
+    },
+    "smi": {
+      "source": "BOE — Salario Mínimo Interprofesional 2025",
+      "type": "fallback",
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-26958",
+      "note": "SMI 2025: 1.134€/mes (15.960€/14 pagas)"
+    },
+    "cpi": {
+      "source": "INE — Índice de Precios al Consumo (series IPC278296 + IPC290750)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=50902",
+      "note": "IPC base 2021=100, 31 años (1995-2025)"
+    }
+  }
+}
