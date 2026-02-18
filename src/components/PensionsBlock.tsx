@@ -94,6 +94,12 @@ export function PensionsBlock() {
             </a>{" "}
             ({pensionDate}) x 14 pagas / 365,25 días / 86.400 s
           </p>
+          <div
+            className="font-mono font-bold tabular-nums whitespace-nowrap text-lg text-muted-foreground"
+            style={{ fontVariantNumeric: "tabular-nums" }}
+          >
+            {formatNumber(expensePerSecond, 2)} €/s en pensiones
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

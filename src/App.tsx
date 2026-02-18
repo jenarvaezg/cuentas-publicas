@@ -7,7 +7,7 @@ import { MethodologySection } from "@/components/MethodologySection";
 import { PensionsBlock } from "@/components/PensionsBlock";
 import { RealtimeCounter } from "@/components/RealtimeCounter";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BDE_BE11B, SS_NOMINA } from "@/data/sources";
+import { BDE_BE11B, CALCULO_DERIVADO, SS_NOMINA } from "@/data/sources";
 import { useData } from "@/hooks/useData";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { formatDate, formatNumber } from "@/utils/formatters";
@@ -22,7 +22,8 @@ function App() {
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
   const debtPerSecond = debt.regression.debtPerSecond;
-  const pensionPerSecond = pensions.current.expensePerSecond;
+
+  const deficitPerSecond = pensions.current.contributoryDeficit / (365.25 * 86_400);
 
   const lastDebtDate =
     debt.historical.length > 0
@@ -67,25 +68,27 @@ function App() {
               style={{ animationDelay: "0.05s" }}
             >
               <div className="text-sm font-medium text-muted-foreground mb-1">
-                Gasto en Pensiones por Segundo
+                Déficit de las Pensiones
               </div>
-              <div className="flex flex-col items-center gap-2">
-                <div
-                  className="font-mono font-bold tabular-nums whitespace-nowrap text-xl sm:text-2xl lg:text-3xl"
-                  style={{ fontVariantNumeric: "tabular-nums" }}
-                >
-                  {formatNumber(pensionPerSecond, 2)} €/s
-                </div>
-              </div>
+              <RealtimeCounter
+                baseValue={0}
+                perSecond={deficitPerSecond}
+                suffix=" €"
+                size="xl"
+                decimals={0}
+                label=""
+              />
               <p className="text-xs text-muted-foreground mt-2 text-center">
-                Nómina mensual x 14 pagas / 365,25 días / 86.400 s —{" "}
+                {formatNumber(deficitPerSecond, 2)} €/s — diferencia entre gasto anual (
+                {formatNumber(pensions.current.annualExpense / 1e9, 1)} mm€) y cotizaciones (
+                {formatNumber(pensions.current.socialContributions / 1e9, 0)} mm€) —{" "}
                 <a
                   href={SS_NOMINA.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-foreground"
                 >
-                  MITES/Seg. Social
+                  {CALCULO_DERIVADO.name}
                 </a>{" "}
                 ({pensionDate})
               </p>
