@@ -1,6 +1,6 @@
 {
-  "lastDownload": "2026-02-18T15:23:13.151Z",
-  "duration": 755,
+  "lastDownload": "2026-02-18T18:41:46.357Z",
+  "duration": 1896,
   "status": {
     "debt": true,
     "demographics": true,
@@ -10,21 +10,21 @@
   "sources": {
     "debt": {
       "success": true,
-      "lastUpdated": "2026-02-18T15:23:12.611Z",
+      "lastUpdated": "2026-02-18T18:41:45.032Z",
       "dataPoints": 373
     },
     "demographics": {
       "success": true,
-      "lastUpdated": "2026-02-18T15:23:12.780Z"
+      "lastUpdated": "2026-02-18T18:41:45.437Z"
     },
     "pensions": {
       "success": true,
-      "lastUpdated": "2026-02-18T15:23:13.149Z",
+      "lastUpdated": "2026-02-18T18:41:45.911Z",
       "dataPoints": 12
     },
     "budget": {
       "success": true,
-      "lastUpdated": "2026-02-18T15:23:12.953Z",
+      "lastUpdated": "2026-02-18T18:41:46.353Z",
       "years": 30
     }
   }
