@@ -24,6 +24,9 @@ function App() {
   const debtPerSecond = debt.regression.debtPerSecond;
 
   const deficitPerSecond = pensions.current.contributoryDeficit / (365.25 * 86_400);
+  const yearStart = new Date(new Date().getFullYear(), 0, 1).getTime();
+  const secondsSinceYearStart = (Date.now() - yearStart) / 1000;
+  const accumulatedDeficit = deficitPerSecond * secondsSinceYearStart;
 
   const lastDebtDate =
     debt.historical.length > 0
@@ -71,7 +74,7 @@ function App() {
                 Déficit de las Pensiones
               </div>
               <RealtimeCounter
-                baseValue={0}
+                baseValue={accumulatedDeficit}
                 perSecond={deficitPerSecond}
                 suffix=" €"
                 size="xl"
