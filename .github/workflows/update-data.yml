@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   update:
@@ -24,3 +25,70 @@ jobs:
         with:
           commit_message: "chore: update fiscal data"
           file_pattern: src/data/*.json
+
+      - name: Check for stale data
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'src/data/meta.json';
+            if (!fs.existsSync(path)) {
+              console.log('No meta.json found, skipping stale check.');
+              return;
+            }
+            
+            const meta = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const now = new Date();
+            const staleThresholdDays = 14;
+            const staleSources = [];
+
+            for (const [name, info] of Object.entries(meta.sources)) {
+              if (!info.success) {
+                staleSources.push(`**${name}**: Falló en la última descarga.`);
+                continue;
+              }
+              if (!info.lastUpdated) {
+                staleSources.push(`**${name}**: Sin fecha de última actualización.`);
+                continue;
+              }
+              const lastUpdated = new Date(info.lastUpdated);
+              const diffDays = (now - lastUpdated) / (1000 * 60 * 60 * 24);
+              if (diffDays > staleThresholdDays) {
+                staleSources.push(`**${name}**: No se actualiza desde hace ${diffDays.toFixed(1)} días (límite: ${staleThresholdDays} días).`);
+              }
+            }
+
+            if (staleSources.length > 0) {
+              console.log('Stale sources detected:', staleSources);
+              
+              // Check if there is already an open issue for stale data to avoid duplicates
+              const issues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: 'data-stale'
+              });
+              
+              if (issues.data.length > 0) {
+                console.log('An open issue for stale data already exists. Updating it...');
+                const issueNumber = issues.data[0].number;
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  body: `La alerta persiste. Estado actual:\n\n- ${staleSources.join('\n- ')}`
+                });
+              } else {
+                console.log('Creating new issue for stale data...');
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: '⚠️ Alerta: Datos desactualizados en Dashboard Fiscal',
+                  body: `Las siguientes fuentes de datos están desactualizadas o fallando:\n\n- ${staleSources.join('\n- ')}\n\nPor favor, revisa los logs del workflow y las fuentes oficiales.`,
+                  labels: ['data-stale', 'bug']
+                });
+              }
+            } else {
+              console.log('All data sources are fresh.');
+            }

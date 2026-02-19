@@ -236,38 +236,104 @@ function parseYearSheet(ws, sheetName) {
   const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
   if (rows.length < 9) return null
 
+  // B1: Detección dinámica de columnas por header
+  const headerRow = rows[7]
+  let colMapping = detectColumnsFromHeader(headerRow)
+
+  if (!colMapping) {
+    console.warn(`    ⚠️  [${sheetName}] Fallo en detección dinámica de columnas. Usando constantes hardcodeadas.`)
+    colMapping = {
+      divisionTotalCols: DIVISION_TOTAL_COLS,
+      subcategoryCols: SUBCATEGORY_COLS,
+      grandTotalCol: GRAND_TOTAL_COL
+    }
+  } else {
+    // Verificar si difiere de lo esperado (opcional para debug)
+    let differs = false
+    for (const code of Object.keys(DIVISION_TOTAL_COLS)) {
+      if (colMapping.divisionTotalCols[code] !== DIVISION_TOTAL_COLS[code]) differs = true
+    }
+    if (differs) {
+      console.log(`    ℹ️  [${sheetName}] Estructura de columnas detectada difiere de la estándar. Adaptando dinámicamente.`)
+    }
+  }
+
   // Row 8 (index 8) is "GASTO TOTAL"
   const gastoRow = rows[8]
   if (!gastoRow || String(gastoRow[1] || '').trim() !== 'GASTO TOTAL') {
     // Try to find GASTO TOTAL row
     for (let i = 0; i < rows.length; i++) {
       if (String(rows[i]?.[1] || '').trim() === 'GASTO TOTAL') {
-        return parseGastoRow(rows[i], rows[i - 1], sheetName)
+        return parseGastoRow(rows[i], headerRow, sheetName, colMapping)
       }
     }
     return null
   }
 
-  return parseGastoRow(gastoRow, rows[7], sheetName)
+  return parseGastoRow(gastoRow, headerRow, sheetName, colMapping)
+}
+
+/**
+ * Detect column indices for divisions and subcategories based on COFOG codes in row 7
+ */
+function detectColumnsFromHeader(headerRow) {
+  if (!headerRow) return null
+
+  const divisions = {}
+  for (let col = 0; col < headerRow.length; col++) {
+    const cell = String(headerRow[col] || '').trim()
+    const subMatch = cell.match(/^(\d{2})\.\d+$/)
+    if (subMatch) {
+      const divCode = subMatch[1]
+      if (!divisions[divCode]) {
+        divisions[divCode] = { subCols: [] }
+      }
+      divisions[divCode].subCols.push(col)
+    }
+  }
+
+  const divCodes = Object.keys(divisions).sort()
+  if (divCodes.length < 10) return null // Esperamos al menos las 10 divisiones principales
+
+  const divisionTotalCols = {}
+  const subcategoryCols = {}
+
+  for (const code of divCodes) {
+    const subCols = divisions[code].subCols
+    const lastSubCol = Math.max(...subCols)
+    const firstSubCol = Math.min(...subCols)
+
+    // El total de la división suele estar justo después de su última subcategoría
+    divisionTotalCols[code] = lastSubCol + 1
+    subcategoryCols[code] = { start: firstSubCol, end: lastSubCol }
+  }
+
+  const lastDivCode = divCodes[divCodes.length - 1]
+  const grandTotalCol = divisionTotalCols[lastDivCode] + 1
+
+  return { divisionTotalCols, subcategoryCols, grandTotalCol }
 }
 
 /**
  * Parse the GASTO TOTAL row to extract division and subcategory totals
  */
-function parseGastoRow(gastoRow, headerRow, sheetName) {
-  const grandTotal = toNumber(gastoRow[GRAND_TOTAL_COL])
+function parseGastoRow(gastoRow, headerRow, sheetName, colMapping) {
+  const { divisionTotalCols, subcategoryCols, grandTotalCol: totalColIdx } = colMapping
+  const grandTotal = toNumber(gastoRow[totalColIdx])
   if (!grandTotal || grandTotal <= 0) return null
 
   const categories = []
+  let sumDivisions = 0
 
-  const sortedDivCodes = Object.keys(DIVISION_TOTAL_COLS).sort()
+  const sortedDivCodes = Object.keys(divisionTotalCols).sort()
   for (const divCode of sortedDivCodes) {
-    const totalCol = DIVISION_TOTAL_COLS[divCode]
+    const totalCol = divisionTotalCols[divCode]
     const divAmount = toNumber(gastoRow[totalCol])
+    sumDivisions += divAmount
     const divPercentage = grandTotal > 0 ? (divAmount / grandTotal) * 100 : 0
 
     // Extract subcategories
-    const { start, end } = SUBCATEGORY_COLS[divCode]
+    const { start, end } = subcategoryCols[divCode]
     const children = []
 
     for (let col = start; col <= end; col++) {
@@ -295,6 +361,13 @@ function parseGastoRow(gastoRow, headerRow, sheetName) {
       percentage: divPercentage,
       children: children.length > 0 ? children : undefined,
     })
+  }
+
+  // B2: Validación cruzada: sum(divisions) ≈ grandTotal (1% tolerancia)
+  const diff = Math.abs(sumDivisions - grandTotal)
+  const tolerance = grandTotal * 0.01
+  if (diff > tolerance) {
+    console.warn(`    ⚠️  [${sheetName}] Cross-validation fallida: suma divisiones (${sumDivisions.toLocaleString()}) != gran total (${grandTotal.toLocaleString()}). Dif: ${diff.toLocaleString()} M€`)
   }
 
   return {

@@ -267,11 +267,20 @@ async function main() {
   }
   console.log()
 
-  if (successCount === totalCount) {
-    console.log('✅ Descarga completada exitosamente')
+  // B3: Éxito parcial. Definir fuentes críticas.
+  const CRITICAL_SOURCES = ['debt', 'demographics', 'pensions', 'budget']
+  const failedCritical = CRITICAL_SOURCES.filter(source => !status[source])
+
+  if (failedCritical.length === 0) {
+    if (successCount === totalCount) {
+      console.log('✅ Descarga completada exitosamente')
+    } else {
+      console.warn('⚠️  Descarga completada con errores en fuentes no críticas:',
+        Object.keys(status).filter(s => !status[s]).join(', '))
+    }
     process.exit(0)
   } else {
-    console.warn('⚠️  Descarga completada con errores parciales')
+    console.error('❌ Error: Fallaron fuentes críticas:', failedCritical.join(', '))
     process.exit(1)
   }
 }

@@ -141,6 +141,36 @@ async function fetchFromSSExcel() {
   const ws = wb.Sheets[sheetName]
   const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
 
+  // B4: Validación de headers Excel
+  let headerRow = null
+  for (let i = 0; i < Math.min(rows.length, 10); i++) {
+    const rowStr = (rows[i] || []).join(' ').toLowerCase()
+    if (rowStr.includes('pensiones') && (rowStr.includes('importe') || rowStr.includes('nómina'))) {
+      headerRow = rows[i]
+      console.log(`    Fila de cabecera detectada en posición ${i}`)
+      break
+    }
+  }
+
+  if (headerRow) {
+    const col1 = String(headerRow[1] || '').toLowerCase()
+    const col2 = String(headerRow[2] || '').toLowerCase()
+    const col3 = String(headerRow[3] || '').toLowerCase()
+
+    const valid1 = /pensiones/i.test(col1)
+    const valid2 = /importe|nómina/i.test(col2)
+    const valid3 = /pensión media/i.test(col3)
+
+    if (!valid1 || !valid2 || !valid3) {
+      console.warn(`    ⚠️  Detección de columnas sospechosa: [1]="${col1}", [2]="${col2}", [3]="${col3}"`)
+      console.warn('    Se esperaba: [1]~"pensiones", [2]~"importe/nómina", [3]~"pensión media"')
+    } else {
+      console.log('    ✅ Cabeceras de columna validadas correctamente')
+    }
+  } else {
+    console.warn('    ⚠️  No se pudo encontrar la fila de cabecera para validar columnas')
+  }
+
   // Find "Total sistema" row
   // Structure: [label, totalNum, totalImporte, totalMedia, incapNum, incapImporte, incapMedia, jubNum, jubImporte, jubMedia]
   let totalRow = null

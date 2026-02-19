@@ -47,7 +47,7 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 | Población activa (EPA) | **AUTOMATIZADO** | `EPA387794` (Tabla 65080) | Trimestral | 24.940.400 (Q3 2025) | BAJA |
 | PIB nominal | **AUTOMATIZADO** | `CNTR6597` (Tabla 30679) | Trimestral (suma 4Q) | 1,686 B€ | BAJA |
 | Salario medio | **AUTOMATIZADO** pero MUY DESFASADO | `EAES741` (Tabla 28191) | Anual (~2 años lag) | 28.050€ (**dato 2022**) | ALTA |
-| SMI | **HARDCODEADO** | — (BOE) | Anual | 1.134€/mes (2025) | ALTA — actualizar a mano cada enero |
+| SMI | **HARDCODEADO** | — (BOE) | Anual | 1.221€/mes (2026) | ALTA — actualizar a mano cada enero |
 | IPC (30 años) | **AUTOMATIZADO** | `IPC278296` + `IPC290750` | Anual | 1995-2024, base 2024 | MEDIA |
 
 **URLs** (estables — API Tempus):
@@ -107,26 +107,18 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 
 | Dato | Clasificación | Método | Cobertura | Fragilidad |
 |------|---------------|--------|-----------|------------|
-| Gasto total por año | **AUTOMATIZADO** | Excel COFOG, fila "GASTO TOTAL" | 30 años (1995-2024) | ALTA — índice de fila hardcodeado |
-| 10 divisiones COFOG | **AUTOMATIZADO** | Columnas hardcodeadas | 30 años | MUY ALTA — 10 índices |
-| ~70 subcategorías | **SEMI-AUTOMATIZADO** | Rangos de columnas hardcodeados | 30 años | MUY ALTA |
+| Gasto total por año | **AUTOMATIZADO** | Excel COFOG, fila "GASTO TOTAL" | 30 años (1995-2024) | BAJA — detección dinámica de fila |
+| 10 divisiones COFOG | **AUTOMATIZADO** | Detección dinámica por header | 30 años | MEDIA — validación cruzada implementada |
+| ~70 subcategorías | **SEMI-AUTOMATIZADO** | Detección dinámica de rangos | 30 años | MEDIA |
 | Nombres de categorías | **HARDCODEADO** | Mapa estático | Fijo | BAJA |
 | Porcentajes | **DERIVADO** | (categoría / total) × 100 | — | BAJA |
 
-**URL** (estable): `https://www.igae.pap.hacienda.gob.es/.../COFOG_A_AAPP.xlsx`
+**URL** (estable): `https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/AAPP_A/COFOG_A_AAPP.xlsx`
 
-**Columnas hardcodeadas** (mayor punto de fragilidad):
-```
-Div 01 total=col10  02=col16  03=col23  04=col33  05=col40
-Div 06 total=col47  07=col54  08=col61  09=col70  10=col80
-Gran total = col 81
-```
-
-**Problemas detectados**:
-1. **Índices de columna extremadamente frágiles**: Si IGAE añade UNA columna, TODOS los índices posteriores se desplazan.
-2. **Fila 8 hardcodeada** para "GASTO TOTAL". Si añaden/quitan filas cabecera, lee fila errónea.
-3. **Hojas por año**: Busca `/^\d{4}$/`. Si IGAE usa "2024(P)" (provisional), no la detecta.
-4. **Sin validación cruzada**: No verifica que suma divisiones = total general.
+**Mejoras de robustez**:
+1. **Detección dinámica de columnas**: El script escanea la fila 7 buscando códigos COFOG (`XX.N`) para identificar automáticamente los índices de columnas de subcategorías y totales.
+2. **Validación cruzada**: Se verifica que la suma de las 10 divisiones coincida con el gran total (tolerancia 1%) para detectar errores de parsing.
+3. **Fallback**: Si la detección dinámica falla, el script utiliza constantes de respaldo y emite un aviso.
 
 ---
 
@@ -213,12 +205,13 @@ Gran total = col 81
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
 | `deploy.yml` | Push a main | lint -> test -> build -> deploy a GitHub Pages |
-| `update-data.yml` | Lunes 08:00 UTC + manual | `npm run download-data` -> auto-commit si hay cambios |
+| `update-data.yml` | Lunes 08:00 UTC + manual | `npm run download-data` -> check stale -> auto-commit |
 
-- Auto-commit solo si exit code 0 (todas las fuentes OK)
-- Pattern: `src/data/*.json`
-- Sin secretos necesarios (todas las fuentes públicas)
-- El push a main dispara deploy automáticamente
+**Lógica de robustez en CI**:
+1. **Éxito parcial**: El script de descarga devuelve exit 0 si las fuentes críticas (deuda, demografía, pensiones, presupuestos) son correctas, permitiendo fallos temporales en fuentes secundarias (Eurostat, CCAA).
+2. **Alertas de datos obsoletos (Stale)**: Tras la descarga, el workflow verifica si alguna fuente tiene un desfase > 14 días. Si es así, crea automáticamente una GitHub Issue detallando el problema.
+3. **Auto-commit**: Solo se guardan cambios si las fuentes críticas están OK.
+4. **Validación de cabeceras**: Los scripts de Seguridad Social e IGAE validan la estructura del Excel antes de procesar, emitiendo avisos ante cambios de formato.
 
 ---
 

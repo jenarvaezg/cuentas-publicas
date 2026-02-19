@@ -476,11 +476,48 @@ export function MethodologySection() {
                   segundos = €/segundo.
                 </li>
                 <li>
-                  Todos los contadores se actualizan a ~20 fotogramas por segundo (intervalo de
-                  50ms) con fuente <code className="text-xs">tabular-nums</code> para animación
-                  fluida.
+                  Todos los contadores se actualizan a ~60 fotogramas por segundo
+                  (requestAnimationFrame), respetando prefers-reduced-motion, con fuente{" "}
+                  <code className="text-xs">tabular-nums</code> para animación fluida.
                 </li>
               </ul>
+            </div>
+
+            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
+              Frecuencia y Desfase Temporal
+            </h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p>
+                No todos los datos oficiales se publican con la misma rapidez. Este dashboard maneja
+                distintos horizontes temporales:
+              </p>
+              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
+                <li>
+                  <strong className="text-foreground">Deuda (BdE) y Pensiones (SS):</strong>{" "}
+                  Mensual, con un retraso de 15-30 días respecto al mes actual.
+                </li>
+                <li>
+                  <strong className="text-foreground">Población Activa (EPA):</strong> Trimestral,
+                  con aprox. 1 mes de desfase.
+                </li>
+                <li>
+                  <strong className="text-foreground">Salario Medio (INE):</strong> Anual, publicado
+                  con aprox. 2 años de retraso (Encuesta de Estructura Salarial).
+                </li>
+                <li>
+                  <strong className="text-foreground">
+                    Gasto Público (IGAE) e Ingresos (Eurostat):
+                  </strong>{" "}
+                  Anual, con 1-2 años de desfase.
+                </li>
+              </ul>
+              <p>
+                Cuando un dato es antiguo (más de un año), se muestra un indicador visual{" "}
+                <span className="px-1 py-0.5 rounded-full text-[8px] font-bold bg-amber-100 text-amber-700 uppercase">
+                  dato YYYY
+                </span>{" "}
+                para advertir al usuario.
+              </p>
             </div>
 
             <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">

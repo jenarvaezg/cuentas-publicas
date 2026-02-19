@@ -151,6 +151,7 @@ export interface MetaData {
     budget: boolean;
     eurostat?: boolean;
     ccaaDebt?: boolean;
+    revenue?: boolean;
   };
   sources: {
     debt: {

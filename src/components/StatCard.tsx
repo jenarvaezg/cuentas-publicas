@@ -1,6 +1,7 @@
-import { ArrowDown, ArrowUp, ExternalLink } from "lucide-react";
+import { ArrowDown, ArrowUp, ExternalLink, Info } from "lucide-react";
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { SparklineChart } from "./SparklineChart";
 
@@ -14,6 +15,7 @@ export interface SourceDetail {
 interface StatCardProps {
   label: string;
   value: string;
+  tooltip?: string;
   trend?: { value: number; label: string };
   sparklineData?: number[];
   sources?: SourceDetail[];
@@ -24,12 +26,25 @@ interface StatCardProps {
 export const StatCard = memo(function StatCard({
   label,
   value,
+  tooltip,
   trend,
   sparklineData,
   sources,
   className,
   delay = 0,
 }: StatCardProps) {
+  // C4: Check for stale data (> 1 year old) in sources
+  const staleSource = sources?.find((src) => {
+    if (!src.date) return false;
+    const date = new Date(src.date);
+    if (Number.isNaN(date.getTime())) return false;
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    return date < oneYearAgo;
+  });
+
+  const staleYear = staleSource?.date ? new Date(staleSource.date).getFullYear() : null;
+
   return (
     <Card
       className={cn(
@@ -40,8 +55,31 @@ export const StatCard = memo(function StatCard({
     >
       <CardContent className="pt-6 text-center">
         <div className="space-y-2">
-          <div className="text-sm font-medium text-muted-foreground mb-1">{label}</div>
-          <div className="text-3xl font-bold">{value}</div>
+          <div className="flex items-center justify-center gap-1.5 mb-1">
+            <div className="text-sm font-medium text-muted-foreground">{label}</div>
+            {tooltip && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="text-muted-foreground/50 hover:text-foreground transition-colors"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                    <span className="sr-only">Más información</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[200px] text-center">{tooltip}</TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+          <div className="text-3xl font-bold flex flex-col items-center gap-1">
+            {value}
+            {staleYear && (
+              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 uppercase tracking-tight">
+                dato {staleYear}
+              </span>
+            )}
+          </div>
 
           {trend && (
             <div

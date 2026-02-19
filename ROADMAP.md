@@ -68,17 +68,18 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Robustez del pipeline
 
-1. **IGAE: Detectar columnas por header en vez de por índice** — Leer fila cabecera, buscar códigos COFOG (01, 02...) y calcular índices dinámicamente. Elimina el problema de desplazamiento.
+1. **✅ IGAE: Detectar columnas por header en vez de por índice** — Leer fila cabecera, buscar códigos COFOG (01, 02...) y calcular índices dinámicamente. Elimina el problema de desplazamiento.
 2. **SS: Fallback de URLs alternativas** — Mantener últimas 3-4 URLs conocidas del Excel y probarlas si scraping falla. Alertar (GitHub Issue automática) si ninguna funciona.
-3. **Validación cruzada COFOG** — Verificar que suma de 10 divisiones = total general. Si no cuadra, log warning + mantener datos anteriores.
+3. **✅ Validación cruzada COFOG** — Verificar que suma de 10 divisiones = total general. Si no cuadra, log warning + mantener datos anteriores.
+4. **✅ SS: Validación de cabeceras** — Comprobar que las columnas del Excel coinciden con el esquema esperado antes de procesar.
 
 ### Infraestructura y UX
 
-- **Tooltips/modales explicativos por métrica**: Cada gráfica y dato debería tener un icono de ayuda (?) que abra un tooltip o modal explicando qué es el dato, cómo se calcula y por qué es importante. Objetivo: que cualquier persona sin formación económica entienda cada cifra.
+- **✅ Tooltips/modales explicativos por métrica**: Cada gráfica y dato debería tener un icono de ayuda (?) que abra un tooltip o modal explicando qué es el dato, cómo se calcula y por qué es importante. Objetivo: que cualquier persona sin formación económica entienda cada cifra.
 - **Roadmap visible en la web**: Mostrar este roadmap como una página dentro del dashboard.
 - **Compartir gráficos individuales**: Botón para exportar cada bloque como imagen (canvas -> PNG).
 - **Notificaciones de datos nuevos**: Suscripción por email/RSS cuando se actualizan los datos.
 - **API pública**: Endpoint JSON para que otros proyectos consuman nuestros datos procesados.
-- **Alertas de datos stale**: Si un dato > X meses de antigüedad, crear GitHub Issue automática.
+- **✅ Alertas de datos stale**: Si un dato > X meses de antigüedad, crear GitHub Issue automática (umbral actual: 14 días).
 - **Ampliar meta.json**: Incluir "último dato real" (no último download) para cada métrica. Mostrar en UI cuándo se actualizó realmente cada dato.
 - **Tests de integridad**: Tests que verifiquen `debtToGDP > 0`, `interestExpense > 0`, suma COFOG cuadre, etc.

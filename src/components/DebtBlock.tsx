@@ -88,6 +88,7 @@ export function DebtBlock() {
           <StatCard
             label="Deuda per cápita"
             value={formatCurrency(debtPerCapita)}
+            tooltip="Lo que debe cada habitante de España si repartiéramos la deuda por igual entre toda la población."
             delay={0.05}
             sources={[
               { ...CALCULO_DERIVADO, note: "Deuda total / población" },
@@ -98,6 +99,7 @@ export function DebtBlock() {
           <StatCard
             label="Deuda por contribuyente"
             value={formatCurrency(debtPerContributor)}
+            tooltip="Carga de deuda por cada persona en edad y disposición de trabajar (población activa según la EPA)."
             delay={0.1}
             sources={[
               { ...CALCULO_DERIVADO, note: "Deuda total / población activa" },
@@ -108,6 +110,7 @@ export function DebtBlock() {
           <StatCard
             label="Ratio deuda/PIB"
             value={formatPercent(debt.current.debtToGDP)}
+            tooltip="Mide la sostenibilidad de la deuda comparándola con todo lo que produce el país en un año (PIB)."
             delay={0.15}
             sources={[
               { ...CALCULO_DERIVADO, note: "Deuda total / PIB nominal" },
@@ -119,12 +122,14 @@ export function DebtBlock() {
           <StatCard
             label="Deuda Estado"
             value={formatCompact(debt.current.debtBySubsector.estado)}
+            tooltip="Deuda emitida directamente por el Tesoro Público para financiar la Administración Central."
             delay={0.2}
             sources={[bdeSource]}
           />
           <StatCard
             label="Deuda CCAA"
             value={formatCompact(debt.current.debtBySubsector.ccaa)}
+            tooltip="Deuda acumulada por las 17 Comunidades Autónomas, incluyendo préstamos del Estado (como el FLA)."
             delay={0.25}
             sources={[bdeSource]}
           />
@@ -133,6 +138,7 @@ export function DebtBlock() {
             value={formatCompact(
               debt.current.debtBySubsector.ccll + debt.current.debtBySubsector.ss,
             )}
+            tooltip="Suma de la deuda de Ayuntamientos, Diputaciones, Cabildos y la propia Seguridad Social."
             delay={0.3}
             sources={[bdeSource]}
           />
@@ -140,6 +146,7 @@ export function DebtBlock() {
           <StatCard
             label="Variación interanual"
             value={formatPercent(yoyChange)}
+            tooltip="Comparación porcentual de la deuda actual frente al mismo mes del año anterior."
             delay={0.35}
             trend={{
               value: yoyChange,
@@ -149,6 +156,12 @@ export function DebtBlock() {
             sources={[yoySource, bdeSource]}
           />
         </div>
+
+        <p className="text-[10px] text-muted-foreground/60 italic px-2">
+          * La suma de subsectores puede superar la deuda total PDE porque la cifra oficial
+          consolida préstamos intergubernamentales (FLA, FFPP) que se compensan contablemente entre
+          administraciones.
+        </p>
       </CardContent>
     </Card>
   );

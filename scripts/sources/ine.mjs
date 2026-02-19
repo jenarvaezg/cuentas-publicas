@@ -44,7 +44,7 @@ export async function downloadDemographics() {
       activePopulation: activePop.value,
       gdp: gdpData.value,
       averageSalary: salaryData.value,
-      smi: 1_134, // SMI 2025: 15960€/14 pagas
+      smi: 1_221, // SMI 2026: 17.094€/14 pagas
       cpi: cpiData.value,
       sourceAttribution: {
         population: popData.attribution,
@@ -52,10 +52,10 @@ export async function downloadDemographics() {
         gdp: gdpData.attribution,
         averageSalary: salaryData.attribution,
         smi: {
-          source: 'BOE — Salario Mínimo Interprofesional 2025',
+          source: 'BOE — Salario Mínimo Interprofesional 2026',
           type: 'fallback',
-          url: 'https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-26958',
-          note: 'SMI 2025: 1.134€/mes (15.960€/14 pagas)'
+          url: 'https://www.boe.es/boe/dias/2026/02/18/pdfs/BOE-A-2026-3456.pdf',
+          note: 'SMI 2026: 1.221€/mes (17.094€/14 pagas)'
         },
         cpi: cpiData.attribution
       }
@@ -526,7 +526,7 @@ function buildFallbackDemographics() {
     activePopulation: active.value,
     gdp: gdpVal.value,
     averageSalary: sal.value,
-    smi: 1_134,
+    smi: 1_221,
     cpi: cpiVal.value,
     sourceAttribution: {
       population: pop.attribution,
@@ -534,10 +534,10 @@ function buildFallbackDemographics() {
       gdp: gdpVal.attribution,
       averageSalary: sal.attribution,
       smi: {
-        source: 'BOE — Salario Mínimo Interprofesional 2025',
+        source: 'BOE — Salario Mínimo Interprofesional 2026',
         type: 'fallback',
-        url: 'https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-26958',
-        note: 'SMI 2025: 1.134€/mes (15.960€/14 pagas)'
+        url: 'https://www.boe.es/boe/dias/2026/02/18/pdfs/BOE-A-2026-3456.pdf',
+        note: 'SMI 2026: 1.221€/mes (17.094€/14 pagas)'
       },
       cpi: cpiVal.attribution
     }

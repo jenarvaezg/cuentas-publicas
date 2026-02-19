@@ -1,4 +1,3 @@
-import { parseSpanishCSV } from '../lib/csv-parser.mjs'
 import { linearRegression } from '../lib/regression.mjs'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
 
@@ -140,8 +139,7 @@ function parseBdETransposedCSV(csvText, type) {
   const result = {
     totalDebt: [],
     debtBySubsector: {},
-    debtToGDP: [],
-    interestExpense: []
+    debtToGDP: []
   }
 
   if (!csvText) return result
@@ -409,9 +407,7 @@ function buildDebtResult(monthlyData, quarterlyData, apiData) {
 
   // Interest expense — no CSV source available, use PGE 2025 estimate as reference
   const REFERENCE_INTEREST_EXPENSE = 39_000_000_000
-  const interestExpense = monthlyData?.interestExpense?.[0] ||
-                          quarterlyData?.interestExpense?.[0] ||
-                          REFERENCE_INTEREST_EXPENSE
+  const interestExpense = REFERENCE_INTEREST_EXPENSE
 
   // Calculate regression for extrapolation
   const regressionPoints = historical.slice(-24).map(p => ({
@@ -516,7 +512,7 @@ function buildFallbackDebtData() {
       },
       debtToGDP: 106.8,
       yearOverYearChange: 2.1,
-      interestExpense: 42_000_000_000
+      interestExpense: 39_000_000_000
     },
     historical: [
       { date: '2024-12-31', totalDebt: 1_621_000_000_000 },
@@ -524,10 +520,10 @@ function buildFallbackDebtData() {
       { date: '2025-12-31', totalDebt: 1_635_000_000_000 }
     ],
     regression: {
-      slope: totalDebt / Date.now(),
-      intercept: 0,
+      slope: 60_000_000_000 / (365.25 * 24 * 60 * 60 * 1000), // ~60B€/año
+      get intercept() { return totalDebt - this.slope * Date.now() },
       lastDataTimestamp: Date.now(),
-      debtPerSecond: 3_500 // Approximate
+      get debtPerSecond() { return this.slope * 1000 }
     },
     sourceAttribution: {
       totalDebt: {
@@ -556,7 +552,7 @@ function buildFallbackDebtData() {
         source: 'Estimación PGE 2025',
         type: 'fallback',
         url: 'https://www.sepg.pap.hacienda.gob.es/sitios/sepg/es-ES/Presupuestos/PGE/Paginas/PGE2025.aspx',
-        note: '~42.000 M€ (estimación)'
+        note: '~39.000 M€ (estimación PGE 2025)'
       }
     }
   }

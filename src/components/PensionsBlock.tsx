@@ -106,6 +106,7 @@ export function PensionsBlock() {
           <StatCard
             label="Nómina mensual total"
             value={formatCompact(pensions.current.monthlyPayroll)}
+            tooltip="Suma de lo que el Estado paga cada mes a todos los pensionistas (incluye Seg. Social y Clases Pasivas)."
             delay={0.05}
             sparklineData={sparklineData}
             sources={[ssNomina, { name: "Incluye SS contributivas + Clases Pasivas" }]}
@@ -113,9 +114,10 @@ export function PensionsBlock() {
           <StatCard
             label="Déficit contributivo"
             value={formatCompact(pensions.current.contributoryDeficit)}
+            tooltip="Diferencia anual entre lo que se recauda por cotizaciones sociales y lo que cuestan las pensiones contributivas."
             delay={0.1}
             trend={{
-              value: 1,
+              value: -pensions.current.contributoryDeficit,
               label: formatCompact(pensions.current.contributoryDeficit),
             }}
             sources={[contributoryDeficitSource, ssNomina, cotizacionesSource]}
@@ -123,18 +125,21 @@ export function PensionsBlock() {
           <StatCard
             label="Cotizantes por pensionista"
             value={formatNumber(pensions.current.contributorsPerPensioner, 2)}
+            tooltip="Número de trabajadores en activo por cada pensión en vigor. Un ratio cercano a 2,0 se considera necesario para la estabilidad."
             delay={0.15}
             sources={[contributorsPerPensionerSource, ssAfiliados, ssPensiones]}
           />
           <StatCard
             label="Pensión media jubilación"
             value={`${formatCurrency(pensions.current.averagePensionRetirement)}/mes`}
+            tooltip="Importe medio percibido mensualmente por los pensionistas por jubilación del sistema."
             delay={0.2}
             sources={[avgPensionSource]}
           />
           <StatCard
             label="Gasto pensiones / PIB"
             value={formatPercent(pensionExpenseToGDP)}
+            tooltip="Porcentaje de la riqueza nacional (PIB) que se destina anualmente a pagar el sistema de pensiones."
             delay={0.25}
             sources={[
               { ...CALCULO_DERIVADO, note: "Gasto anual (nomina x 14) / PIB" },
@@ -143,9 +148,19 @@ export function PensionsBlock() {
             ]}
           />
           <StatCard
+            label="Fondo de Reserva"
+            value={formatCompact(pensions.current.reserveFund)}
+            tooltip="La 'hucha de las pensiones'. Creada para cubrir desfases, llegó a tener 66.815 M€ en 2011. Actualmente en recuperación."
+            delay={0.3}
+            sources={[
+              { name: "Estimación Ministerio Inclusión/Seg. Social", note: "Dato feb 2026" },
+            ]}
+          />
+          <StatCard
             label="Pensiones en vigor"
             value={formatNumber(pensions.current.totalPensions, 0)}
-            delay={0.3}
+            tooltip="Número total de prestaciones que se están pagando actualmente (una persona puede cobrar más de una)."
+            delay={0.35}
             sources={[ssPensiones]}
           />
         </div>

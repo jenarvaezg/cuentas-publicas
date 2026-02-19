@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   Bar,
@@ -10,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fromAttribution } from "@/data/sources";
 import { useData } from "@/hooks/useData";
 import { formatCompact, formatNumber } from "@/utils/formatters";
 
@@ -160,18 +162,29 @@ export function CcaaDebtBlock() {
           </BarChart>
         </ResponsiveContainer>
 
-        <p className="text-[10px] text-muted-foreground/70 text-center">
-          Datos del{" "}
-          <a
-            href="https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-foreground"
-          >
-            Banco de España
-          </a>{" "}
-          — {ccaaDebt.quarter}
-        </p>
+        {(() => {
+          const attr =
+            selectedMetric === "debtToGDP"
+              ? fromAttribution(ccaaDebt.sourceAttribution.be1310)
+              : fromAttribution(ccaaDebt.sourceAttribution.be1309);
+
+          return (
+            <p className="text-[10px] text-muted-foreground/70 text-center flex items-center justify-center gap-1">
+              <span>Datos del</span>
+              <a
+                href={attr.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground inline-flex items-center gap-0.5"
+              >
+                {attr.name}
+                <ExternalLink className="h-2 w-2" />
+              </a>
+              <span>— {ccaaDebt.quarter}</span>
+              {attr.note && <span className="hidden sm:inline">({attr.note})</span>}
+            </p>
+          );
+        })()}
       </CardContent>
     </Card>
   );

@@ -17,7 +17,7 @@ export function Header() {
               Deuda, Pensiones y Gasto Público en Tiempo Real
             </p>
             <p className="text-sm text-muted-foreground/60 text-center">
-              Datos del BdE, INE y Seg. Social · Última actualización:{" "}
+              Datos del BdE, INE, Seg. Social, IGAE y Eurostat · Última actualización:{" "}
               {formatDate(meta.lastDownload)}
             </p>
           </div>

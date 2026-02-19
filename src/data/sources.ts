@@ -23,8 +23,8 @@ export const INE_POBLACION: SourceDetail = {
 
 export const INE_EPA: SourceDetail = {
   name: "INE — EPA (Encuesta Poblacion Activa)",
-  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=4247",
-  note: "Tabla 4247, valor de referencia",
+  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=65080",
+  note: "Tabla 65080 (serie EPA387794)",
 };
 
 export const INE_PIB: SourceDetail = {
