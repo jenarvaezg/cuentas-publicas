@@ -80,6 +80,16 @@ describe('linearRegression', () => {
     expect(typeof result.predict).toBe('function')
   })
 
+  it('handles vertical points (denominator=0)', () => {
+    const points = [
+      { x: 5, y: 10 },
+      { x: 5, y: 20 },
+    ]
+    const result = linearRegression(points)
+    expect(result.slope).toBe(0)
+    expect(result.intercept).toBe(15) // (10+20)/2
+  })
+
   it('handles null input', () => {
     const result = linearRegression(null)
     expect(result.slope).toBe(0)

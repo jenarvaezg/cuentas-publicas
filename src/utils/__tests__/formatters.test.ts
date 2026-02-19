@@ -133,4 +133,8 @@ describe("formatDate", () => {
     expect(formatDate("2024-Q2")).toBe("T2 2024");
     expect(formatDate("2024-Q3")).toBe("T3 2024");
   });
+
+  it("returns original string for invalid dates", () => {
+    expect(formatDate("not-a-date")).toBe("not-a-date");
+  });
 });

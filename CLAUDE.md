@@ -66,6 +66,7 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 
 ## Conventions
 
+- **Coverage**: **100% coverage is mandatory** for all business logic, utilities, and data processing scripts. Tests must be added or updated for every change.
 - **Language**: UI text is in Spanish. Code (variables, comments, commits) in English.
 - **Formatting**: Biome — 2-space indent, double quotes, trailing commas, semicolons, 100 char line width.
 - **Path alias**: `@/` maps to `src/` (configured in tsconfig.json and vite.config.ts).

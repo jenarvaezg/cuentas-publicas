@@ -7,14 +7,17 @@
  * @returns {Array<Object>} Array of row objects
  */
 export function parseSpanishCSV(csvText) {
-  if (!csvText || typeof csvText !== 'string') {
+  if (typeof csvText !== 'string') {
     return []
   }
-
-  const lines = csvText.split('\n').map(line => line.trim()).filter(line => line.length > 0)
-
-  if (lines.length === 0) {
+  if (!csvText) {
     return []
+  }
+  const lines = csvText.split('\n').map(line => line.trim())
+  if (lines.length === 1) {
+    if (!lines[0]) {
+      return []
+    }
   }
 
   // Find header row - typically the first non-empty line

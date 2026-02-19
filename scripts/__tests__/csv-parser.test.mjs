@@ -22,6 +22,11 @@ describe('parseSpanishNumber', () => {
     expect(parseSpanishNumber('')).toBe('')
   })
 
+  it('returns original input if not a string', () => {
+    expect(parseSpanishNumber(123)).toBe(123)
+    expect(parseSpanishNumber(null)).toBe(null)
+  })
+
   it('handles zero', () => {
     expect(parseSpanishNumber('0')).toBe(0)
   })
@@ -29,11 +34,28 @@ describe('parseSpanishNumber', () => {
   it('handles large numbers with multiple dot separators', () => {
     expect(parseSpanishNumber('1.234.567,89')).toBeCloseTo(1234567.89, 2)
   })
+
+  it('returns original string if parseFloat results in NaN despite passing regex', () => {
+    expect(parseSpanishNumber('..')).toBe('..')
+  })
 })
 
 describe('parseSpanishCSV', () => {
   it('returns empty array for empty input', () => {
     expect(parseSpanishCSV('')).toEqual([])
+  })
+
+  it('returns empty array for non-string input', () => {
+    expect(parseSpanishCSV(123)).toEqual([])
+    expect(parseSpanishCSV({})).toEqual([])
+  })
+
+  it('returns empty array for whitespace-only input', () => {
+    expect(parseSpanishCSV('   \n   ')).toEqual([])
+  })
+
+  it('returns empty array for single-line whitespace input', () => {
+    expect(parseSpanishCSV('   ')).toEqual([])
   })
 
   it('returns empty array for null/undefined', () => {
@@ -79,11 +101,32 @@ describe('parseSpanishCSV', () => {
     expect(result).toHaveLength(2)
   })
 
+  it('handles header-only CSV', () => {
+    const csv = 'Col1;Col2'
+    const result = parseSpanishCSV(csv)
+    expect(result).toEqual([])
+  })
+
+  it('handles rows with fewer columns than the header', () => {
+    const csv = 'A;B\n1'
+    const result = parseSpanishCSV(csv)
+    expect(result[0].A).toBe(1)
+    expect(result[0].B).toBe('')
+  })
+
   it('parses multiple columns correctly', () => {
     const csv = 'Col1;Col2;Col3\n1,5;2.000;texto'
     const result = parseSpanishCSV(csv)
     expect(result[0].Col1).toBeCloseTo(1.5, 1)
     expect(result[0].Col2).toBe(2000)
     expect(result[0].Col3).toBe('texto')
+  })
+
+  it('uses first line as header if no multi-column header found in first 10 lines', () => {
+    const csv = 'SingleColumn\nValue1\nValue2'
+    const result = parseSpanishCSV(csv)
+    expect(result).toHaveLength(2)
+    expect(result[0].SingleColumn).toBe('Value1')
+    expect(result[1].SingleColumn).toBe('Value2')
   })
 })

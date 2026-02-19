@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1771535594893" clover="3.2.0">
+  <project timestamp="1771535594893" name="All files">
+    <metrics statements="83" coveredstatements="83" conditionals="45" coveredconditionals="45" methods="14" coveredmethods="14" elements="142" coveredelements="142" complexity="0" loc="83" ncloc="83" packages="2" files="3" classes="3"/>
+    <package name="scripts.lib">
+      <metrics statements="61" coveredstatements="61" conditionals="32" coveredconditionals="32" methods="9" coveredmethods="9"/>
+      <file name="csv-parser.mjs" path="/Users/jose/jenarvaezg/cuentas-publicas/scripts/lib/csv-parser.mjs">
+        <metrics statements="40" coveredstatements="40" conditionals="24" coveredconditionals="24" methods="5" coveredmethods="5"/>
+        <line num="10" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="13" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="26" type="stmt"/>
+        <line num="17" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="25" count="10" type="stmt"/>
+        <line num="26" count="10" type="stmt"/>
+        <line num="29" count="10" type="stmt"/>
+        <line num="30" count="13" type="stmt"/>
+        <line num="32" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="17" type="stmt"/>
+        <line num="34" count="8" type="stmt"/>
+        <line num="35" count="8" type="stmt"/>
+        <line num="39" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="42" count="2" type="stmt"/>
+        <line num="45" count="10" type="stmt"/>
+        <line num="48" count="10" type="stmt"/>
+        <line num="49" count="15" type="stmt"/>
+        <line num="50" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="12" type="stmt"/>
+        <line num="53" count="12" type="stmt"/>
+        <line num="55" count="12" type="stmt"/>
+        <line num="56" count="23" type="stmt"/>
+        <line num="57" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="23" type="stmt"/>
+        <line num="63" count="12" type="stmt"/>
+        <line num="66" count="10" type="stmt"/>
+        <line num="76" count="33" type="cond" truecount="4" falsecount="0"/>
+        <line num="77" count="4" type="stmt"/>
+        <line num="80" count="29" type="stmt"/>
+        <line num="83" count="29" type="cond" truecount="2" falsecount="0"/>
+        <line num="84" count="11" type="stmt"/>
+        <line num="89" count="18" type="stmt"/>
+        <line num="93" count="18" type="stmt"/>
+        <line num="95" count="18" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="regression.mjs" path="/Users/jose/jenarvaezg/cuentas-publicas/scripts/lib/regression.mjs">
+        <metrics statements="21" coveredstatements="21" conditionals="8" coveredconditionals="8" methods="4" coveredmethods="4"/>
+        <line num="7" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="11" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="19" count="7" type="stmt"/>
+        <line num="20" count="7" type="stmt"/>
+        <line num="21" count="7" type="stmt"/>
+        <line num="22" count="7" type="stmt"/>
+        <line num="23" count="7" type="stmt"/>
+        <line num="25" count="7" type="stmt"/>
+        <line num="26" count="22" type="stmt"/>
+        <line num="27" count="22" type="stmt"/>
+        <line num="28" count="22" type="stmt"/>
+        <line num="29" count="22" type="stmt"/>
+        <line num="33" count="7" type="stmt"/>
+        <line num="34" count="7" type="stmt"/>
+        <line num="36" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="10" type="stmt"/>
+        <line num="39" count="10" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.utils">
+      <metrics statements="22" coveredstatements="22" conditionals="13" coveredconditionals="13" methods="5" coveredmethods="5"/>
+      <file name="formatters.ts" path="/Users/jose/jenarvaezg/cuentas-publicas/src/utils/formatters.ts">
+        <metrics statements="22" coveredstatements="22" conditionals="13" coveredconditionals="13" methods="5" coveredmethods="5"/>
+        <line num="3" count="11" type="stmt"/>
+        <line num="11" count="7" type="stmt"/>
+        <line num="22" count="8" type="stmt"/>
+        <line num="23" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="28" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="31" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="44" count="4" type="stmt"/>
+        <line num="54" count="7" type="stmt"/>
+        <line num="55" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="4" type="stmt"/>
+        <line num="57" count="4" type="stmt"/>
+        <line num="61" count="3" type="stmt"/>
+        <line num="62" count="3" type="stmt"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="69" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
