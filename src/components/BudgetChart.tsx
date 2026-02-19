@@ -44,7 +44,7 @@ interface BudgetChartProps {
   euroLabel?: string;
 }
 
-interface ChartDatum {
+export interface ChartDatum {
   name: string;
   code: string;
   amount: number;
@@ -53,6 +53,83 @@ interface ChartDatum {
   comparisonPercentage?: number;
   change?: number;
 }
+
+export const CustomTooltip = ({
+  active,
+  payload,
+  isChangeMode,
+  isWeightMode,
+  selectedYear,
+  hasComparison,
+  comparisonYear,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: ChartDatum }>;
+  isChangeMode?: boolean;
+  isWeightMode?: boolean;
+  selectedYear?: number;
+  hasComparison?: boolean;
+  comparisonYear?: number;
+}) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+
+  if (isChangeMode) {
+    return (
+      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+        <p className="font-semibold text-foreground">{d.name}</p>
+        <p className="text-muted-foreground">
+          {selectedYear}: {formatNumber(d.amount, 0)} M€
+        </p>
+        {d.comparison !== undefined && (
+          <p className="text-muted-foreground">
+            {comparisonYear}: {formatNumber(d.comparison, 0)} M€
+          </p>
+        )}
+        {d.change !== undefined && (
+          <p
+            className={d.change >= 0 ? "text-emerald-600 font-medium" : "text-red-500 font-medium"}
+          >
+            {d.change >= 0 ? "+" : ""}
+            {formatNumber(d.change, 1)}%
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  if (isWeightMode) {
+    return (
+      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+        <p className="font-semibold text-foreground">{d.name}</p>
+        <p className="text-muted-foreground">
+          {selectedYear}: {formatNumber(d.percentage, 1)}% ({formatNumber(d.amount, 0)} M€)
+        </p>
+        {hasComparison && d.comparisonPercentage !== undefined && (
+          <p className="text-muted-foreground">
+            {comparisonYear}: {formatNumber(d.comparisonPercentage, 1)}% (
+            {formatNumber(d.comparison ?? 0, 0)} M€)
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <p className="font-semibold text-foreground">{d.name}</p>
+      <p className="text-muted-foreground">
+        {selectedYear}: {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
+      </p>
+      {hasComparison && d.comparison !== undefined && (
+        <p className="text-muted-foreground">
+          {comparisonYear}: {formatNumber(d.comparison, 0)} M€ (
+          {formatNumber(d.comparisonPercentage ?? 0, 1)}%)
+        </p>
+      )}
+    </div>
+  );
+};
 
 function resolveItems(
   categories: BudgetCategory[],
@@ -113,75 +190,6 @@ export function BudgetChart({
   const formatAxis = (v: number) => {
     if (isChangeMode || isWeightMode) return `${formatNumber(v, 1)}%`;
     return formatNumber(v, 0);
-  };
-
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: Array<{ payload: ChartDatum }>;
-  }) => {
-    if (!active || !payload?.length) return null;
-    const d = payload[0].payload;
-
-    if (isChangeMode) {
-      return (
-        <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
-          <p className="font-semibold text-foreground">{d.name}</p>
-          <p className="text-muted-foreground">
-            {selectedYear}: {formatNumber(d.amount, 0)} M€
-          </p>
-          {d.comparison !== undefined && (
-            <p className="text-muted-foreground">
-              {comparisonYear}: {formatNumber(d.comparison, 0)} M€
-            </p>
-          )}
-          {d.change !== undefined && (
-            <p
-              className={
-                d.change >= 0 ? "text-emerald-600 font-medium" : "text-red-500 font-medium"
-              }
-            >
-              {d.change >= 0 ? "+" : ""}
-              {formatNumber(d.change, 1)}%
-            </p>
-          )}
-        </div>
-      );
-    }
-
-    if (isWeightMode) {
-      return (
-        <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
-          <p className="font-semibold text-foreground">{d.name}</p>
-          <p className="text-muted-foreground">
-            {selectedYear}: {formatNumber(d.percentage, 1)}% ({formatNumber(d.amount, 0)} M€)
-          </p>
-          {hasComparison && d.comparisonPercentage !== undefined && (
-            <p className="text-muted-foreground">
-              {comparisonYear}: {formatNumber(d.comparisonPercentage, 1)}% (
-              {formatNumber(d.comparison ?? 0, 0)} M€)
-            </p>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
-        <p className="font-semibold text-foreground">{d.name}</p>
-        <p className="text-muted-foreground">
-          {selectedYear}: {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
-        </p>
-        {hasComparison && d.comparison !== undefined && (
-          <p className="text-muted-foreground">
-            {comparisonYear}: {formatNumber(d.comparison, 0)} M€ (
-            {formatNumber(d.comparisonPercentage ?? 0, 1)}%)
-          </p>
-        )}
-      </div>
-    );
   };
 
   return (
@@ -248,7 +256,17 @@ export function BudgetChart({
             tick={{ fontSize: 11 }}
             stroke="hsl(var(--muted-foreground))"
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip
+            content={
+              <CustomTooltip
+                isChangeMode={!!isChangeMode}
+                isWeightMode={!!isWeightMode}
+                selectedYear={selectedYear}
+                hasComparison={!!hasComparison}
+                comparisonYear={comparisonYear}
+              />
+            }
+          />
           {isChangeMode && <ReferenceLine x={0} stroke="hsl(var(--muted-foreground))" />}
           <Bar
             dataKey={primaryKey}

@@ -30,13 +30,36 @@ const COLOR_SPAIN = "hsl(215, 65%, 45%)";
 const COLOR_OTHER = "hsl(215, 30%, 65%)";
 const COLOR_EU27 = "hsl(215, 15%, 55%)";
 
-interface ChartDatum {
+export interface ChartDatum {
   country: string;
   countryCode: string;
   value: number;
   isSpain: boolean;
   isEU: boolean;
 }
+
+export const CustomTooltip = ({
+  active,
+  payload,
+  unit,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: ChartDatum }>;
+  unit?: string;
+}) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+
+  return (
+    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <p className="font-semibold text-foreground">{d.country}</p>
+      <p className="text-muted-foreground">
+        {formatNumber(d.value, 1)}
+        {unit ? ` ${unit}` : "%"}
+      </p>
+    </div>
+  );
+};
 
 export function ComparativaEUBlock() {
   const { eurostat } = useData();
@@ -76,27 +99,6 @@ export function ComparativaEUBlock() {
         eurostat.sourceAttribution.eurostat as EurostatData["sourceAttribution"]["eurostat"],
       )
     : { name: "Eurostat", url: "https://ec.europa.eu/eurostat/databrowser/" };
-
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: Array<{ payload: ChartDatum }>;
-  }) => {
-    if (!active || !payload?.length) return null;
-    const d = payload[0].payload;
-
-    return (
-      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
-        <p className="font-semibold text-foreground">{d.country}</p>
-        <p className="text-muted-foreground">
-          {formatNumber(d.value, 1)}
-          {meta?.unit ? ` ${meta.unit}` : "%"}
-        </p>
-      </div>
-    );
-  };
 
   return (
     <Card>
@@ -165,7 +167,7 @@ export function ComparativaEUBlock() {
               tick={{ fontSize: 12 }}
               stroke="hsl(var(--muted-foreground))"
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip unit={meta?.unit} />} />
             {eu27Value !== undefined && (
               <ReferenceLine
                 x={eu27Value}

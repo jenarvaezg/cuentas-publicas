@@ -17,6 +17,57 @@ import { useData } from "@/hooks/useData";
 import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
 import { StatCard } from "./StatCard";
 
+export interface BreakdownDatum {
+  name: string;
+  key: string;
+  amount: number;
+  percentage: number;
+}
+
+export const BreakdownTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: BreakdownDatum }>;
+}) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+  return (
+    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <p className="font-semibold text-foreground">{d.name}</p>
+      <p className="text-muted-foreground">
+        {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
+      </p>
+    </div>
+  );
+};
+
+export const HistoricalTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ dataKey: string; value: number; color: string }>;
+  label?: number;
+}) => {
+  if (!active || !payload?.length || !label) return null;
+  const ingresos = payload.find((p) => p.dataKey === "ingresos")?.value ?? 0;
+  const gastos = payload.find((p) => p.dataKey === "gastos")?.value ?? 0;
+  const balance = ingresos - gastos;
+  return (
+    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <p className="font-semibold text-foreground">{label}</p>
+      <p className="text-emerald-600">Ingresos: {formatNumber(ingresos, 0)} M€</p>
+      <p className="text-rose-500">Gastos: {formatNumber(gastos, 0)} M€</p>
+      <p className={balance >= 0 ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>
+        {balance >= 0 ? "Superávit" : "Déficit"}: {formatNumber(balance, 0)} M€
+      </p>
+    </div>
+  );
+};
+
 const BREAKDOWN_COLORS = {
   taxesDirect: "hsl(215, 65%, 45%)",
   taxesIndirect: "hsl(30, 75%, 50%)",
@@ -30,13 +81,6 @@ const BREAKDOWN_LABELS: Record<string, string> = {
   socialContributions: "Cotizaciones sociales",
   otherRevenue: "Otros ingresos",
 };
-
-interface BreakdownDatum {
-  name: string;
-  key: string;
-  amount: number;
-  percentage: number;
-}
 
 export function RevenueBlock() {
   const { revenue, demographics } = useData();
@@ -110,50 +154,6 @@ export function RevenueBlock() {
     if (!demographics.gdp || !totalRevenueEuros) return 0;
     return (totalRevenueEuros / demographics.gdp) * 100;
   }, [totalRevenueEuros, demographics.gdp]);
-
-  const BreakdownTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: Array<{ payload: BreakdownDatum }>;
-  }) => {
-    if (!active || !payload?.length) return null;
-    const d = payload[0].payload;
-    return (
-      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
-        <p className="font-semibold text-foreground">{d.name}</p>
-        <p className="text-muted-foreground">
-          {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
-        </p>
-      </div>
-    );
-  };
-
-  const HistoricalTooltip = ({
-    active,
-    payload,
-    label,
-  }: {
-    active?: boolean;
-    payload?: Array<{ dataKey: string; value: number; color: string }>;
-    label?: number;
-  }) => {
-    if (!active || !payload?.length || !label) return null;
-    const ingresos = payload.find((p) => p.dataKey === "ingresos")?.value ?? 0;
-    const gastos = payload.find((p) => p.dataKey === "gastos")?.value ?? 0;
-    const balance = ingresos - gastos;
-    return (
-      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
-        <p className="font-semibold text-foreground">{label}</p>
-        <p className="text-emerald-600">Ingresos: {formatNumber(ingresos, 0)} M€</p>
-        <p className="text-rose-500">Gastos: {formatNumber(gastos, 0)} M€</p>
-        <p className={balance >= 0 ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>
-          {balance >= 0 ? "Superávit" : "Déficit"}: {formatNumber(balance, 0)} M€
-        </p>
-      </div>
-    );
-  };
 
   return (
     <Card>
