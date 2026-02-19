@@ -1,11 +1,16 @@
 import { BudgetBlock } from "@/components/BudgetBlock";
+import { CcaaDebtBlock } from "@/components/CcaaDebtBlock";
+import { ComparativaEUBlock } from "@/components/ComparativaEUBlock";
 import { DebtBlock } from "@/components/DebtBlock";
 import { DebtCostBlock } from "@/components/DebtCostBlock";
+import { EquivalenciasBlock } from "@/components/EquivalenciasBlock";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MethodologySection } from "@/components/MethodologySection";
 import { PensionsBlock } from "@/components/PensionsBlock";
 import { RealtimeCounter } from "@/components/RealtimeCounter";
+import { RevenueBlock } from "@/components/RevenueBlock";
+import { RoadmapSection } from "@/components/RoadmapSection";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BDE_BE11B, CALCULO_DERIVADO, SS_NOMINA } from "@/data/sources";
 import { useData } from "@/hooks/useData";
@@ -135,12 +140,25 @@ function App() {
               <DebtCostBlock />
             </div>
             <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-              <PensionsBlock />
+              <EquivalenciasBlock />
             </div>
             <div className="animate-slide-up" style={{ animationDelay: "0.25s" }}>
+              <PensionsBlock />
+            </div>
+            <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
+              <RevenueBlock />
+            </div>
+            <div className="animate-slide-up" style={{ animationDelay: "0.35s" }}>
               <BudgetBlock />
             </div>
+            <div className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
+              <ComparativaEUBlock />
+            </div>
+            <div className="animate-slide-up" style={{ animationDelay: "0.45s" }}>
+              <CcaaDebtBlock />
+            </div>
             <MethodologySection />
+            <RoadmapSection />
           </div>
         </main>
 

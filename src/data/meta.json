@@ -1,31 +1,49 @@
 {
-  "lastDownload": "2026-02-18T18:41:46.357Z",
-  "duration": 1896,
+  "lastDownload": "2026-02-19T15:55:24.827Z",
+  "duration": 1059,
   "status": {
     "debt": true,
     "demographics": true,
     "pensions": true,
-    "budget": true
+    "budget": true,
+    "eurostat": true,
+    "ccaaDebt": true,
+    "revenue": true
   },
   "sources": {
     "debt": {
       "success": true,
-      "lastUpdated": "2026-02-18T18:41:45.032Z",
+      "lastUpdated": "2026-02-19T15:55:23.919Z",
       "dataPoints": 373
     },
     "demographics": {
       "success": true,
-      "lastUpdated": "2026-02-18T18:41:45.437Z"
+      "lastUpdated": "2026-02-19T15:55:24.090Z"
     },
     "pensions": {
       "success": true,
-      "lastUpdated": "2026-02-18T18:41:45.911Z",
+      "lastUpdated": "2026-02-19T15:55:24.481Z",
       "dataPoints": 12
     },
     "budget": {
       "success": true,
-      "lastUpdated": "2026-02-18T18:41:46.353Z",
+      "lastUpdated": "2026-02-19T15:55:24.289Z",
       "years": 30
+    },
+    "eurostat": {
+      "success": true,
+      "lastUpdated": "2026-02-19T15:55:24.026Z",
+      "year": 2024
+    },
+    "ccaaDebt": {
+      "success": true,
+      "lastUpdated": "2026-02-19T15:55:23.903Z",
+      "quarter": "2025-Q3"
+    },
+    "revenue": {
+      "success": true,
+      "lastUpdated": "2026-02-19T15:55:24.770Z",
+      "latestYear": 2024
     }
   }
 }

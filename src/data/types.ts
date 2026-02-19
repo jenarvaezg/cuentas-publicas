@@ -95,6 +95,52 @@ export interface BudgetData {
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
+export interface CcaaDebtEntry {
+  code: string; // "CA01"..."CA17"
+  name: string; // "Andalucía"
+  debtAbsolute: number; // euros (converted from thousands in CSV)
+  debtToGDP: number; // percentage
+}
+
+export interface CcaaDebtData {
+  lastUpdated: string;
+  quarter: string; // "2025-Q3"
+  ccaa: CcaaDebtEntry[];
+  total: { debtAbsolute: number; debtToGDP: number };
+  sourceAttribution: Record<string, DataSourceAttribution>;
+}
+
+export interface RevenueYearData {
+  totalRevenue: number; // M€
+  totalExpenditure: number; // M€
+  balance: number; // M€ (negative = deficit)
+  taxesIndirect: number; // M€ — D2REC (IVA, IIEE)
+  taxesDirect: number; // M€ — D5REC (IRPF, IS)
+  socialContributions: number; // M€ — D61REC
+  otherRevenue: number; // M€ — derived
+}
+
+export interface RevenueData {
+  lastUpdated: string;
+  latestYear: number;
+  years: number[];
+  byYear: Record<string, RevenueYearData>;
+  indicatorMeta?: Record<string, { label: string; unit: string }>;
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
+export interface EurostatData {
+  lastUpdated: string;
+  year: number;
+  countries: string[];
+  countryNames: Record<string, string>;
+  indicators: Record<string, Record<string, number>>;
+  indicatorMeta?: Record<string, { label: string; unit: string }>;
+  sourceAttribution: {
+    eurostat: DataSourceAttribution;
+  };
+}
+
 export interface MetaData {
   lastDownload: string;
   duration: number;
@@ -103,6 +149,8 @@ export interface MetaData {
     demographics: boolean;
     pensions: boolean;
     budget: boolean;
+    eurostat?: boolean;
+    ccaaDebt?: boolean;
   };
   sources: {
     debt: {
@@ -123,6 +171,21 @@ export interface MetaData {
       success: boolean;
       lastUpdated: string;
       years: number;
+    };
+    eurostat?: {
+      success: boolean;
+      lastUpdated: string;
+      year: number;
+    };
+    ccaaDebt?: {
+      success: boolean;
+      lastUpdated: string;
+      quarter: string;
+    };
+    revenue?: {
+      success: boolean;
+      lastUpdated: string;
+      latestYear: number;
     };
   };
 }

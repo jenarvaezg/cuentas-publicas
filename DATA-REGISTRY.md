@@ -1,14 +1,14 @@
 # Data Registry — Dashboard Fiscal de España
 
-Inventario completo de todos los datos del dashboard: clasificación, fuentes, fragilidad, bugs conocidos, wishlist y recomendaciones.
+Inventario técnico de todos los datos del dashboard: clasificación, fuentes, fragilidad y estado. Para wishlist, recomendaciones y roadmap, ver [`ROADMAP.md`](ROADMAP.md).
 
 > **Última auditoría**: febrero 2026
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 4 fuentes de datos oficiales descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Los datos se almacenan como JSON en `src/data/` y se importan en build time (no hay API calls en runtime). Cada fuente tiene fallback hardcodeado para garantizar que la app siempre funcione.
+El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 7 archivos JSON en `src/data/` importados en build time (no hay API calls en runtime). Cada fuente tiene fallback hardcodeado para garantizar que la app siempre funcione.
 
-**Estado general**: De ~35 métricas mostradas, **~15 son automatizadas**, **~8 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~5 son derivadas** por cálculo.
+**Estado general**: De ~40 métricas mostradas, **~22 son automatizadas**, **~5 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~7 son derivadas** por cálculo.
 
 ---
 
@@ -20,9 +20,9 @@ El dashboard utiliza 4 fuentes de datos oficiales descargadas semanalmente (lune
 |------|---------------|--------|------------|------------|
 | Deuda total PDE | **AUTOMATIZADO** | CSV `be11b.csv` descarga directa | Mensual (~15d retraso) | MEDIA — parsing columnas por keyword |
 | Desglose por subsector (Estado, CCAA, CCLL, SS) | **AUTOMATIZADO** | CSV `be11b.csv` columnas | Mensual | MEDIA — keyword matching en headers |
-| Ratio deuda/PIB | **ROTO** (vale 0) | CSV `be1101.csv` — se extrae pero no se asigna | Trimestral | ALTA |
+| Ratio deuda/PIB | **AUTOMATIZADO** | CSV `be1101.csv` col 11 (deuda PDE) / col 12 (PIB) | Trimestral | MEDIA — keyword matching en headers |
 | Variación interanual | **DERIVADO** | (mes actual - mismo mes año anterior) / anterior × 100 | Mensual | BAJA |
-| Gasto en intereses | **ROTO** (vale 0) | Debería venir de PGE pero no se extrae | Anual | ALTA |
+| Gasto en intereses | **HARDCODEADO** (estimación PGE 2025) | 39.000 M€ — sin CSV disponible, fallback en script | Anual | MEDIA — actualizar con cada PGE |
 | Pendiente regresión (€/segundo) | **DERIVADO** | Regresión lineal últimos 24 meses | Mensual | BAJA |
 | Serie histórica | **AUTOMATIZADO** | CSV completo | 373 puntos (dic 1994 - dic 2025) | BAJA |
 
@@ -32,10 +32,8 @@ El dashboard utiliza 4 fuentes de datos oficiales descargadas semanalmente (lune
 - API: `https://app.bde.es/bierest/resources/srdatosapp?series=DTNPDE2010_P0000P_PS_APU`
 
 **Problemas detectados**:
-1. **`debtToGDP` = 0**: El script extrae el dato de `be1101.csv` pero la lógica de asignación falla silenciosamente. El campo llega vacío al JSON.
-2. **`interestExpense` = 0**: El sourceAttribution dice "~39.000 M€ (estimación ~2,3% coste medio)" pero el valor real es 0. La estimación no se aplica.
-3. CSV transposed format: BdE usa formato invertido (series como columnas). Si cambian la estructura, falla el parser.
-4. Meses en español hardcodeados (`ENE, FEB...DIC`). Si BdE cambia formato, falla el date parsing.
+1. CSV transposed format: BdE usa formato invertido (series como columnas). Si cambian la estructura, falla el parser.
+2. Meses en español hardcodeados (`ENE, FEB...DIC`). Si BdE cambia formato, falla el date parsing.
 
 ---
 
@@ -132,7 +130,85 @@ Gran total = col 81
 
 ---
 
-## 5. INFRAESTRUCTURA CI/CD
+## 5. EUROSTAT — Comparativa Europea
+
+**Script**: `scripts/sources/eurostat.mjs` | **Output**: `src/data/eurostat.json`
+
+| Dato | Clasificación | Dataset Eurostat | Cobertura | Fragilidad |
+|------|---------------|------------------|-----------|------------|
+| Deuda/PIB por país | **AUTOMATIZADO** | `gov_10dd_edpt1` (na_item=GD) | 8 países, último año | BAJA |
+| Déficit/superávit | **AUTOMATIZADO** | `gov_10dd_edpt1` (na_item=B9) | 8 países, último año | BAJA |
+| Gasto público/PIB | **AUTOMATIZADO** | `gov_10a_main` (na_item=TE) | 8 países, último año | BAJA |
+| Gasto social/PIB | **AUTOMATIZADO** | `gov_10a_exp` (cofog99=GF10) | 8 países, último año | BAJA |
+| Tasa de paro | **AUTOMATIZADO** | `une_rt_a` (age=Y15-74) | 8 países, último año | BAJA |
+
+**Países**: ES (España), DE (Alemania), FR (Francia), IT (Italia), PT (Portugal), EL (Grecia), NL (Países Bajos), EU27_2020 (media UE-27).
+
+**URL** (estable — API pública REST):
+- Base: `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/{DATASET}`
+- Formato: JSON-stat 2.0
+- Sin autenticación necesaria
+
+**Método**: API REST con filtros por dimensión (freq, unit, sector, na_item, geo, time). Se solicitan los últimos 3 años y se toma el más reciente con datos disponibles. Parsing del formato JSON-stat 2.0 (flat value array con cross-product de dimensiones).
+
+**Desfase**: Eurostat publica con ~1-2 años de retraso. Los datos más recientes suelen ser del año anterior o el previo.
+
+**Fallback**: Valores de referencia hardcodeados (Eurostat 2023) que se usan si la API no responde.
+
+---
+
+## 6. BANCO DE ESPAÑA — Deuda por Comunidades Autónomas
+
+**Script**: `scripts/sources/bde.mjs` (función `downloadCcaaDebtData`) | **Output**: `src/data/ccaa-debt.json`
+
+| Dato | Clasificación | Método | Frecuencia | Fragilidad |
+|------|---------------|--------|------------|------------|
+| Deuda CCAA como % del PIB regional | **AUTOMATIZADO** | CSV `be1310.csv` formato transpuesto | Trimestral | BAJA — mismo formato que be11b |
+| Deuda CCAA absoluta (miles de €) | **AUTOMATIZADO** | CSV `be1309.csv` formato transpuesto | Trimestral | BAJA |
+| Total nacional (suma ponderada) | **DERIVADO** | Suma de 17 CCAA | Trimestral | BAJA |
+
+**URLs** (estables):
+- `https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv`
+- `https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1309.csv`
+
+**Cobertura**: 17 Comunidades Autónomas, datos trimestrales desde MAR 1995.
+
+**Método de parsing**: Mismo formato transpuesto que be11b. Series como columnas con sufijo numérico (`.1` a `.17`) que mapea a cada CCAA. Se extrae el último trimestre con datos disponibles.
+
+**Fallback**: Valores de referencia hardcodeados (Q3 2025) para las 17 CCAA, mismo patrón que el resto de fuentes.
+
+---
+
+## 7. EUROSTAT — Ingresos y Gastos Públicos
+
+**Script**: `scripts/sources/eurostat.mjs` (función `downloadRevenueData`) | **Output**: `src/data/revenue.json`
+
+| Dato | Clasificación | Indicador Eurostat | Cobertura | Fragilidad |
+|------|---------------|-------------------|-----------|------------|
+| Ingresos totales (TR) | **AUTOMATIZADO** | `gov_10a_main` na_item=TR, MIO_EUR | 30 años (1995-2024) | BAJA |
+| Gastos totales (TE) | **AUTOMATIZADO** | `gov_10a_main` na_item=TE, MIO_EUR | 30 años | BAJA |
+| Déficit/superávit (B9) | **AUTOMATIZADO** | `gov_10a_main` na_item=B9, MIO_EUR | 30 años | BAJA |
+| Impuestos indirectos (D2REC) | **AUTOMATIZADO** | `gov_10a_main` na_item=D2REC, MIO_EUR | 30 años | BAJA |
+| Impuestos directos (D5REC) | **AUTOMATIZADO** | `gov_10a_main` na_item=D5REC, MIO_EUR | 30 años | BAJA |
+| Cotizaciones sociales (D61REC) | **AUTOMATIZADO** | `gov_10a_main` na_item=D61REC, MIO_EUR | 30 años | BAJA |
+| Otros ingresos | **DERIVADO** | TR - D2REC - D5REC - D61REC | 30 años | BAJA |
+| Presión fiscal | **DERIVADO** | TR / PIB × 100 | — | BAJA |
+
+**URL** (estable — API pública REST):
+- Base: `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_main`
+- Formato: JSON-stat 2.0
+- Sin autenticación necesaria
+- Filtros: `freq=A`, `unit=MIO_EUR`, `sector=S13`, `geo=ES`, `sinceTimePeriod=1995`
+
+**Método**: Mismo API REST de Eurostat que la comparativa europea. Se descargan 6 indicadores en paralelo como series temporales para España (S.13). Se parsea con `parseJsonStatTimeSeries` (variante del parser existente que extrae todos los años para un solo país). Los datos se fusionan por año con cálculo derivado de `otherRevenue`.
+
+**Desfase**: ~1-2 años (mismo que el resto de Eurostat).
+
+**Fallback**: Valores de referencia hardcodeados (2024) que se usan si la API no responde.
+
+---
+
+## 8. INFRAESTRUCTURA CI/CD
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
@@ -146,13 +222,14 @@ Gran total = col 81
 
 ---
 
-## 6. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+## 9. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
 
 ### AUTOMATIZADOS (se actualizan solos cada lunes)
 | Dato | Fuente | Frescura | Confiabilidad |
 |------|--------|----------|---------------|
 | Deuda total PDE | BdE CSV | Mensual (~15d lag) | Alta |
 | Deuda por subsector | BdE CSV | Mensual | Alta |
+| Ratio deuda/PIB | BdE CSV be1101 | Trimestral | Alta |
 | Variación interanual deuda | Derivado | Mensual | Alta |
 | Regresión deuda (€/s) | Derivado | Mensual | Alta |
 | Población total | INE API ECP320 | Anual | Media |
@@ -160,6 +237,19 @@ Gran total = col 81
 | PIB nominal | INE API CNTR6597 | Trimestral | Alta |
 | IPC (1995-2024) | INE API IPC278296+290750 | Anual | Alta |
 | Gasto COFOG (10 div × 30 años) | IGAE Excel | Anual | Media (índices frágiles) |
+| Deuda/PIB comparativa EU | Eurostat API | Anual (~1-2a lag) | Alta |
+| Déficit/superávit EU | Eurostat API | Anual | Alta |
+| Gasto público/PIB EU | Eurostat API | Anual | Alta |
+| Gasto social/PIB EU | Eurostat API | Anual | Alta |
+| Tasa de paro EU | Eurostat API | Anual | Alta |
+| Deuda CCAA % PIB | BdE CSV be1310 | Trimestral | Alta |
+| Deuda CCAA absoluta | BdE CSV be1309 | Trimestral | Alta |
+| Ingresos totales (TR) | Eurostat API gov_10a_main | Anual (~1-2a lag) | Alta |
+| Gastos totales (TE) | Eurostat API gov_10a_main | Anual | Alta |
+| Déficit/superávit (B9) | Eurostat API gov_10a_main | Anual | Alta |
+| Impuestos indirectos (D2REC) | Eurostat API gov_10a_main | Anual | Alta |
+| Impuestos directos (D5REC) | Eurostat API gov_10a_main | Anual | Alta |
+| Cotizaciones sociales (D61REC) | Eurostat API gov_10a_main | Anual | Alta |
 
 ### SEMI-AUTOMATIZADOS (se descargan pero con riesgo de rotura)
 | Dato | Fuente | Riesgo |
@@ -179,8 +269,7 @@ Gran total = col 81
 | Cotizaciones sociales | 180.000 M€/año | Con cada PGE | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Fondo de Reserva | 2.100 M€ | Cuando se publique | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Déficit acumulado (base) | 300.000 M€ (ene 2026) | Anualmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
-| Gasto en intereses | 0 (**ROTO**) | Debería automatizarse | `bde.mjs` |
-| Ratio deuda/PIB | 0 (**ROTO**) | Debería automatizarse | `bde.mjs` |
+| Gasto en intereses | 39.000 M€ (PGE 2025) | Con cada PGE | `bde.mjs` -> `REFERENCE_INTEREST_EXPENSE` |
 | Serie hist. pensiones | 11 puntos interpolados | Con cada descarga exitosa | `seguridad-social.mjs` |
 
 ### DERIVADOS (calculados a partir de otros datos)
@@ -195,85 +284,14 @@ Gran total = col 81
 | Deuda por segundo | Regresión lineal 24 meses | Automatizado |
 | Porcentajes COFOG | categoría / total × 100 | Automatizado |
 | Deflación (€ reales) | nominal × (IPC[base] / IPC[año]) | Automatizado |
-
----
-
-## 7. BUGS / DATOS ROTOS
-
-| Bug | Impacto | Causa |
-|-----|---------|-------|
-| `debt.current.debtToGDP = 0` | No se muestra ratio deuda/PIB calculado dinámicamente | Script extrae be1101.csv pero la asignación falla silenciosamente |
-| `debt.current.interestExpense = 0` | No se muestra coste de la deuda | Estimación (~39B€) en sourceAttribution pero no aplicada al campo |
-
----
-
-## 8. WISHLIST — Datos que vendría bien tener
-
-### Prioridad ALTA (mejoran métricas existentes)
-
-| Dato | Por qué | Fuente potencial | Dificultad |
-|------|---------|-------------------|------------|
-| **Ratio deuda/PIB real** (fix bug) | Campo existe pero vale 0; métrica clave | Ya se descarga de `be1101.csv` — arreglar parsing | BAJA |
-| **Gasto en intereses real** (fix bug) | Campo existe pero vale 0 | PGE o BdE series de tipos de interés | MEDIA |
-| **Afiliados SS automatizados** | Dato crucial para ratio cotizantes/pensionista | SS `EST211` — scraping similar al de pensiones | ALTA (UUID) |
-| **Cotizaciones sociales reales** | Base del déficit contributivo | AEAT recaudación o liquidación presupuestaria SS | ALTA |
-| **Serie histórica pensiones real** | Los 11 puntos actuales son interpolados | Histórico EST24 o Anuario Estadístico SS | MEDIA |
-| **SMI automático** | Actualización manual cada enero | Tabla INE si existe, o historial hardcodeado | MEDIA |
-| **CPI 2025** | Solo llega hasta 2024; limita deflación | INE publica media anual en enero del año siguiente | BAJA (esperar) |
-
-### Prioridad MEDIA (nuevas métricas interesantes)
-
-| Dato | Por qué | Fuente potencial | Dificultad |
-|------|---------|-------------------|------------|
-| **Déficit/superávit público total** | Complementa deuda — explica por qué crece | IGAE/Eurostat — Capacidad/Necesidad financiación AAPP | MEDIA |
-| **Ingresos tributarios** (IRPF, IVA, Sociedades) | Entender de dónde viene el dinero | AEAT informe mensual recaudación (PDF/Excel) | ALTA |
-| **Tipo interés medio de la deuda** | Calcular coste intereses dinámicamente | Tesoro Público — tipos medios emisión | MEDIA |
-| **Presión fiscal** (ingresos/PIB) | Indicador macro clave | Derivable de ingresos + PIB | MEDIA |
-| **Deuda por CCAA desglosada** | Hoy solo total CCAA | BdE be11b — ya lo descargamos pero no extraemos por CCAA | BAJA-MEDIA |
-| **Tasa de paro** | Contexto laboral junto a EPA | INE API — serie desempleo EPA | BAJA |
-| **Inflación anual actual** | Dato de contexto muy demandado | INE API — IPC variación anual (ya tenemos serie) | BAJA |
-| **Población por tramos de edad** | Pirámide demográfica, ratio dependencia | INE API — tablas demográficas | MEDIA |
-
-### Prioridad BAJA (nice to have)
-
-| Dato | Por qué | Fuente potencial | Dificultad |
-|------|---------|-------------------|------------|
-| **Comparativa EU** | Contextualizar vs Eurozona | Eurostat API (gratuita, documentada) | MEDIA |
-| **Proyecciones demográficas** | Futuro del sistema pensiones | INE proyecciones largo plazo | MEDIA |
-| **Rating crediticio** | Indicador confianza deuda | Moody's/S&P/Fitch — sin API pública | MUY ALTA |
-| **Deuda hogares/empresas** | Deuda total no solo pública | BdE cuentas financieras | MEDIA |
-
----
-
-## 9. RECOMENDACIONES DE MEJORA
-
-### Robustez (reducir fragilidad)
-
-1. **IGAE: Detectar columnas por header en vez de por índice** — Leer fila cabecera, buscar códigos COFOG (01, 02...) y calcular índices dinámicamente. Elimina el problema de desplazamiento.
-
-2. **SS: Fallback de URLs alternativas** — Mantener últimas 3-4 URLs conocidas del Excel y probarlas si scraping falla. Alertar (GitHub Issue automática) si ninguna funciona.
-
-3. **BdE: Arreglar debtToGDP e interestExpense** — Dos campos que ya se descargan pero no se populan. Fix de baja complejidad y alto impacto.
-
-4. **Validación cruzada COFOG** — Verificar que suma de 10 divisiones = total general. Si no cuadra, log warning + mantener datos anteriores.
-
-### Automatización (reducir hardcodeados)
-
-5. **Afiliados SS**: Scrapear EST211 con mismo patrón que pensiones.
-
-6. **Cotizaciones sociales**: Explorar liquidación presupuestaria SS en formato descargable.
-
-7. **SMI**: Tabla de valores históricos en el código (2020:950, 2021:965, 2022:1000, 2023:1080, 2024:1134, 2025:1134) y actualizar anualmente. Buscar serie INE.
-
-8. **Déficit acumulado**: Script que lo recalcule a partir de datos anuales gasto vs cotizaciones.
-
-### Monitorización
-
-9. **Alertas de datos stale**: Si un dato > X meses de antigüedad, crear GitHub Issue automática.
-
-10. **Ampliar meta.json**: Incluir "último dato real" (no último download) para cada métrica. Mostrar en UI cuándo se actualizó realmente cada dato.
-
-11. **Tests de integridad**: Tests que verifiquen `debtToGDP > 0`, `interestExpense > 0`, suma COFOG cuadre, etc.
+| Deuda en meses de SMI | debtPerCapita / SMI | Automatizado + hardcodeado |
+| Deuda en salarios anuales | debtPerCapita / salarioMedio | Automatizados |
+| Deuda en años de gasto | deuda / gastoAnual | Automatizados |
+| Deuda en años de pensiones | deuda / gastoAnualPensiones | Semi-auto |
+| Intereses en días de gasto | intereses / gastoDiario | Hardcodeado + automatizado |
+| Gasto público diario | gastoAnual / 365 | Automatizado |
+| Otros ingresos | TR - D2REC - D5REC - D61REC | Automatizados |
+| Presión fiscal | ingresosTotales / PIB × 100 | Automatizados |
 
 ---
 
@@ -283,10 +301,11 @@ Gran total = col 81
 scripts/
   download-data.mjs              # Orquestador (Promise.allSettled)
   sources/
-    bde.mjs                      # Banco de España (CSV + API)
+    bde.mjs                      # Banco de España (CSV + API + CCAA)
     ine.mjs                      # INE Tempus API (5 series + CPI)
     seguridad-social.mjs         # SS (HTML scraping + Excel)
     igae.mjs                     # IGAE (Excel COFOG)
+    eurostat.mjs                 # Eurostat API (5 indicadores EU-27 + 6 revenue ES)
   lib/
     fetch-utils.mjs              # fetchWithRetry (backoff + timeout)
     csv-parser.mjs               # Parser CSV formato español
@@ -297,6 +316,9 @@ src/data/
   demographics.json              # Población, PIB, salarios, CPI (30 años)
   pensions.json                  # Nómina, pensiones, déficit + 12 hist.
   budget.json                    # COFOG 30 años × 10 div × ~7 subcats
+  eurostat.json                  # Comparativa EU-27 (5 indicadores × 8 países)
+  ccaa-debt.json                 # Deuda por CCAA (17 comunidades, 2 indicadores)
+  revenue.json                   # Ingresos vs gastos AAPP (30 años, 6 indicadores)
   meta.json                      # Estado última descarga
   types.ts                       # Interfaces TypeScript
   sources.ts                     # Atribución fuentes (URLs, nombres)

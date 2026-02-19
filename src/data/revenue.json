@@ -1,0 +1,343 @@
+{
+  "lastUpdated": "2026-02-19T15:55:24.770Z",
+  "latestYear": 2024,
+  "years": [
+    1995,
+    1996,
+    1997,
+    1998,
+    1999,
+    2000,
+    2001,
+    2002,
+    2003,
+    2004,
+    2005,
+    2006,
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+  ],
+  "byYear": {
+    "1995": {
+      "totalRevenue": 175364,
+      "totalExpenditure": 207280,
+      "balance": -31916,
+      "taxesIndirect": 46976,
+      "taxesDirect": 44524,
+      "socialContributions": 57354,
+      "otherRevenue": 26510
+    },
+    "1996": {
+      "totalRevenue": 187242,
+      "totalExpenditure": 216929,
+      "balance": -29687,
+      "taxesIndirect": 50957,
+      "taxesDirect": 47710,
+      "socialContributions": 60691,
+      "otherRevenue": 27884
+    },
+    "1997": {
+      "totalRevenue": 195859,
+      "totalExpenditure": 215947,
+      "balance": -20088,
+      "taxesIndirect": 54066,
+      "taxesDirect": 50558,
+      "socialContributions": 63301,
+      "otherRevenue": 27934
+    },
+    "1998": {
+      "totalRevenue": 211986,
+      "totalExpenditure": 226510,
+      "balance": -14524,
+      "taxesIndirect": 61202,
+      "taxesDirect": 54607,
+      "socialContributions": 67605,
+      "otherRevenue": 28572
+    },
+    "1999": {
+      "totalRevenue": 230397,
+      "totalExpenditure": 237779,
+      "balance": -7382,
+      "taxesIndirect": 67814,
+      "taxesDirect": 57860,
+      "socialContributions": 73986,
+      "otherRevenue": 30737
+    },
+    "2000": {
+      "totalRevenue": 245747,
+      "totalExpenditure": 253267,
+      "balance": -7520,
+      "taxesIndirect": 72939,
+      "taxesDirect": 62882,
+      "socialContributions": 80509,
+      "otherRevenue": 29417
+    },
+    "2001": {
+      "totalRevenue": 266006,
+      "totalExpenditure": 269195,
+      "balance": -3189,
+      "taxesIndirect": 76726,
+      "taxesDirect": 67520,
+      "socialContributions": 88138,
+      "otherRevenue": 33622
+    },
+    "2002": {
+      "totalRevenue": 287171,
+      "totalExpenditure": 289527,
+      "balance": -2356,
+      "taxesIndirect": 82033,
+      "taxesDirect": 75736,
+      "socialContributions": 94039,
+      "otherRevenue": 35363
+    },
+    "2003": {
+      "totalRevenue": 304787,
+      "totalExpenditure": 307796,
+      "balance": -3009,
+      "taxesIndirect": 89950,
+      "taxesDirect": 77381,
+      "socialContributions": 101025,
+      "otherRevenue": 36431
+    },
+    "2004": {
+      "totalRevenue": 332725,
+      "totalExpenditure": 333666,
+      "balance": -941,
+      "taxesIndirect": 100460,
+      "taxesDirect": 86080,
+      "socialContributions": 108469,
+      "otherRevenue": 37716
+    },
+    "2005": {
+      "totalRevenue": 368206,
+      "totalExpenditure": 356785,
+      "balance": 11421,
+      "taxesIndirect": 112258,
+      "taxesDirect": 99881,
+      "socialContributions": 116666,
+      "otherRevenue": 39401
+    },
+    "2006": {
+      "totalRevenue": 407079,
+      "totalExpenditure": 385757,
+      "balance": 21322,
+      "taxesIndirect": 122204,
+      "taxesDirect": 114702,
+      "socialContributions": 126296,
+      "otherRevenue": 43877
+    },
+    "2007": {
+      "totalRevenue": 442451,
+      "totalExpenditure": 422164,
+      "balance": 20287,
+      "taxesIndirect": 122839,
+      "taxesDirect": 135000,
+      "socialContributions": 135643,
+      "otherRevenue": 48969
+    },
+    "2008": {
+      "totalRevenue": 409082,
+      "totalExpenditure": 459813,
+      "balance": -50731,
+      "taxesIndirect": 104356,
+      "taxesDirect": 113916,
+      "socialContributions": 140997,
+      "otherRevenue": 49813
+    },
+    "2009": {
+      "totalRevenue": 373777,
+      "totalExpenditure": 494353,
+      "balance": -120576,
+      "taxesIndirect": 86108,
+      "taxesDirect": 97621,
+      "socialContributions": 138190,
+      "otherRevenue": 51858
+    },
+    "2010": {
+      "totalRevenue": 391624,
+      "totalExpenditure": 493817,
+      "balance": -102193,
+      "taxesIndirect": 105981,
+      "taxesDirect": 97247,
+      "socialContributions": 136975,
+      "otherRevenue": 51421
+    },
+    "2011": {
+      "totalRevenue": 387333,
+      "totalExpenditure": 490908,
+      "balance": -103575,
+      "taxesIndirect": 102441,
+      "taxesDirect": 98373,
+      "socialContributions": 135458,
+      "otherRevenue": 51061
+    },
+    "2012": {
+      "totalRevenue": 390842,
+      "totalExpenditure": 509936,
+      "balance": -119094,
+      "taxesIndirect": 105324,
+      "taxesDirect": 102973,
+      "socialContributions": 129823,
+      "otherRevenue": 52722
+    },
+    "2013": {
+      "totalRevenue": 396593,
+      "totalExpenditure": 473398,
+      "balance": -76805,
+      "taxesIndirect": 112744,
+      "taxesDirect": 102233,
+      "socialContributions": 126856,
+      "otherRevenue": 54760
+    },
+    "2014": {
+      "totalRevenue": 405125,
+      "totalExpenditure": 467841,
+      "balance": -62716,
+      "taxesIndirect": 118365,
+      "taxesDirect": 104395,
+      "socialContributions": 128966,
+      "otherRevenue": 53399
+    },
+    "2015": {
+      "totalRevenue": 417645,
+      "totalExpenditure": 474893,
+      "balance": -57248,
+      "taxesIndirect": 126349,
+      "taxesDirect": 107107,
+      "socialContributions": 131508,
+      "otherRevenue": 52681
+    },
+    "2016": {
+      "totalRevenue": 425316,
+      "totalExpenditure": 472717,
+      "balance": -47401,
+      "taxesIndirect": 128812,
+      "taxesDirect": 110002,
+      "socialContributions": 135573,
+      "otherRevenue": 50929
+    },
+    "2017": {
+      "totalRevenue": 444005,
+      "totalExpenditure": 479908,
+      "balance": -35903,
+      "taxesIndirect": 135067,
+      "taxesDirect": 116938,
+      "socialContributions": 142430,
+      "otherRevenue": 49570
+    },
+    "2018": {
+      "totalRevenue": 472250,
+      "totalExpenditure": 503193,
+      "balance": -30943,
+      "taxesIndirect": 141184,
+      "taxesDirect": 127284,
+      "socialContributions": 149450,
+      "otherRevenue": 54332
+    },
+    "2019": {
+      "totalRevenue": 488347,
+      "totalExpenditure": 526769,
+      "balance": -38422,
+      "taxesIndirect": 143058,
+      "taxesDirect": 129117,
+      "socialContributions": 160656,
+      "otherRevenue": 55516
+    },
+    "2020": {
+      "totalRevenue": 468267,
+      "totalExpenditure": 580164,
+      "balance": -111897,
+      "taxesIndirect": 126756,
+      "taxesDirect": 125348,
+      "socialContributions": 162174,
+      "otherRevenue": 53989
+    },
+    "2021": {
+      "totalRevenue": 528950,
+      "totalExpenditure": 611124,
+      "balance": -82174,
+      "taxesIndirect": 146953,
+      "taxesDirect": 143485,
+      "socialContributions": 171687,
+      "otherRevenue": 66825
+    },
+    "2022": {
+      "totalRevenue": 574012,
+      "totalExpenditure": 637117,
+      "balance": -63105,
+      "taxesIndirect": 160429,
+      "taxesDirect": 164770,
+      "socialContributions": 180086,
+      "otherRevenue": 68727
+    },
+    "2023": {
+      "totalRevenue": 630198,
+      "totalExpenditure": 680225,
+      "balance": -50027,
+      "taxesIndirect": 165865,
+      "taxesDirect": 183119,
+      "socialContributions": 197003,
+      "otherRevenue": 84211
+    },
+    "2024": {
+      "totalRevenue": 673734,
+      "totalExpenditure": 725001,
+      "balance": -51267,
+      "taxesIndirect": 176937,
+      "taxesDirect": 198711,
+      "socialContributions": 210337,
+      "otherRevenue": 87749
+    }
+  },
+  "indicatorMeta": {
+    "totalRevenue": {
+      "label": "Ingresos totales",
+      "unit": "M€"
+    },
+    "totalExpenditure": {
+      "label": "Gastos totales",
+      "unit": "M€"
+    },
+    "balance": {
+      "label": "Déficit/superávit",
+      "unit": "M€"
+    },
+    "taxesIndirect": {
+      "label": "Impuestos indirectos",
+      "unit": "M€"
+    },
+    "taxesDirect": {
+      "label": "Impuestos directos",
+      "unit": "M€"
+    },
+    "socialContributions": {
+      "label": "Cotizaciones sociales",
+      "unit": "M€"
+    }
+  },
+  "sourceAttribution": {
+    "revenue": {
+      "source": "Eurostat",
+      "type": "api",
+      "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+      "date": "2026-02-19",
+      "note": "Ingresos y gastos AAPP España, 30 años (1995–2024)"
+    }
+  }
+}

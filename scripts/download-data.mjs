@@ -1,8 +1,9 @@
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'fs'
-import { downloadDebtData } from './sources/bde.mjs'
+import { downloadDebtData, downloadCcaaDebtData } from './sources/bde.mjs'
 import { downloadDemographics } from './sources/ine.mjs'
 import { downloadPensionData } from './sources/seguridad-social.mjs'
 import { downloadBudgetData } from './sources/igae.mjs'
+import { downloadEurostatData, downloadRevenueData } from './sources/eurostat.mjs'
 
 /**
  * Main orchestrator - downloads all data sources and writes JSON files
@@ -28,17 +29,23 @@ async function main() {
     downloadDebtData(),
     downloadDemographics(),
     downloadPensionData(),
-    downloadBudgetData()
+    downloadBudgetData(),
+    downloadEurostatData(),
+    downloadCcaaDebtData(),
+    downloadRevenueData()
   ])
 
-  const [debtResult, demographicsResult, pensionsResult, budgetResult] = results
+  const [debtResult, demographicsResult, pensionsResult, budgetResult, eurostatResult, ccaaDebtResult, revenueResult] = results
 
   // Track success/failure
   const status = {
     debt: debtResult.status === 'fulfilled',
     demographics: demographicsResult.status === 'fulfilled',
     pensions: pensionsResult.status === 'fulfilled',
-    budget: budgetResult.status === 'fulfilled'
+    budget: budgetResult.status === 'fulfilled',
+    eurostat: eurostatResult.status === 'fulfilled',
+    ccaaDebt: ccaaDebtResult.status === 'fulfilled',
+    revenue: revenueResult.status === 'fulfilled'
   }
 
   // Write individual data files
@@ -72,6 +79,27 @@ async function main() {
     console.error('❌ budget.json - Error:', budgetResult.reason?.message)
   }
 
+  if (status.eurostat) {
+    writeDataFile('src/data/eurostat.json', eurostatResult.value)
+    console.log('✅ eurostat.json')
+  } else {
+    console.error('❌ eurostat.json - Error:', eurostatResult.reason?.message)
+  }
+
+  if (status.ccaaDebt) {
+    writeDataFile('src/data/ccaa-debt.json', ccaaDebtResult.value)
+    console.log('✅ ccaa-debt.json')
+  } else {
+    console.error('❌ ccaa-debt.json - Error:', ccaaDebtResult.reason?.message)
+  }
+
+  if (status.revenue) {
+    writeDataFile('src/data/revenue.json', revenueResult.value)
+    console.log('✅ revenue.json')
+  } else {
+    console.error('❌ revenue.json - Error:', revenueResult.reason?.message)
+  }
+
   // Write metadata file
   const meta = {
     lastDownload: new Date().toISOString(),
@@ -96,6 +124,21 @@ async function main() {
         success: status.budget,
         lastUpdated: status.budget ? budgetResult.value.lastUpdated : null,
         years: status.budget ? budgetResult.value.years.length : 0
+      },
+      eurostat: {
+        success: status.eurostat,
+        lastUpdated: status.eurostat ? eurostatResult.value.lastUpdated : null,
+        year: status.eurostat ? eurostatResult.value.year : null
+      },
+      ccaaDebt: {
+        success: status.ccaaDebt,
+        lastUpdated: status.ccaaDebt ? ccaaDebtResult.value.lastUpdated : null,
+        quarter: status.ccaaDebt ? ccaaDebtResult.value.quarter : null
+      },
+      revenue: {
+        success: status.revenue,
+        lastUpdated: status.revenue ? revenueResult.value.lastUpdated : null,
+        latestYear: status.revenue ? revenueResult.value.latestYear : null
       }
     }
   }
@@ -194,6 +237,33 @@ async function main() {
     console.log(`Presupuestos: ${isLive ? '✅' : '⚠️'} ${budgetAttr?.type?.toUpperCase() || 'N/A'} (${latestTotal?.toLocaleString('es-ES') || 'N/A'} M€, ${latestYear})`)
   } else {
     console.log('Presupuestos: ❌ Error')
+  }
+
+  if (status.eurostat && eurostatResult.value) {
+    const eurostatAttr = eurostatResult.value.sourceAttribution?.eurostat
+    const indicatorCount = Object.keys(eurostatResult.value.indicators || {}).length
+    const isLive = eurostatAttr?.type === 'api'
+    console.log(`Eurostat: ${isLive ? '✅' : '⚠️'} ${eurostatAttr?.type?.toUpperCase() || 'N/A'} (${indicatorCount} indicadores, año ${eurostatResult.value.year})`)
+  } else {
+    console.log('Eurostat: ❌ Error')
+  }
+
+  if (status.ccaaDebt && ccaaDebtResult.value) {
+    const ccaaAttr = ccaaDebtResult.value.sourceAttribution?.be1310
+    const ccaaCount = ccaaDebtResult.value.ccaa?.length || 0
+    const isLive = ccaaAttr?.type === 'csv'
+    console.log(`Deuda CCAA: ${isLive ? '✅' : '⚠️'} ${ccaaAttr?.type?.toUpperCase() || 'N/A'} (${ccaaCount} comunidades, ${ccaaDebtResult.value.quarter})`)
+  } else {
+    console.log('Deuda CCAA: ❌ Error')
+  }
+
+  if (status.revenue && revenueResult.value) {
+    const revenueAttr = revenueResult.value.sourceAttribution?.revenue
+    const yearCount = revenueResult.value.years?.length || 0
+    const isLive = revenueAttr?.type === 'api'
+    console.log(`Revenue: ${isLive ? '✅' : '⚠️'} ${revenueAttr?.type?.toUpperCase() || 'N/A'} (${yearCount} años, último ${revenueResult.value.latestYear})`)
+  } else {
+    console.log('Revenue: ❌ Error')
   }
   console.log()
 

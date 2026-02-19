@@ -248,6 +248,213 @@ export function MethodologySection() {
             </div>
 
             <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
+              Ingresos y Gastos Públicos
+            </h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">Fuente:</strong>{" "}
+                <a
+                  href="https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 hover:text-primary transition-colors"
+                >
+                  Eurostat — gov_10a_main
+                </a>{" "}
+                — Cuentas principales de las Administraciones Públicas (SEC 2010).
+              </p>
+              <p>
+                <strong className="text-foreground">Método de obtención:</strong> API REST pública
+                de Eurostat (JSON-stat 2.0). Se descargan 6 indicadores para España (S.13) como
+                series temporales anuales desde 1995 hasta el último año disponible.
+              </p>
+              <p>
+                <strong className="text-foreground">Indicadores:</strong>
+              </p>
+              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
+                <li>
+                  <strong className="text-foreground">TR</strong> — Ingresos totales (Total Revenue)
+                  en millones de euros.
+                </li>
+                <li>
+                  <strong className="text-foreground">TE</strong> — Gastos totales (Total
+                  Expenditure) en millones de euros.
+                </li>
+                <li>
+                  <strong className="text-foreground">B9</strong> — Déficit/superávit (Net
+                  lending/borrowing) en millones de euros.
+                </li>
+                <li>
+                  <strong className="text-foreground">D2REC</strong> — Impuestos indirectos (IVA,
+                  Impuestos Especiales) en millones de euros.
+                </li>
+                <li>
+                  <strong className="text-foreground">D5REC</strong> — Impuestos directos (IRPF,
+                  Impuesto de Sociedades) en millones de euros.
+                </li>
+                <li>
+                  <strong className="text-foreground">D61REC</strong> — Cotizaciones sociales en
+                  millones de euros.
+                </li>
+              </ul>
+              <p>
+                <strong className="text-foreground">Cobertura:</strong> Total Administraciones
+                Públicas (S.13), datos anuales desde 1995. Los datos se publican con ~1-2 años de
+                desfase.
+              </p>
+              <p>
+                <strong className="text-foreground">Cálculos derivados:</strong>
+              </p>
+              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
+                <li>Otros ingresos = TR - D2REC - D5REC - D61REC</li>
+                <li>Presión fiscal = Ingresos totales / PIB nominal × 100</li>
+              </ul>
+            </div>
+
+            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">Equivalencias</h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p>
+                La sección de equivalencias traduce las cifras macroeconómicas a magnitudes
+                comprensibles. Todos los cálculos son derivados a partir de datos ya descargados:
+              </p>
+              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
+                <li>
+                  <strong className="text-foreground">Deuda en meses de SMI</strong>: Deuda per
+                  cápita dividida entre el Salario Mínimo Interprofesional mensual (1.134€).
+                </li>
+                <li>
+                  <strong className="text-foreground">Deuda en salarios anuales</strong>: Deuda per
+                  cápita dividida entre el salario medio anual (INE).
+                </li>
+                <li>
+                  <strong className="text-foreground">Deuda en años de gasto público</strong>: Deuda
+                  total dividida entre el gasto AAPP anual (IGAE COFOG).
+                </li>
+                <li>
+                  <strong className="text-foreground">Deuda en años de pensiones</strong>: Deuda
+                  total dividida entre el gasto anual en pensiones.
+                </li>
+                <li>
+                  <strong className="text-foreground">Intereses en días de gasto</strong>: Gasto en
+                  intereses dividido entre el gasto público diario.
+                </li>
+                <li>
+                  <strong className="text-foreground">Gasto público diario</strong>: Gasto AAPP
+                  anual dividido entre 365 días.
+                </li>
+              </ul>
+            </div>
+
+            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
+              Comparativa Europea (Eurostat)
+            </h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">Fuente:</strong>{" "}
+                <a
+                  href="https://ec.europa.eu/eurostat/databrowser/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 hover:text-primary transition-colors"
+                >
+                  Eurostat — Statistics API
+                </a>{" "}
+                — Oficina estadística de la Unión Europea.
+              </p>
+              <p>
+                <strong className="text-foreground">Método de obtención:</strong> API REST pública
+                (JSON-stat 2.0). Se descargan 5 indicadores para 8 países (España, Alemania,
+                Francia, Italia, Portugal, Grecia, Países Bajos y media UE-27).
+              </p>
+              <p>
+                <strong className="text-foreground">Indicadores:</strong>
+              </p>
+              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
+                <li>
+                  <strong className="text-foreground">Deuda/PIB</strong> (dataset{" "}
+                  <code className="text-xs">gov_10dd_edpt1</code>): Deuda pública bruta como
+                  porcentaje del PIB.
+                </li>
+                <li>
+                  <strong className="text-foreground">Déficit/superávit</strong> (dataset{" "}
+                  <code className="text-xs">gov_10dd_edpt1</code>): Capacidad/necesidad de
+                  financiación del sector público.
+                </li>
+                <li>
+                  <strong className="text-foreground">Gasto público/PIB</strong> (dataset{" "}
+                  <code className="text-xs">gov_10a_main</code>): Gasto total de las
+                  administraciones públicas.
+                </li>
+                <li>
+                  <strong className="text-foreground">Gasto social/PIB</strong> (dataset{" "}
+                  <code className="text-xs">gov_10a_exp</code>): Gasto en protección social (COFOG
+                  10).
+                </li>
+                <li>
+                  <strong className="text-foreground">Tasa de paro</strong> (dataset{" "}
+                  <code className="text-xs">une_rt_a</code>): Tasa de desempleo anual (15-74 años).
+                </li>
+              </ul>
+              <p>
+                <strong className="text-foreground">Desfase:</strong> Eurostat publica los datos con
+                ~1-2 años de retraso. El año mostrado es el último disponible con datos completos
+                para todos los países.
+              </p>
+            </div>
+
+            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
+              Deuda por Comunidades Autónomas
+            </h3>
+            <div className="space-y-2 text-muted-foreground">
+              <p>
+                <strong className="text-foreground">Fuente:</strong>{" "}
+                <a
+                  href="https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 hover:text-primary transition-colors"
+                >
+                  Banco de España (be1310.csv)
+                </a>{" "}
+                y{" "}
+                <a
+                  href="https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1309.csv"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 hover:text-primary transition-colors"
+                >
+                  be1309.csv
+                </a>{" "}
+                — Deuda PDE por Comunidad Autónoma.
+              </p>
+              <p>
+                <strong className="text-foreground">Indicadores:</strong>
+              </p>
+              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
+                <li>
+                  <strong className="text-foreground">Deuda/PIB (%)</strong> (be1310): Deuda pública
+                  de cada CCAA como porcentaje de su PIB regional. Datos trimestrales desde 1995.
+                </li>
+                <li>
+                  <strong className="text-foreground">Deuda total (€)</strong> (be1309): Deuda
+                  pública absoluta en miles de euros, convertida a euros. Datos trimestrales desde
+                  1995.
+                </li>
+              </ul>
+              <p>
+                <strong className="text-foreground">Cobertura:</strong> 17 Comunidades Autónomas.
+                Los datos se presentan como ranking ordenado por el indicador seleccionado, con
+                línea de referencia para el total nacional (solo en modo % PIB).
+              </p>
+              <p>
+                <strong className="text-foreground">Método:</strong> Ambos CSVs utilizan el formato
+                transpuesto del BdE (series como columnas). Se extraen los códigos de serie por
+                sufijo numérico (1-17) para mapear a cada comunidad. Se toma el último trimestre con
+                datos disponibles.
+              </p>
+            </div>
+
+            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
               Contadores en tiempo real
             </h3>
             <div className="space-y-2 text-muted-foreground">

@@ -160,6 +160,7 @@ function parseBdETransposedCSV(csvText, type) {
   let ccaaIdx = -1
   let ccllIdx = -1
   let ssIdx = -1
+  let pibIdx = -1
 
   console.log(`    Columnas encontradas:`)
   for (let i = 1; i < descriptions.length; i++) {
@@ -181,6 +182,9 @@ function parseBdETransposedCSV(csvText, type) {
     } else if (desc.includes('seguridad social') && desc.includes('deuda')) {
       ssIdx = i
       matched = 'MATCHED: ss'
+    } else if (desc.includes('pib') && pibIdx === -1) {
+      pibIdx = i
+      matched = 'MATCHED: pib'
     }
 
     // Log first 10 columns to see what we have
@@ -189,7 +193,7 @@ function parseBdETransposedCSV(csvText, type) {
     }
   }
 
-  console.log(`    Índices encontrados - Total:${totalDebtIdx}, Estado:${estadoIdx}, CCAA:${ccaaIdx}, CCLL:${ccllIdx}, SS:${ssIdx}`)
+  console.log(`    Índices encontrados - Total:${totalDebtIdx}, Estado:${estadoIdx}, CCAA:${ccaaIdx}, CCLL:${ccllIdx}, SS:${ssIdx}, PIB:${pibIdx}`)
 
   // Parse data rows (starting from row 7, index 6)
   for (let i = 6; i < lines.length; i++) {
@@ -229,6 +233,18 @@ function parseBdETransposedCSV(csvText, type) {
     if (ssIdx !== -1) {
       const value = parseSpanishNumberFromString(row[ssIdx])
       if (value > 0) result.debtBySubsector.ss = value * 1000
+    }
+
+    // Calculate debt-to-GDP ratio when both columns are available
+    if (totalDebtIdx !== -1 && pibIdx !== -1) {
+      const debtValue = parseSpanishNumberFromString(row[totalDebtIdx])
+      const pibValue = parseSpanishNumberFromString(row[pibIdx])
+      if (debtValue > 0 && pibValue > 0) {
+        result.debtToGDP.push({
+          date: isoDate,
+          value: (debtValue / pibValue) * 100
+        })
+      }
     }
   }
 
@@ -391,10 +407,11 @@ function buildDebtResult(monthlyData, quarterlyData, apiData) {
     debtToGDP = gdpData[gdpData.length - 1].value
   }
 
-  // Interest expense
+  // Interest expense — no CSV source available, use PGE 2025 estimate as reference
+  const REFERENCE_INTEREST_EXPENSE = 39_000_000_000
   const interestExpense = monthlyData?.interestExpense?.[0] ||
                           quarterlyData?.interestExpense?.[0] ||
-                          0
+                          REFERENCE_INTEREST_EXPENSE
 
   // Calculate regression for extrapolation
   const regressionPoints = historical.slice(-24).map(p => ({
@@ -542,5 +559,229 @@ function buildFallbackDebtData() {
         note: '~42.000 M€ (estimación)'
       }
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// CCAA debt data (be1309 absolute / be1310 % GDP)
+// ---------------------------------------------------------------------------
+
+// BdE CSV suffix mapping: .1 = Total CCAA, .2-.18 = individual CCAA
+// Order comes from BdE CSV alias row (BE_13_9.N / BE_13_10.N)
+const CCAA_TOTAL_SUFFIX = 1
+
+const CCAA_MAP = {
+  2:  { code: 'CA01', name: 'Andalucía' },
+  3:  { code: 'CA02', name: 'Aragón' },
+  4:  { code: 'CA03', name: 'Asturias' },
+  5:  { code: 'CA04', name: 'Baleares' },
+  6:  { code: 'CA05', name: 'Canarias' },
+  7:  { code: 'CA06', name: 'Cantabria' },
+  8:  { code: 'CA07', name: 'Castilla-La Mancha' },
+  9:  { code: 'CA08', name: 'Castilla y León' },
+  10: { code: 'CA09', name: 'Cataluña' },
+  11: { code: 'CA10', name: 'Extremadura' },
+  12: { code: 'CA11', name: 'Galicia' },
+  13: { code: 'CA12', name: 'La Rioja' },
+  14: { code: 'CA13', name: 'Madrid' },
+  15: { code: 'CA14', name: 'Murcia' },
+  16: { code: 'CA15', name: 'Navarra' },
+  17: { code: 'CA16', name: 'País Vasco' },
+  18: { code: 'CA17', name: 'C. Valenciana' },
+}
+
+/**
+ * Convert a Date to "YYYY-QN" quarter string
+ */
+function dateToQuarter(date) {
+  const year = date.getFullYear()
+  const quarter = Math.floor(date.getMonth() / 3) + 1
+  return `${year}-Q${quarter}`
+}
+
+/**
+ * Parse a BdE transposed CSV where series are columns.
+ * Row 0: series codes, Row 2: aliases (e.g. "BE_13_9.1" … "BE_13_9.18")
+ * Row 6+: data rows — col 0 is date string, rest are values.
+ *
+ * Returns { latestDate: Date, values: Map<number, number> }
+ * where the Map key is the alias suffix integer and value is
+ * the latest non-zero reading. Suffix 1 = total, 2-18 = individual CCAA.
+ */
+function parseCcaaTransposedCSV(csvText) {
+  const lines = csvText.split('\n').filter(line => line.trim() !== '')
+
+  if (lines.length < 7) {
+    throw new Error(`CSV demasiado corto (${lines.length} líneas)`)
+  }
+
+  // Row 2: alias row (e.g. "BE_13_9.1", "BE_13_9.2", ...)
+  const aliasCols = parseCSVLine(lines[2])
+
+  // Build map: column index → suffix number
+  const colToSuffix = new Map()
+  for (let col = 1; col < aliasCols.length; col++) {
+    const alias = aliasCols[col].trim().replace(/"/g, '')
+    const match = alias.match(/\.(\d+)$/)
+    if (match) {
+      const suffix = parseInt(match[1], 10)
+      colToSuffix.set(col, suffix)
+    }
+  }
+
+  // Accumulate latest non-zero value per suffix
+  const latestValues = new Map() // suffix → number
+  let latestDate = null
+
+  for (let row = 6; row < lines.length; row++) {
+    const cols = parseCSVLine(lines[row])
+    if (!cols[0] || !cols[0].trim()) continue
+
+    const date = parseBdEDate(cols[0].trim())
+    if (!date) continue
+
+    let rowHasData = false
+    for (const [col, suffix] of colToSuffix) {
+      const raw = cols[col]
+      if (!raw || !raw.trim() || raw.trim() === '_') continue
+      // BdE CCAA CSVs use international number format (dot = decimal)
+      const val = parseFloat(raw.trim())
+      if (!isNaN(val) && val !== 0) {
+        latestValues.set(suffix, val)
+        rowHasData = true
+      }
+    }
+
+    if (rowHasData) {
+      latestDate = date
+    }
+  }
+
+  return { latestDate, values: latestValues }
+}
+
+/**
+ * Build fallback CCAA debt data from hardcoded reference values (Q3 2025)
+ */
+function buildFallbackCcaaDebtData() {
+  console.warn('⚠️  Usando datos de respaldo para deuda CCAA')
+
+  return {
+    lastUpdated: new Date().toISOString(),
+    quarter: '2025-Q3',
+    ccaa: [
+      { code: 'CA01', name: 'Andalucía',         debtAbsolute: 40_452_000_000, debtToGDP: 18.3 },
+      { code: 'CA02', name: 'Aragón',             debtAbsolute:  9_416_000_000, debtToGDP: 18.3 },
+      { code: 'CA03', name: 'Asturias',           debtAbsolute:  3_934_000_000, debtToGDP: 12.6 },
+      { code: 'CA04', name: 'Baleares',           debtAbsolute:  8_615_000_000, debtToGDP: 18.5 },
+      { code: 'CA05', name: 'Canarias',           debtAbsolute:  6_534_000_000, debtToGDP: 10.8 },
+      { code: 'CA06', name: 'Cantabria',          debtAbsolute:  3_229_000_000, debtToGDP: 17.6 },
+      { code: 'CA07', name: 'Castilla-La Mancha', debtAbsolute: 16_621_000_000, debtToGDP: 28.8 },
+      { code: 'CA08', name: 'Castilla y León',    debtAbsolute: 14_523_000_000, debtToGDP: 18.9 },
+      { code: 'CA09', name: 'Cataluña',           debtAbsolute: 89_069_000_000, debtToGDP: 28.4 },
+      { code: 'CA10', name: 'Extremadura',        debtAbsolute:  5_279_000_000, debtToGDP: 19.1 },
+      { code: 'CA11', name: 'Galicia',            debtAbsolute: 12_051_000_000, debtToGDP: 14.2 },
+      { code: 'CA12', name: 'La Rioja',           debtAbsolute:  1_753_000_000, debtToGDP: 15.2 },
+      { code: 'CA13', name: 'Madrid',             debtAbsolute: 37_829_000_000, debtToGDP: 11.5 },
+      { code: 'CA14', name: 'Murcia',             debtAbsolute: 13_147_000_000, debtToGDP: 29.8 },
+      { code: 'CA15', name: 'Navarra',            debtAbsolute:  2_737_000_000, debtToGDP:  9.9 },
+      { code: 'CA16', name: 'País Vasco',         debtAbsolute: 11_191_000_000, debtToGDP: 11.8 },
+      { code: 'CA17', name: 'C. Valenciana',      debtAbsolute: 62_424_000_000, debtToGDP: 40.5 },
+    ],
+    total: { debtAbsolute: 338_804_000_000, debtToGDP: 20.4 },
+    sourceAttribution: {
+      be1309: {
+        source: 'Valor referencia Q3 2025',
+        type: 'fallback',
+        url: `${BDE_CSV_BASE}/be1309.csv`,
+        note: 'Deuda PDE CCAA en miles de euros',
+      },
+      be1310: {
+        source: 'Valor referencia Q3 2025',
+        type: 'fallback',
+        url: `${BDE_CSV_BASE}/be1310.csv`,
+        note: 'Deuda PDE CCAA como % del PIB regional',
+      },
+    },
+  }
+}
+
+/**
+ * Download CCAA debt data from Banco de España (be1309 + be1310)
+ * @returns {Promise<Object>} CCAA debt data object
+ */
+export async function downloadCcaaDebtData() {
+  console.log('\n=== Descargando datos de deuda CCAA (BdE) ===')
+
+  try {
+    const url1309 = `${BDE_CSV_BASE}/be1309.csv`
+    const url1310 = `${BDE_CSV_BASE}/be1310.csv`
+
+    console.log('  Descargando be1309.csv (deuda absoluta en miles €)...')
+    console.log('  Descargando be1310.csv (deuda % PIB regional)...')
+
+    const [res1309, res1310] = await Promise.allSettled([
+      fetchWithRetry(url1309),
+      fetchWithRetry(url1310),
+    ])
+
+    if (res1309.status !== 'fulfilled') {
+      throw new Error(`Error descargando be1309: ${res1309.reason?.message}`)
+    }
+    if (res1310.status !== 'fulfilled') {
+      throw new Error(`Error descargando be1310: ${res1310.reason?.message}`)
+    }
+
+    const text1309 = await res1309.value.text()
+    const text1310 = await res1310.value.text()
+
+    const parsed1309 = parseCcaaTransposedCSV(text1309)
+    const parsed1310 = parseCcaaTransposedCSV(text1310)
+
+    // Use the most recent date across both files
+    const latestDate = parsed1309.latestDate || parsed1310.latestDate || new Date()
+    const latestDateISO = latestDate.toISOString().split('T')[0]
+    const quarter = dateToQuarter(latestDate)
+
+    // Build per-CCAA entries (suffixes 2-18 in CCAA_MAP)
+    const ccaa = Object.entries(CCAA_MAP).map(([suffixStr, { code, name }]) => {
+      const suffix = parseInt(suffixStr, 10)
+      const debtToGDP = parsed1310.values.get(suffix) ?? 0
+      const debtAbsolute = (parsed1309.values.get(suffix) ?? 0) * 1000 // thousands → euros
+      return { code, name, debtAbsolute, debtToGDP }
+    })
+
+    // Total from suffix 1 (or sum of CCAA as fallback)
+    const totalDebtAbsolute = parsed1309.values.has(CCAA_TOTAL_SUFFIX)
+      ? parsed1309.values.get(CCAA_TOTAL_SUFFIX) * 1000
+      : ccaa.reduce((sum, c) => sum + c.debtAbsolute, 0)
+    const totalDebtToGDP = parsed1310.values.get(CCAA_TOTAL_SUFFIX) ?? 0
+
+    console.log(`✅ Deuda CCAA descargada: ${ccaa.length} comunidades, trimestre ${quarter}`)
+    console.log(`   Total: ${totalDebtAbsolute.toLocaleString('es-ES')}€ (${totalDebtToGDP.toFixed(1)}% PIB)`)
+
+    return {
+      lastUpdated: new Date().toISOString(),
+      quarter,
+      ccaa,
+      total: { debtAbsolute: totalDebtAbsolute, debtToGDP: totalDebtToGDP },
+      sourceAttribution: {
+        be1309: {
+          source: 'BdE — CSV be1309',
+          type: 'csv',
+          url: url1309,
+          date: latestDateISO,
+        },
+        be1310: {
+          source: 'BdE — CSV be1310',
+          type: 'csv',
+          url: url1310,
+          date: latestDateISO,
+        },
+      },
+    }
+  } catch (error) {
+    console.error('❌ Error descargando datos de deuda CCAA:', error.message)
+    return buildFallbackCcaaDebtData()
   }
 }

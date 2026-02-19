@@ -1,0 +1,107 @@
+{
+  "lastUpdated": "2026-02-19T15:55:24.026Z",
+  "year": 2024,
+  "countries": [
+    "ES",
+    "DE",
+    "FR",
+    "IT",
+    "PT",
+    "EL",
+    "NL",
+    "EU27_2020"
+  ],
+  "countryNames": {
+    "ES": "España",
+    "DE": "Alemania",
+    "FR": "Francia",
+    "IT": "Italia",
+    "PT": "Portugal",
+    "EL": "Grecia",
+    "NL": "Países Bajos",
+    "EU27_2020": "UE-27"
+  },
+  "indicators": {
+    "debtToGDP": {
+      "ES": 101.6,
+      "DE": 62.2,
+      "FR": 113.2,
+      "IT": 134.9,
+      "PT": 93.6,
+      "EL": 154.2,
+      "NL": 43.7,
+      "EU27_2020": 80.7
+    },
+    "deficit": {
+      "ES": -3.2,
+      "DE": -2.7,
+      "FR": -5.8,
+      "IT": -3.4,
+      "PT": 0.5,
+      "EL": 1.2,
+      "NL": -0.9,
+      "EU27_2020": -3.1
+    },
+    "expenditureToGDP": {
+      "ES": 45.5,
+      "DE": 49.4,
+      "FR": 57.3,
+      "IT": 50.4,
+      "PT": 42.6,
+      "EL": 48.2,
+      "NL": 44.4,
+      "EU27_2020": 49.2
+    },
+    "socialSpendingToGDP": {
+      "ES": 18.5,
+      "DE": 19.7,
+      "FR": 23.3,
+      "IT": 21.1,
+      "PT": 16.6,
+      "EL": 18.5,
+      "NL": 16.2,
+      "EU27_2020": 19.2
+    },
+    "unemploymentRate": {
+      "ES": 11.4,
+      "DE": 3.4,
+      "FR": 7.4,
+      "IT": 6.5,
+      "PT": 6.5,
+      "EL": 10.1,
+      "NL": 3.7,
+      "EU27_2020": 5.9
+    }
+  },
+  "indicatorMeta": {
+    "debtToGDP": {
+      "label": "Deuda/PIB",
+      "unit": "% del PIB"
+    },
+    "deficit": {
+      "label": "Déficit/superávit",
+      "unit": "% del PIB"
+    },
+    "expenditureToGDP": {
+      "label": "Gasto público/PIB",
+      "unit": "% del PIB"
+    },
+    "socialSpendingToGDP": {
+      "label": "Gasto social/PIB",
+      "unit": "% del PIB"
+    },
+    "unemploymentRate": {
+      "label": "Tasa de paro",
+      "unit": "%"
+    }
+  },
+  "sourceAttribution": {
+    "eurostat": {
+      "source": "Eurostat",
+      "type": "api",
+      "url": "https://ec.europa.eu/eurostat/databrowser/",
+      "date": "2026-02-19",
+      "note": "Datos comparativos EU-27 (2024)"
+    }
+  }
+}

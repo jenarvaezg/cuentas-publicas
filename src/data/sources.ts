@@ -76,6 +76,32 @@ export const PGE_COTIZACIONES: SourceDetail = {
   note: "Presupuestos Generales del Estado",
 };
 
+// Banco de España — CCAA debt
+export const BDE_BE1309: SourceDetail = {
+  name: "BdE — CSV be1309",
+  url: "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1309.csv",
+  note: "Deuda PDE CCAA en miles de euros",
+};
+
+export const BDE_BE1310: SourceDetail = {
+  name: "BdE — CSV be1310",
+  url: "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv",
+  note: "Deuda PDE CCAA como % del PIB regional",
+};
+
+// Eurostat
+export const EUROSTAT: SourceDetail = {
+  name: "Eurostat",
+  url: "https://ec.europa.eu/eurostat/databrowser/",
+  note: "Datos comparativos EU-27",
+};
+
+export const EUROSTAT_GOV_MAIN: SourceDetail = {
+  name: "Eurostat — gov_10a_main",
+  url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+  note: "Ingresos y gastos AAPP, millones de euros (SEC 2010)",
+};
+
 /** Helper: add the data date to a source */
 export function withDate(source: SourceDetail, date: string): SourceDetail {
   return { ...source, date };

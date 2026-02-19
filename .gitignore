@@ -6,8 +6,6 @@ tsconfig.tsbuildinfo
 .omc
 .claude
 .playwright-mcp
-PHASES.md
-PROMPT-dashboard-fiscal-espana.md
 *.png
 !public/og-image.png
 !public/favicon-*.png
