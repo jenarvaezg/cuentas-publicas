@@ -5,17 +5,10 @@ const INE_BASE = 'https://servicios.ine.es/wstempus/js/ES'
 /**
  * Download demographics from INE API
  *
- * Uses DATOS_SERIE endpoint with specific series codes (much more reliable
- * than DATOS_TABLA which returns complex multi-series responses).
- *
- * Series codes discovered via INE API exploration:
- *   - ECP320:    Cifras de Población — Total Nacional
- *   - EPA387794: EPA — Activos Total (en miles)
- *   - CNTR6597:  PIB precios corrientes, ajustado estacionalidad (trimestral, millones €)
- *
+ * @param {Function} fetcher - Optional fetcher function (defaults to fetchWithRetry)
  * @returns {Promise<Object>} Demographics data object
  */
-export async function downloadDemographics() {
+export async function downloadDemographics(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos demográficos (INE) ===')
   console.log(`  Base API: ${INE_BASE}`)
   console.log(`  Método: DATOS_SERIE (series individuales)`)
@@ -24,11 +17,11 @@ export async function downloadDemographics() {
   try {
     // Fetch all series in parallel
     const [population, activePopulation, gdp, salary, cpi] = await Promise.allSettled([
-      fetchPopulation(),
-      fetchActivePopulation(),
-      fetchGDP(),
-      fetchAverageSalary(),
-      fetchCPI()
+      fetchPopulation(fetcher),
+      fetchActivePopulation(fetcher),
+      fetchGDP(fetcher),
+      fetchAverageSalary(fetcher),
+      fetchCPI(fetcher)
     ])
 
     // Extract values and attributions
@@ -88,11 +81,11 @@ export async function downloadDemographics() {
  * @param {number} nult - Number of latest data points to fetch
  * @returns {Promise<Array>} Array of { Valor, Fecha, ... } objects
  */
-async function fetchSeries(seriesCode, nult = 1) {
+async function fetchSeries(seriesCode, nult = 1, fetcher = fetchWithRetry) {
   const url = `${INE_BASE}/DATOS_SERIE/${seriesCode}?nult=${nult}`
   console.log(`    URL: ${url}`)
 
-  const response = await fetchWithRetry(url, {
+  const response = await fetcher(url, {
     headers: { 'Accept': 'application/json' }
   }, { timeoutMs: 15000 })
 
@@ -115,7 +108,7 @@ async function fetchSeries(seriesCode, nult = 1) {
 /**
  * Format an INE timestamp (milliseconds since epoch) to YYYY-MM-DD
  */
-function formatINEDate(timestamp) {
+export function formatINEDate(timestamp) {
   if (!timestamp) return 'sin fecha'
   // INE returns Fecha as milliseconds since epoch
   const d = new Date(typeof timestamp === 'number' ? timestamp : parseInt(timestamp))

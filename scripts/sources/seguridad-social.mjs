@@ -53,7 +53,7 @@ export async function downloadPensionData() {
  *
  * @returns {Promise<Object|null>} Parsed pension data or null
  */
-async function fetchFromSSExcel() {
+export async function fetchFromSSExcel() {
   // Step 1: Fetch the index page
   console.log('  1. Descargando página índice EST24...')
   console.log(`    URL: ${EST24_URL}`)
@@ -247,7 +247,7 @@ const REFERENCE_DATA = {
 /**
  * Build pension result from live or fallback data
  */
-function buildPensionResult(liveData) {
+export function buildPensionResult(liveData) {
   const isFallback = !liveData
   const sourceUrl = `${SS_BASE}/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24`
 
@@ -422,7 +422,7 @@ function buildPensionResult(liveData) {
  * Build historical reference data
  * If we have live data, append the latest point
  */
-function buildHistoricalData(liveData) {
+export function buildHistoricalData(liveData) {
   const historical = [
     { date: '2020-12-31', monthlyPayroll: 10_200_000_000, totalPensions: 9_800_000 },
     { date: '2021-06-30', monthlyPayroll: 10_600_000_000, totalPensions: 9_900_000 },

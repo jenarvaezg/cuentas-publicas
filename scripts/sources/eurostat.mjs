@@ -89,6 +89,8 @@ export async function downloadEurostatData() {
       }
     }
 
+    const usedApi = results.some(r => r.status === 'fulfilled' && r.value);
+    
     if (latestYear === 0) {
       latestYear = FALLBACK_DATA.year
     }
@@ -104,11 +106,11 @@ export async function downloadEurostatData() {
       ),
       sourceAttribution: {
         eurostat: {
-          source: 'Eurostat',
-          type: 'api',
+          source: usedApi ? 'Eurostat' : 'Eurostat (referencia)',
+          type: usedApi ? 'api' : 'fallback',
           url: 'https://ec.europa.eu/eurostat/databrowser/',
           date: new Date().toISOString().split('T')[0],
-          note: `Datos comparativos EU-27 (${latestYear})`
+          note: usedApi ? `Datos comparativos EU-27 (${latestYear})` : `Valores de referencia (${latestYear})`
         }
       }
     }
@@ -167,7 +169,7 @@ async function fetchIndicator(key, config) {
  * @param {string[]} countries - Country codes to extract
  * @returns {{ values: Record<string, number>, year: number }}
  */
-function parseJsonStat(data, countries) {
+export function parseJsonStat(data, countries) {
   const dims = data.id
   const sizes = data.size
   const values = data.value
@@ -309,7 +311,7 @@ const REVENUE_FALLBACK = {
  * @param {string} country - Country code (e.g. 'ES')
  * @returns {{ byYear: Record<string, number>, years: number[] }}
  */
-function parseJsonStatTimeSeries(data, country) {
+export function parseJsonStatTimeSeries(data, country) {
   const dims = data.id
   const sizes = data.size
   const values = data.value

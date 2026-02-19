@@ -135,7 +135,7 @@ async function fetchBDEApi() {
  * Row 5: Units
  * Row 7+: Data rows with date in first column
  */
-function parseBdETransposedCSV(csvText, type) {
+export function parseBdETransposedCSV(csvText, type) {
   const result = {
     totalDebt: [],
     debtBySubsector: {},
@@ -252,38 +252,22 @@ function parseBdETransposedCSV(csvText, type) {
 /**
  * Parse CSV line handling quoted fields
  */
-function parseCSVLine(line) {
-  const result = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i]
-
-    if (char === '"') {
-      inQuotes = !inQuotes
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim())
-      current = ''
-    } else {
-      current += char
-    }
-  }
-
-  result.push(current.trim())
-  return result
+export function parseCSVLine(line) {
+  if (!line) return []
+  // Standard BdE CSV format uses semicolon
+  return line.split(';').map(part => part.trim().replace(/^"|"$/g, ''))
 }
 
 /**
  * Parse BdE date format (e.g., "DIC 1994", "ENE 1995")
  */
-function parseBdEDate(dateStr) {
+export function parseBdEDate(dateStr) {
   const months = {
     'ENE': 0, 'FEB': 1, 'MAR': 2, 'ABR': 3, 'MAY': 4, 'JUN': 5,
     'JUL': 6, 'AGO': 7, 'SEP': 8, 'OCT': 9, 'NOV': 10, 'DIC': 11
   }
 
-  const parts = dateStr.split(' ')
+  const parts = dateStr.trim().split(/\s+/)
   if (parts.length !== 2) return null
 
   const monthName = parts[0].toUpperCase()
@@ -297,7 +281,7 @@ function parseBdEDate(dateStr) {
 /**
  * Parse Spanish number from string
  */
-function parseSpanishNumberFromString(str) {
+export function parseSpanishNumberFromString(str) {
   if (!str || typeof str !== 'string') return 0
 
   const cleaned = str.trim().replace(/\./g, '').replace(/,/g, '.')
@@ -310,7 +294,7 @@ function parseSpanishNumberFromString(str) {
 /**
  * Extract latest value from BdE API response
  */
-function extractLatestFromApi(apiData) {
+export function extractLatestFromApi(apiData) {
   try {
     console.log(`    Estructura de respuesta API:`)
     console.log(`      Es array: ${Array.isArray(apiData)}`)
@@ -352,7 +336,7 @@ function extractLatestFromApi(apiData) {
 /**
  * Build final debt result object
  */
-function buildDebtResult(monthlyData, quarterlyData, apiData) {
+export function buildDebtResult(monthlyData, quarterlyData, apiData) {
   const now = new Date().toISOString()
 
   // Combine all historical data
