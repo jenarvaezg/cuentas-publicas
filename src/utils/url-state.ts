@@ -89,7 +89,10 @@ export function updateSearchParams(updates: Record<string, string | null | undef
   }
 }
 
-export function updateSectionInUrl(section: string | null | undefined) {
+export function updateSectionInUrl(
+  section: string | null | undefined,
+  { notify = true }: { notify?: boolean } = {},
+) {
   if (!canUseWindow()) return;
 
   const url = getCanonicalUrl();
@@ -102,7 +105,9 @@ export function updateSectionInUrl(section: string | null | undefined) {
   }
 
   replaceUrlIfChanged(url);
-  notifySectionChange(url.searchParams.get("section"));
+  if (notify) {
+    notifySectionChange(url.searchParams.get("section"));
+  }
 }
 
 export function replaceCurrentUrl(url: URL) {

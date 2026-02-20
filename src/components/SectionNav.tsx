@@ -65,7 +65,7 @@ export function SectionNav({ items }: SectionNavProps) {
 
   useEffect(() => {
     if (!activeId) return;
-    updateSectionInUrl(activeId);
+    updateSectionInUrl(activeId, { notify: false });
   }, [activeId]);
 
   return (
