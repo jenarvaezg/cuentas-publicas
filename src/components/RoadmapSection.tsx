@@ -56,6 +56,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "✅ Tests E2E con Playwright (smoke suite)",
           "✅ i18n (castellano + inglés en interfaz + contenidos largos)",
           "✅ Notificaciones de datos nuevos via RSS",
+          "🟡 Explicación detallada por métrica (el botón ℹ existe pero solo muestra tooltip hover, no funciona en móvil)",
         ],
       },
     ],
@@ -67,6 +68,9 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — Nuevas visualizaciones",
         items: [
+          "Sección de demografía: población en tiempo real (contador), natalidad, mortalidad, inmigración — desglose por provincia (INE)",
+          "Sostenibilidad SS: serie histórica déficit contributivo (ingresos vs gastos desde 2006), déficit como % PIB, saldo por CCAA, evolución Fondo de Reserva y patrimonio neto SS (Fedea, IGAE, Ageing Report)",
+          "Visión unificada ingresos vs gastos: fusionar Ingresos/Gastos (Eurostat), COFOG y Recaudación Tributaria en un panel global y por CCAA con máximo desglose por partidas",
           "Proyecciones demográficas a 20-30 años",
           "Panorama de deuda pública + privada",
           "Simulador de ajuste fiscal",
@@ -125,6 +129,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "✅ Playwright E2E tests (smoke suite)",
           "✅ i18n (Spanish + English across interface + long-form content)",
           "✅ New-data notifications via RSS",
+          "🟡 Detailed per-metric explanations (info button exists but only shows hover tooltip, doesn't work on mobile)",
         ],
       },
     ],
@@ -136,6 +141,9 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — New visualizations",
         items: [
+          "Demographics section: real-time population counter, birth rate, mortality, immigration — breakdown by province (INE)",
+          "Social Security sustainability: historical contributory deficit (revenue vs spending since 2006), deficit as % GDP, balance by region, Reserve Fund evolution and SS net worth (Fedea, IGAE, Ageing Report)",
+          "Unified revenue vs spending view: merge Revenue/Spending (Eurostat), COFOG and Tax Revenue into a single panel with national and regional breakdown by category",
           "20-30 year demographic projections",
           "Public + private debt panorama",
           "Fiscal adjustment simulator",

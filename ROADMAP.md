@@ -63,8 +63,10 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Nuevas visualizaciones
 
+- **Sección de demografía**: Bloque completo con población en tiempo real (contador estimado), natalidad, mortalidad e inmigración. Desglose por provincia. Fuente: INE (padrón continuo, estadísticas de nacimientos/defunciones, estadística de migraciones). Dificultad: ALTA.
 - **Proyecciones demográficas**: Pirámide de población actual + proyecciones INE a 20-30 años (ratio dependencia futuro).
 - **Población por tramos de edad**: Pirámide demográfica, ratio dependencia. Fuente: INE API — tablas demográficas.
+- **Sostenibilidad de la Seguridad Social**: Sección dedicada con serie histórica del déficit contributivo (ingresos vs gastos contributivos desde 2006), déficit como % PIB y % gasto contributivo, saldo contributivo por CCAA, evolución del Fondo de Reserva y patrimonio neto de la SS. Fuentes: Fedea (Ángel de la Fuente, series de SS Ampliada), IGAE, García (2023) para CCAA, Ageing Report 2024 (proyecciones UE). Referencia: informe Hespérides «La (in)sostenibilidad de la Seguridad Social» (gráficos 7-15). Dificultad: ALTA.
 - **Deuda hogares/empresas**: No solo deuda pública — incluir deuda privada para ver el panorama completo (BdE cuentas financieras).
 - **Simulador de ajuste fiscal**: "¿Qué pasaría si subimos/bajamos X impuesto un Y%?" — calculadora interactiva.
 - **Timeline de hitos**: Eventos económicos importantes (crisis 2008, COVID, reformas) superpuestos en los gráficos históricos.
@@ -79,7 +81,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Infraestructura y UX
 
-- **✅ Tooltips/modales explicativos por métrica**: Cada gráfica y dato debería tener un icono de ayuda (?) que abra un tooltip o modal explicando qué es el dato, cómo se calcula y por qué es importante. Objetivo: que cualquier persona sin formación económica entienda cada cifra.
+- **🟡 Explicación detallada por métrica**: Cada dato tiene un botón de información (ℹ), pero actualmente solo muestra un tooltip al hacer hover (no funciona en móvil). Falta: modal o panel que explique qué es el dato, de dónde sale, cómo se calcula y por qué es relevante. Objetivo: que cualquier persona sin formación económica entienda cada cifra.
 - **✅ Roadmap visible en la web**: Sección integrada en el dashboard (`RoadmapSection`).
 - **✅ Compartir gráficos individuales**: Botón para exportar cada bloque como imagen (PNG).
 - **✅ Notificaciones de datos nuevos (RSS)**: Feed en `/feed.xml` con publicaciones de actualización.
