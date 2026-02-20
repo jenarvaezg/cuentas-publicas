@@ -1,15 +1,18 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getSearchParam, updateSearchParams, updateSectionInUrl } from "../url-state";
+import { updateSearchParams, updateSectionInUrl } from "../url-state";
 
 describe("url-state", () => {
   beforeEach(() => {
     window.history.replaceState(null, "", "/");
   });
 
-  it("reads lang from legacy ampersand path URLs", () => {
+  it("normalizes legacy ampersand path URLs to path prefixes", () => {
     window.history.replaceState(null, "", "/&lang=en");
 
-    expect(getSearchParam("lang")).toBe("en");
+    updateSearchParams({});
+
+    expect(window.location.pathname).toBe("/en");
+    expect(window.location.search).toBe("");
   });
 
   it("canonicalizes legacy ampersand path when updating query params", () => {
@@ -18,8 +21,7 @@ describe("url-state", () => {
     updateSearchParams({ ccaaMetric: "debtAbsolute" });
 
     const params = new URLSearchParams(window.location.search);
-    expect(window.location.pathname).toBe("/");
-    expect(params.get("lang")).toBe("en");
+    expect(window.location.pathname).toBe("/en");
     expect(params.get("section")).toBe("ccaa");
     expect(params.get("ccaaMetric")).toBe("debtAbsolute");
   });
@@ -34,12 +36,12 @@ describe("url-state", () => {
   });
 
   it("sets section for non-summary sections and preserves other params", () => {
-    window.history.replaceState(null, "", "/?lang=en");
+    window.history.replaceState(null, "", "/en");
 
     updateSectionInUrl("ccaa");
 
     const params = new URLSearchParams(window.location.search);
-    expect(params.get("lang")).toBe("en");
+    expect(window.location.pathname).toBe("/en");
     expect(params.get("section")).toBe("ccaa");
   });
 });

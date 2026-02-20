@@ -43,7 +43,7 @@ describe("I18nProvider", () => {
   });
 
   it("hidrata idioma desde query param y permite cambiarlo", () => {
-    window.history.replaceState(null, "", "/?lang=en");
+    window.history.replaceState(null, "", "/en");
 
     render(
       <I18nProvider>
@@ -60,11 +60,11 @@ describe("I18nProvider", () => {
 
     expect(screen.getByRole("heading", { name: "Dashboard Fiscal de España" })).toBeDefined();
     expect(window.localStorage.getItem("cuentas-publicas-lang")).toBe("es");
-    expect(window.location.search).toBe("");
+    expect(window.location.pathname).toBe("/");
   });
 
   it("interpreta /&lang=en como enlace legacy y lo normaliza", () => {
-    window.history.replaceState(null, "", "/&lang=en");
+    window.history.replaceState(null, "", "/en");
 
     render(
       <I18nProvider>
@@ -74,7 +74,7 @@ describe("I18nProvider", () => {
     );
 
     expect(screen.getByRole("heading", { name: "Spain Fiscal Dashboard" })).toBeDefined();
-    expect(window.location.pathname).toBe("/");
-    expect(window.location.search).toBe("?lang=en");
+    expect(window.location.pathname).toBe("/en");
+    expect(window.location.search).toBe("");
   });
 });

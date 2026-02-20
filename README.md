@@ -13,7 +13,7 @@ Dashboard fiscal interactivo que muestra en tiempo real la deuda pública, el ga
 - **Deuda por CCAA** — ranking de 17 comunidades con vista `% PIB` y `€`
 - **Comparativa interanual** — modos absoluto, % peso y % cambio, con opción de euros reales (ajustados por IPC) o corrientes
 - **Modo oscuro/claro** — respeta la preferencia del sistema
-- **i18n ES/EN (interfaz + contenidos largos)** — selector persistente (`?lang=en`) + metodología/roadmap bilingües
+  - **i18n ES/EN (interfaz + contenidos largos)** — selector persistente (ruta `/en/` para la versión en inglés) + metodología/roadmap bilingües
 - **PWA offline hardening** — caché runtime y fallback offline
 - **SEO/SSG multi-ruta** — `seo-snapshot.html` + `sitemap.xml` + páginas por sección (`/secciones/*`, `/en/sections/*`)
 - **Notificaciones RSS** — feed de actualizaciones en `/feed.xml`

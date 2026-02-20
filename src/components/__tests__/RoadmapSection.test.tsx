@@ -20,7 +20,7 @@ describe("RoadmapSection", () => {
   });
 
   it("renders english copy when lang=en", () => {
-    window.history.replaceState(null, "", "/?lang=en");
+    window.history.replaceState(null, "", "/en");
 
     render(
       <I18nProvider>

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getSearchParam, updateSearchParams } from "@/utils/url-state";
+import { buildPathWithLanguage, getPathLanguage } from "@/utils/lang-path";
+import { getSearchParam, replaceCurrentUrl } from "@/utils/url-state";
 import { type AppLanguage, type Messages, messages } from "./messages";
 
 const STORAGE_KEY = "cuentas-publicas-lang";
@@ -23,6 +24,10 @@ function isLanguage(value: string | null): value is AppLanguage {
 }
 
 export function detectInitialLanguage(): AppLanguage {
+  if (typeof window !== "undefined") {
+    const pathLanguage = getPathLanguage(window.location.pathname);
+    if (isLanguage(pathLanguage)) return pathLanguage;
+  }
   const queryLanguage = getSearchParam("lang");
   if (isLanguage(queryLanguage)) return queryLanguage;
 
@@ -48,7 +53,12 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       // Ignore localStorage access errors
     }
 
-    updateSearchParams({ lang: lang === "es" ? null : lang });
+    if (typeof window === "undefined") return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("lang");
+    url.pathname = buildPathWithLanguage(url.pathname, lang);
+    replaceCurrentUrl(url);
   }, [lang]);
 
   const value = useMemo<I18nContextValue>(

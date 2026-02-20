@@ -23,7 +23,7 @@ describe("MethodologySection", () => {
   });
 
   it("renders english methodology when lang=en", () => {
-    window.history.replaceState(null, "", "/?lang=en");
+    window.history.replaceState(null, "", "/en");
 
     render(
       <I18nProvider>
@@ -35,5 +35,29 @@ describe("MethodologySection", () => {
 
     expect(screen.getByText(/Educational project showing/i)).toBeDefined();
     expect(screen.getByRole("heading", { name: /Public Debt/i })).toBeDefined();
+  });
+
+  it("opens automatically when /?section=metodologia", () => {
+    window.history.replaceState(null, "", "/?section=metodologia");
+
+    render(
+      <I18nProvider>
+        <MethodologySection />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText(/Proyecto educativo que muestra/i)).toBeDefined();
+  });
+
+  it("opens automatically when hash is #metodologia", () => {
+    window.history.replaceState(null, "", "/#metodologia");
+
+    render(
+      <I18nProvider>
+        <MethodologySection />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText(/Proyecto educativo que muestra/i)).toBeDefined();
   });
 });

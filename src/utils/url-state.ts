@@ -1,3 +1,5 @@
+import { buildPathWithLanguage } from "@/utils/lang-path";
+
 function canUseWindow() {
   return typeof window !== "undefined";
 }
@@ -21,16 +23,28 @@ function parseLegacyPathParams(pathname: string): {
 function getCanonicalUrl() {
   const url = new URL(window.location.href);
   const legacyPath = parseLegacyPathParams(url.pathname);
-  if (!legacyPath) return url;
-
-  // If someone shares "/&lang=en", interpret it as "/?lang=en" and normalize.
-  legacyPath.params.forEach((value, key) => {
-    if (!url.searchParams.has(key)) {
-      url.searchParams.set(key, value);
-    }
-  });
-  url.pathname = legacyPath.cleanPathname;
+  if (legacyPath) {
+    // Apply params parsed from `/&key=value` path fragments.
+    url.pathname = legacyPath.cleanPathname;
+    legacyPath.params.forEach((value, key) => {
+      if (!url.searchParams.has(key)) {
+        url.searchParams.set(key, value);
+      }
+    });
+  }
+  normalizeLangQuery(url);
   return url;
+}
+
+function normalizeLangQuery(url: URL) {
+  const langParam = url.searchParams.get("lang");
+  if (!langParam) return;
+
+  if (langParam === "en") {
+    url.pathname = buildPathWithLanguage(url.pathname, "en");
+  }
+
+  url.searchParams.delete("lang");
 }
 
 function replaceUrlIfChanged(url: URL) {
@@ -74,5 +88,9 @@ export function updateSectionInUrl(section: string | null | undefined) {
     url.searchParams.set("section", section);
   }
 
+  replaceUrlIfChanged(url);
+}
+
+export function replaceCurrentUrl(url: URL) {
   replaceUrlIfChanged(url);
 }

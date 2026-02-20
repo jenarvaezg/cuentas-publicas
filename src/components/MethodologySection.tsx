@@ -1,7 +1,8 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useI18n } from "@/i18n/I18nProvider";
+import { getSearchParam } from "@/utils/url-state";
 
 interface MethodSection {
   title: string;
@@ -318,6 +319,25 @@ export function MethodologySection() {
   const { msg, lang } = useI18n();
 
   const copy = useMemo(() => copyByLang[lang], [lang]);
+
+  useEffect(() => {
+    const syncOpenState = () => {
+      const searchSection = getSearchParam("section");
+      const hash = window.location.hash.replace("#", "");
+      setIsOpen(searchSection === "metodologia" || hash === "metodologia");
+    };
+
+    if (typeof window !== "undefined") {
+      syncOpenState();
+      window.addEventListener("popstate", syncOpenState);
+      window.addEventListener("hashchange", syncOpenState);
+      return () => {
+        window.removeEventListener("popstate", syncOpenState);
+        window.removeEventListener("hashchange", syncOpenState);
+      };
+    }
+    return undefined;
+  }, []);
 
   return (
     <Card className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
