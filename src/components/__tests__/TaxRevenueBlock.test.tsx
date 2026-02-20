@@ -391,4 +391,52 @@ describe("TaxRevenueBlock", () => {
     render(<TaxRevenueBlock />);
     expect(screen.getByTestId("bar-chart")).toBeDefined();
   });
+
+  it("preserves negative CCAA values without clamping", () => {
+    (useData as any).mockReturnValue({
+      taxRevenue: {
+        ...mockTaxRevenue,
+        ccaa: {
+          "2024": {
+            entries: [
+              {
+                code: "CA13",
+                name: "Madrid",
+                total: 65000,
+                irpf: 30000,
+                iva: 18000,
+                sociedades: 12000,
+                iiee: 3000,
+                irnr: 2000,
+              },
+              {
+                code: "CA15",
+                name: "Navarra",
+                total: -50,
+                irpf: -20,
+                iva: -15,
+                sociedades: -10,
+                iiee: -3,
+                irnr: -2,
+              },
+            ],
+          },
+        },
+      },
+      demographics: mockDemographics,
+    });
+
+    render(<TaxRevenueBlock />);
+    const ccaaBtn = screen.getByText("Por CCAA");
+    fireEvent.click(ccaaBtn);
+
+    expect(capturedCcaaData).toHaveLength(2);
+
+    const madrid = capturedCcaaData.find((d) => d.name === "Madrid");
+    const navarra = capturedCcaaData.find((d) => d.name === "Navarra");
+
+    // Values are preserved as-is, no clamping
+    expect(madrid?.value).toBe(65000);
+    expect(navarra?.value).toBe(-50);
+  });
 });

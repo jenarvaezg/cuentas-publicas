@@ -356,6 +356,16 @@ export function TaxRevenueBlock() {
   const nationalChartHeight = Math.max(180, activeNationalData.length * 44);
   const ccaaChartHeight = Math.max(300, ccaaChartData.length * 26);
 
+  // Explicit domain prevents Recharts nice() from rounding a small negative
+  // (e.g. Navarra -50) down to -35,000 while the max is ~100,000.
+  const ccaaXDomain = useMemo<[number, number]>(() => {
+    if (!ccaaChartData.length) return [0, 0];
+    const values = ccaaChartData.map((d) => d.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    return [Math.min(0, min), max];
+  }, [ccaaChartData]);
+
   // ── Tab toggle ───────────────────────────────────────────────────────────────
 
   const TabButton = ({ tab, label }: { tab: TabKey; label: string }) => (
@@ -596,6 +606,7 @@ export function TaxRevenueBlock() {
                   >
                     <XAxis
                       type="number"
+                      domain={ccaaXDomain}
                       tickFormatter={(v: number) => formatNumber(v, 0)}
                       tick={{ fontSize: 11 }}
                       stroke="hsl(var(--muted-foreground))"
