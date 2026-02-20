@@ -1,6 +1,6 @@
 {
-  "lastDownload": "2026-02-20T14:14:11.627Z",
-  "duration": 3304,
+  "lastDownload": "2026-02-20T22:00:14.216Z",
+  "duration": 4967,
   "status": {
     "debt": true,
     "demographics": true,
@@ -8,26 +8,27 @@
     "budget": true,
     "eurostat": true,
     "ccaaDebt": true,
-    "revenue": true
+    "revenue": true,
+    "taxRevenue": true
   },
   "sources": {
     "debt": {
       "success": true,
-      "lastUpdated": "2026-02-20T14:14:08.454Z",
-      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastUpdated": "2026-02-20T22:00:09.384Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
       "lastRealDataDate": "2025-11-30",
       "dataPoints": 373
     },
     "demographics": {
       "success": true,
-      "lastUpdated": "2026-02-20T14:14:08.767Z",
-      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastUpdated": "2026-02-20T22:00:10.093Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
       "lastRealDataDate": "2025-12-31"
     },
     "pensions": {
       "success": true,
-      "lastUpdated": "2026-02-20T14:14:11.616Z",
-      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastUpdated": "2026-02-20T22:00:10.480Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
       "criticalFallback": false,
       "criticalFallbackReason": null,
       "lastRealDataDate": "2026-01-01",
@@ -35,31 +36,39 @@
     },
     "budget": {
       "success": true,
-      "lastUpdated": "2026-02-20T14:14:08.765Z",
-      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastUpdated": "2026-02-20T22:00:09.705Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
       "lastRealDataDate": "2024-12-31",
       "years": 30
     },
     "eurostat": {
       "success": true,
-      "lastUpdated": "2026-02-20T14:14:08.545Z",
-      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastUpdated": "2026-02-20T22:00:09.509Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
       "lastRealDataDate": "2026-02-20",
       "year": 2024
     },
     "ccaaDebt": {
       "success": true,
-      "lastUpdated": "2026-02-20T14:14:08.444Z",
-      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastUpdated": "2026-02-20T22:00:09.368Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
       "lastRealDataDate": "2025-09-30",
       "quarter": "2025-Q3"
     },
     "revenue": {
       "success": true,
-      "lastUpdated": "2026-02-20T14:14:08.543Z",
-      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastUpdated": "2026-02-20T22:00:10.092Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
       "lastRealDataDate": "2026-02-20",
       "latestYear": 2024
+    },
+    "taxRevenue": {
+      "success": true,
+      "lastUpdated": "2026-02-20T22:00:14.207Z",
+      "lastFetchAt": "2026-02-20T22:00:14.216Z",
+      "lastRealDataDate": "2025-12-31",
+      "latestYear": 2025,
+      "years": 31
     }
   }
 }
