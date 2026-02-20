@@ -146,6 +146,67 @@ export interface EurostatData {
   };
 }
 
+// ── Tax Revenue (AEAT) ──────────────────────────────────────────────
+
+export interface TaxBreakdown {
+  total: number;
+  irpf: number;
+  iva: number;
+  sociedades: number;
+  irnr: number;
+  iiee: number;
+  resto: number;
+}
+
+export interface IIEEBreakdown {
+  alcohol: number;
+  cerveza: number;
+  productosIntermedios: number;
+  hidrocarburos: number;
+  tabaco: number;
+  electricidad: number;
+  envasesPlastico: number;
+  carbon: number;
+  mediosTransporte: number;
+}
+
+export interface RestoBreakdown {
+  medioambientales: number;
+  traficoExterior: number;
+  primasSeguros: number;
+  transaccionesFinancieras: number;
+  serviciosDigitales: number;
+  juego: number;
+  tasas: number;
+}
+
+export interface TaxRevenueYearNational extends TaxBreakdown {
+  iieeBreakdown?: IIEEBreakdown;
+  restoBreakdown?: RestoBreakdown;
+}
+
+export interface TaxRevenueCcaaEntry {
+  code: string; // "CA01"..."CA17"
+  name: string; // "Andalucía"
+  total: number;
+  irpf: number;
+  iva: number;
+  sociedades: number;
+  iiee: number;
+  irnr: number;
+}
+
+export interface TaxRevenueData {
+  lastUpdated: string;
+  years: number[];
+  latestYear: number;
+  national: Record<string, TaxRevenueYearNational>;
+  ccaa: Record<string, { entries: TaxRevenueCcaaEntry[] }>;
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
+// ── Metadata ────────────────────────────────────────────────────────
+
 export interface MetaData {
   lastDownload: string;
   duration: number;
@@ -157,6 +218,7 @@ export interface MetaData {
     eurostat?: boolean;
     ccaaDebt?: boolean;
     revenue?: boolean;
+    taxRevenue?: boolean;
   };
   sources: {
     debt: {
@@ -208,6 +270,14 @@ export interface MetaData {
       lastFetchAt?: string;
       lastRealDataDate?: string;
       latestYear: number;
+    };
+    taxRevenue?: {
+      success: boolean;
+      lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
+      latestYear: number;
+      years: number;
     };
   };
 }

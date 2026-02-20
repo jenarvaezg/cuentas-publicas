@@ -4,6 +4,14 @@ function canUseWindow() {
   return typeof window !== "undefined";
 }
 
+export const SECTION_CHANGE_EVENT = "cuentas-publicas:section-change";
+
+function notifySectionChange(section: string | null) {
+  if (!canUseWindow()) return;
+  const event = new CustomEvent(SECTION_CHANGE_EVENT, { detail: { section } });
+  window.dispatchEvent(event);
+}
+
 function parseLegacyPathParams(pathname: string): {
   cleanPathname: string;
   params: URLSearchParams;
@@ -65,6 +73,7 @@ export function updateSearchParams(updates: Record<string, string | null | undef
   if (!canUseWindow()) return;
 
   const url = getCanonicalUrl();
+  const sectionUpdated = "section" in updates;
   for (const [key, value] of Object.entries(updates)) {
     if (value == null || value === "") {
       url.searchParams.delete(key);
@@ -74,6 +83,10 @@ export function updateSearchParams(updates: Record<string, string | null | undef
   }
 
   replaceUrlIfChanged(url);
+
+  if (sectionUpdated) {
+    notifySectionChange(url.searchParams.get("section"));
+  }
 }
 
 export function updateSectionInUrl(section: string | null | undefined) {
@@ -89,6 +102,7 @@ export function updateSectionInUrl(section: string | null | undefined) {
   }
 
   replaceUrlIfChanged(url);
+  notifySectionChange(url.searchParams.get("section"));
 }
 
 export function replaceCurrentUrl(url: URL) {

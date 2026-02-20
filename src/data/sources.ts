@@ -89,6 +89,19 @@ export const BDE_BE1310: SourceDetail = {
   note: "Deuda PDE CCAA como % del PIB regional",
 };
 
+// AEAT
+export const AEAT_SERIES: SourceDetail = {
+  name: "AEAT — Series mensuales de recaudación",
+  url: "https://sede.agenciatributaria.gob.es/Sede/datosabiertos/catalogo/hacienda/Informe_mensual_de_Recaudacion_Tributaria.shtml",
+  note: "Recaudación tributaria neta mensual por impuesto",
+};
+
+export const AEAT_DELEGACIONES: SourceDetail = {
+  name: "AEAT — Ingresos por delegaciones",
+  url: "https://sede.agenciatributaria.gob.es/Sede/datosabiertos/catalogo/hacienda/Informe_mensual_de_Recaudacion_Tributaria.shtml",
+  note: "Recaudación tributaria neta mensual por CCAA",
+};
+
 // Eurostat
 export const EUROSTAT: SourceDetail = {
   name: "Eurostat",

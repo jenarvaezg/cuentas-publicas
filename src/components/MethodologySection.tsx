@@ -2,7 +2,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useI18n } from "@/i18n/I18nProvider";
-import { getSearchParam } from "@/utils/url-state";
+import { getSearchParam, SECTION_CHANGE_EVENT } from "@/utils/url-state";
 
 interface MethodSection {
   title: string;
@@ -87,6 +87,24 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
           "Cobertura anual desde 1995",
           "10 divisiones COFOG con subcategorías",
           "Validación cruzada de suma de categorías vs total",
+        ],
+      },
+      {
+        title: "Recaudación Tributaria",
+        source: {
+          label: "AEAT (Series mensuales + Delegaciones)",
+          url: "https://sede.agenciatributaria.gob.es/Sede/datosAbiertos/catalogo/hacienda/Informe_mensual_de_Recaudacion_Tributaria.shtml",
+          note: "Datos abiertos AEAT",
+        },
+        paragraphs: [
+          "Se descargan dos ficheros Excel de la AEAT: series mensuales nacionales (1995-presente) e ingresos por delegaciones/CCAA (2007-presente).",
+          "Los datos mensuales se agregan a nivel anual. Se muestran ingresos netos (tras devoluciones) en millones de euros.",
+        ],
+        bullets: [
+          "Desglose por impuesto: IRPF, IVA, Sociedades, IRNR, Impuestos Especiales y resto",
+          "Sub-desglose de Impuestos Especiales (hidrocarburos, tabaco, alcohol, etc.)",
+          "Recaudación por Comunidad Autónoma (delegaciones AEAT)",
+          "Régimen foral: Navarra y País Vasco recaudan sus propios tributos; las cifras AEAT reflejan solo la cuota estatal",
         ],
       },
       {
@@ -233,6 +251,24 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         ],
       },
       {
+        title: "Tax Revenue",
+        source: {
+          label: "AEAT (Monthly series + Regional offices)",
+          url: "https://sede.agenciatributaria.gob.es/Sede/datosAbiertos/catalogo/hacienda/Informe_mensual_de_Recaudacion_Tributaria.shtml",
+          note: "AEAT open data",
+        },
+        paragraphs: [
+          "Two AEAT Excel files are downloaded: national monthly series (1995-present) and revenue by regional tax offices/CCAA (2007-present).",
+          "Monthly figures are aggregated annually. Values shown are net revenue (after refunds) in millions of euros.",
+        ],
+        bullets: [
+          "Tax type breakdown: PIT, VAT, Corporate, Non-resident, Excise duties and other",
+          "Excise duty sub-breakdown (hydrocarbons, tobacco, alcohol, etc.)",
+          "Revenue by Autonomous Community (AEAT regional offices)",
+          "Foral regime: Navarra and País Vasco collect their own taxes; AEAT figures reflect only the central government share",
+        ],
+      },
+      {
         title: "Demographics and GDP",
         source: {
           label: "INE (Tempus API)",
@@ -324,16 +360,28 @@ export function MethodologySection() {
     const syncOpenState = () => {
       const searchSection = getSearchParam("section");
       const hash = window.location.hash.replace("#", "");
-      setIsOpen(searchSection === "metodologia" || hash === "metodologia");
+
+      if (searchSection === "metodologia" || hash === "metodologia") {
+        setIsOpen(true);
+      }
+    };
+
+    const handleSectionChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ section: string | null }>).detail?.section ?? null;
+      if (detail === "metodologia") {
+        setIsOpen(true);
+      }
     };
 
     if (typeof window !== "undefined") {
       syncOpenState();
       window.addEventListener("popstate", syncOpenState);
       window.addEventListener("hashchange", syncOpenState);
+      window.addEventListener(SECTION_CHANGE_EVENT, handleSectionChange);
       return () => {
         window.removeEventListener("popstate", syncOpenState);
         window.removeEventListener("hashchange", syncOpenState);
+        window.removeEventListener(SECTION_CHANGE_EVENT, handleSectionChange);
       };
     }
     return undefined;

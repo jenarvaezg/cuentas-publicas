@@ -200,7 +200,39 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 
 ---
 
-## 8. INFRAESTRUCTURA CI/CD
+## 8. AEAT — Recaudación Tributaria
+
+**Script**: `scripts/sources/aeat.mjs` | **Output**: `src/data/tax-revenue.json`
+
+| Dato | Clasificación | Método | Frecuencia | Fragilidad |
+|------|---------------|--------|------------|------------|
+| Total recaudación neta | **AUTOMATIZADO** | Excel Series mensuales, col 6 | Mensual | MEDIA — índices de columna hardcodeados |
+| IRPF netos | **AUTOMATIZADO** | Excel Series mensuales, col 29 | Mensual | MEDIA |
+| IVA netos | **AUTOMATIZADO** | Excel Series mensuales, col 107 | Mensual | MEDIA |
+| Sociedades netos | **AUTOMATIZADO** | Excel Series mensuales, col 65 | Mensual | MEDIA |
+| IRNR netos | **AUTOMATIZADO** | Excel Series mensuales, col 82 | Mensual | MEDIA |
+| IIEE total netos | **AUTOMATIZADO** | Excel Series mensuales, col 137 | Mensual | MEDIA |
+| IIEE sub-desglose (9 conceptos) | **AUTOMATIZADO** | Excel Series mensuales, cols 142-175 | Mensual | MEDIA |
+| Resto impuestos netos | **AUTOMATIZADO** | Excel Series mensuales, col 178 | Mensual | MEDIA |
+| Resto sub-desglose (7 conceptos) | **AUTOMATIZADO** | Excel Series mensuales, cols 180-188 | Mensual | MEDIA |
+| Recaudación por CCAA (17 comunidades) | **AUTOMATIZADO** | Excel Delegaciones, columnas D.E. | Mensual | MEDIA — matching headers CCAA |
+| Recaudación per cápita | **DERIVADO** | Total netos × 1M / población INE | — | BAJA |
+
+**URLs** (estables, sobreescritas en cada actualización AEAT):
+- Series mensuales: `https://sede.agenciatributaria.gob.es/.../Cuadros_estadisticos_series_es_es.xlsx` (~1,6 MB)
+- Delegaciones: `https://sede.agenciatributaria.gob.es/.../Ingresos_por_Delegaciones.xlsx` (~11 MB, timeout 60s)
+
+**Validación**: suma de componentes ≈ total (tolerancia 1%).
+
+**Desfase**: ~1 mes (datos publicados con retraso de un mes).
+
+**Fallback**: Valores de referencia hardcodeados (2024: total=295.028 M€, IRPF=129.538, IVA=90.631, Sociedades=39.136, IIEE=22.150, IRNR=4.039, resto=9.535).
+
+**Nota foral**: Navarra y País Vasco recaudan tributos propios; las cifras de delegaciones reflejan solo la cuota estatal.
+
+---
+
+## 9. INFRAESTRUCTURA CI/CD
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
@@ -215,7 +247,7 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 
 ---
 
-## 9. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+## 10. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
 
 ### AUTOMATIZADOS (se actualizan solos cada lunes)
 | Dato | Fuente | Frescura | Confiabilidad |
@@ -288,7 +320,7 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 
 ---
 
-## 10. MAPA DE ARCHIVOS
+## 11. MAPA DE ARCHIVOS
 
 ```
 scripts/

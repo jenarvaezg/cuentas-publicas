@@ -14,6 +14,7 @@ import { RealtimeCounter } from "@/components/RealtimeCounter";
 import { RevenueBlock } from "@/components/RevenueBlock";
 import { RoadmapSection } from "@/components/RoadmapSection";
 import { SectionNav, type SectionNavItem } from "@/components/SectionNav";
+import { TaxRevenueBlock } from "@/components/TaxRevenueBlock";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BDE_BE11B, CALCULO_DERIVADO, SS_NOMINA } from "@/data/sources";
 import { useData } from "@/hooks/useData";
@@ -29,6 +30,7 @@ const SECTION_IDS = [
   "pensiones",
   "ingresos-gastos",
   "gasto-cofog",
+  "recaudacion",
   "ue",
   "ccaa",
   "metodologia",
@@ -48,6 +50,7 @@ function App() {
       { id: "pensiones", label: msg.sections.pensiones },
       { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
       { id: "gasto-cofog", label: msg.sections.gastoCofog },
+      { id: "recaudacion", label: msg.sections.recaudacion },
       { id: "ue", label: msg.sections.ue },
       { id: "ccaa", label: msg.sections.ccaa },
       { id: "metodologia", label: msg.sections.metodologia },
@@ -226,16 +229,23 @@ function App() {
               <BudgetBlock />
             </section>
             <section
-              id="ue"
+              id="recaudacion"
               className="scroll-mt-28 animate-slide-up"
               style={{ animationDelay: "0.4s" }}
+            >
+              <TaxRevenueBlock />
+            </section>
+            <section
+              id="ue"
+              className="scroll-mt-28 animate-slide-up"
+              style={{ animationDelay: "0.45s" }}
             >
               <ComparativaEUBlock />
             </section>
             <section
               id="ccaa"
               className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.45s" }}
+              style={{ animationDelay: "0.5s" }}
             >
               <CcaaDebtBlock />
             </section>

@@ -48,6 +48,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         items: [
           "✅ Datos desglosados por CCAA (ranking general de 17 comunidades)",
           "✅ Selector de Comunidad Autónoma (con estado persistente en URL)",
+          "✅ Recaudación tributaria por impuesto (IRPF, IVA, Sociedades, IIEE) y por CCAA",
           "🟡 Deuda, déficit y gasto por comunidad (detalle de deuda listo)",
           "✅ SSG multi-ruta + snapshot SEO + sitemap",
           "✅ Compartir (hash + query params + exportación PNG por bloque)",
@@ -61,11 +62,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
     wishlists: [
       {
         title: "Wishlist — Datos fiscales",
-        items: [
-          "Recaudación por impuesto y año (IRPF, IVA, Sociedades, IIEE)",
-          "Tipos efectivos por impuesto (IRPF, Sociedades, IVA)",
-          "Recaudación por CCAA (cedidos vs transferencias)",
-        ],
+        items: ["Tipos efectivos por impuesto (IRPF, Sociedades, IVA)"],
       },
       {
         title: "Wishlist — Nuevas visualizaciones",
@@ -120,6 +117,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         items: [
           "✅ Regional debt breakdown (17 regions ranking)",
           "✅ Autonomous Community selector (persisted in URL)",
+          "✅ Tax revenue by tax type (PIT, VAT, CIT, excise) and by region",
           "🟡 Regional debt, deficit and spending (debt detail ready)",
           "✅ Multi-route SSG + SEO snapshot + sitemap",
           "✅ Sharing (hash + query params + per-block PNG export)",
@@ -133,11 +131,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
     wishlists: [
       {
         title: "Wishlist — Fiscal data",
-        items: [
-          "Tax revenue by tax and year (PIT, VAT, CIT, excise)",
-          "Effective tax rates by tax type",
-          "Regional revenue (shared taxes vs transfers)",
-        ],
+        items: ["Effective tax rates by tax type"],
       },
       {
         title: "Wishlist — New visualizations",

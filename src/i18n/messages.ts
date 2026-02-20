@@ -20,6 +20,7 @@ export const messages = {
       pensiones: "Pensiones",
       ingresosGastos: "Ingresos y gastos",
       gastoCofog: "Gasto COFOG",
+      recaudacion: "Recaudación",
       ue: "Comparativa UE",
       ccaa: "CCAA",
       metodologia: "Metodología",
@@ -78,6 +79,7 @@ export const messages = {
       budget: { title: "Gasto Público por Funciones (COFOG)" },
       eu: { title: "España en la Unión Europea" },
       ccaa: { title: "Deuda por Comunidad Autónoma" },
+      taxRevenue: { title: "Recaudación Tributaria" },
       methodology: {
         title: "Metodología y fuentes",
       },
@@ -112,6 +114,7 @@ export const messages = {
       pensiones: "Pensions",
       ingresosGastos: "Revenue & spending",
       gastoCofog: "COFOG spending",
+      recaudacion: "Tax revenue",
       ue: "EU comparison",
       ccaa: "Regions",
       metodologia: "Methodology",
@@ -169,6 +172,7 @@ export const messages = {
       budget: { title: "Public Spending by Function (COFOG)" },
       eu: { title: "Spain in the European Union" },
       ccaa: { title: "Debt by Autonomous Community" },
+      taxRevenue: { title: "Tax Revenue" },
       methodology: {
         title: "Methodology and sources",
       },

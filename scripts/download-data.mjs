@@ -5,6 +5,7 @@ import { downloadDemographics } from './sources/ine.mjs'
 import { downloadPensionData } from './sources/seguridad-social.mjs'
 import { downloadBudgetData } from './sources/igae.mjs'
 import { downloadEurostatData, downloadRevenueData } from './sources/eurostat.mjs'
+import { downloadTaxRevenueData } from './sources/aeat.mjs'
 
 const SITE_URL = 'https://cuentas-publicas.es'
 
@@ -62,6 +63,15 @@ const SECTION_PAGE_DEFS = [
     titleEn: 'COFOG Public Spending',
     descriptionEs: 'Desglose funcional del gasto público por categorías COFOG.',
     descriptionEn: 'Functional public spending breakdown by COFOG categories.',
+  },
+  {
+    id: 'recaudacion',
+    slugEs: 'recaudacion',
+    slugEn: 'tax-revenue',
+    titleEs: 'Recaudación Tributaria',
+    titleEn: 'Tax Revenue',
+    descriptionEs: 'Desglose de la recaudación tributaria por impuesto y comunidad autónoma.',
+    descriptionEn: 'Tax revenue breakdown by tax type and autonomous community.',
   },
   {
     id: 'ue',
@@ -165,10 +175,11 @@ async function main() {
     downloadBudgetData(),
     downloadEurostatData(),
     downloadCcaaDebtData(),
-    downloadRevenueData()
+    downloadRevenueData(),
+    downloadTaxRevenueData()
   ])
 
-  const [debtResult, demographicsResult, pensionsResult, budgetResult, eurostatResult, ccaaDebtResult, revenueResult] = results
+  const [debtResult, demographicsResult, pensionsResult, budgetResult, eurostatResult, ccaaDebtResult, revenueResult, taxRevenueResult] = results
 
   // Track success/failure
   const status = {
@@ -178,7 +189,8 @@ async function main() {
     budget: budgetResult.status === 'fulfilled',
     eurostat: eurostatResult.status === 'fulfilled',
     ccaaDebt: ccaaDebtResult.status === 'fulfilled',
-    revenue: revenueResult.status === 'fulfilled'
+    revenue: revenueResult.status === 'fulfilled',
+    taxRevenue: taxRevenueResult.status === 'fulfilled'
   }
 
   // Write individual data files
@@ -231,6 +243,13 @@ async function main() {
     console.log('✅ revenue.json')
   } else {
     console.error('❌ revenue.json - Error:', revenueResult.reason?.message)
+  }
+
+  if (status.taxRevenue) {
+    writeMirroredDataFile('tax-revenue.json', taxRevenueResult.value)
+    console.log('✅ tax-revenue.json')
+  } else {
+    console.error('❌ tax-revenue.json - Error:', taxRevenueResult.reason?.message)
   }
 
   // Write metadata file
@@ -327,6 +346,19 @@ async function main() {
           ])
           : null,
         latestYear: status.revenue ? revenueResult.value.latestYear : null
+      },
+      taxRevenue: {
+        success: status.taxRevenue,
+        lastUpdated: status.taxRevenue ? taxRevenueResult.value.lastUpdated : null,
+        lastFetchAt: status.taxRevenue ? nowIso : null,
+        lastRealDataDate: status.taxRevenue
+          ? pickLatestDate([
+            taxRevenueResult.value.latestYear,
+            ...getAttributionDates(taxRevenueResult.value.sourceAttribution)
+          ])
+          : null,
+        latestYear: status.taxRevenue ? taxRevenueResult.value.latestYear : null,
+        years: status.taxRevenue ? taxRevenueResult.value.years.length : 0
       }
     }
   }
@@ -340,6 +372,7 @@ async function main() {
   const resolvedPensions = status.pensions ? pensionsResult.value : existingData.pensions
   const resolvedBudget = status.budget ? budgetResult.value : existingData.budget
   const resolvedRevenue = status.revenue ? revenueResult.value : null
+  const resolvedTaxRevenue = status.taxRevenue ? taxRevenueResult.value : null
 
   // Write SEO static artifacts
   writeTextFile(
@@ -490,6 +523,15 @@ async function main() {
   } else {
     console.log('Revenue: ❌ Error')
   }
+
+  if (status.taxRevenue && taxRevenueResult.value) {
+    const taxRevAttr = taxRevenueResult.value.sourceAttribution?.series
+    const yearCount = taxRevenueResult.value.years?.length || 0
+    const isLive = taxRevAttr?.type === 'csv'
+    console.log(`Tax Revenue: ${isLive ? '✅' : '⚠️'} ${taxRevAttr?.type?.toUpperCase() || 'N/A'} (${yearCount} años, último ${taxRevenueResult.value.latestYear})`)
+  } else {
+    console.log('Tax Revenue: ❌ Error')
+  }
   console.log()
 
   // B3: Éxito parcial. Definir fuentes críticas.
@@ -551,6 +593,7 @@ function buildPublicApiIndex(meta) {
       { path: '/api/v1/revenue.json', source: 'Eurostat', description: 'Ingresos y gastos públicos de España' },
       { path: '/api/v1/eurostat.json', source: 'Eurostat', description: 'Comparativa UE por indicadores fiscales' },
       { path: '/api/v1/ccaa-debt.json', source: 'Banco de España', description: 'Deuda de CCAA por comunidad' },
+      { path: '/api/v1/tax-revenue.json', source: 'AEAT', description: 'Recaudación tributaria por impuesto y CCAA' },
       { path: '/api/v1/meta.json', source: 'Pipeline', description: 'Estado de actualización y frescura de fuentes' }
     ],
     freshness: meta.sources

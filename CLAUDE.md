@@ -31,9 +31,9 @@ npm run download-data    # Fetch all data sources → src/data/*.json
 ### Data flow
 
 ```
-scripts/sources/{bde,ine,seguridad-social,igae,eurostat}.mjs
+scripts/sources/{bde,ine,seguridad-social,igae,eurostat,aeat}.mjs
   → scripts/download-data.mjs (orchestrator, parallel Promise.allSettled)
-    → src/data/{debt,demographics,pensions,budget,eurostat,ccaa-debt,revenue,meta}.json
+    → src/data/{debt,demographics,pensions,budget,eurostat,ccaa-debt,revenue,tax-revenue,meta}.json
       → src/hooks/useData.ts (single useMemo, returns all data)
         → Section components (DebtBlock, PensionsBlock, RevenueBlock, BudgetBlock, etc.)
 ```
@@ -47,6 +47,7 @@ scripts/sources/{bde,ine,seguridad-social,igae,eurostat}.mjs
 | Seguridad Social | `seguridad-social.mjs` | Pension payroll Excel (scraped from HTML page, UUID URLs) |
 | IGAE | `igae.mjs` | COFOG functional expenditure Excel (Total AAPP, S.13) |
 | Eurostat | `eurostat.mjs` | EU comparison indicators + Spain revenue/expenditure time series |
+| AEAT | `aeat.mjs` | Tax revenue by type (national monthly series) + by CCAA (delegaciones) |
 
 All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + `AbortSignal.timeout`). Each source has hardcoded fallback/reference data used when downloads fail.
 
@@ -71,6 +72,7 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 
 - **Coverage**: target **90-95%** coverage for critical business logic and data scripts. Current baseline can be below target; every change should maintain or improve coverage and avoid regressions.
 - **Language/i18n**: All user-facing UI text must be translatable and sourced from `src/i18n/messages.ts` with both `es` and `en` entries (no hardcoded strings in components, except source datasets). Code (variables, comments, commits) in English.
+- **Translation delivery**: Whenever copy changes, update the matching English/Spanish entries in `messages.ts`, keep the static `public/en/sections/*.html` snapshots in sync, and document language-specific behavior (OG tags, canonical paths) in this guide so future contributors know to adjust both locales together.
 - **Formatting**: Biome — 2-space indent, double quotes, trailing commas, semicolons, 100 char line width.
 - **Path alias**: `@/` maps to `src/` (configured in tsconfig.json and vite.config.ts).
 - **No mutation**: Return new objects, never mutate existing data structures.
@@ -78,6 +80,7 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 - **Methodology sync**: When adding/modifying a data source or derived metric, update `src/components/MethodologySection.tsx` to reflect the change. This section is the user-facing documentation of all sources and calculations.
 - **README sync**: When changing architecture, data sources, tech stack, or commands, update `README.md` to match. README mirrors CLAUDE.md content in user-facing format.
 - **Data registry sync**: When adding, removing, or modifying a data source, metric, or hardcoded value in `scripts/sources/`, update `DATA-REGISTRY.md` to reflect the change. This file is the single source of truth for what data we have, how it's obtained, and what's hardcoded vs automated.
+- **Roadmap sync**: When completing a feature listed in the roadmap/wishlist (`src/components/RoadmapSection.tsx`), move it from the wishlist to the completed items in the appropriate phase (both `es` and `en` copies). Always check the roadmap at the end of a feature implementation.
 
 ## CI/CD
 

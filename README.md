@@ -10,6 +10,7 @@ Dashboard fiscal interactivo que muestra en tiempo real la deuda pública, el ga
 - **Gasto en pensiones** — nómina mensual, pensión media, ratio afiliados/pensionistas
 - **Gasto público COFOG (1995-2024)** — clasificación funcional con drilldown por subcategorías
 - **Ingresos vs gastos públicos (1995-2024)** — Eurostat (`TR`, `TE`, `B9`, `D2REC`, `D5REC`, `D61REC`)
+- **Recaudación tributaria** — desglose por impuesto (IRPF, IVA, Sociedades, IIEE, IRNR) y por CCAA, con drilldown en subcategorías
 - **Deuda por CCAA** — ranking de 17 comunidades con vista `% PIB` y `€`
 - **Comparativa interanual** — modos absoluto, % peso y % cambio, con opción de euros reales (ajustados por IPC) o corrientes
 - **Modo oscuro/claro** — respeta la preferencia del sistema
@@ -27,6 +28,7 @@ Dashboard fiscal interactivo que muestra en tiempo real la deuda pública, el ga
 | [Seguridad Social](https://www.seg-social.es) | Nómina de pensiones contributivas | Mensual |
 | [IGAE](https://www.igae.pap.hacienda.gob.es) | Gasto funcional COFOG (Total AAPP) | Anual |
 | [Eurostat](https://ec.europa.eu/eurostat) | Comparativa UE e ingresos/gastos públicos | Anual |
+| [AEAT](https://sede.agenciatributaria.gob.es) | Recaudación tributaria por impuesto y CCAA | Mensual |
 
 Los datos se actualizan automáticamente cada lunes a las 08:00 UTC via GitHub Actions. Si una fuente falla, el dashboard sigue funcionando con los últimos datos conocidos (patrón fallback).
 

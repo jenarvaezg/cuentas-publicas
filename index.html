@@ -30,6 +30,38 @@
     <link rel="alternate" type="application/rss+xml" title="Cuentas Públicas RSS" href="/feed.xml" />
     <link rel="alternate" type="text/html" hreflang="es" href="https://cuentas-publicas.es/" />
     <link rel="alternate" type="text/html" hreflang="en" href="https://cuentas-publicas.es/en/" />
+    <script>
+      (function () {
+        const path = window.location.pathname;
+        const isEnglishPath = path === "/en" || path.startsWith("/en/");
+        if (!isEnglishPath) return;
+
+        const englishTitle = "Spain Public Accounts in Real Time";
+        const englishDescription =
+          "Public debt, pensions and spending indicators for Spain with official up-to-date data.";
+        const normalizedPath = path.endsWith("/") ? path : `${path}/`;
+        const canonicalHref = `${window.location.origin}${normalizedPath}`;
+
+        document.documentElement.lang = "en";
+        document.title = englishTitle;
+
+        const updateAttribute = (selector, attribute, value) => {
+          const element = document.head.querySelector(selector);
+          if (element) {
+            element.setAttribute(attribute, value);
+          }
+        };
+
+        updateAttribute('meta[name="description"]', "content", englishDescription);
+        updateAttribute('meta[property="og:title"]', "content", englishTitle);
+        updateAttribute('meta[property="og:description"]', "content", englishDescription);
+        updateAttribute('meta[property="og:locale"]', "content", "en_US");
+        updateAttribute('meta[property="og:url"]', "content", canonicalHref);
+        updateAttribute('meta[name="twitter:title"]', "content", englishTitle);
+        updateAttribute('meta[name="twitter:description"]', "content", englishDescription);
+        updateAttribute('link[rel="canonical"]', "href", canonicalHref);
+      })();
+    </script>
     <link rel="alternate" type="text/html" href="https://cuentas-publicas.es/seo-snapshot.html" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

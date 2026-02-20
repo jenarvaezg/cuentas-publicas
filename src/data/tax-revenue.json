@@ -1,0 +1,46 @@
+{
+  "lastUpdated": "2025-01-01T00:00:00.000Z",
+  "years": [2024],
+  "latestYear": 2024,
+  "national": {
+    "2024": {
+      "total": 295028,
+      "irpf": 129538,
+      "iva": 90631,
+      "sociedades": 39136,
+      "irnr": 4039,
+      "iiee": 22150,
+      "resto": 9535,
+      "iieeBreakdown": {
+        "alcohol": 371,
+        "cerveza": 464,
+        "productosIntermedios": 24,
+        "hidrocarburos": 10283,
+        "tabaco": 6765,
+        "electricidad": 1529,
+        "envasesPlastico": 393,
+        "carbon": 0,
+        "mediosTransporte": 2321
+      },
+      "restoBreakdown": {
+        "medioambientales": 2103,
+        "traficoExterior": 2053,
+        "primasSeguros": 1853,
+        "transaccionesFinancieras": 0,
+        "serviciosDigitales": 33,
+        "juego": 115,
+        "tasas": 3378
+      }
+    }
+  },
+  "ccaa": {},
+  "sourceAttribution": {
+    "series": {
+      "source": "Referencia AEAT Series mensuales 2024",
+      "type": "fallback",
+      "url": "https://sede.agenciatributaria.gob.es/Sede/datosAbiertos/catalogo/hacienda/Informe_mensual_de_Recaudacion_Tributaria.shtml",
+      "date": "2024-12-31",
+      "note": "Datos de referencia, descarga AEAT no disponible"
+    }
+  }
+}

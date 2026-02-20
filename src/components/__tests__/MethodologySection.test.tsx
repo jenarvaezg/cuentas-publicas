@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { I18nProvider } from "@/i18n/I18nProvider";
+import { SECTION_CHANGE_EVENT } from "@/utils/url-state";
 import { MethodologySection } from "../MethodologySection";
 
 describe("MethodologySection", () => {
@@ -57,6 +58,23 @@ describe("MethodologySection", () => {
         <MethodologySection />
       </I18nProvider>,
     );
+
+    expect(screen.getByText(/Proyecto educativo que muestra/i)).toBeDefined();
+  });
+
+  it("opens when the section-change event reports metodología", () => {
+    render(
+      <I18nProvider>
+        <MethodologySection />
+      </I18nProvider>,
+    );
+
+    const event = new CustomEvent(SECTION_CHANGE_EVENT, {
+      detail: { section: "metodologia" },
+    });
+    act(() => {
+      window.dispatchEvent(event);
+    });
 
     expect(screen.getByText(/Proyecto educativo que muestra/i)).toBeDefined();
   });
