@@ -141,9 +141,8 @@ export function CcaaDebtBlock() {
 
   useEffect(() => {
     updateSearchParams({
-      section: "ccaa",
-      ccaa: selectedCcaa,
-      ccaaMetric: selectedMetric,
+      ccaa: selectedCcaa === "all" ? null : selectedCcaa,
+      ccaaMetric: selectedMetric === "debtToGDP" ? null : selectedMetric,
     });
   }, [selectedCcaa, selectedMetric]);
 

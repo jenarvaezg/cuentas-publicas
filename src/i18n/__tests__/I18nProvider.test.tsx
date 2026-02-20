@@ -62,4 +62,19 @@ describe("I18nProvider", () => {
     expect(window.localStorage.getItem("cuentas-publicas-lang")).toBe("es");
     expect(window.location.search).toBe("");
   });
+
+  it("interpreta /&lang=en como enlace legacy y lo normaliza", () => {
+    window.history.replaceState(null, "", "/&lang=en");
+
+    render(
+      <I18nProvider>
+        <LanguageToggle />
+        <TitleProbe />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole("heading", { name: "Spain Fiscal Dashboard" })).toBeDefined();
+    expect(window.location.pathname).toBe("/");
+    expect(window.location.search).toBe("?lang=en");
+  });
 });

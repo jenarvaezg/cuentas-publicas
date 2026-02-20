@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
-import { getSearchParam, updateSearchParams } from "@/utils/url-state";
+import { getSearchParam, updateSectionInUrl } from "@/utils/url-state";
 
 export interface SectionNavItem {
   id: string;
@@ -65,7 +65,7 @@ export function SectionNav({ items }: SectionNavProps) {
 
   useEffect(() => {
     if (!activeId) return;
-    updateSearchParams({ section: activeId });
+    updateSectionInUrl(activeId);
   }, [activeId]);
 
   return (
@@ -81,7 +81,7 @@ export function SectionNav({ items }: SectionNavProps) {
                 href={`#${item.id}`}
                 onClick={() => {
                   setActiveId(item.id);
-                  updateSearchParams({ section: item.id });
+                  updateSectionInUrl(item.id);
                 }}
                 className={cn(
                   "inline-flex whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",

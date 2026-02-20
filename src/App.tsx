@@ -81,7 +81,7 @@ function App() {
     if (typeof window === "undefined") return;
     const section = getSearchParam("section");
     const isValidSection = SECTION_IDS.some((item) => item === section);
-    if (!section || !isValidSection) return;
+    if (!section || !isValidSection || section === "resumen") return;
 
     const url = new URL(window.location.href);
     if (url.hash !== `#${section}`) {

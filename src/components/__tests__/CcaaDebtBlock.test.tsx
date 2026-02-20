@@ -113,7 +113,7 @@ describe("CcaaDebtBlock", () => {
     expect(axisSample).toContain("mm€");
     expect(screen.getByText(/mm€/)).toBeInTheDocument();
     expect(window.location.search).toContain("ccaaMetric=debtAbsolute");
-    expect(window.location.search).toContain("section=ccaa");
+    expect(window.location.search).not.toContain("section=");
   });
 
   it("muestra detalle y placeholders al seleccionar comunidad", () => {
@@ -124,6 +124,12 @@ describe("CcaaDebtBlock", () => {
     expect(screen.getByText("Detalle: C. Valenciana")).toBeInTheDocument();
     expect(screen.getAllByText(/Próximamente: pendiente de integración/)).toHaveLength(2);
     expect(window.location.search).toContain("ccaa=CA17");
+  });
+
+  it("no ensucia la URL en el montaje con valores por defecto", () => {
+    render(<CcaaDebtBlock />);
+
+    expect(window.location.search).toBe("");
   });
 
   it("renders chart component", () => {
