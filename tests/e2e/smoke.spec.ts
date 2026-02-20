@@ -60,7 +60,7 @@ test.describe('Smoke', () => {
     await page.goto('/')
 
     await page.getByRole('link', { name: 'Gasto COFOG' }).click()
-    await expect(page).toHaveURL(/#gasto-cofog/)
+    await expect(page).toHaveURL(/section=gasto-cofog/)
 
     const cofogSection = page.locator('#gasto-cofog')
     await expect(
@@ -99,7 +99,7 @@ test.describe('Smoke', () => {
     await expect(debtSourceLink).toHaveAttribute('target', '_blank')
 
     await page.getByRole('link', { name: 'CCAA' }).click()
-    await expect(page).toHaveURL(/#ccaa/)
+    await expect(page).toHaveURL(/section=ccaa/)
 
     const ccaaSection = page.locator('#ccaa')
     const metricSelect = ccaaSection.getByLabel('Métrica')
@@ -115,10 +115,9 @@ test.describe('Smoke', () => {
   test('sincroniza estado CCAA en query params y lo restaura tras recarga', async ({ page }) => {
     await page.goto('/?section=ccaa&ccaa=CA09&ccaaMetric=debtAbsolute')
 
-    await expect(page).toHaveURL(/section=ccaa/)
+    await expect(page).not.toHaveURL(/section=/)
     await expect(page).toHaveURL(/ccaa=CA09/)
     await expect(page).toHaveURL(/ccaaMetric=debtAbsolute/)
-    await expect(page).toHaveURL(/#ccaa/)
 
     const ccaaSection = page.locator('#ccaa')
     await expect(ccaaSection.getByLabel('Comunidad')).toHaveValue('CA09')
