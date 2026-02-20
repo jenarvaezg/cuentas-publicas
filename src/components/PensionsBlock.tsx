@@ -58,7 +58,7 @@ export function PensionsBlock() {
           deficitNote: "Annual pension spending - social contributions",
           ratioNote: "Contributors / pensioners",
           gdpNote: "Annual spending (monthly payroll x 14) / GDP",
-          payrollCalcSuffix: "x 14 payments / 365.25 days / 86,400 s",
+          payrollCalcSuffix: "x 14 payments / 365.25 days / 86,400\u00A0s",
         }
       : {
           realtimeLabel: "Gastado en pensiones desde que abriste la página",
@@ -92,7 +92,7 @@ export function PensionsBlock() {
           deficitNote: "Gasto anual pensiones - cotizaciones sociales",
           ratioNote: "Afiliados / pensionistas",
           gdpNote: "Gasto anual (nomina x 14) / PIB",
-          payrollCalcSuffix: "x 14 pagas / 365,25 días / 86.400 s",
+          payrollCalcSuffix: "x 14 pagas / 365,25 días / 86.400\u00A0s",
         };
 
   const expensePerSecond = pensions.current.expensePerSecond;
@@ -223,7 +223,12 @@ export function PensionsBlock() {
             value={formatCompact(pensions.current.reserveFund)}
             tooltip={copy.reserveFundTooltip}
             delay={0.3}
-            sources={[{ name: copy.reserveFundSource, note: copy.reserveFundSourceNote }]}
+            sources={[
+              {
+                name: copy.reserveFundSource,
+                note: copy.reserveFundSourceNote,
+              },
+            ]}
           />
           <StatCard
             label={copy.activePensions}

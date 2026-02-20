@@ -135,4 +135,67 @@ describe("exportElementToPng", () => {
       download: filename,
     });
   });
+
+  it("reemplaza toggle groups con texto estático del botón activo", async () => {
+    vi.stubGlobal("Image", MockImage as unknown as typeof Image);
+
+    const source = document.createElement("section");
+    source.id = "toggle-test";
+    source.style.backgroundColor = "rgb(255, 255, 255)";
+    source.innerHTML = `
+      <div class="flex items-center rounded-md border border-input bg-background p-0.5">
+        <button type="button" class="bg-primary text-primary-foreground shadow-sm">Nacional</button>
+        <button type="button" class="text-muted-foreground">Por CCAA</button>
+      </div>
+    `;
+    document.body.appendChild(source);
+
+    vi.spyOn(source, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 0,
+      top: 0,
+      left: 0,
+      right: 320,
+      bottom: 100,
+      width: 320,
+      height: 100,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+      drawImage: vi.fn(),
+      fillRect: vi.fn(),
+      fillText: vi.fn(),
+      scale: vi.fn(),
+      fillStyle: "",
+      textAlign: "",
+      font: "",
+    } as unknown as CanvasRenderingContext2D);
+
+    Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
+      configurable: true,
+      value: (callback: BlobCallback) => {
+        callback(new Blob(["png"], { type: "image/png" }));
+      },
+    });
+
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: vi.fn(() => "blob:test-url"),
+    });
+    Object.defineProperty(URL, "revokeObjectURL", {
+      configurable: true,
+      value: vi.fn(),
+    });
+
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    const serializeSpy = vi.spyOn(XMLSerializer.prototype, "serializeToString");
+
+    await exportElementToPng("toggle-test", "toggle");
+
+    const serialized = serializeSpy.mock.results[0]?.value as string;
+    expect(serialized).toContain("Nacional");
+    expect(serialized).not.toContain("Por CCAA");
+  });
 });

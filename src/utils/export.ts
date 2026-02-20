@@ -121,6 +121,16 @@ function prepareCloneForExport(clone: HTMLElement, source: HTMLElement) {
     el.remove();
   }
 
+  // Remove inline SVG icons (lucide-react) — nested SVGs break foreignObject rendering
+  for (const svg of clone.querySelectorAll("svg.lucide")) {
+    svg.remove();
+  }
+
+  // Remove screen-reader-only content that can misrender in foreignObject
+  for (const el of clone.querySelectorAll(".sr-only")) {
+    el.remove();
+  }
+
   // Replace <select> elements with static text showing selected value
   const sourceSelects = source.querySelectorAll("select");
   const cloneSelects = Array.from(clone.querySelectorAll("select"));
@@ -152,9 +162,51 @@ function prepareCloneForExport(clone: HTMLElement, source: HTMLElement) {
     cloneSelect.replaceWith(span);
   }
 
-  // Disable button interactivity (toggle buttons already show active state)
+  // Replace button toggle groups with static text showing active selection
+  for (const container of clone.querySelectorAll(".border-input")) {
+    if (!(container instanceof HTMLElement)) continue;
+    const buttons = Array.from(container.querySelectorAll(":scope > button"));
+    if (buttons.length < 2) continue;
+
+    const activeButton = buttons.find((btn) => btn.classList.contains("bg-primary"));
+    if (!(activeButton instanceof HTMLElement)) continue;
+
+    const span = document.createElement("span");
+    span.textContent = activeButton.textContent?.trim() ?? "";
+    span.setAttribute(
+      "style",
+      [
+        `font-family: ${activeButton.style.fontFamily}`,
+        `font-size: ${activeButton.style.fontSize}`,
+        `font-weight: ${activeButton.style.fontWeight}`,
+        `color: ${activeButton.style.color}`,
+        `line-height: ${activeButton.style.lineHeight}`,
+        "display: inline",
+        "border: none",
+        "background: none",
+        "padding: 0",
+        "white-space: nowrap",
+      ].join("; "),
+    );
+    container.replaceWith(span);
+  }
+
+  // Disable remaining button interactivity
   for (const btn of clone.querySelectorAll("button")) {
     btn.style.pointerEvents = "none";
+  }
+
+  // Allow vertical reflow: foreignObject may render fonts with slightly
+  // different metrics, causing text to wrap where it didn't in the browser.
+  // Fixed heights from copyComputedStyles prevent elements from growing,
+  // so reset them to auto. Skip chart containers that need explicit sizing.
+  for (const el of clone.querySelectorAll("*")) {
+    if (!(el instanceof HTMLElement)) continue;
+    if (el.tagName === "svg" || el.closest("svg")) continue;
+    if (el.classList.contains("recharts-responsive-container")) continue;
+    if (el instanceof HTMLCanvasElement) continue;
+    el.style.height = "auto";
+    el.style.overflow = "visible";
   }
 }
 
