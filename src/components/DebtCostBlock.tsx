@@ -3,6 +3,7 @@ import { BDE_BE11B, CALCULO_DERIVADO, ESTIMACION_INTERESES, fromAttribution } fr
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatPercent } from "@/utils/formatters";
+import { ExportBlockButton } from "./ExportBlockButton";
 import { RealtimeCounter } from "./RealtimeCounter";
 import { StatCard } from "./StatCard";
 
@@ -41,9 +42,12 @@ export function DebtCostBlock() {
     : BDE_BE11B;
 
   return (
-    <Card>
+    <Card id="coste-deuda">
       <CardHeader>
-        <CardTitle>{msg.blocks.debtCost.title}</CardTitle>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle>{msg.blocks.debtCost.title}</CardTitle>
+          <ExportBlockButton targetId="coste-deuda" filenamePrefix="cuentas-publicas-coste-deuda" />
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center py-6 border-b gap-2">

@@ -28,7 +28,7 @@ export function ExportBlockButton({ targetId, filenamePrefix }: ExportBlockButto
   };
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-end gap-1" data-export-hide>
       <Button
         type="button"
         variant="outline"

@@ -112,6 +112,52 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   });
 }
 
+const WATERMARK_HEIGHT = 28;
+const WATERMARK_URL = "https://cuentas-publicas.es/";
+
+function prepareCloneForExport(clone: HTMLElement, source: HTMLElement) {
+  // Remove elements marked for export hiding (e.g. export buttons)
+  for (const el of clone.querySelectorAll("[data-export-hide]")) {
+    el.remove();
+  }
+
+  // Replace <select> elements with static text showing selected value
+  const sourceSelects = source.querySelectorAll("select");
+  const cloneSelects = Array.from(clone.querySelectorAll("select"));
+  for (let i = 0; i < cloneSelects.length; i++) {
+    const cloneSelect = cloneSelects[i];
+    const sourceSelect = sourceSelects[i];
+    if (!(sourceSelect instanceof HTMLSelectElement)) continue;
+
+    const selectedText = sourceSelect.selectedOptions[0]?.textContent ?? sourceSelect.value;
+    const span = document.createElement("span");
+    span.textContent = selectedText;
+
+    const selectStyle = window.getComputedStyle(sourceSelect);
+    span.setAttribute(
+      "style",
+      [
+        `font-family: ${selectStyle.fontFamily}`,
+        `font-size: ${selectStyle.fontSize}`,
+        `font-weight: ${selectStyle.fontWeight}`,
+        `color: ${selectStyle.color}`,
+        `line-height: ${selectStyle.lineHeight}`,
+        "display: inline",
+        "border: none",
+        "background: none",
+        "padding: 0",
+        "appearance: none",
+      ].join("; "),
+    );
+    cloneSelect.replaceWith(span);
+  }
+
+  // Disable button interactivity (toggle buttons already show active state)
+  for (const btn of clone.querySelectorAll("button")) {
+    btn.style.pointerEvents = "none";
+  }
+}
+
 function triggerDownload(blob: Blob, filename: string) {
   const objectUrl = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -140,6 +186,7 @@ export async function exportElementToPng(targetId: string, filenamePrefix: strin
 
   const clonedNode = node.cloneNode(true) as HTMLElement;
   copyComputedStyles(node, clonedNode);
+  prepareCloneForExport(clonedNode, node);
 
   const serializedHtml = new XMLSerializer().serializeToString(clonedNode);
   const backgroundColor = resolveBackgroundColor(node);
@@ -155,9 +202,10 @@ export async function exportElementToPng(targetId: string, filenamePrefix: strin
   const image = await loadImage(getSvgDataUrl(svg));
 
   const scale = Math.max(window.devicePixelRatio || 1, MIN_EXPORT_SCALE);
+  const exportHeight = height + WATERMARK_HEIGHT;
   const canvas = document.createElement("canvas");
   canvas.width = Math.ceil(width * scale);
-  canvas.height = Math.ceil(height * scale);
+  canvas.height = Math.ceil(exportHeight * scale);
 
   const ctx = canvas.getContext("2d");
   if (!ctx) {
@@ -166,8 +214,14 @@ export async function exportElementToPng(targetId: string, filenamePrefix: strin
 
   ctx.scale(scale, scale);
   ctx.fillStyle = backgroundColor;
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillRect(0, 0, width, exportHeight);
   ctx.drawImage(image, 0, 0, width, height);
+
+  // Draw watermark in the extra space below the content
+  ctx.font = "11px system-ui, sans-serif";
+  ctx.fillStyle = "rgba(140, 140, 140, 0.7)";
+  ctx.textAlign = "right";
+  ctx.fillText(WATERMARK_URL, width - 16, height + WATERMARK_HEIGHT - 10);
 
   const blob = await canvasToBlob(canvas);
   const filename = getExportFilename(filenamePrefix);

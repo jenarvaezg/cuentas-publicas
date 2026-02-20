@@ -10,6 +10,7 @@ import {
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber } from "@/utils/formatters";
+import { ExportBlockButton } from "./ExportBlockButton";
 import { StatCard } from "./StatCard";
 
 export function EquivalenciasBlock() {
@@ -100,10 +101,18 @@ export function EquivalenciasBlock() {
     : IGAE_COFOG;
 
   return (
-    <Card>
+    <Card id="equivalencias">
       <CardHeader>
-        <CardTitle>{msg.blocks.equivalences.title}</CardTitle>
-        <p className="text-sm text-muted-foreground">{msg.blocks.equivalences.subtitle}</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle>{msg.blocks.equivalences.title}</CardTitle>
+            <p className="text-sm text-muted-foreground">{msg.blocks.equivalences.subtitle}</p>
+          </div>
+          <ExportBlockButton
+            targetId="equivalencias"
+            filenamePrefix="cuentas-publicas-equivalencias"
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

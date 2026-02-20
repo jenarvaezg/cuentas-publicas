@@ -87,12 +87,16 @@ describe("exportElementToPng", () => {
 
     const drawImage = vi.fn();
     const fillRect = vi.fn();
+    const fillText = vi.fn();
     const scale = vi.fn();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
       drawImage,
       fillRect,
+      fillText,
       scale,
       fillStyle: "",
+      textAlign: "",
+      font: "",
     } as unknown as CanvasRenderingContext2D);
 
     Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
@@ -122,8 +126,9 @@ describe("exportElementToPng", () => {
 
     expect(filename).toMatch(/^demo-\d{4}-\d{2}-\d{2}\.png$/);
     expect(scale).toHaveBeenCalledOnce();
-    expect(fillRect).toHaveBeenCalledWith(0, 0, 320, 180);
+    expect(fillRect).toHaveBeenCalledWith(0, 0, 320, 208);
     expect(drawImage).toHaveBeenCalledOnce();
+    expect(fillText).toHaveBeenCalledWith("https://cuentas-publicas.es/", 304, 198);
     expect(clickedDownloads).toHaveLength(1);
     expect(clickedDownloads[0]).toMatchObject({
       href: "blob:test-url",

@@ -15,6 +15,7 @@ import type { EurostatData } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatNumber } from "@/utils/formatters";
+import { ExportBlockButton } from "./ExportBlockButton";
 
 const INDICATOR_KEYS = [
   "debtToGDP",
@@ -166,29 +167,35 @@ export function ComparativaEUBlock() {
     : { name: "Eurostat", url: "https://ec.europa.eu/eurostat/databrowser/" };
 
   return (
-    <Card>
+    <Card id="comparativa-ue">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <CardTitle>{msg.blocks.eu.title}</CardTitle>
-          <div className="flex items-center gap-1.5">
-            <label
-              htmlFor="eu-indicator"
-              className="text-xs text-muted-foreground whitespace-nowrap"
-            >
-              {msg.common.indicator}
-            </label>
-            <select
-              id="eu-indicator"
-              value={selectedIndicator}
-              onChange={(e) => setSelectedIndicator(e.target.value as IndicatorKey)}
-              className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
-            >
-              {INDICATOR_KEYS.map((key) => (
-                <option key={key} value={key}>
-                  {copy.indicatorLabels[key]}
-                </option>
-              ))}
-            </select>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <label
+                htmlFor="eu-indicator"
+                className="text-xs text-muted-foreground whitespace-nowrap"
+              >
+                {msg.common.indicator}
+              </label>
+              <select
+                id="eu-indicator"
+                value={selectedIndicator}
+                onChange={(e) => setSelectedIndicator(e.target.value as IndicatorKey)}
+                className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                {INDICATOR_KEYS.map((key) => (
+                  <option key={key} value={key}>
+                    {copy.indicatorLabels[key]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <ExportBlockButton
+              targetId="comparativa-ue"
+              filenamePrefix="cuentas-publicas-comparativa-ue"
+            />
           </div>
         </div>
       </CardHeader>
