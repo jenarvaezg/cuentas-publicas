@@ -1,14 +1,15 @@
+import { useI18n } from "@/i18n/I18nProvider";
+
 export function Footer() {
+  const { msg } = useI18n();
+
   return (
     <footer className="py-8">
       <div className="container mx-auto px-4">
         <div className="text-center text-xs text-muted-foreground space-y-2">
+          <p>{msg.footer.educational}</p>
           <p>
-            Datos orientativos con fines educativos. Consulta la sección de metodología para más
-            información sobre fuentes y cálculos.
-          </p>
-          <p>
-            Hecho por{" "}
+            {msg.footer.madeBy}{" "}
             <a
               href="https://github.com/jenarvaezg"
               target="_blank"
@@ -24,7 +25,25 @@ export function Footer() {
               rel="noopener noreferrer"
               className="underline underline-offset-4 hover:text-primary transition-colors"
             >
-              Código fuente
+              {msg.footer.sourceCode}
+            </a>
+            {" · "}
+            <a
+              href="/api/v1/index.json"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-primary transition-colors"
+            >
+              API v1
+            </a>
+            {" · "}
+            <a
+              href="/feed.xml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-primary transition-colors"
+            >
+              {msg.footer.rssUpdates}
             </a>
           </p>
         </div>

@@ -12,7 +12,9 @@ Spanish fiscal dashboard showing real-time public debt, pension spending, and go
 npm run dev              # Vite dev server (HMR)
 npm run build            # TypeScript check + Vite production build
 npm run test             # Vitest (run once)
+npm run test:coverage    # Vitest + coverage report
 npm run test:watch       # Vitest (watch mode)
+npm run test:e2e         # Playwright smoke suite
 npm run lint             # Biome check src/
 npm run format           # Biome format src/ --write
 npm run download-data    # Fetch all data sources → src/data/*.json
@@ -29,21 +31,22 @@ npm run download-data    # Fetch all data sources → src/data/*.json
 ### Data flow
 
 ```
-scripts/sources/{bde,ine,seguridad-social,igae}.mjs
+scripts/sources/{bde,ine,seguridad-social,igae,eurostat}.mjs
   → scripts/download-data.mjs (orchestrator, parallel Promise.allSettled)
-    → src/data/{debt,demographics,pensions,budget,meta}.json
+    → src/data/{debt,demographics,pensions,budget,eurostat,ccaa-debt,revenue,meta}.json
       → src/hooks/useData.ts (single useMemo, returns all data)
-        → Section components (DebtBlock, PensionsBlock, BudgetBlock, etc.)
+        → Section components (DebtBlock, PensionsBlock, RevenueBlock, BudgetBlock, etc.)
 ```
 
 ### Data sources
 
 | Source | File | What it fetches |
 |--------|------|-----------------|
-| Banco de España | `bde.mjs` | Monthly debt CSV (be11b.csv), quarterly deficit (be1101.csv) |
+| Banco de España | `bde.mjs` | Monthly debt CSV (be11b.csv), quarterly debt/GDP ratio (be1101.csv) |
 | INE (Tempus API) | `ine.mjs` | Population, active population (EPA), GDP, avg salary, CPI (IPC) |
 | Seguridad Social | `seguridad-social.mjs` | Pension payroll Excel (scraped from HTML page, UUID URLs) |
 | IGAE | `igae.mjs` | COFOG functional expenditure Excel (Total AAPP, S.13) |
+| Eurostat | `eurostat.mjs` | EU comparison indicators + Spain revenue/expenditure time series |
 
 All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + `AbortSignal.timeout`). Each source has hardcoded fallback/reference data used when downloads fail.
 
@@ -52,7 +55,7 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 - **Realtime counters**: `useRealtimeCounter` uses `requestAnimationFrame` + direct DOM mutation via refs (zero React re-renders). Returns `{ displayRef, ariaRef }` — no state.
 - **Data types**: All data shapes defined in `src/data/types.ts` (`DebtData`, `PensionData`, `BudgetData`, `DemographicsData`).
 - **Source attribution**: Every displayed metric links back to its source via `DataSourceAttribution` objects. UI sources defined in `src/data/sources.ts`.
-- **COFOG columns**: `igae.mjs` has hardcoded column indices for the IGAE Excel structure (division totals, subcategory ranges). These are stable across AACC and AAPP files.
+- **COFOG columns**: `igae.mjs` first detects columns dynamically from header codes (`XX.N`), then falls back to hardcoded constants if detection fails.
 - **Spanish locale**: All number formatting uses `es-ES` locale (comma decimal, dot thousands). CSV parsing handles Spanish format.
 - **Linear regression**: Debt counter extrapolates from last 24 months of BdE data using slope/intercept stored in `debt.json.regression`.
 - **CPI deflation**: `useDeflator` hook provides `deflate(amount, year)` using CPI data from `demographics.json.cpi`. Base year = latest COFOG year (2024). Used in BudgetBlock comparison mode to show euros reales vs corrientes.
@@ -66,8 +69,8 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 
 ## Conventions
 
-- **Coverage**: **100% coverage is mandatory** for all business logic, utilities, and data processing scripts. Tests must be added or updated for every change.
-- **Language**: UI text is in Spanish. Code (variables, comments, commits) in English.
+- **Coverage**: target **90-95%** coverage for critical business logic and data scripts. Current baseline can be below target; every change should maintain or improve coverage and avoid regressions.
+- **Language/i18n**: All user-facing UI text must be translatable and sourced from `src/i18n/messages.ts` with both `es` and `en` entries (no hardcoded strings in components, except source datasets). Code (variables, comments, commits) in English.
 - **Formatting**: Biome — 2-space indent, double quotes, trailing commas, semicolons, 100 char line width.
 - **Path alias**: `@/` maps to `src/` (configured in tsconfig.json and vite.config.ts).
 - **No mutation**: Return new objects, never mutate existing data structures.

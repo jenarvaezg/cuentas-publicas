@@ -1,0 +1,99 @@
+{
+  "apiVersion": "v1",
+  "generatedAt": "2026-02-20T14:14:11.627Z",
+  "basePath": "/api/v1",
+  "endpoints": [
+    {
+      "path": "/api/v1/debt.json",
+      "source": "Banco de España",
+      "description": "Deuda pública PDE y series históricas"
+    },
+    {
+      "path": "/api/v1/pensions.json",
+      "source": "Seguridad Social",
+      "description": "Nómina, pensiones y métricas derivadas"
+    },
+    {
+      "path": "/api/v1/demographics.json",
+      "source": "INE",
+      "description": "Población, EPA, PIB, salario e IPC"
+    },
+    {
+      "path": "/api/v1/budget.json",
+      "source": "IGAE",
+      "description": "Gasto COFOG por año y categoría"
+    },
+    {
+      "path": "/api/v1/revenue.json",
+      "source": "Eurostat",
+      "description": "Ingresos y gastos públicos de España"
+    },
+    {
+      "path": "/api/v1/eurostat.json",
+      "source": "Eurostat",
+      "description": "Comparativa UE por indicadores fiscales"
+    },
+    {
+      "path": "/api/v1/ccaa-debt.json",
+      "source": "Banco de España",
+      "description": "Deuda de CCAA por comunidad"
+    },
+    {
+      "path": "/api/v1/meta.json",
+      "source": "Pipeline",
+      "description": "Estado de actualización y frescura de fuentes"
+    }
+  ],
+  "freshness": {
+    "debt": {
+      "success": true,
+      "lastUpdated": "2026-02-20T14:14:08.454Z",
+      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastRealDataDate": "2025-11-30",
+      "dataPoints": 373
+    },
+    "demographics": {
+      "success": true,
+      "lastUpdated": "2026-02-20T14:14:08.767Z",
+      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastRealDataDate": "2025-12-31"
+    },
+    "pensions": {
+      "success": true,
+      "lastUpdated": "2026-02-20T14:14:11.616Z",
+      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "criticalFallback": false,
+      "criticalFallbackReason": null,
+      "lastRealDataDate": "2026-01-01",
+      "dataPoints": 12
+    },
+    "budget": {
+      "success": true,
+      "lastUpdated": "2026-02-20T14:14:08.765Z",
+      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastRealDataDate": "2024-12-31",
+      "years": 30
+    },
+    "eurostat": {
+      "success": true,
+      "lastUpdated": "2026-02-20T14:14:08.545Z",
+      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastRealDataDate": "2026-02-20",
+      "year": 2024
+    },
+    "ccaaDebt": {
+      "success": true,
+      "lastUpdated": "2026-02-20T14:14:08.444Z",
+      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastRealDataDate": "2025-09-30",
+      "quarter": "2025-Q3"
+    },
+    "revenue": {
+      "success": true,
+      "lastUpdated": "2026-02-20T14:14:08.543Z",
+      "lastFetchAt": "2026-02-20T14:14:11.627Z",
+      "lastRealDataDate": "2026-02-20",
+      "latestYear": 2024
+    }
+  }
+}

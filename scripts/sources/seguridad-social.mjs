@@ -4,126 +4,70 @@ import { fetchWithRetry } from '../lib/fetch-utils.mjs'
 
 const SS_BASE = 'https://www.seg-social.es'
 const EST24_URL = `${SS_BASE}/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24`
+const MONTH_NAMES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
-/**
- * Download pension data from Seguridad Social
- *
- * Strategy:
- * 1. Scrape the EST24 page (Pensiones contributivas en vigor) to find Excel links
- * 2. Download the REG*.xlsx file (data by regime — has totals, payroll, averages)
- * 3. Parse "Total sistema" row from sheet "Régimen_clase"
- * 4. Fall back to hardcoded reference data if scraping fails
- *
- * @returns {Promise<Object>} Pension data object
- */
-export async function downloadPensionData() {
-  console.log('\n=== Descargando datos de pensiones (Seguridad Social) ===')
-  console.log()
-  console.log('  Estrategia: scraping Excel desde Seg. Social')
-  console.log(`  Página índice: ${EST24_URL}`)
-  console.log()
-
-  let liveData = null
+function normalizeExcelUrl(pathOrUrl) {
+  const cleaned = String(pathOrUrl || '').replace(/&amp;/g, '&').trim()
+  if (!cleaned) return null
 
   try {
-    liveData = await fetchFromSSExcel()
-  } catch (error) {
-    console.log(`  ❌ Error en scraping: ${error.message}`)
+    return new URL(cleaned, `${SS_BASE}/`).toString()
+  } catch {
+    if (cleaned.startsWith('http')) return cleaned
+    return `${SS_BASE}${cleaned}`
   }
-
-  if (liveData) {
-    console.log()
-    console.log('  ✅ Datos en vivo obtenidos de Seg. Social (Excel)')
-    console.log()
-  } else {
-    console.log()
-    console.log('  ⚠️  No se pudieron obtener datos en vivo → usando valores de referencia')
-    console.log()
-  }
-
-  return buildPensionResult(liveData)
 }
 
-/**
- * Scrape the SS EST24 page, find the REG*.xlsx link, download and parse it.
- *
- * The SS website publishes monthly Excel files with pension data.
- * URLs contain UUIDs that change each month, so we must scrape the page
- * to find the current links.
- *
- * @returns {Promise<Object|null>} Parsed pension data or null
- */
-export async function fetchFromSSExcel() {
-  // Step 1: Fetch the index page
-  console.log('  1. Descargando página índice EST24...')
-  console.log(`    URL: ${EST24_URL}`)
+function buildRecentRegFallbackUrls(months = 4) {
+  const fallback = []
+  const today = new Date()
 
-  const pageResponse = await fetchWithRetry(EST24_URL, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)',
-      'Accept': 'text/html'
-    }
-  }, { timeoutMs: 15000 })
-
-  const html = await pageResponse.text()
-  console.log(`    HTML recibido: ${(html.length / 1024).toFixed(1)} KB`)
-
-  // Step 2: Find the REG*.xlsx link (pension data by regime)
-  console.log()
-  console.log('  2. Buscando enlace a Excel de regímenes (REG*.xlsx)...')
-
-  const regexPattern = /href=["']([^"']*REG\d{6}\.xlsx[^"']*)["']/i
-  const match = html.match(regexPattern)
-
-  if (!match) {
-    // Try broader pattern
-    const allXlsx = [...html.matchAll(/href=["']([^"']*\.xlsx[^"']*)["']/gi)]
-    console.log(`    No se encontró REG*.xlsx. Total Excel encontrados: ${allXlsx.length}`)
-    allXlsx.slice(0, 5).forEach((m, i) => {
-      const filename = m[1].split('/').pop()?.split('?')[0] || m[1]
-      console.log(`      [${i + 1}] ${filename}`)
-    })
-    throw new Error('No se encontró enlace REG*.xlsx en la página')
+  for (let i = 0; i < months; i++) {
+    const dt = new Date(today.getFullYear(), today.getMonth() - i, 1)
+    const yyyymm = `${dt.getFullYear()}${String(dt.getMonth() + 1).padStart(2, '0')}`
+    fallback.push(`${SS_BASE}/REG${yyyymm}.xlsx`)
+    fallback.push(`${SS_BASE}/wps/wcm/connect/wss/REG${yyyymm}.xlsx`)
   }
 
-  // Clean up HTML entities in the URL
-  let excelPath = match[1].replace(/&amp;/g, '&')
-  const excelUrl = excelPath.startsWith('http') ? excelPath : `${SS_BASE}${excelPath}`
+  return fallback
+}
+
+function collectExcelCandidates(html) {
+  const regexPattern = /href=["']([^"']*REG\d{6}\.xlsx[^"']*)["']/i
+  const primaryMatch = html.match(regexPattern)
+  const primaryUrl = primaryMatch ? normalizeExcelUrl(primaryMatch[1]) : null
+
+  const allXlsx = [...html.matchAll(/href=["']([^"']*\.xlsx[^"']*)["']/gi)]
+  const regUrlsFromPage = allXlsx
+    .map(match => normalizeExcelUrl(match[1]))
+    .filter(Boolean)
+    .filter(url => /REG\d{6}\.xlsx/i.test(url))
+
+  const candidateUrls = [
+    primaryUrl,
+    ...regUrlsFromPage,
+    ...buildRecentRegFallbackUrls(4)
+  ].filter(Boolean)
+
+  return [...new Set(candidateUrls)]
+}
+
+function parseExcelMetadata(excelUrl) {
   const filename = excelUrl.split('/').pop()?.split('?')[0] || 'unknown'
-
-  console.log(`    Encontrado: ${filename}`)
-  console.log(`    URL completa: ${excelUrl.substring(0, 120)}...`)
-
-  // Extract the date from filename (e.g., REG202601.xlsx → enero 2026)
   const dateMatch = filename.match(/REG(\d{4})(\d{2})/)
   const excelDate = dateMatch
     ? `${dateMatch[1]}-${dateMatch[2]}-01`
     : new Date().toISOString().split('T')[0]
-  const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
   const monthLabel = dateMatch
-    ? `${monthNames[parseInt(dateMatch[2]) - 1]} ${dateMatch[1]}`
+    ? `${MONTH_NAMES[parseInt(dateMatch[2]) - 1]} ${dateMatch[1]}`
     : 'fecha desconocida'
 
-  console.log(`    Período: ${monthLabel}`)
+  return { filename, excelDate, monthLabel }
+}
 
-  // Step 3: Download the Excel file
-  console.log()
-  console.log('  3. Descargando Excel...')
-
-  const xlsxResponse = await fetchWithRetry(excelUrl, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)'
-    }
-  }, { timeoutMs: 15000 })
-
-  const buffer = await xlsxResponse.arrayBuffer()
-  console.log(`    Descargado: ${(buffer.byteLength / 1024).toFixed(1)} KB`)
-
-  // Step 4: Parse the Excel
-  console.log()
-  console.log('  4. Parseando Excel...')
-
+function parseSSExcelBuffer(buffer, excelUrl) {
+  const { excelDate, monthLabel } = parseExcelMetadata(excelUrl)
   const wb = XLSX.read(Buffer.from(buffer), { type: 'buffer' })
   console.log(`    Hojas: ${wb.SheetNames.join(', ')}`)
 
@@ -141,31 +85,48 @@ export async function fetchFromSSExcel() {
   const ws = wb.Sheets[sheetName]
   const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
 
-  // B4: Validación de headers Excel
-  let headerRow = null
-  for (let i = 0; i < Math.min(rows.length, 10); i++) {
-    const rowStr = (rows[i] || []).join(' ').toLowerCase()
-    if (rowStr.includes('pensiones') && (rowStr.includes('importe') || rowStr.includes('nómina'))) {
-      headerRow = rows[i]
-      console.log(`    Fila de cabecera detectada en posición ${i}`)
-      break
+  // B4: Validación de headers Excel (tolerante a variantes reales: "Número", "Importe", "P. media")
+  const normalizeHeaderText = value => String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  const scoreHeaderRow = row => {
+    const col1 = normalizeHeaderText(row?.[1])
+    const col2 = normalizeHeaderText(row?.[2])
+    const col3 = normalizeHeaderText(row?.[3])
+
+    const valid1 = /pensiones?|numero/.test(col1)
+    const valid2 = /importe|nomina/.test(col2)
+    const valid3 = /p\.?\s*media|pension\s*media|media/.test(col3)
+
+    return {
+      col1,
+      col2,
+      col3,
+      valid1,
+      valid2,
+      valid3,
+      score: [valid1, valid2, valid3].filter(Boolean).length
     }
   }
 
-  if (headerRow) {
-    const col1 = String(headerRow[1] || '').toLowerCase()
-    const col2 = String(headerRow[2] || '').toLowerCase()
-    const col3 = String(headerRow[3] || '').toLowerCase()
+  let bestHeader = null
+  for (let i = 0; i < Math.min(rows.length, 25); i++) {
+    const scored = scoreHeaderRow(rows[i])
+    if (!bestHeader || scored.score > bestHeader.score) {
+      bestHeader = { ...scored, index: i }
+    }
+  }
 
-    const valid1 = /pensiones/i.test(col1)
-    const valid2 = /importe|nómina/i.test(col2)
-    const valid3 = /pensión media/i.test(col3)
-
-    if (!valid1 || !valid2 || !valid3) {
-      console.warn(`    ⚠️  Detección de columnas sospechosa: [1]="${col1}", [2]="${col2}", [3]="${col3}"`)
-      console.warn('    Se esperaba: [1]~"pensiones", [2]~"importe/nómina", [3]~"pensión media"')
-    } else {
+  if (bestHeader && bestHeader.score >= 2) {
+    console.log(`    Fila de cabecera detectada en posición ${bestHeader.index}`)
+    if (bestHeader.score === 3) {
       console.log('    ✅ Cabeceras de columna validadas correctamente')
+    } else {
+      console.log(`    ℹ️  Cabecera parcial aceptada: [1]="${bestHeader.col1}", [2]="${bestHeader.col2}", [3]="${bestHeader.col3}"`)
     }
   } else {
     console.warn('    ⚠️  No se pudo encontrar la fila de cabecera para validar columnas')
@@ -226,6 +187,110 @@ export async function fetchFromSSExcel() {
   }
 }
 
+/**
+ * Download pension data from Seguridad Social
+ *
+ * Strategy:
+ * 1. Scrape the EST24 page (Pensiones contributivas en vigor) to find Excel links
+ * 2. Download the REG*.xlsx file (data by regime — has totals, payroll, averages)
+ * 3. Parse "Total sistema" row from sheet "Régimen_clase"
+ * 4. Fall back to hardcoded reference data if scraping fails
+ *
+ * @returns {Promise<Object>} Pension data object
+ */
+export async function downloadPensionData() {
+  console.log('\n=== Descargando datos de pensiones (Seguridad Social) ===')
+  console.log()
+  console.log('  Estrategia: scraping Excel desde Seg. Social')
+  console.log(`  Página índice: ${EST24_URL}`)
+  console.log()
+
+  let liveData = null
+  let liveDataError = null
+
+  try {
+    liveData = await fetchFromSSExcel()
+  } catch (error) {
+    liveDataError = error?.message || 'error desconocido'
+    console.log(`  ❌ Error en scraping: ${error.message}`)
+  }
+
+  if (liveData) {
+    console.log()
+    console.log('  ✅ Datos en vivo obtenidos de Seg. Social (Excel)')
+    console.log()
+  } else {
+    console.log()
+    console.log('  ⚠️  No se pudieron obtener datos en vivo → usando valores de referencia')
+    console.log()
+  }
+
+  return buildPensionResult(liveData, liveDataError)
+}
+
+/**
+ * Scrape the SS EST24 page, find the REG*.xlsx link, download and parse it.
+ *
+ * The SS website publishes monthly Excel files with pension data.
+ * URLs contain UUIDs that change each month, so we must scrape the page
+ * to find the current links.
+ *
+ * @returns {Promise<Object|null>} Parsed pension data or null
+ */
+export async function fetchFromSSExcel() {
+  // Step 1: Fetch the index page
+  console.log('  1. Descargando página índice EST24...')
+  console.log(`    URL: ${EST24_URL}`)
+
+  const pageResponse = await fetchWithRetry(EST24_URL, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)',
+      'Accept': 'text/html'
+    }
+  }, { timeoutMs: 15000 })
+
+  const html = await pageResponse.text()
+  console.log(`    HTML recibido: ${(html.length / 1024).toFixed(1)} KB`)
+
+  // Step 2: Find candidate REG*.xlsx links
+  console.log()
+  console.log('  2. Buscando enlaces REG*.xlsx...')
+  const candidateExcelUrls = collectExcelCandidates(html)
+  console.log(`    Candidatos REG*.xlsx: ${candidateExcelUrls.length}`)
+
+  if (candidateExcelUrls.length === 0) {
+    throw new Error('No se encontraron candidatos REG*.xlsx en la página ni en fallback local')
+  }
+
+  console.log()
+  console.log('  3. Descargando y validando Excel (con fallback de URLs)...')
+
+  let lastError = null
+  for (let i = 0; i < candidateExcelUrls.length; i++) {
+    const candidateUrl = candidateExcelUrls[i]
+    const { filename, monthLabel } = parseExcelMetadata(candidateUrl)
+    console.log(`    [${i + 1}/${candidateExcelUrls.length}] ${filename} (${monthLabel})`)
+
+    try {
+      const xlsxResponse = await fetchWithRetry(candidateUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)'
+        }
+      }, { timeoutMs: 15000 })
+
+      const buffer = await xlsxResponse.arrayBuffer()
+      console.log(`      Descargado: ${(buffer.byteLength / 1024).toFixed(1)} KB`)
+      console.log('      Parseando...')
+      return parseSSExcelBuffer(buffer, candidateUrl)
+    } catch (error) {
+      lastError = error
+      console.warn(`      ⚠️  Falló ${filename}: ${error.message}`)
+    }
+  }
+
+  throw new Error(`No se pudo procesar ningún Excel REG*.xlsx. Último error: ${lastError?.message || 'desconocido'}`)
+}
+
 // ─────────────────────────────────────────────
 // Reference / fallback data
 // ─────────────────────────────────────────────
@@ -247,7 +312,7 @@ const REFERENCE_DATA = {
 /**
  * Build pension result from live or fallback data
  */
-export function buildPensionResult(liveData) {
+export function buildPensionResult(liveData, fallbackReason = null) {
   const isFallback = !liveData
   const sourceUrl = `${SS_BASE}/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24`
 
@@ -311,7 +376,7 @@ export function buildPensionResult(liveData) {
   const liveDate = liveData?.date || undefined
   const liveNote = liveData
     ? `Datos Excel Seg. Social ${liveData.dateLabel}`
-    : 'Valor referencia ene 2026'
+    : `Valor referencia ene 2026${fallbackReason ? ` (${fallbackReason})` : ''}`
 
   const sourceAttribution = {
     monthlyPayroll: {
@@ -382,6 +447,11 @@ export function buildPensionResult(liveData) {
 
   const result = {
     lastUpdated: new Date().toISOString(),
+    pipeline: {
+      liveDataUsed: !isFallback,
+      criticalFallback: isFallback,
+      fallbackReason: isFallback ? fallbackReason || 'No se pudo procesar ningún REG*.xlsx' : null
+    },
     current: {
       monthlyPayroll,
       monthlyPayrollSS,

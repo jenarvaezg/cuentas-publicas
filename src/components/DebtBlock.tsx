@@ -9,12 +9,80 @@ import {
   withDate,
 } from "@/data/sources";
 import { useData } from "@/hooks/useData";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatCurrency, formatDate, formatPercent } from "@/utils/formatters";
+import { ExportBlockButton } from "./ExportBlockButton";
 import { RealtimeCounter } from "./RealtimeCounter";
 import { StatCard } from "./StatCard";
 
 export function DebtBlock() {
   const { debt, demographics } = useData();
+  const { msg, lang } = useI18n();
+
+  const copy =
+    lang === "en"
+      ? {
+          realtimeLabel: "Real-time total debt",
+          extrapolationPrefix: "Linear extrapolation over monthly series",
+          lastOfficial: "latest official data:",
+          debtPerCapita: "Debt per capita",
+          debtPerCapitaTooltip:
+            "How much each resident would owe if total debt were evenly distributed across the population.",
+          debtPerContributor: "Debt per contributor",
+          debtPerContributorTooltip:
+            "Debt burden per person active in the labor force (EPA active population).",
+          ratioDebtGdp: "Debt-to-GDP ratio",
+          ratioDebtGdpTooltip:
+            "Debt sustainability indicator comparing debt with annual national output (GDP).",
+          debtState: "Central government debt",
+          debtStateTooltip: "Debt issued by the Treasury to finance the central administration.",
+          debtRegions: "Regional debt",
+          debtRegionsTooltip:
+            "Accumulated debt of Spain's Autonomous Communities, including central loans (e.g. FLA).",
+          debtLocalAndSs: "Local + Social Security debt",
+          debtLocalAndSsTooltip:
+            "Combined debt of local governments and Social Security institutions.",
+          yoyLabel: "Year-over-year change",
+          yoyTooltip: "Percentage change versus the same month in the previous year.",
+          yoyNote: "% change latest data vs same month previous year",
+          perCapitaNote: "Total debt / population",
+          contributorNote: "Total debt / active population",
+          gdpNote: "Total debt / nominal GDP",
+          subsectorFootnote:
+            "* The sum of subsectors may exceed total EDP debt because official figures consolidate intergovernmental loans (FLA, FFPP), which are netted out in accounting.",
+        }
+      : {
+          realtimeLabel: "Deuda total en tiempo real",
+          extrapolationPrefix: "Extrapolación lineal sobre serie mensual",
+          lastOfficial: "último dato:",
+          debtPerCapita: "Deuda per cápita",
+          debtPerCapitaTooltip:
+            "Lo que debe cada habitante de España si repartiéramos la deuda por igual entre toda la población.",
+          debtPerContributor: "Deuda por contribuyente",
+          debtPerContributorTooltip:
+            "Carga de deuda por cada persona en edad y disposición de trabajar (población activa según la EPA).",
+          ratioDebtGdp: "Ratio deuda/PIB",
+          ratioDebtGdpTooltip:
+            "Mide la sostenibilidad de la deuda comparándola con todo lo que produce el país en un año (PIB).",
+          debtState: "Deuda Estado",
+          debtStateTooltip:
+            "Deuda emitida directamente por el Tesoro Público para financiar la Administración Central.",
+          debtRegions: "Deuda CCAA",
+          debtRegionsTooltip:
+            "Deuda acumulada por las 17 Comunidades Autónomas, incluyendo préstamos del Estado (como el FLA).",
+          debtLocalAndSs: "Deuda CCLL + Seg. Social",
+          debtLocalAndSsTooltip:
+            "Suma de la deuda de Ayuntamientos, Diputaciones, Cabildos y la propia Seguridad Social.",
+          yoyLabel: "Variación interanual",
+          yoyTooltip:
+            "Comparación porcentual de la deuda actual frente al mismo mes del año anterior.",
+          yoyNote: "Variación % último dato vs mismo mes año anterior",
+          perCapitaNote: "Deuda total / población",
+          contributorNote: "Deuda total / población activa",
+          gdpNote: "Deuda total / PIB nominal",
+          subsectorFootnote:
+            "* La suma de subsectores puede superar la deuda total PDE porque la cifra oficial consolida préstamos intergubernamentales (FLA, FFPP) que se compensan contablemente entre administraciones.",
+        };
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
   const perSecond = debt.regression.debtPerSecond;
@@ -29,7 +97,7 @@ export function DebtBlock() {
   const lastDebtDate =
     debt.historical.length > 0
       ? formatDate(debt.historical[debt.historical.length - 1].date)
-      : "N/D";
+      : msg.common.notAvailable;
   const demoDate = formatDate(demographics.lastUpdated);
 
   // Use real attributions from data if available, otherwise fall back to static sources
@@ -53,13 +121,16 @@ export function DebtBlock() {
     ? fromAttribution(debt.sourceAttribution.yearOverYearChange)
     : {
         ...CALCULO_DERIVADO,
-        note: "Variación % último dato vs mismo mes año anterior",
+        note: copy.yoyNote,
       };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Deuda Pública (PDE)</CardTitle>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle>{msg.blocks.debt.title}</CardTitle>
+          <ExportBlockButton targetId="deuda" filenamePrefix="cuentas-publicas-deuda" />
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center py-6 border-b gap-2">
@@ -67,11 +138,11 @@ export function DebtBlock() {
             baseValue={currentDebt}
             perSecond={perSecond}
             suffix=" €"
-            size="xl"
-            label="Deuda total en tiempo real"
+            size="lg"
+            label={copy.realtimeLabel}
           />
-          <p className="text-[10px] text-muted-foreground/70 text-center">
-            Extrapolación lineal sobre serie mensual{" "}
+          <p className="text-xs text-muted-foreground/80 text-center">
+            {copy.extrapolationPrefix}{" "}
             <a
               href={BDE_BE11B.url}
               target="_blank"
@@ -80,73 +151,61 @@ export function DebtBlock() {
             >
               BdE be11b.csv
             </a>{" "}
-            (último dato: {lastDebtDate})
+            ({copy.lastOfficial} {lastDebtDate})
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
-            label="Deuda per cápita"
+            label={copy.debtPerCapita}
             value={formatCurrency(debtPerCapita)}
-            tooltip="Lo que debe cada habitante de España si repartiéramos la deuda por igual entre toda la población."
+            tooltip={copy.debtPerCapitaTooltip}
             delay={0.05}
-            sources={[
-              { ...CALCULO_DERIVADO, note: "Deuda total / población" },
-              bdeSource,
-              inePopSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.perCapitaNote }, bdeSource, inePopSource]}
           />
           <StatCard
-            label="Deuda por contribuyente"
+            label={copy.debtPerContributor}
             value={formatCurrency(debtPerContributor)}
-            tooltip="Carga de deuda por cada persona en edad y disposición de trabajar (población activa según la EPA)."
+            tooltip={copy.debtPerContributorTooltip}
             delay={0.1}
-            sources={[
-              { ...CALCULO_DERIVADO, note: "Deuda total / población activa" },
-              bdeSource,
-              ineEpaSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.contributorNote }, bdeSource, ineEpaSource]}
           />
           <StatCard
-            label="Ratio deuda/PIB"
+            label={copy.ratioDebtGdp}
             value={formatPercent(debt.current.debtToGDP)}
-            tooltip="Mide la sostenibilidad de la deuda comparándola con todo lo que produce el país en un año (PIB)."
+            tooltip={copy.ratioDebtGdpTooltip}
             delay={0.15}
-            sources={[
-              { ...CALCULO_DERIVADO, note: "Deuda total / PIB nominal" },
-              bdeSource,
-              inePibSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.gdpNote }, bdeSource, inePibSource]}
           />
 
           <StatCard
-            label="Deuda Estado"
+            label={copy.debtState}
             value={formatCompact(debt.current.debtBySubsector.estado)}
-            tooltip="Deuda emitida directamente por el Tesoro Público para financiar la Administración Central."
+            tooltip={copy.debtStateTooltip}
             delay={0.2}
             sources={[bdeSource]}
           />
           <StatCard
-            label="Deuda CCAA"
+            label={copy.debtRegions}
             value={formatCompact(debt.current.debtBySubsector.ccaa)}
-            tooltip="Deuda acumulada por las 17 Comunidades Autónomas, incluyendo préstamos del Estado (como el FLA)."
+            tooltip={copy.debtRegionsTooltip}
             delay={0.25}
             sources={[bdeSource]}
           />
           <StatCard
-            label="Deuda CCLL + Seg. Social"
+            label={copy.debtLocalAndSs}
             value={formatCompact(
               debt.current.debtBySubsector.ccll + debt.current.debtBySubsector.ss,
             )}
-            tooltip="Suma de la deuda de Ayuntamientos, Diputaciones, Cabildos y la propia Seguridad Social."
+            tooltip={copy.debtLocalAndSsTooltip}
             delay={0.3}
             sources={[bdeSource]}
           />
 
           <StatCard
-            label="Variación interanual"
+            label={copy.yoyLabel}
             value={formatPercent(yoyChange)}
-            tooltip="Comparación porcentual de la deuda actual frente al mismo mes del año anterior."
+            tooltip={copy.yoyTooltip}
             delay={0.35}
             trend={{
               value: yoyChange,
@@ -157,11 +216,7 @@ export function DebtBlock() {
           />
         </div>
 
-        <p className="text-[10px] text-muted-foreground/60 italic px-2">
-          * La suma de subsectores puede superar la deuda total PDE porque la cifra oficial
-          consolida préstamos intergubernamentales (FLA, FFPP) que se compensan contablemente entre
-          administraciones.
-        </p>
+        <p className="text-xs text-muted-foreground/80 italic px-2">{copy.subsectorFootnote}</p>
       </CardContent>
     </Card>
   );

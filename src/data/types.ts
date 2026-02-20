@@ -27,6 +27,11 @@ export interface DebtData {
 
 export interface PensionData {
   lastUpdated: string;
+  pipeline?: {
+    liveDataUsed: boolean;
+    criticalFallback: boolean;
+    fallbackReason: string | null;
+  };
   current: {
     monthlyPayroll: number;
     monthlyPayrollSS: number;
@@ -157,35 +162,51 @@ export interface MetaData {
     debt: {
       success: boolean;
       lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
       dataPoints: number;
     };
     demographics: {
       success: boolean;
       lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
     };
     pensions: {
       success: boolean;
       lastUpdated: string;
+      lastFetchAt?: string;
+      criticalFallback?: boolean;
+      criticalFallbackReason?: string | null;
+      lastRealDataDate?: string;
       dataPoints: number;
     };
     budget: {
       success: boolean;
       lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
       years: number;
     };
     eurostat?: {
       success: boolean;
       lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
       year: number;
     };
     ccaaDebt?: {
       success: boolean;
       lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
       quarter: string;
     };
     revenue?: {
       success: boolean;
       lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
       latestYear: number;
     };
   };

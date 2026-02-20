@@ -6,7 +6,7 @@ Inventario técnico de todos los datos del dashboard: clasificación, fuentes, f
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 7 archivos JSON en `src/data/` importados en build time (no hay API calls en runtime). Cada fuente tiene fallback hardcodeado para garantizar que la app siempre funcione.
+El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 8 archivos JSON en `src/data/` (7 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
 
 **Estado general**: De ~40 métricas mostradas, **~22 son automatizadas**, **~5 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~7 son derivadas** por cálculo.
 
@@ -48,7 +48,7 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 | PIB nominal | **AUTOMATIZADO** | `CNTR6597` (Tabla 30679) | Trimestral (suma 4Q) | 1,686 B€ | BAJA |
 | Salario medio | **AUTOMATIZADO** pero MUY DESFASADO | `EAES741` (Tabla 28191) | Anual (~2 años lag) | 28.050€ (**dato 2022**) | ALTA |
 | SMI | **HARDCODEADO** | — (BOE) | Anual | 1.221€/mes (2026) | ALTA — actualizar a mano cada enero |
-| IPC (30 años) | **AUTOMATIZADO** | `IPC278296` + `IPC290750` | Anual | 1995-2024, base 2024 | MEDIA |
+| IPC (31 años) | **AUTOMATIZADO** | `IPC278296` + `IPC290750` | Anual | 1995-2025, base 2024 | MEDIA |
 
 **URLs** (estables — API Tempus):
 - Base: `https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/{SERIE}?nult=N`
@@ -57,7 +57,7 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 1. **Salario medio con 3+ años de retraso**: El dato actual (28.050€) es de 2022. INE publica la Encuesta de Estructura Salarial con ~2 años de lag.
 2. **SMI requiere actualización manual** cada enero cuando se publica en el BOE.
 3. **Población (ECP320)**: Tabla 56934 conocida por devolver datos antiguos. Sanity check (40M-60M) no detecta datos viejos.
-4. **CPI solo hasta 2024**: Media anual se publica al cerrar el año. Limita deflación a euros de 2024.
+4. **CPI limitado al último año cerrado**: actualmente llega hasta 2025 (base 2024). La serie del año en curso se consolida al cierre anual.
 
 ---
 
@@ -77,7 +77,7 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 | Déficit acumulado (desde 2011) | **HARDCODEADO** | UV-Eje, Fedea SSA, BdE | 300.000 M€ (base ene 2026) | MUY ALTA |
 | Fondo de Reserva | **HARDCODEADO** | Ministerio | 2.100 M€ | ALTA |
 | Gasto por segundo | **DERIVADO** | nómina × 14 / 365,25 / 86400 | 7.058 €/s | BAJA |
-| Serie histórica | **HARDCODEADA** | 11 puntos interpolados a mano | 2020-2026 | MUY ALTA |
+| Serie histórica | **HARDCODEADA** | 11 puntos interpolados a mano + último punto live/fallback | 2020-2026 | MUY ALTA |
 
 **Proceso de scraping** (el más frágil del pipeline):
 ```
@@ -94,7 +94,7 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 3. **Índices de columna hardcodeados** (`[1]`, `[2]`, `[3]`) — si SS reordena columnas, valores erróneos sin error visible.
 4. **"Total sistema" como ancla**: Si cambian a "TOTAL SISTEMA" o "Total del Sistema", no encuentra la fila.
 5. **Clases Pasivas sin fuente**: No hay API ni archivo descargable. Se estima como ~11,6% de la nómina SS.
-6. **Serie histórica inventada**: Los 11 puntos (2020-2025) son valores interpolados a mano, no descargados.
+6. **Serie histórica inventada**: Los 11 puntos base (2020-2025) son valores interpolados a mano, no descargados.
 7. **Afiliados sin fuente**: 21.3M es estimación. SS publica afiliados pero no en formato fácilmente automatizable.
 8. **Cotizaciones sociales**: 180.000 M€ del PGE 2025. Actualizar manualmente con cada PGE.
 9. **Déficit acumulado 300.000 M€**: Estimación conservadora basada en literatura. Requiere revisión manual periódica.
@@ -204,13 +204,13 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
-| `deploy.yml` | Push a main | lint -> test -> build -> deploy a GitHub Pages |
+| `deploy.yml` | Push/PR a main | lint -> test -> build (deploy solo en push a main) |
 | `update-data.yml` | Lunes 08:00 UTC + manual | `npm run download-data` -> check stale -> auto-commit |
 
 **Lógica de robustez en CI**:
 1. **Éxito parcial**: El script de descarga devuelve exit 0 si las fuentes críticas (deuda, demografía, pensiones, presupuestos) son correctas, permitiendo fallos temporales en fuentes secundarias (Eurostat, CCAA).
 2. **Alertas de datos obsoletos (Stale)**: Tras la descarga, el workflow verifica si alguna fuente tiene un desfase > 14 días. Si es así, crea automáticamente una GitHub Issue detallando el problema.
-3. **Auto-commit**: Solo se guardan cambios si las fuentes críticas están OK.
+3. **Auto-commit**: Solo se guardan cambios si las fuentes críticas están OK (datasets + API pública + artefactos SEO/SSG + RSS).
 4. **Validación de cabeceras**: Los scripts de Seguridad Social e IGAE validan la estructura del Excel antes de procesar, emitiendo avisos ante cambios de formato.
 
 ---
@@ -228,8 +228,8 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 | Población total | INE API ECP320 | Anual | Media |
 | Población activa (EPA) | INE API EPA387794 | Trimestral | Alta |
 | PIB nominal | INE API CNTR6597 | Trimestral | Alta |
-| IPC (1995-2024) | INE API IPC278296+290750 | Anual | Alta |
-| Gasto COFOG (10 div × 30 años) | IGAE Excel | Anual | Media (índices frágiles) |
+| IPC (1995-2025) | INE API IPC278296+290750 | Anual | Alta |
+| Gasto COFOG (10 div × 30 años) | IGAE Excel | Anual | Media (detección dinámica + fallback) |
 | Deuda/PIB comparativa EU | Eurostat API | Anual (~1-2a lag) | Alta |
 | Déficit/superávit EU | Eurostat API | Anual | Alta |
 | Gasto público/PIB EU | Eurostat API | Anual | Alta |
@@ -250,20 +250,20 @@ El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat)
 | Nómina pensiones SS | Seg. Social Excel | MUY ALTO — UUID URLs + scraping |
 | N.° pensiones | Seg. Social Excel | MUY ALTO |
 | Pensión media jubilación | Seg. Social Excel | MUY ALTO |
-| Subcategorías COFOG (~70) | IGAE Excel | ALTO — rangos columnas hardcodeados |
+| Subcategorías COFOG (~70) | IGAE Excel | MEDIA — detección dinámica con fallback a rangos hardcodeados |
 | Salario medio | INE API EAES741 | MEDIO — dato de hace 3 años |
 
 ### HARDCODEADOS / MANUALES (requieren intervención humana)
 | Dato | Valor actual | Cuándo actualizar | Dónde |
 |------|-------------|-------------------|-------|
-| SMI | 1.134€/mes (2025) | Cada enero (BOE) | `ine.mjs` -> `SMI_MONTHLY` |
+| SMI | 1.221€/mes (2026) | Cada enero (BOE) | `ine.mjs` -> valor hardcodeado `smi: 1_221` |
 | Clases Pasivas | 1.659 M€/mes | Cuando haya datos | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | N.° afiliados | 21.300.000 | Trimestralmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Cotizaciones sociales | 180.000 M€/año | Con cada PGE | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Fondo de Reserva | 2.100 M€ | Cuando se publique | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Déficit acumulado (base) | 300.000 M€ (ene 2026) | Anualmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Gasto en intereses | 39.000 M€ (PGE 2025) | Con cada PGE | `bde.mjs` -> `REFERENCE_INTEREST_EXPENSE` |
-| Serie hist. pensiones | 11 puntos interpolados | Con cada descarga exitosa | `seguridad-social.mjs` |
+| Serie hist. pensiones | 11 puntos interpolados + 1 punto actual | Con cada descarga exitosa | `seguridad-social.mjs` |
 
 ### DERIVADOS (calculados a partir de otros datos)
 | Dato | Fórmula | Depende de |
@@ -306,7 +306,7 @@ scripts/
 
 src/data/
   debt.json                      # 373 puntos mensuales + regresión
-  demographics.json              # Población, PIB, salarios, CPI (30 años)
+  demographics.json              # Población, PIB, salarios, CPI (31 años)
   pensions.json                  # Nómina, pensiones, déficit + 12 hist.
   budget.json                    # COFOG 30 años × 10 div × ~7 subcats
   eurostat.json                  # Comparativa EU-27 (5 indicadores × 8 países)

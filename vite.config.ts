@@ -9,6 +9,16 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      includeAssets: [
+        "favicon.svg",
+        "favicon-16.png",
+        "favicon-32.png",
+        "apple-touch-icon.png",
+        "offline.html",
+        "robots.txt",
+        "sitemap.xml",
+        "feed.xml",
+      ],
       manifest: {
         name: "Cuentas Públicas de España en Tiempo Real",
         short_name: "Cuentas Públicas",
@@ -24,7 +34,58 @@ export default defineConfig({
         ],
       },
       workbox: {
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+        navigateFallback: "index.html",
         globPatterns: ["**/*.{js,css,html,json,png,jpg,svg,ico}"],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "google-fonts",
+              expiration: {
+                maxEntries: 16,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "images-cache",
+              expiration: {
+                maxEntries: 120,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /\/api\/v1\/.*\.json$/i,
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "api-v1-cache",
+              expiration: {
+                maxEntries: 40,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "pages-cache",
+              networkTimeoutSeconds: 3,
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],
@@ -62,5 +123,6 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    exclude: ["tests/e2e/**", "node_modules/**", "dist/**", "coverage/**"],
   },
 });

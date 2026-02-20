@@ -1,5 +1,9 @@
 # Roadmap — Dashboard Fiscal de España
 
+Estado validado contra el código actual: **20 febrero 2026**.
+
+Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
+
 ## Fase 1: Deuda + Pensiones (MVP) ✅
 
 - Dashboard con contadores en tiempo real
@@ -24,13 +28,13 @@
 ## Fase 3: CCAA + Polish
 
 - ✅ Datos desglosados por CCAA (CSV be1309/be1310 del BdE) — ranking general
-- Selector de Comunidad Autónoma (drill-down detallado)
-- Deuda, déficit y gasto por comunidad (vista detallada per-CCAA)
-- SSG/pre-rendering para SEO
-- Compartir: URL con parámetros, captura de imagen
-- PWA offline completa
-- Tests E2E con Playwright
-- i18n (castellano + inglés)
+- ✅ Selector de Comunidad Autónoma (incluye persistencia en URL)
+- 🟡 Deuda, déficit y gasto por comunidad (detalle de deuda listo; déficit/gasto pendientes)
+- ✅ SEO pre-render + SSG multi-ruta: snapshot estático, sitemap y páginas por sección (`/secciones/*`, `/en/sections/*`)
+- ✅ Compartir: hash + URL state (`section`, `ccaa`, `ccaaMetric`) + export PNG por bloque
+- ✅ PWA offline hardening: runtime caching, fallback offline y registro SW con actualización
+- ✅ Tests E2E con Playwright (smoke suite)
+- ✅ i18n de interfaz y contenidos largos (castellano + inglés): selector, UI principal, metodología y roadmap
 
 ---
 
@@ -52,7 +56,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 | Cotizaciones sociales reales | Base del déficit contributivo | AEAT recaudación o liquidación presupuestaria SS | ALTA |
 | Serie histórica pensiones real | Los 11 puntos actuales son interpolados | Histórico EST24 o Anuario Estadístico SS | MEDIA |
 | SMI automático | Actualización manual cada enero | Tabla INE si existe, o historial hardcodeado | MEDIA |
-| CPI 2025 | Solo llega hasta 2024; limita deflación | INE publica media anual en enero del año siguiente | BAJA (esperar) |
+| CPI 2026 | La serie suele llegar hasta el último año cerrado; limita deflación del año en curso | INE publica media anual al cierre del año | BAJA (esperar) |
 | Tipo interés medio de la deuda | Calcular coste intereses dinámicamente | Tesoro Público — tipos medios emisión | MEDIA |
 | Inflación anual actual | Dato de contexto muy demandado | INE API — IPC variación anual (ya tenemos serie) | BAJA |
 | Déficit acumulado recalculado | Eliminar hardcoded 300 mm€ | Script que sume gasto vs cotizaciones anualmente | MEDIA |
@@ -69,17 +73,24 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 ### Robustez del pipeline
 
 1. **✅ IGAE: Detectar columnas por header en vez de por índice** — Leer fila cabecera, buscar códigos COFOG (01, 02...) y calcular índices dinámicamente. Elimina el problema de desplazamiento.
-2. **SS: Fallback de URLs alternativas** — Mantener últimas 3-4 URLs conocidas del Excel y probarlas si scraping falla. Alertar (GitHub Issue automática) si ninguna funciona.
+2. **✅ SS: Fallback + alerta automática** — Prueba múltiples URLs (scrape + fallback local) y crea/actualiza issue automática cuando entra en fallback crítico.
 3. **✅ Validación cruzada COFOG** — Verificar que suma de 10 divisiones = total general. Si no cuadra, log warning + mantener datos anteriores.
 4. **✅ SS: Validación de cabeceras** — Comprobar que las columnas del Excel coinciden con el esquema esperado antes de procesar.
 
 ### Infraestructura y UX
 
 - **✅ Tooltips/modales explicativos por métrica**: Cada gráfica y dato debería tener un icono de ayuda (?) que abra un tooltip o modal explicando qué es el dato, cómo se calcula y por qué es importante. Objetivo: que cualquier persona sin formación económica entienda cada cifra.
-- **Roadmap visible en la web**: Mostrar este roadmap como una página dentro del dashboard.
-- **Compartir gráficos individuales**: Botón para exportar cada bloque como imagen (canvas -> PNG).
-- **Notificaciones de datos nuevos**: Suscripción por email/RSS cuando se actualizan los datos.
-- **API pública**: Endpoint JSON para que otros proyectos consuman nuestros datos procesados.
+- **✅ Roadmap visible en la web**: Sección integrada en el dashboard (`RoadmapSection`).
+- **✅ Compartir gráficos individuales**: Botón para exportar cada bloque como imagen (PNG).
+- **✅ Notificaciones de datos nuevos (RSS)**: Feed en `/feed.xml` con publicaciones de actualización.
+- **✅ API pública**: endpoints versionados en `/api/v1` + catálogo `index.json` + documentación `API.md`.
 - **✅ Alertas de datos stale**: Si un dato > X meses de antigüedad, crear GitHub Issue automática (umbral actual: 14 días).
-- **Ampliar meta.json**: Incluir "último dato real" (no último download) para cada métrica. Mostrar en UI cuándo se actualizó realmente cada dato.
-- **Tests de integridad**: Tests que verifiquen `debtToGDP > 0`, `interestExpense > 0`, suma COFOG cuadre, etc.
+- **✅ Ampliar meta.json**: `lastRealDataDate` y `lastFetchAt` añadidos por fuente.
+- **✅ Tests de integridad**: suite explícita (`scripts/__tests__/data-integrity.test.mjs`) para datasets y metadatos.
+
+---
+
+## Orden Propuesto de Ejecución
+
+1. **Completar CCAA (déficit y gasto por comunidad)**  
+   Último gran bloque funcional pendiente antes de nuevas líneas de producto.

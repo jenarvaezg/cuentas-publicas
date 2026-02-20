@@ -2,9 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   @apply antialiased bg-background text-foreground;
   min-height: 100vh;
+  line-height: 1.5;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  background-image: radial-gradient(
+    circle at top right,
+    hsl(var(--primary) / 0.08) 0%,
+    hsl(var(--background)) 44%
+  );
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Fraunces", Georgia, serif;
 }
 
 @keyframes fade-in {
@@ -99,6 +116,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {

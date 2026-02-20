@@ -14,7 +14,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CALCULO_DERIVADO, EUROSTAT_GOV_MAIN, fromAttribution } from "@/data/sources";
 import { useData } from "@/hooks/useData";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
+import { ExportBlockButton } from "./ExportBlockButton";
 import { StatCard } from "./StatCard";
 
 export interface BreakdownDatum {
@@ -27,17 +29,20 @@ export interface BreakdownDatum {
 export const BreakdownTooltip = ({
   active,
   payload,
+  millionSuffix,
 }: {
   active?: boolean;
   payload?: Array<{ payload: BreakdownDatum }>;
+  millionSuffix?: string;
 }) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
+  const millions = millionSuffix ?? "M€";
   return (
     <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
       <p className="font-semibold text-foreground">{d.name}</p>
       <p className="text-muted-foreground">
-        {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
+        {formatNumber(d.amount, 0)} {millions} ({formatNumber(d.percentage, 1)}%)
       </p>
     </div>
   );
@@ -47,22 +52,41 @@ export const HistoricalTooltip = ({
   active,
   payload,
   label,
+  revenueLabel,
+  spendingLabel,
+  surplusLabel,
+  deficitLabel,
+  millionSuffix,
 }: {
   active?: boolean;
   payload?: Array<{ dataKey: string; value: number; color: string }>;
   label?: number;
+  revenueLabel?: string;
+  spendingLabel?: string;
+  surplusLabel?: string;
+  deficitLabel?: string;
+  millionSuffix?: string;
 }) => {
   if (!active || !payload?.length || !label) return null;
   const ingresos = payload.find((p) => p.dataKey === "ingresos")?.value ?? 0;
   const gastos = payload.find((p) => p.dataKey === "gastos")?.value ?? 0;
   const balance = ingresos - gastos;
+  const revenueText = revenueLabel ?? "Ingresos";
+  const spendingText = spendingLabel ?? "Gastos";
+  const surplusText = surplusLabel ?? "Superávit";
+  const deficitText = deficitLabel ?? "Déficit";
+  const millions = millionSuffix ?? "M€";
   return (
     <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
       <p className="font-semibold text-foreground">{label}</p>
-      <p className="text-emerald-600">Ingresos: {formatNumber(ingresos, 0)} M€</p>
-      <p className="text-rose-500">Gastos: {formatNumber(gastos, 0)} M€</p>
+      <p className="text-emerald-600">
+        {revenueText}: {formatNumber(ingresos, 0)} {millions}
+      </p>
+      <p className="text-rose-500">
+        {spendingText}: {formatNumber(gastos, 0)} {millions}
+      </p>
       <p className={balance >= 0 ? "text-emerald-600 font-medium" : "text-rose-500 font-medium"}>
-        {balance >= 0 ? "Superávit" : "Déficit"}: {formatNumber(balance, 0)} M€
+        {balance >= 0 ? surplusText : deficitText}: {formatNumber(balance, 0)} {millions}
       </p>
     </div>
   );
@@ -75,15 +99,57 @@ const BREAKDOWN_COLORS = {
   otherRevenue: "hsl(265, 50%, 55%)",
 };
 
-const BREAKDOWN_LABELS: Record<string, string> = {
-  taxesDirect: "Impuestos directos (IRPF, IS)",
-  taxesIndirect: "Impuestos indirectos (IVA, IIEE)",
-  socialContributions: "Cotizaciones sociales",
-  otherRevenue: "Otros ingresos",
-};
-
 export function RevenueBlock() {
   const { revenue, demographics } = useData();
+  const { msg, lang } = useI18n();
+
+  const copy =
+    lang === "en"
+      ? {
+          taxesDirect: "Direct taxes (PIT, CIT)",
+          taxesIndirect: "Indirect taxes (VAT, excise)",
+          socialContributions: "Social contributions",
+          otherRevenue: "Other revenue",
+          totalRevenue: "Total revenue",
+          totalExpenditure: "Total expenditure",
+          surplus: "Surplus",
+          deficit: "Deficit",
+          taxBurden: "Tax burden",
+          compositionTitle: "Revenue composition",
+          historicalTitle: "Historical revenue vs expenditure",
+          revenueLegend: "Revenue",
+          spendingLegend: "Spending",
+          adminScope: "General government (S.13)",
+          millionEuros: "Million euros",
+          yearLabel: "Year",
+          derivativeNote: "Total revenue / nominal GDP",
+        }
+      : {
+          taxesDirect: "Impuestos directos (IRPF, IS)",
+          taxesIndirect: "Impuestos indirectos (IVA, IIEE)",
+          socialContributions: "Cotizaciones sociales",
+          otherRevenue: "Otros ingresos",
+          totalRevenue: "Ingresos totales",
+          totalExpenditure: "Gastos totales",
+          surplus: "Superávit",
+          deficit: "Déficit",
+          taxBurden: "Presión fiscal",
+          compositionTitle: "Composición de los ingresos",
+          historicalTitle: "Evolución histórica ingresos vs gastos",
+          revenueLegend: "Ingresos",
+          spendingLegend: "Gastos",
+          adminScope: "Total Administraciones Públicas (S.13)",
+          millionEuros: "Millones de euros",
+          yearLabel: "Año",
+          derivativeNote: "Ingresos totales / PIB nominal",
+        };
+
+  const breakdownLabels: Record<string, string> = {
+    taxesDirect: copy.taxesDirect,
+    taxesIndirect: copy.taxesIndirect,
+    socialContributions: copy.socialContributions,
+    otherRevenue: copy.otherRevenue,
+  };
 
   const years = revenue.years;
   const latestYear = revenue.latestYear;
@@ -104,25 +170,25 @@ export function RevenueBlock() {
 
     const items: BreakdownDatum[] = [
       {
-        name: BREAKDOWN_LABELS.taxesDirect,
+        name: breakdownLabels.taxesDirect,
         key: "taxesDirect",
         amount: yearData.taxesDirect,
         percentage: (yearData.taxesDirect / total) * 100,
       },
       {
-        name: BREAKDOWN_LABELS.socialContributions,
+        name: breakdownLabels.socialContributions,
         key: "socialContributions",
         amount: yearData.socialContributions,
         percentage: (yearData.socialContributions / total) * 100,
       },
       {
-        name: BREAKDOWN_LABELS.taxesIndirect,
+        name: breakdownLabels.taxesIndirect,
         key: "taxesIndirect",
         amount: yearData.taxesIndirect,
         percentage: (yearData.taxesIndirect / total) * 100,
       },
       {
-        name: BREAKDOWN_LABELS.otherRevenue,
+        name: breakdownLabels.otherRevenue,
         key: "otherRevenue",
         amount: yearData.otherRevenue,
         percentage: (yearData.otherRevenue / total) * 100,
@@ -130,7 +196,13 @@ export function RevenueBlock() {
     ];
 
     return items.sort((a, b) => b.amount - a.amount);
-  }, [yearData]);
+  }, [
+    breakdownLabels.otherRevenue,
+    breakdownLabels.socialContributions,
+    breakdownLabels.taxesDirect,
+    breakdownLabels.taxesIndirect,
+    yearData,
+  ]);
 
   // Historical area chart data
   const historicalData = useMemo(() => {
@@ -159,13 +231,13 @@ export function RevenueBlock() {
     <Card>
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <CardTitle>Ingresos vs Gastos Públicos</CardTitle>
+          <CardTitle>{msg.blocks.revenue.title}</CardTitle>
           <div className="flex items-center gap-1.5">
             <label
               htmlFor="revenue-year"
               className="text-xs text-muted-foreground whitespace-nowrap"
             >
-              Año
+              {msg.common.year}
             </label>
             <select
               id="revenue-year"
@@ -180,38 +252,39 @@ export function RevenueBlock() {
               ))}
             </select>
           </div>
+          <ExportBlockButton
+            targetId="ingresos-gastos"
+            filenamePrefix="cuentas-publicas-ingresos-gastos"
+          />
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Summary stat cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            label="Ingresos totales"
+            label={copy.totalRevenue}
             value={formatCompact(totalRevenueEuros)}
             delay={0.05}
             sources={[revenueSource]}
           />
           <StatCard
-            label="Gastos totales"
+            label={copy.totalExpenditure}
             value={formatCompact(totalExpenditureEuros)}
             delay={0.1}
             sources={[revenueSource]}
           />
           <StatCard
-            label={balanceEuros >= 0 ? "Superávit" : "Déficit"}
+            label={balanceEuros >= 0 ? copy.surplus : copy.deficit}
             value={formatCompact(balanceEuros)}
             delay={0.15}
             className={balanceEuros >= 0 ? "border-emerald-500/30" : "border-rose-500/30"}
             sources={[revenueSource]}
           />
           <StatCard
-            label="Presión fiscal"
+            label={copy.taxBurden}
             value={formatPercent(presionFiscal)}
             delay={0.2}
-            sources={[
-              { ...CALCULO_DERIVADO, note: "Ingresos totales / PIB nominal" },
-              revenueSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeNote }, revenueSource]}
           />
         </div>
 
@@ -219,7 +292,7 @@ export function RevenueBlock() {
         {breakdownData.length > 0 && (
           <div>
             <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
-              Composición de los ingresos ({selectedYear})
+              {copy.compositionTitle} ({selectedYear})
             </h3>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart
@@ -240,7 +313,7 @@ export function RevenueBlock() {
                   tick={{ fontSize: 11 }}
                   stroke="hsl(var(--muted-foreground))"
                 />
-                <Tooltip content={<BreakdownTooltip />} />
+                <Tooltip content={<BreakdownTooltip millionSuffix="M€" />} />
                 <Bar dataKey="amount" radius={[0, 4, 4, 0]}>
                   {breakdownData.map((entry) => (
                     <Cell
@@ -258,16 +331,16 @@ export function RevenueBlock() {
         {historicalData.length > 1 && (
           <div>
             <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
-              Evolución histórica ingresos vs gastos
+              {copy.historicalTitle}
             </h3>
             <div className="flex items-center justify-center gap-5 mb-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <span className="inline-block w-3 h-3 rounded-sm bg-emerald-500" />
-                Ingresos
+                {copy.revenueLegend}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-block w-3 h-3 rounded-sm bg-rose-500" />
-                Gastos
+                {copy.spendingLegend}
               </span>
             </div>
             <ResponsiveContainer width="100%" height={300}>
@@ -283,7 +356,17 @@ export function RevenueBlock() {
                   tick={{ fontSize: 11 }}
                   stroke="hsl(var(--muted-foreground))"
                 />
-                <Tooltip content={<HistoricalTooltip />} />
+                <Tooltip
+                  content={
+                    <HistoricalTooltip
+                      revenueLabel={copy.revenueLegend}
+                      spendingLabel={copy.spendingLegend}
+                      surplusLabel={copy.surplus}
+                      deficitLabel={copy.deficit}
+                      millionSuffix="M€"
+                    />
+                  }
+                />
                 <Area
                   type="monotone"
                   dataKey="ingresos"
@@ -305,8 +388,8 @@ export function RevenueBlock() {
           </div>
         )}
 
-        <p className="text-[10px] text-muted-foreground/70 text-center">
-          Total Administraciones Públicas (S.13) — Millones de euros —{" "}
+        <p className="text-xs text-muted-foreground/80 text-center">
+          {copy.adminScope} — {copy.millionEuros} —{" "}
           <a
             href={EUROSTAT_GOV_MAIN.url}
             target="_blank"
@@ -315,7 +398,7 @@ export function RevenueBlock() {
           >
             Eurostat gov_10a_main
           </a>{" "}
-          — Año {selectedYear}
+          — {copy.yearLabel} {selectedYear}
         </p>
       </CardContent>
     </Card>

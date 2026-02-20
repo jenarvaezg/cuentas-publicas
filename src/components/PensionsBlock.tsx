@@ -10,6 +10,7 @@ import {
   withDate,
 } from "@/data/sources";
 import { useData } from "@/hooks/useData";
+import { useI18n } from "@/i18n/I18nProvider";
 import {
   formatCompact,
   formatCurrency,
@@ -17,11 +18,82 @@ import {
   formatNumber,
   formatPercent,
 } from "@/utils/formatters";
+import { ExportBlockButton } from "./ExportBlockButton";
 import { RealtimeCounter } from "./RealtimeCounter";
 import { StatCard } from "./StatCard";
 
 export function PensionsBlock() {
   const { pensions, demographics } = useData();
+  const { msg, lang } = useI18n();
+
+  const copy =
+    lang === "en"
+      ? {
+          realtimeLabel: "Pension spending since you opened this page",
+          basedOn: "based on monthly payroll",
+          pensionSecondSuffix: "in pensions",
+          includesSources: "Includes contributory SS + civil service pensions",
+          monthlyPayroll: "Total monthly payroll",
+          monthlyPayrollTooltip:
+            "Total amount paid each month to all pensioners (Social Security + civil service pensions).",
+          contributoryDeficit: "Contributory deficit",
+          contributoryDeficitTooltip:
+            "Annual gap between social contributions collected and contributory pension spending.",
+          contributorsPerPensioner: "Contributors per pensioner",
+          contributorsPerPensionerTooltip:
+            "Active workers per pension in payment. A ratio close to 2.0 is usually considered more stable.",
+          averageRetirementPension: "Average retirement pension",
+          averageRetirementPensionTooltip: "Average monthly pension paid to retirement pensioners.",
+          perMonthSuffix: "/month",
+          pensionToGdp: "Pension spending / GDP",
+          pensionToGdpTooltip: "Share of annual GDP used to pay pensions each year.",
+          reserveFund: "Reserve fund",
+          reserveFundTooltip:
+            "The pensions reserve fund. It peaked at €66.8B in 2011 and is currently recovering.",
+          reserveFundSource: "Estimate by Inclusion Ministry/Social Security",
+          reserveFundSourceNote: "Value Feb 2026",
+          activePensions: "Pensions in payment",
+          activePensionsTooltip:
+            "Total number of benefits currently paid (one person may receive more than one pension).",
+          deficitNote: "Annual pension spending - social contributions",
+          ratioNote: "Contributors / pensioners",
+          gdpNote: "Annual spending (monthly payroll x 14) / GDP",
+          payrollCalcSuffix: "x 14 payments / 365.25 days / 86,400 s",
+        }
+      : {
+          realtimeLabel: "Gastado en pensiones desde que abriste la página",
+          basedOn: "basado en nomina mensual",
+          pensionSecondSuffix: "en pensiones",
+          includesSources: "Incluye SS contributivas + Clases Pasivas",
+          monthlyPayroll: "Nómina mensual total",
+          monthlyPayrollTooltip:
+            "Suma de lo que el Estado paga cada mes a todos los pensionistas (incluye Seg. Social y Clases Pasivas).",
+          contributoryDeficit: "Déficit contributivo",
+          contributoryDeficitTooltip:
+            "Diferencia anual entre lo que se recauda por cotizaciones sociales y lo que cuestan las pensiones contributivas.",
+          contributorsPerPensioner: "Cotizantes por pensionista",
+          contributorsPerPensionerTooltip:
+            "Número de trabajadores en activo por cada pensión en vigor. Un ratio cercano a 2,0 se considera necesario para la estabilidad.",
+          averageRetirementPension: "Pensión media jubilación",
+          averageRetirementPensionTooltip:
+            "Importe medio percibido mensualmente por los pensionistas por jubilación del sistema.",
+          perMonthSuffix: "/mes",
+          pensionToGdp: "Gasto pensiones / PIB",
+          pensionToGdpTooltip:
+            "Porcentaje de la riqueza nacional (PIB) que se destina anualmente a pagar el sistema de pensiones.",
+          reserveFund: "Fondo de Reserva",
+          reserveFundTooltip:
+            "La 'hucha de las pensiones'. Creada para cubrir desfases, llegó a tener 66.815 M€ en 2011. Actualmente en recuperación.",
+          reserveFundSource: "Estimación Ministerio Inclusión/Seg. Social",
+          reserveFundSourceNote: "Dato feb 2026",
+          activePensions: "Pensiones en vigor",
+          activePensionsTooltip:
+            "Número total de prestaciones que se están pagando actualmente (una persona puede cobrar más de una).",
+          deficitNote: "Gasto anual pensiones - cotizaciones sociales",
+          ratioNote: "Afiliados / pensionistas",
+          gdpNote: "Gasto anual (nomina x 14) / PIB",
+          payrollCalcSuffix: "x 14 pagas / 365,25 días / 86.400 s",
+        };
 
   const expensePerSecond = pensions.current.expensePerSecond;
   const pensionExpenseToGDP = (pensions.current.annualExpense / demographics.gdp) * 100;
@@ -52,12 +124,12 @@ export function PensionsBlock() {
     ? fromAttribution(pensions.sourceAttribution.contributoryDeficit)
     : {
         ...CALCULO_DERIVADO,
-        note: "Gasto anual pensiones - cotizaciones sociales",
+        note: copy.deficitNote,
       };
 
   const contributorsPerPensionerSource = pensions.sourceAttribution?.contributorsPerPensioner
     ? fromAttribution(pensions.sourceAttribution.contributorsPerPensioner)
-    : { ...CALCULO_DERIVADO, note: "Afiliados / pensionistas" };
+    : { ...CALCULO_DERIVADO, note: copy.ratioNote };
 
   const inePibSource = demographics.sourceAttribution?.gdp
     ? fromAttribution(demographics.sourceAttribution.gdp)
@@ -70,7 +142,10 @@ export function PensionsBlock() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pensiones y Seguridad Social</CardTitle>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle>{msg.blocks.pensions.title}</CardTitle>
+          <ExportBlockButton targetId="pensiones" filenamePrefix="cuentas-publicas-pensiones" />
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center py-6 border-b gap-2">
@@ -80,10 +155,10 @@ export function PensionsBlock() {
             suffix=" €"
             size="lg"
             decimals={0}
-            label="Gastado en pensiones desde que abriste la página"
+            label={copy.realtimeLabel}
           />
-          <p className="text-[10px] text-muted-foreground/70 text-center">
-            {formatNumber(expensePerSecond, 2)} €/s — basado en nomina mensual{" "}
+          <p className="text-xs text-muted-foreground/80 text-center">
+            {formatNumber(expensePerSecond, 2)} €/s — {copy.basedOn}{" "}
             <a
               href={SS_NOMINA.url}
               target="_blank"
@@ -92,29 +167,29 @@ export function PensionsBlock() {
             >
               MITES/Seg. Social
             </a>{" "}
-            ({pensionDate}) x 14 pagas / 365,25 días / 86.400 s
+            ({pensionDate}) {copy.payrollCalcSuffix}
           </p>
           <div
             className="font-mono font-bold tabular-nums whitespace-nowrap text-lg text-muted-foreground"
             style={{ fontVariantNumeric: "tabular-nums" }}
           >
-            {formatNumber(expensePerSecond, 2)} €/s en pensiones
+            {formatNumber(expensePerSecond, 2)} €/s {copy.pensionSecondSuffix}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
-            label="Nómina mensual total"
+            label={copy.monthlyPayroll}
             value={formatCompact(pensions.current.monthlyPayroll)}
-            tooltip="Suma de lo que el Estado paga cada mes a todos los pensionistas (incluye Seg. Social y Clases Pasivas)."
+            tooltip={copy.monthlyPayrollTooltip}
             delay={0.05}
             sparklineData={sparklineData}
-            sources={[ssNomina, { name: "Incluye SS contributivas + Clases Pasivas" }]}
+            sources={[ssNomina, { name: copy.includesSources }]}
           />
           <StatCard
-            label="Déficit contributivo"
+            label={copy.contributoryDeficit}
             value={formatCompact(pensions.current.contributoryDeficit)}
-            tooltip="Diferencia anual entre lo que se recauda por cotizaciones sociales y lo que cuestan las pensiones contributivas."
+            tooltip={copy.contributoryDeficitTooltip}
             delay={0.1}
             trend={{
               value: -pensions.current.contributoryDeficit,
@@ -123,43 +198,37 @@ export function PensionsBlock() {
             sources={[contributoryDeficitSource, ssNomina, cotizacionesSource]}
           />
           <StatCard
-            label="Cotizantes por pensionista"
+            label={copy.contributorsPerPensioner}
             value={formatNumber(pensions.current.contributorsPerPensioner, 2)}
-            tooltip="Número de trabajadores en activo por cada pensión en vigor. Un ratio cercano a 2,0 se considera necesario para la estabilidad."
+            tooltip={copy.contributorsPerPensionerTooltip}
             delay={0.15}
             sources={[contributorsPerPensionerSource, ssAfiliados, ssPensiones]}
           />
           <StatCard
-            label="Pensión media jubilación"
-            value={`${formatCurrency(pensions.current.averagePensionRetirement)}/mes`}
-            tooltip="Importe medio percibido mensualmente por los pensionistas por jubilación del sistema."
+            label={copy.averageRetirementPension}
+            value={`${formatCurrency(pensions.current.averagePensionRetirement)}${copy.perMonthSuffix}`}
+            tooltip={copy.averageRetirementPensionTooltip}
             delay={0.2}
             sources={[avgPensionSource]}
           />
           <StatCard
-            label="Gasto pensiones / PIB"
+            label={copy.pensionToGdp}
             value={formatPercent(pensionExpenseToGDP)}
-            tooltip="Porcentaje de la riqueza nacional (PIB) que se destina anualmente a pagar el sistema de pensiones."
+            tooltip={copy.pensionToGdpTooltip}
             delay={0.25}
-            sources={[
-              { ...CALCULO_DERIVADO, note: "Gasto anual (nomina x 14) / PIB" },
-              ssNomina,
-              inePibSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.gdpNote }, ssNomina, inePibSource]}
           />
           <StatCard
-            label="Fondo de Reserva"
+            label={copy.reserveFund}
             value={formatCompact(pensions.current.reserveFund)}
-            tooltip="La 'hucha de las pensiones'. Creada para cubrir desfases, llegó a tener 66.815 M€ en 2011. Actualmente en recuperación."
+            tooltip={copy.reserveFundTooltip}
             delay={0.3}
-            sources={[
-              { name: "Estimación Ministerio Inclusión/Seg. Social", note: "Dato feb 2026" },
-            ]}
+            sources={[{ name: copy.reserveFundSource, note: copy.reserveFundSourceNote }]}
           />
           <StatCard
-            label="Pensiones en vigor"
+            label={copy.activePensions}
             value={formatNumber(pensions.current.totalPensions, 0)}
-            tooltip="Número total de prestaciones que se están pagando actualmente (una persona puede cobrar más de una)."
+            tooltip={copy.activePensionsTooltip}
             delay={0.35}
             sources={[ssPensiones]}
           />

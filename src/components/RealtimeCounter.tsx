@@ -13,10 +13,10 @@ interface RealtimeCounterProps {
 }
 
 const sizeClasses = {
-  sm: "text-lg",
-  md: "text-2xl",
-  lg: "text-2xl md:text-3xl",
-  xl: "text-xl sm:text-2xl lg:text-3xl",
+  sm: "text-base sm:text-lg",
+  md: "text-[clamp(1.2rem,2.1vw,1.9rem)]",
+  lg: "text-[clamp(1.3rem,2.4vw,2.15rem)]",
+  xl: "text-[clamp(1.15rem,2.2vw,2rem)]",
 };
 
 export function RealtimeCounter({
@@ -36,9 +36,12 @@ export function RealtimeCounter({
   });
 
   return (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
+    <div className={cn("flex w-full flex-col items-center gap-2", className)}>
       <div
-        className={cn("font-mono font-bold tabular-nums whitespace-nowrap", sizeClasses[size])}
+        className={cn(
+          "w-full max-w-full text-center font-semibold tabular-nums leading-tight tracking-tight",
+          sizeClasses[size],
+        )}
         style={{ fontVariantNumeric: "tabular-nums" }}
         aria-hidden="true"
       >

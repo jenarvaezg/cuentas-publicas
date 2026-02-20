@@ -7,6 +7,8 @@ tsconfig.tsbuildinfo
 .omc
 .claude
 .playwright-mcp
+playwright-report
+test-results
 *.png
 !public/og-image.png
 !public/favicon-*.png

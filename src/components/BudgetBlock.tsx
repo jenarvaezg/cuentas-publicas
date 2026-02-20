@@ -4,8 +4,10 @@ import { CALCULO_DERIVADO, fromAttribution, IGAE_COFOG } from "@/data/sources";
 import type { BudgetCategory } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useDeflator } from "@/hooks/useDeflator";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
 import { BudgetChart, type CompareMode } from "./BudgetChart";
+import { ExportBlockButton } from "./ExportBlockButton";
 import { StatCard } from "./StatCard";
 
 function deflateCategory(
@@ -24,6 +26,46 @@ function deflateCategory(
 export function BudgetBlock() {
   const { budget, demographics } = useData();
   const { deflate, baseYear, available: cpiAvailable } = useDeflator();
+  const { msg, lang } = useI18n();
+
+  const copy =
+    lang === "en"
+      ? {
+          eurosReal: "Real €",
+          eurosCurrent: "Current €",
+          totalSpending: "Total public spending",
+          spendingPerCapita: "Spending per capita",
+          spendingToGdp: "Spending / GDP",
+          largestItem: "Largest category",
+          ofTotal: "of total",
+          viewAbsolute: "Absolute",
+          viewWeight: "% weight",
+          viewChange: "% change",
+          derivativePopulation: "Total spending / population",
+          derivativeGdp: "Total spending / nominal GDP",
+          totalPublicAdmin: "General government",
+          cofogClassification: "COFOG functional classification",
+          dataInMillions: "Data in millions of",
+          yearLabel: "Year",
+        }
+      : {
+          eurosReal: "€ reales",
+          eurosCurrent: "€ corrientes",
+          totalSpending: "Gasto publico total",
+          spendingPerCapita: "Gasto per cápita",
+          spendingToGdp: "Gasto / PIB",
+          largestItem: "Mayor partida",
+          ofTotal: "del total",
+          viewAbsolute: "Absoluto",
+          viewWeight: "% peso",
+          viewChange: "% cambio",
+          derivativePopulation: "Gasto total / población",
+          derivativeGdp: "Gasto total / PIB nominal",
+          totalPublicAdmin: "Total Administraciones Públicas",
+          cofogClassification: "Clasificación funcional COFOG",
+          dataInMillions: "Datos en millones de",
+          yearLabel: "Año",
+        };
 
   const years = budget.years;
   const latestYear = budget.latestYear;
@@ -89,7 +131,7 @@ export function BudgetBlock() {
     <Card>
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <CardTitle>Gasto Público por Funciones (COFOG)</CardTitle>
+          <CardTitle>{msg.blocks.budget.title}</CardTitle>
           <div className="flex flex-wrap items-center gap-3">
             {cpiAvailable && comparisonYear && (
               <div className="flex items-center rounded-md border border-input bg-background p-0.5">
@@ -102,7 +144,7 @@ export function BudgetBlock() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  € reales
+                  {copy.eurosReal}
                 </button>
                 <button
                   type="button"
@@ -113,7 +155,7 @@ export function BudgetBlock() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  € corrientes
+                  {copy.eurosCurrent}
                 </button>
               </div>
             )}
@@ -122,7 +164,7 @@ export function BudgetBlock() {
                 htmlFor="budget-year"
                 className="text-xs text-muted-foreground whitespace-nowrap"
               >
-                Año
+                {msg.common.year}
               </label>
               <select
                 id="budget-year"
@@ -145,7 +187,7 @@ export function BudgetBlock() {
                 htmlFor="budget-compare"
                 className="text-xs text-muted-foreground whitespace-nowrap"
               >
-                Comparar
+                {msg.common.compare}
               </label>
               <select
                 id="budget-compare"
@@ -167,6 +209,10 @@ export function BudgetBlock() {
                   ))}
               </select>
             </div>
+            <ExportBlockButton
+              targetId="gasto-cofog"
+              filenamePrefix="cuentas-publicas-gasto-cofog"
+            />
           </div>
         </div>
       </CardHeader>
@@ -174,31 +220,31 @@ export function BudgetBlock() {
         {/* Summary stat cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            label="Gasto publico total"
+            label={copy.totalSpending}
             value={formatCompact(totalEuros)}
             delay={0.05}
             sources={[igaeSource]}
           />
           <StatCard
-            label="Gasto per cápita"
+            label={copy.spendingPerCapita}
             value={`${formatNumber(perCapita, 0)} €`}
             delay={0.1}
-            sources={[{ ...CALCULO_DERIVADO, note: "Gasto total / población" }, igaeSource]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePopulation }, igaeSource]}
           />
           <StatCard
-            label="Gasto / PIB"
+            label={copy.spendingToGdp}
             value={formatPercent(gdpRatio)}
             delay={0.15}
-            sources={[{ ...CALCULO_DERIVADO, note: "Gasto total / PIB nominal" }, igaeSource]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeGdp }, igaeSource]}
           />
           {largestCategory && (
             <StatCard
-              label="Mayor partida"
+              label={copy.largestItem}
               value={`${largestCategory.name}`}
               delay={0.2}
               sources={[
                 {
-                  name: `${formatNumber(largestCategory.percentage, 1)}% del total`,
+                  name: `${formatNumber(largestCategory.percentage, 1)}% ${copy.ofTotal}`,
                   note: formatCompact(largestCategory.amount * 1_000_000),
                 },
               ]}
@@ -209,13 +255,13 @@ export function BudgetBlock() {
         {/* Compare mode selector */}
         {comparisonYear && (
           <div className="flex items-center justify-center gap-1">
-            <span className="text-xs text-muted-foreground mr-1.5">Vista:</span>
+            <span className="text-xs text-muted-foreground mr-1.5">{msg.common.view}</span>
             <div className="flex items-center rounded-md border border-input bg-background p-0.5">
               {(
                 [
-                  ["absoluto", "Absoluto"],
-                  ["pesos", "% peso"],
-                  ["cambio", "% cambio"],
+                  ["absoluto", copy.viewAbsolute],
+                  ["pesos", copy.viewWeight],
+                  ["cambio", copy.viewChange],
                 ] as const
               ).map(([mode, label]) => (
                 <button
@@ -249,8 +295,8 @@ export function BudgetBlock() {
           />
         )}
 
-        <p className="text-[10px] text-muted-foreground/70 text-center">
-          Total Administraciones Públicas — Clasificación funcional COFOG —{" "}
+        <p className="text-xs text-muted-foreground/80 text-center">
+          {copy.totalPublicAdmin} — {copy.cofogClassification} —{" "}
           <a
             href={IGAE_COFOG.url}
             target="_blank"
@@ -259,7 +305,7 @@ export function BudgetBlock() {
           >
             IGAE
           </a>{" "}
-          — Datos en millones de {euroLabel} — Año {selectedYear}
+          — {copy.dataInMillions} {euroLabel} — {copy.yearLabel} {selectedYear}
         </p>
       </CardContent>
     </Card>

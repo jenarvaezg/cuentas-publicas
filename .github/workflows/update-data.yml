@@ -24,7 +24,7 @@ jobs:
         if: success()
         with:
           commit_message: "chore: update fiscal data"
-          file_pattern: src/data/*.json
+          file_pattern: src/data/*.json public/api/v1/*.json public/api/openapi.json public/seo-snapshot.html public/sitemap.xml public/feed.xml public/secciones/*.html public/en/sections/*.html
 
       - name: Check for stale data
         if: always()
@@ -42,17 +42,24 @@ jobs:
             const now = new Date();
             const staleThresholdDays = 14;
             const staleSources = [];
+            let ssCriticalFallback = null;
 
             for (const [name, info] of Object.entries(meta.sources)) {
               if (!info.success) {
                 staleSources.push(`**${name}**: Falló en la última descarga.`);
                 continue;
               }
-              if (!info.lastUpdated) {
+              if (name === 'pensions' && info.criticalFallback) {
+                ssCriticalFallback = info.criticalFallbackReason || 'No se pudo descargar ningún REG*.xlsx y se usó fallback.';
+                staleSources.push(`**${name}**: FALLBACK CRÍTICO (${ssCriticalFallback})`);
+                continue;
+              }
+              const freshnessDate = info.lastRealDataDate || info.lastUpdated;
+              if (!freshnessDate) {
                 staleSources.push(`**${name}**: Sin fecha de última actualización.`);
                 continue;
               }
-              const lastUpdated = new Date(info.lastUpdated);
+              const lastUpdated = new Date(freshnessDate);
               const diffDays = (now - lastUpdated) / (1000 * 60 * 60 * 24);
               if (diffDays > staleThresholdDays) {
                 staleSources.push(`**${name}**: No se actualiza desde hace ${diffDays.toFixed(1)} días (límite: ${staleThresholdDays} días).`);
@@ -91,4 +98,45 @@ jobs:
               }
             } else {
               console.log('All data sources are fresh.');
+            }
+
+            // Dedicated alert for Seguridad Social critical fallback
+            const ssIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'ss-fallback'
+            });
+
+            if (ssCriticalFallback) {
+              const body = `El scraper de pensiones no pudo procesar ningún REG*.xlsx y el pipeline cayó en fallback.\n\nMotivo: ${ssCriticalFallback}\n\nRevisar logs del workflow y enlaces actuales de EST24/REG*.xlsx.`;
+              if (ssIssues.data.length > 0) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: ssIssues.data[0].number,
+                  body: `La alerta de fallback crítico en Seguridad Social persiste.\n\n${body}`
+                });
+              } else {
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: '🚨 Alerta: fallback crítico en pensiones (Seguridad Social)',
+                  body,
+                  labels: ['ss-fallback', 'bug', 'data-stale']
+                });
+              }
+            } else if (ssIssues.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ssIssues.data[0].number,
+                body: '✅ Recuperado: el último run volvió a usar datos en vivo de Seguridad Social. Se cierra la alerta.'
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ssIssues.data[0].number,
+                state: 'closed'
+              });
             }

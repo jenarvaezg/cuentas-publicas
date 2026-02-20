@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   formatCompact,
   formatCurrency,
@@ -136,5 +136,31 @@ describe("formatDate", () => {
 
   it("returns original string for invalid dates", () => {
     expect(formatDate("not-a-date")).toBe("not-a-date");
+  });
+});
+
+describe("locale-aware formatting", () => {
+  const previousLang = document.documentElement.lang;
+
+  afterEach(() => {
+    document.documentElement.lang = previousLang;
+  });
+
+  it("uses English quarter prefix when document language is en", () => {
+    document.documentElement.lang = "en";
+    expect(formatDate("2025-Q4")).toBe("Q4 2025");
+  });
+
+  it("uses English separators when document language is en", () => {
+    document.documentElement.lang = "en";
+    const result = formatNumber(1234.5, 1);
+    expect(result).toContain(".5");
+    expect(result).not.toContain(",5");
+  });
+
+  it("uses English compact units when document language is en", () => {
+    document.documentElement.lang = "en";
+    expect(formatCompact(42_000_000_000)).toContain("B€");
+    expect(formatCompact(5_000)).toContain("k€");
   });
 });

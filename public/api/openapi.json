@@ -1,0 +1,67 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cuentas Públicas API",
+    "version": "1.0.0",
+    "description": "API pública estática para métricas fiscales de España"
+  },
+  "servers": [
+    { "url": "https://cuentas-publicas.es" }
+  ],
+  "paths": {
+    "/api/v1/index.json": {
+      "get": {
+        "summary": "Catálogo de endpoints v1",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/debt.json": {
+      "get": {
+        "summary": "Deuda pública PDE",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/pensions.json": {
+      "get": {
+        "summary": "Pensiones y seguridad social",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/demographics.json": {
+      "get": {
+        "summary": "Demografía, PIB e IPC",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/budget.json": {
+      "get": {
+        "summary": "Gasto COFOG",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/revenue.json": {
+      "get": {
+        "summary": "Ingresos y gastos públicos",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/eurostat.json": {
+      "get": {
+        "summary": "Comparativa UE",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/ccaa-debt.json": {
+      "get": {
+        "summary": "Deuda por CCAA",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/meta.json": {
+      "get": {
+        "summary": "Estado y frescura del pipeline",
+        "responses": { "200": { "description": "OK" } }
+      }
+    }
+  }
+}

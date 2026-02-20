@@ -8,11 +8,56 @@ import {
   INE_POBLACION,
 } from "@/data/sources";
 import { useData } from "@/hooks/useData";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber } from "@/utils/formatters";
 import { StatCard } from "./StatCard";
 
 export function EquivalenciasBlock() {
   const { debt, demographics, pensions, budget } = useData();
+  const { msg, lang } = useI18n();
+
+  const copy =
+    lang === "en"
+      ? {
+          monthsLabel: "Debt per person in minimum-wage months",
+          monthsUnit: "months",
+          monthsNoteSuffix: "€/month",
+          salaryLabel: "Debt per person in annual salaries",
+          yearsUnit: "years",
+          salaryNoteSuffix: "€/year",
+          spendingLabel: "Debt equals public spending for...",
+          pensionsLabel: "Debt equals pension spending for...",
+          interestLabel: "Interest equals public spending for...",
+          daysUnit: "days",
+          dailySpendingLabel: "Daily public spending",
+          perCapitaLabel: "Debt per capita",
+          debtTotalLabel: "Total debt",
+          spendingLabelShort: "Public spending",
+          annualPensionsLabel: "Annual pension spending",
+          annualInterestLabel: "Interest",
+          publicDailyLabel: "daily public spending",
+          averageSalaryLabel: "average salary",
+        }
+      : {
+          monthsLabel: "Deuda por persona en meses de SMI",
+          monthsUnit: "meses",
+          monthsNoteSuffix: "€/mes",
+          salaryLabel: "Deuda por persona en salarios anuales",
+          yearsUnit: "años",
+          salaryNoteSuffix: "€/año",
+          spendingLabel: "Deuda = gasto publico de...",
+          pensionsLabel: "Deuda = pensiones de...",
+          interestLabel: "Intereses = gasto publico de...",
+          daysUnit: "dias",
+          dailySpendingLabel: "Gasto publico diario",
+          perCapitaLabel: "Deuda per capita",
+          debtTotalLabel: "Deuda total",
+          spendingLabelShort: "gasto AAPP",
+          annualPensionsLabel: "gasto anual pensiones",
+          annualInterestLabel: "Intereses",
+          publicDailyLabel: "gasto diario AAPP",
+          averageSalaryLabel: "salario medio",
+        };
 
   // Use extrapolated debt (same approach as DebtBlock)
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
@@ -57,85 +102,83 @@ export function EquivalenciasBlock() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Equivalencias</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Para entender las cifras: la deuda publica traducida a magnitudes cotidianas
-        </p>
+        <CardTitle>{msg.blocks.equivalences.title}</CardTitle>
+        <p className="text-sm text-muted-foreground">{msg.blocks.equivalences.subtitle}</p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
-            label="Deuda por persona en meses de SMI"
-            value={`${formatNumber(monthsOfSMI, 1)} meses`}
+            label={copy.monthsLabel}
+            value={`${formatNumber(monthsOfSMI, 1)} ${copy.monthsUnit}`}
             delay={0.05}
             sources={[
               {
                 ...CALCULO_DERIVADO,
-                note: `Deuda per capita (${formatCompact(debtPerCapita)}) / SMI (${formatNumber(demographics.smi, 0)} €/mes)`,
+                note: `${copy.perCapitaLabel} (${formatCompact(debtPerCapita)}) / SMI (${formatNumber(demographics.smi, 0)} ${copy.monthsNoteSuffix})`,
               },
               bdeSource,
               inePopSource,
             ]}
           />
           <StatCard
-            label="Deuda por persona en salarios anuales"
-            value={`${formatNumber(yearsOfSalary, 1)} años`}
+            label={copy.salaryLabel}
+            value={`${formatNumber(yearsOfSalary, 1)} ${copy.yearsUnit}`}
             delay={0.1}
             sources={[
               {
                 ...CALCULO_DERIVADO,
-                note: `Deuda per capita / salario medio (${formatNumber(demographics.averageSalary, 0)} €/año)`,
+                note: `${copy.perCapitaLabel} / ${copy.averageSalaryLabel} (${formatNumber(demographics.averageSalary, 0)} ${copy.salaryNoteSuffix})`,
               },
               bdeSource,
               inePopSource,
             ]}
           />
           <StatCard
-            label="Deuda = gasto publico de..."
-            value={`${formatNumber(yearsOfSpending, 1)} años`}
+            label={copy.spendingLabel}
+            value={`${formatNumber(yearsOfSpending, 1)} ${copy.yearsUnit}`}
             delay={0.15}
             sources={[
               {
                 ...CALCULO_DERIVADO,
-                note: `Deuda total / gasto AAPP ${latestBudgetYear} (${formatCompact(budgetTotalEuros)})`,
+                note: `${copy.debtTotalLabel} / ${copy.spendingLabelShort} ${latestBudgetYear} (${formatCompact(budgetTotalEuros)})`,
               },
               bdeSource,
               igaeSource,
             ]}
           />
           <StatCard
-            label="Deuda = pensiones de..."
-            value={`${formatNumber(yearsOfPensions, 1)} años`}
+            label={copy.pensionsLabel}
+            value={`${formatNumber(yearsOfPensions, 1)} ${copy.yearsUnit}`}
             delay={0.2}
             sources={[
               {
                 ...CALCULO_DERIVADO,
-                note: `Deuda total / gasto anual pensiones (${formatCompact(pensions.current.annualExpense)})`,
+                note: `${copy.debtTotalLabel} / ${copy.annualPensionsLabel} (${formatCompact(pensions.current.annualExpense)})`,
               },
               bdeSource,
             ]}
           />
           <StatCard
-            label="Intereses = gasto publico de..."
-            value={`${formatNumber(daysOfInterest, 0)} dias`}
+            label={copy.interestLabel}
+            value={`${formatNumber(daysOfInterest, 0)} ${copy.daysUnit}`}
             delay={0.25}
             sources={[
               {
                 ...CALCULO_DERIVADO,
-                note: `Intereses (${formatCompact(debt.current.interestExpense)}) / gasto diario AAPP`,
+                note: `${copy.annualInterestLabel} (${formatCompact(debt.current.interestExpense)}) / ${copy.publicDailyLabel}`,
               },
               ESTIMACION_INTERESES,
               igaeSource,
             ]}
           />
           <StatCard
-            label="Gasto publico diario"
+            label={copy.dailySpendingLabel}
             value={formatCompact(dailySpending)}
             delay={0.3}
             sources={[
               {
                 ...CALCULO_DERIVADO,
-                note: `Gasto AAPP ${latestBudgetYear} / 365 dias`,
+                note: `${copy.spendingLabelShort} ${latestBudgetYear} / 365 ${copy.daysUnit}`,
               },
               igaeSource,
             ]}

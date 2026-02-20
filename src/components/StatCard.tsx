@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUp, ExternalLink, Info } from "lucide-react";
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
 import { SparklineChart } from "./SparklineChart";
 
@@ -9,6 +10,7 @@ export interface SourceDetail {
   name: string;
   url?: string;
   date?: string;
+  realDataDate?: string;
   note?: string;
 }
 
@@ -33,17 +35,20 @@ export const StatCard = memo(function StatCard({
   className,
   delay = 0,
 }: StatCardProps) {
+  const { msg } = useI18n();
   // C4: Check for stale data (> 1 year old) in sources
   const staleSource = sources?.find((src) => {
-    if (!src.date) return false;
-    const date = new Date(src.date);
+    const sourceDate = src.realDataDate || src.date;
+    if (!sourceDate) return false;
+    const date = new Date(sourceDate);
     if (Number.isNaN(date.getTime())) return false;
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
     return date < oneYearAgo;
   });
 
-  const staleYear = staleSource?.date ? new Date(staleSource.date).getFullYear() : null;
+  const staleDate = staleSource?.realDataDate || staleSource?.date;
+  const staleYear = staleDate ? new Date(staleDate).getFullYear() : null;
 
   return (
     <Card
@@ -65,7 +70,7 @@ export const StatCard = memo(function StatCard({
                     className="text-muted-foreground/50 hover:text-foreground transition-colors"
                   >
                     <Info className="h-3.5 w-3.5" />
-                    <span className="sr-only">Más información</span>
+                    <span className="sr-only">{msg.common.moreInformation}</span>
                   </button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-[200px] text-center">{tooltip}</TooltipContent>
@@ -76,7 +81,7 @@ export const StatCard = memo(function StatCard({
             {value}
             {staleYear && (
               <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 uppercase tracking-tight">
-                dato {staleYear}
+                {`${msg.common.staleDataTagPrefix} ${staleYear}`}
               </span>
             )}
           </div>
@@ -105,30 +110,33 @@ export const StatCard = memo(function StatCard({
 
           {sources && sources.length > 0 && (
             <div className="pt-2 border-t border-border/50 space-y-1">
-              {sources.map((src) => (
-                <div
-                  key={src.name ?? src.note ?? src.url}
-                  className="text-[10px] leading-tight text-muted-foreground/70 text-center"
-                >
-                  <span className="font-medium">
-                    {src.url ? (
-                      <a
-                        href={src.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
-                      >
-                        {src.name}
-                        <ExternalLink className="h-2 w-2" />
-                      </a>
-                    ) : (
-                      src.name
-                    )}
-                  </span>
-                  {src.date && <span> ({src.date})</span>}
-                  {src.note && <span> — {src.note}</span>}
-                </div>
-              ))}
+              {sources.map((src) => {
+                const shownDate = src.realDataDate || src.date;
+                return (
+                  <div
+                    key={src.name ?? src.note ?? src.url}
+                    className="text-xs leading-snug text-muted-foreground/85 text-center"
+                  >
+                    <span className="font-medium">
+                      {src.url ? (
+                        <a
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
+                        >
+                          {src.name}
+                          <ExternalLink className="h-2 w-2" />
+                        </a>
+                      ) : (
+                        src.name
+                      )}
+                    </span>
+                    {shownDate && <span> ({shownDate})</span>}
+                    {src.note && <span> — {src.note}</span>}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

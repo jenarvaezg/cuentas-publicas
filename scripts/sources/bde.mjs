@@ -117,7 +117,7 @@ async function fetchBE1101() {
  */
 async function fetchBDEApi() {
   console.log('  Descargando API BdE (último valor)...')
-  const url = `${BDE_API_BASE}/favoritas?idioma=es&series=DTNPDE2010_P0000P_PS_APU`
+  const url = `${BDE_API_BASE}/favoritas?idioma=es&series=DTNPDE2010_P00000_PS_APU`
 
   const response = await fetchWithRetry(url)
 
@@ -254,8 +254,42 @@ export function parseBdETransposedCSV(csvText, type) {
  */
 export function parseCSVLine(line) {
   if (!line) return []
-  // Standard BdE CSV format uses semicolon
-  return line.split(';').map(part => part.trim().replace(/^"|"$/g, ''))
+
+  const semicolonCount = (line.match(/;/g) || []).length
+  const commaCount = (line.match(/,/g) || []).length
+  const delimiter = semicolonCount >= commaCount ? ';' : ','
+
+  const values = []
+  let current = ''
+  let inQuotes = false
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]
+
+    if (char === '"') {
+      const next = line[i + 1]
+      // RFC4180 escaped quote ("")
+      if (inQuotes && next === '"') {
+        current += '"'
+        i++
+        continue
+      }
+      inQuotes = !inQuotes
+      continue
+    }
+
+    if (char === delimiter && !inQuotes) {
+      values.push(current.trim())
+      current = ''
+      continue
+    }
+
+    current += char
+  }
+
+  values.push(current.trim())
+
+  return values.map((part, idx) => (idx === 0 ? part.replace(/^\uFEFF/, '') : part))
 }
 
 /**
@@ -307,14 +341,23 @@ export function extractLatestFromApi(apiData) {
         const series = apiData[i]
         console.log(`      Serie ${i}: ${series.Nombre || 'sin nombre'}`)
 
+        // New BdE API shape: one object per serie with lowercase keys
+        if (typeof series.valor === 'number') {
+          const value = series.valor * 1_000_000 // millones de euros → euros
+          const date = series.fechaValor || series.fecha || new Date().toISOString()
+          console.log(`        Último valor: ${value.toLocaleString('es-ES')} € (${date})`)
+          return { value, date }
+        }
+
         if (series.Datos && Array.isArray(series.Datos)) {
           console.log(`        Datos: ${series.Datos.length} puntos`)
 
           // Get latest data point
           const latest = series.Datos[series.Datos.length - 1]
-          if (latest && latest.Valor) {
-            const value = latest.Valor * 1_000_000 // millions to euros
-            const date = latest.Fecha || new Date().toISOString()
+          const rawValue = latest?.Valor ?? latest?.valor
+          if (latest && typeof rawValue === 'number') {
+            const value = rawValue * 1_000_000 // millions to euros
+            const date = latest.Fecha || latest.fecha || new Date().toISOString()
             console.log(`        Último valor: ${value.toLocaleString('es-ES')} € (${date})`)
 
             return { value, date }
@@ -363,9 +406,20 @@ export function buildDebtResult(monthlyData, quarterlyData, apiData) {
   // Get latest total debt
   let totalDebt = 0
   let totalDebtSource = 'csv'
-  if (apiData?.value) {
+  const lastHistoricalDate = historical.length > 0 ? historical[historical.length - 1].date : null
+  let totalDebtDate = lastHistoricalDate || now.split('T')[0]
+
+  const apiDate =
+    typeof apiData?.date === 'string' && !Number.isNaN(new Date(apiData.date).getTime())
+      ? new Date(apiData.date).toISOString().split('T')[0]
+      : null
+
+  const canUseApi = Boolean(apiData?.value) && (!lastHistoricalDate || (apiDate && apiDate >= lastHistoricalDate))
+
+  if (canUseApi) {
     totalDebt = apiData.value
     totalDebtSource = 'api'
+    totalDebtDate = apiDate || totalDebtDate
   } else if (historical.length > 0) {
     totalDebt = historical[historical.length - 1].totalDebt
     totalDebtSource = 'csv'
@@ -420,7 +474,7 @@ export function buildDebtResult(monthlyData, quarterlyData, apiData) {
   }
 
   // Build source attributions
-  const lastDataDate = historical.length > 0 ? historical[historical.length - 1].date : now.split('T')[0]
+  const lastDataDate = lastHistoricalDate || now.split('T')[0]
   const sourceAttribution = {
     totalDebt: {
       source: totalDebtSource === 'api' ? 'BdE — API REST' : 'BdE — CSV be11b',
@@ -428,7 +482,7 @@ export function buildDebtResult(monthlyData, quarterlyData, apiData) {
       url: totalDebtSource === 'api'
         ? 'https://app.bde.es/bierest/resources/srdatosapp'
         : 'https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv',
-      date: lastDataDate
+      date: totalDebtDate
     },
     debtBySubsector: {
       source: 'BdE — CSV be11b',
@@ -625,7 +679,7 @@ function parseCcaaTransposedCSV(csvText) {
       const raw = cols[col]
       if (!raw || !raw.trim() || raw.trim() === '_') continue
       // BdE CCAA CSVs use international number format (dot = decimal)
-      const val = parseFloat(raw.trim())
+      const val = parseFloat(raw.trim().replace(',', '.'))
       if (!isNaN(val) && val !== 0) {
         latestValues.set(suffix, val)
         rowHasData = true

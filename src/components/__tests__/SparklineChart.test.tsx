@@ -7,7 +7,11 @@ vi.mock("recharts", async () => {
   return {
     ...actual,
     ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-    AreaChart: ({ children }: any) => <div data-testid="spark-chart">{children}</div>,
+    AreaChart: ({ children }: any) => (
+      <svg data-testid="spark-chart" aria-hidden="true">
+        {children}
+      </svg>
+    ),
   };
 });
 

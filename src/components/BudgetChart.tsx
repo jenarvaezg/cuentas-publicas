@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import type { BudgetCategory } from "@/data/types";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatNumber } from "@/utils/formatters";
 
 export type CompareMode = "absoluto" | "pesos" | "cambio";
@@ -152,6 +153,22 @@ export function BudgetChart({
   compareMode,
   euroLabel,
 }: BudgetChartProps) {
+  const { lang } = useI18n();
+  const copy =
+    lang === "en"
+      ? {
+          allFunctions: "All functions",
+          increase: "Increase",
+          decrease: "Decrease",
+          clickToDrilldown: "Click a bar to view subcategory breakdown",
+        }
+      : {
+          allFunctions: "Todas las funciones",
+          increase: "Aumento",
+          decrease: "Descenso",
+          clickToDrilldown: "Haz clic en una barra para ver el desglose por subcategorías",
+        };
+
   const data = useMemo<ChartDatum[]>(() => {
     const items = resolveItems(categories, drilldownCategory);
 
@@ -202,7 +219,7 @@ export function BudgetChart({
             onClick={() => onDrilldown(null)}
             className="text-primary hover:underline cursor-pointer"
           >
-            Todas las funciones
+            {copy.allFunctions}
           </button>
           <span className="text-muted-foreground">&rsaquo;</span>
           <span className="text-foreground font-medium">
@@ -230,11 +247,11 @@ export function BudgetChart({
         <div className="flex items-center justify-center gap-5 mb-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm bg-[hsl(155,55%,40%)]" />
-            Aumento
+            {copy.increase}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm bg-[hsl(0,65%,50%)]" />
-            Descenso
+            {copy.decrease}
           </span>
           {euroLabel && <span className="text-muted-foreground/60">({euroLabel})</span>}
         </div>
@@ -306,9 +323,7 @@ export function BudgetChart({
       </ResponsiveContainer>
 
       {!drilldownCategory && (
-        <p className="text-[10px] text-muted-foreground/60 text-center mt-2">
-          Haz clic en una barra para ver el desglose por subcategorías
-        </p>
+        <p className="text-xs text-muted-foreground/80 text-center mt-2">{copy.clickToDrilldown}</p>
       )}
     </div>
   );

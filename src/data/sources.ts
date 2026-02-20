@@ -107,10 +107,20 @@ export function withDate(source: SourceDetail, date: string): SourceDetail {
   return { ...source, date };
 }
 
+function getFallbackLabel(): string {
+  if (
+    typeof document !== "undefined" &&
+    document.documentElement.lang.toLowerCase().startsWith("en")
+  ) {
+    return "reference";
+  }
+  return "referencia";
+}
+
 /** Helper: convert DataSourceAttribution to SourceDetail */
 export function fromAttribution(attr: DataSourceAttribution): SourceDetail {
   return {
-    name: attr.source + (attr.type === "fallback" ? " (referencia)" : ""),
+    name: attr.source + (attr.type === "fallback" ? ` (${getFallbackLabel()})` : ""),
     url: attr.url,
     date: attr.date,
     note: attr.note,

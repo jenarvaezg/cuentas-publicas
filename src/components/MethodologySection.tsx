@@ -1,9 +1,323 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useI18n } from "@/i18n/I18nProvider";
+
+interface MethodSection {
+  title: string;
+  source?: {
+    label: string;
+    url: string;
+    note?: string;
+  };
+  paragraphs: string[];
+  bullets?: string[];
+  ordered?: string[];
+}
+
+interface MethodologyCopy {
+  intro: string;
+  sections: MethodSection[];
+  refreshTitle: string;
+  refreshBullets: string[];
+  limitsTitle: string;
+  limitsText: string;
+}
+
+const copyByLang: Record<"es" | "en", MethodologyCopy> = {
+  es: {
+    intro:
+      "Proyecto educativo que muestra deuda pública, pensiones, gasto público e ingresos del sector público en España usando fuentes oficiales. El pipeline aplica validaciones y mantiene fallback explícito cuando una fuente falla.",
+    sections: [
+      {
+        title: "Deuda Pública",
+        source: {
+          label: "Banco de España (be11b.csv)",
+          url: "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv",
+          note: "Avance mensual de deuda PDE",
+        },
+        paragraphs: [
+          "Se descarga CSV oficial del BdE y se parsea formato español (coma decimal, punto de miles, separador punto y coma).",
+          "El contador en tiempo real usa regresión lineal sobre los últimos 24 meses y extrapola desde el último punto oficial.",
+        ],
+        bullets: [
+          "Deuda total PDE",
+          "Desglose por subsector (Estado, CCAA, CCLL, Seguridad Social)",
+          "Deuda per cápita, deuda por contribuyente y ratio deuda/PIB",
+          "Variación interanual frente al mismo mes del año previo",
+        ],
+      },
+      {
+        title: "Pensiones",
+        source: {
+          label: "Seguridad Social (EST24/REG*.xlsx)",
+          url: "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas",
+          note: "No hay API pública estable",
+        },
+        paragraphs: [
+          "El pipeline localiza la URL mensual del Excel de pensiones contributivas y procesa la hoja con el total del sistema.",
+          "Si falla la descarga de Excel vivo, se activa fallback con el último dataset válido y queda trazado en metadatos/alertas.",
+        ],
+        ordered: [
+          "Descarga de HTML de estadísticas.",
+          "Extracción de enlace REG*.xlsx (UUID rotatorio).",
+          "Descarga y parseo del Excel.",
+          "Cálculo de métricas derivadas (gasto anual, déficit contributivo, cotizantes/pensionista).",
+        ],
+        bullets: [
+          "Nómina mensual total y pensiones en vigor",
+          "Pensión media de jubilación",
+          "Gasto pensiones / PIB",
+          "Fondo de reserva (estimación documentada)",
+        ],
+      },
+      {
+        title: "Gasto Público (COFOG)",
+        source: {
+          label: "IGAE COFOG",
+          url: "https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/AAPP_A/COFOG_A_AAPP.xlsx",
+          note: "Total AAPP (S.13)",
+        },
+        paragraphs: [
+          "Se descarga el Excel anual COFOG y se validan cabeceras/estructura antes de procesar.",
+          "La vista de comparación permite importe absoluto, % peso y % cambio; opcionalmente en euros reales (deflactados por IPC INE).",
+        ],
+        bullets: [
+          "Cobertura anual desde 1995",
+          "10 divisiones COFOG con subcategorías",
+          "Validación cruzada de suma de categorías vs total",
+        ],
+      },
+      {
+        title: "Demografía y PIB",
+        source: {
+          label: "INE (API Tempus)",
+          url: "https://www.ine.es",
+          note: "Series oficiales",
+        },
+        paragraphs: [
+          "Se consumen series de población total, población activa, PIB nominal, salario medio e IPC.",
+          "El IPC se usa para convertir comparativas de gasto a euros constantes con año base del último COFOG disponible.",
+        ],
+        bullets: [
+          "Población total (ECP320)",
+          "Población activa (EPA387794)",
+          "PIB nominal (CNTR6597)",
+          "Salario medio (EAES741)",
+          "IPC (IPC278296 + IPC290750)",
+        ],
+      },
+      {
+        title: "Ingresos y Gastos Públicos",
+        source: {
+          label: "Eurostat (gov_10a_main)",
+          url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+          note: "SEC 2010, S.13",
+        },
+        paragraphs: [
+          "Se consultan series anuales de ingresos, gastos y balance para España (TR, TE, B9) junto con composición de ingresos (D2REC, D5REC, D61REC).",
+          "Con estas series se calcula presión fiscal y se visualiza la evolución histórica de 30 años.",
+        ],
+      },
+      {
+        title: "Comparativa Europea",
+        source: {
+          label: "Eurostat",
+          url: "https://ec.europa.eu/eurostat/databrowser/",
+          note: "Último año comparable",
+        },
+        paragraphs: [
+          "Se comparan indicadores fiscales y macro entre España, países de referencia y media UE-27.",
+        ],
+        bullets: [
+          "Deuda/PIB",
+          "Déficit/superávit",
+          "Gasto público/PIB",
+          "Gasto social/PIB",
+          "Tasa de paro",
+        ],
+      },
+      {
+        title: "Deuda por CCAA",
+        source: {
+          label: "Banco de España (be1310/be1309)",
+          url: "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv",
+          note: "Serie trimestral",
+        },
+        paragraphs: [
+          "Se combinan dos CSV oficiales para mostrar ranking por %PIB y deuda absoluta en euros.",
+          "El selector por comunidad persiste en URL para compartir estado exacto del bloque.",
+        ],
+      },
+      {
+        title: "Contadores en tiempo real",
+        paragraphs: [
+          "Se renderizan con actualización periódica en cliente y números tabulares para estabilidad visual.",
+          "Deuda: extrapolación lineal desde dato oficial mensual. Pensiones: prorrateo de nómina anualizada por segundo.",
+        ],
+      },
+    ],
+    refreshTitle: "Frecuencia de actualización",
+    refreshBullets: [
+      "Workflow automático semanal (lunes 08:00 UTC).",
+      "Actualización manual disponible por workflow_dispatch.",
+      "Si hay cambios, se actualizan datasets, API pública versionada y artefactos SEO/SSG.",
+      "Si hay fallos o datos stale, se crean/actualizan issues automáticas en GitHub.",
+    ],
+    limitsTitle: "Limitaciones",
+    limitsText:
+      "Aunque las fuentes son oficiales, hay desfases de publicación y algunas métricas derivadas requieren hipótesis explícitas. Para decisiones formales, consultar siempre la publicación primaria más reciente del organismo oficial.",
+  },
+  en: {
+    intro:
+      "Educational project showing public debt, pensions, public spending and public revenue in Spain using official data sources. The pipeline adds validations and explicit fallback behavior when a source fails.",
+    sections: [
+      {
+        title: "Public Debt",
+        source: {
+          label: "Bank of Spain (be11b.csv)",
+          url: "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv",
+          note: "Monthly EDP debt release",
+        },
+        paragraphs: [
+          "The pipeline downloads the official CSV and parses Spanish numeric formatting safely.",
+          "Real-time debt is estimated with linear regression over the latest 24 monthly observations, then extrapolated from the last official point.",
+        ],
+        bullets: [
+          "Total EDP debt",
+          "Subsector breakdown (central, regions, local, Social Security)",
+          "Debt per capita, debt per contributor and debt-to-GDP ratio",
+          "Year-over-year change versus same month in the previous year",
+        ],
+      },
+      {
+        title: "Pensions",
+        source: {
+          label: "Social Security (EST24/REG*.xlsx)",
+          url: "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas",
+          note: "No stable public API",
+        },
+        paragraphs: [
+          "The pipeline resolves the current monthly Excel URL and parses the total-system row.",
+          "If live Excel retrieval fails, a critical fallback uses the last valid dataset and the event is persisted in metadata/alerts.",
+        ],
+        ordered: [
+          "Download statistics HTML page.",
+          "Extract REG*.xlsx link (rotating UUID).",
+          "Download and parse workbook.",
+          "Compute derived metrics (annualized spending, contributory deficit, contributors per pensioner).",
+        ],
+        bullets: [
+          "Total monthly payroll and active pensions",
+          "Average retirement pension",
+          "Pension spending / GDP",
+          "Reserve fund (documented estimate)",
+        ],
+      },
+      {
+        title: "Public Spending (COFOG)",
+        source: {
+          label: "IGAE COFOG",
+          url: "https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/AAPP_A/COFOG_A_AAPP.xlsx",
+          note: "General government (S.13)",
+        },
+        paragraphs: [
+          "The annual COFOG workbook is downloaded and validated (headers/schema checks) before processing.",
+          "Comparison mode supports absolute values, weight percentages and year-over-year percentage change; optionally in real euros deflated with INE CPI.",
+        ],
+        bullets: [
+          "Annual coverage since 1995",
+          "10 COFOG divisions with subcategories",
+          "Cross-check validation: categories sum vs total",
+        ],
+      },
+      {
+        title: "Demographics and GDP",
+        source: {
+          label: "INE (Tempus API)",
+          url: "https://www.ine.es",
+          note: "Official time series",
+        },
+        paragraphs: [
+          "The app consumes total population, labor force, nominal GDP, average salary and CPI series.",
+          "CPI is used to deflate public spending comparisons to constant euros with base year equal to the latest available COFOG year.",
+        ],
+        bullets: [
+          "Total population (ECP320)",
+          "Labor force (EPA387794)",
+          "Nominal GDP (CNTR6597)",
+          "Average salary (EAES741)",
+          "CPI (IPC278296 + IPC290750)",
+        ],
+      },
+      {
+        title: "Public Revenue and Expenditure",
+        source: {
+          label: "Eurostat (gov_10a_main)",
+          url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+          note: "ESA 2010, S.13",
+        },
+        paragraphs: [
+          "Annual revenue, expenditure and balance are pulled for Spain (TR, TE, B9), plus revenue composition (D2REC, D5REC, D61REC).",
+          "These series feed tax burden calculations and the long-run revenue vs expenditure chart.",
+        ],
+      },
+      {
+        title: "European Comparison",
+        source: {
+          label: "Eurostat",
+          url: "https://ec.europa.eu/eurostat/databrowser/",
+          note: "Latest comparable year",
+        },
+        paragraphs: [
+          "The dashboard compares fiscal and macro indicators between Spain, benchmark countries and EU-27 average.",
+        ],
+        bullets: [
+          "Debt-to-GDP",
+          "Deficit/surplus",
+          "Public spending/GDP",
+          "Social spending/GDP",
+          "Unemployment rate",
+        ],
+      },
+      {
+        title: "Regional Debt (Autonomous Communities)",
+        source: {
+          label: "Bank of Spain (be1310/be1309)",
+          url: "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv",
+          note: "Quarterly series",
+        },
+        paragraphs: [
+          "Two official CSV sources are combined to rank regions by %GDP and absolute debt in euros.",
+          "Region and metric selection is persisted in URL query state for shareable deep links.",
+        ],
+      },
+      {
+        title: "Real-time Counters",
+        paragraphs: [
+          "Counters are rendered client-side with periodic updates and tabular numerals for stable display.",
+          "Debt uses regression extrapolation; pensions use annualized payroll converted to per-second flow.",
+        ],
+      },
+    ],
+    refreshTitle: "Update frequency",
+    refreshBullets: [
+      "Automatic weekly workflow (Monday 08:00 UTC).",
+      "Manual refresh available through workflow_dispatch.",
+      "When data changes, datasets, versioned public API and SEO/SSG artifacts are regenerated.",
+      "If sources fail or data becomes stale, GitHub issues are created/updated automatically.",
+    ],
+    limitsTitle: "Limitations",
+    limitsText:
+      "Even with official sources, publication lag exists and some derived metrics require explicit assumptions. For formal decisions, always verify against the latest primary release from each official institution.",
+  },
+};
 
 export function MethodologySection() {
   const [isOpen, setIsOpen] = useState(false);
+  const { msg, lang } = useI18n();
+
+  const copy = useMemo(() => copyByLang[lang], [lang]);
 
   return (
     <Card className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
@@ -15,7 +329,7 @@ export function MethodologySection() {
           aria-controls="methodology-content"
           className="flex items-center justify-between w-full text-left hover:text-primary transition-colors"
         >
-          <h2 className="text-lg font-semibold">Metodología y fuentes</h2>
+          <h2 className="text-lg font-semibold">{msg.blocks.methodology.title}</h2>
           {isOpen ? (
             <ChevronUp className="h-5 w-5 text-muted-foreground" />
           ) : (
@@ -27,534 +341,64 @@ export function MethodologySection() {
       {isOpen && (
         <CardContent id="methodology-content" className="space-y-6 text-sm leading-relaxed">
           <div className="prose prose-sm dark:prose-invert max-w-none">
-            <p className="text-muted-foreground">
-              Este proyecto educativo muestra la evolución de la deuda pública y el gasto en
-              pensiones en España utilizando datos oficiales de fuentes públicas. Toda la
-              metodología es transparente y el código es open source.
-            </p>
+            <p className="text-muted-foreground">{copy.intro}</p>
 
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">Deuda Pública</h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                <strong className="text-foreground">Fuente:</strong>{" "}
-                <a
-                  href="https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  Banco de España (be11b.csv)
-                </a>{" "}
-                — Avance mensual de la deuda según el Protocolo de Déficit Excesivo (PDE).
-              </p>
-              <p>
-                <strong className="text-foreground">Método de obtención:</strong> Descarga directa
-                del archivo CSV desde el servidor del BdE. El archivo utiliza formato español (coma
-                decimal, punto de miles, separador punto y coma) y se procesa con un parser
-                personalizado.
-              </p>
-              <p>
-                <strong className="text-foreground">Datos extraídos:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>Deuda total PDE (373 puntos mensuales desde 1994)</li>
-                <li>
-                  Desglose por subsector: Estado, Comunidades Autónomas, Corporaciones Locales,
-                  Seguridad Social
-                </li>
-                <li>Serie temporal para análisis de tendencias</li>
-              </ul>
-              <p>
-                <strong className="text-foreground">Cálculos derivados:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>Deuda per cápita = Deuda total / Población (INE)</li>
-                <li>Deuda por contribuyente = Deuda total / Población activa (EPA)</li>
-                <li>Ratio deuda/PIB = Deuda total / PIB nominal (INE)</li>
-                <li>
-                  Variación interanual = (Deuda mes actual - Deuda mismo mes año anterior) / Deuda
-                  año anterior × 100
-                </li>
-              </ul>
-            </div>
+            {copy.sections.map((section) => (
+              <div key={section.title}>
+                <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
+                  {section.title}
+                </h3>
 
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">Pensiones</h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                <strong className="text-foreground">Fuente:</strong>{" "}
-                <a
-                  href="https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  Ministerio de Trabajo/Seguridad Social
-                </a>{" "}
-                — Estadísticas de pensiones contributivas.
-              </p>
-              <p>
-                <strong className="text-foreground">Método de obtención:</strong> No existe API
-                pública. El proceso es:
-              </p>
-              <ol className="list-decimal list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  Descarga de la página HTML de estadísticas (EST24 - Pensiones contributivas en
-                  vigor)
-                </li>
-                <li>
-                  Extracción del enlace al archivo Excel (URLs con UUID que cambian mensualmente,
-                  formato REG*.xlsx)
-                </li>
-                <li>Descarga del archivo Excel</li>
-                <li>Parsing de la hoja "Régimen_clase", fila "Total sistema"</li>
-              </ol>
-              <p>
-                <strong className="text-foreground">Datos extraídos:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>Número total de pensiones contributivas (~10,45 millones)</li>
-                <li>Nómina mensual total (~14,25 mil millones €)</li>
-                <li>Pensión media del sistema</li>
-                <li>Pensión media de jubilación</li>
-              </ul>
-              <p>
-                <strong className="text-foreground">Clases Pasivas:</strong> Pensiones de
-                funcionarios del Estado. Fuente separada (Ministerio de Hacienda), se estima en
-                ~1.659 mil millones €/mes (valor de referencia).
-              </p>
-              <p>
-                <strong className="text-foreground">Cálculos:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  Gasto anual en pensiones = Nómina mensual × 14 pagas (España tiene 14 pagas
-                  anuales)
-                </li>
-                <li>
-                  Cotizaciones sociales y Fondo de Reserva: estimaciones basadas en Presupuestos
-                  Generales del Estado
-                </li>
-                <li>
-                  Déficit contributivo acumulado: suma de déficits anuales (gasto pensiones −
-                  cotizaciones sociales) desde 2011, cuando el sistema entró en déficit. Fuentes:
-                  informes trimestrales UV-Eje (Universidades de Valencia, Extremadura y Rey Juan
-                  Carlos I), Willis Towers Watson, Instituto Santalucía, y series S.S.A. de Fedea.
-                  Punto de partida: ~300 mm€ a 1 enero 2026, extrapolado en tiempo real al ritmo del
-                  déficit anual actual.
-                </li>
-              </ul>
-            </div>
+                {section.source && (
+                  <p>
+                    <strong className="text-foreground">{msg.common.sourceLabel}:</strong>{" "}
+                    <a
+                      href={section.source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-4 hover:text-primary transition-colors"
+                    >
+                      {section.source.label}
+                    </a>
+                    {section.source.note ? ` — ${section.source.note}` : ""}
+                  </p>
+                )}
 
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">Gasto Público</h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                <strong className="text-foreground">Fuente:</strong>{" "}
-                <a
-                  href="https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/AAPP_A/COFOG_A_AAPP.xlsx"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  IGAE — Clasificación funcional COFOG
-                </a>{" "}
-                — Gasto del Total de Administraciones Públicas (S.13) por divisiones y grupos COFOG.
-              </p>
-              <p>
-                <strong className="text-foreground">Método de obtención:</strong> Descarga directa
-                del archivo Excel (.xlsx) desde el servidor de la IGAE. Cada año tiene su propia
-                hoja con el desglose por funciones (10 divisiones COFOG) y subfunciones (~70
-                grupos).
-              </p>
-              <p>
-                <strong className="text-foreground">Clasificación COFOG:</strong> Estándar
-                internacional de Eurostat/Naciones Unidas para clasificar el gasto público por
-                funciones. Las 10 divisiones son: Servicios públicos generales, Defensa, Orden
-                público, Asuntos económicos, Medio ambiente, Vivienda, Salud, Ocio/cultura/religión,
-                Educación y Protección social.
-              </p>
-              <p>
-                <strong className="text-foreground">Cobertura:</strong> Total Administraciones
-                Públicas (S.13): Estado + CCAA + Corporaciones Locales + Seguridad Social. Datos
-                anuales desde 1995. Los datos se publican con un desfase de ~1-2 años; el último año
-                disponible puede ser provisional.
-              </p>
-              <p>
-                <strong className="text-foreground">Unidades:</strong> Millones de euros. Los
-                cálculos per cápita y ratio sobre PIB se derivan combinando con datos del INE.
-              </p>
-              <p>
-                <strong className="text-foreground">Euros reales vs corrientes:</strong> Al comparar
-                dos años, se puede activar la vista en{" "}
-                <strong className="text-foreground">euros reales</strong> (constantes), que ajusta
-                los importes por inflación usando el IPC del INE. El año base es el último año COFOG
-                disponible (2024), de modo que los valores de ese año quedan intactos y los
-                anteriores se ajustan al alza. Fórmula: importe real = importe nominal × (IPC año
-                base / IPC año dato). Los porcentajes no se deflactan porque ya son ratios dentro
-                del mismo año.
-              </p>
-            </div>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
 
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">Demografía y PIB</h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                <strong className="text-foreground">Fuente:</strong>{" "}
-                <a
-                  href="https://www.ine.es"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  Instituto Nacional de Estadística (INE)
-                </a>{" "}
-                — API Tempus para series temporales.
-              </p>
-              <p>
-                <strong className="text-foreground">Series consultadas:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  <strong className="text-foreground">Población total</strong> (Serie ECP320): ~49,6
-                  millones (diciembre 2025) — Endpoint:{" "}
-                  <code className="text-xs">DATOS_SERIE/ECP320?nult=3</code>
-                </li>
-                <li>
-                  <strong className="text-foreground">Población activa</strong> (Serie EPA387794):
-                  ~24,9 millones (T3 2025, dato en miles) — Endpoint:{" "}
-                  <code className="text-xs">DATOS_SERIE/EPA387794?nult=3</code>
-                </li>
-                <li>
-                  <strong className="text-foreground">PIB a precios corrientes</strong> (Serie
-                  CNTR6597): PIB trimestral, se suman 4 trimestres = ~1,686 billones € — Endpoint:{" "}
-                  <code className="text-xs">DATOS_SERIE/CNTR6597?nult=8</code>
-                </li>
-                <li>
-                  <strong className="text-foreground">Salario medio</strong> (Serie EAES741):
-                  ~28.050€ (2022, encuesta con desfase de ~2 años) — Endpoint:{" "}
-                  <code className="text-xs">DATOS_SERIE/EAES741?nult=5</code>
-                </li>
-                <li>
-                  <strong className="text-foreground">IPC</strong> (Series IPC278296 + IPC290750):
-                  Índice de Precios al Consumo, base 2021=100. La serie IPC278296 proporciona medias
-                  anuales directas (2002-2025). Para años anteriores (1995-2001), se reconstruye
-                  hacia atrás usando las variaciones anuales de IPC290750: índice[año-1] =
-                  índice[año] / (1 + variación[año] / 100). Se usa para deflactar el gasto público
-                  COFOG a euros constantes.
-                </li>
-              </ul>
-              <p>
-                <strong className="text-foreground">Salario Mínimo Interprofesional (SMI):</strong>{" "}
-                Valor hardcodeado desde BOE (1.134€/mes × 14 pagas, actualización anual).
-              </p>
-            </div>
+                {section.ordered && (
+                  <ol className="list-decimal list-inside pl-4 space-y-1 text-xs text-muted-foreground">
+                    {section.ordered.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                )}
+
+                {section.bullets && (
+                  <ul className="list-disc list-inside pl-4 space-y-1 text-xs text-muted-foreground">
+                    {section.bullets.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
 
             <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
-              Ingresos y Gastos Públicos
+              {copy.refreshTitle}
             </h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                <strong className="text-foreground">Fuente:</strong>{" "}
-                <a
-                  href="https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  Eurostat — gov_10a_main
-                </a>{" "}
-                — Cuentas principales de las Administraciones Públicas (SEC 2010).
-              </p>
-              <p>
-                <strong className="text-foreground">Método de obtención:</strong> API REST pública
-                de Eurostat (JSON-stat 2.0). Se descargan 6 indicadores para España (S.13) como
-                series temporales anuales desde 1995 hasta el último año disponible.
-              </p>
-              <p>
-                <strong className="text-foreground">Indicadores:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  <strong className="text-foreground">TR</strong> — Ingresos totales (Total Revenue)
-                  en millones de euros.
-                </li>
-                <li>
-                  <strong className="text-foreground">TE</strong> — Gastos totales (Total
-                  Expenditure) en millones de euros.
-                </li>
-                <li>
-                  <strong className="text-foreground">B9</strong> — Déficit/superávit (Net
-                  lending/borrowing) en millones de euros.
-                </li>
-                <li>
-                  <strong className="text-foreground">D2REC</strong> — Impuestos indirectos (IVA,
-                  Impuestos Especiales) en millones de euros.
-                </li>
-                <li>
-                  <strong className="text-foreground">D5REC</strong> — Impuestos directos (IRPF,
-                  Impuesto de Sociedades) en millones de euros.
-                </li>
-                <li>
-                  <strong className="text-foreground">D61REC</strong> — Cotizaciones sociales en
-                  millones de euros.
-                </li>
-              </ul>
-              <p>
-                <strong className="text-foreground">Cobertura:</strong> Total Administraciones
-                Públicas (S.13), datos anuales desde 1995. Los datos se publican con ~1-2 años de
-                desfase.
-              </p>
-              <p>
-                <strong className="text-foreground">Cálculos derivados:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>Otros ingresos = TR - D2REC - D5REC - D61REC</li>
-                <li>Presión fiscal = Ingresos totales / PIB nominal × 100</li>
-              </ul>
-            </div>
-
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">Equivalencias</h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                La sección de equivalencias traduce las cifras macroeconómicas a magnitudes
-                comprensibles. Todos los cálculos son derivados a partir de datos ya descargados:
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  <strong className="text-foreground">Deuda en meses de SMI</strong>: Deuda per
-                  cápita dividida entre el Salario Mínimo Interprofesional mensual (1.134€).
-                </li>
-                <li>
-                  <strong className="text-foreground">Deuda en salarios anuales</strong>: Deuda per
-                  cápita dividida entre el salario medio anual (INE).
-                </li>
-                <li>
-                  <strong className="text-foreground">Deuda en años de gasto público</strong>: Deuda
-                  total dividida entre el gasto AAPP anual (IGAE COFOG).
-                </li>
-                <li>
-                  <strong className="text-foreground">Deuda en años de pensiones</strong>: Deuda
-                  total dividida entre el gasto anual en pensiones.
-                </li>
-                <li>
-                  <strong className="text-foreground">Intereses en días de gasto</strong>: Gasto en
-                  intereses dividido entre el gasto público diario.
-                </li>
-                <li>
-                  <strong className="text-foreground">Gasto público diario</strong>: Gasto AAPP
-                  anual dividido entre 365 días.
-                </li>
-              </ul>
-            </div>
+            <ul className="list-disc list-inside pl-4 space-y-1 text-xs text-muted-foreground">
+              {copy.refreshBullets.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
 
             <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
-              Comparativa Europea (Eurostat)
+              {copy.limitsTitle}
             </h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                <strong className="text-foreground">Fuente:</strong>{" "}
-                <a
-                  href="https://ec.europa.eu/eurostat/databrowser/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  Eurostat — Statistics API
-                </a>{" "}
-                — Oficina estadística de la Unión Europea.
-              </p>
-              <p>
-                <strong className="text-foreground">Método de obtención:</strong> API REST pública
-                (JSON-stat 2.0). Se descargan 5 indicadores para 8 países (España, Alemania,
-                Francia, Italia, Portugal, Grecia, Países Bajos y media UE-27).
-              </p>
-              <p>
-                <strong className="text-foreground">Indicadores:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  <strong className="text-foreground">Deuda/PIB</strong> (dataset{" "}
-                  <code className="text-xs">gov_10dd_edpt1</code>): Deuda pública bruta como
-                  porcentaje del PIB.
-                </li>
-                <li>
-                  <strong className="text-foreground">Déficit/superávit</strong> (dataset{" "}
-                  <code className="text-xs">gov_10dd_edpt1</code>): Capacidad/necesidad de
-                  financiación del sector público.
-                </li>
-                <li>
-                  <strong className="text-foreground">Gasto público/PIB</strong> (dataset{" "}
-                  <code className="text-xs">gov_10a_main</code>): Gasto total de las
-                  administraciones públicas.
-                </li>
-                <li>
-                  <strong className="text-foreground">Gasto social/PIB</strong> (dataset{" "}
-                  <code className="text-xs">gov_10a_exp</code>): Gasto en protección social (COFOG
-                  10).
-                </li>
-                <li>
-                  <strong className="text-foreground">Tasa de paro</strong> (dataset{" "}
-                  <code className="text-xs">une_rt_a</code>): Tasa de desempleo anual (15-74 años).
-                </li>
-              </ul>
-              <p>
-                <strong className="text-foreground">Desfase:</strong> Eurostat publica los datos con
-                ~1-2 años de retraso. El año mostrado es el último disponible con datos completos
-                para todos los países.
-              </p>
-            </div>
-
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
-              Deuda por Comunidades Autónomas
-            </h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                <strong className="text-foreground">Fuente:</strong>{" "}
-                <a
-                  href="https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  Banco de España (be1310.csv)
-                </a>{" "}
-                y{" "}
-                <a
-                  href="https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1309.csv"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4 hover:text-primary transition-colors"
-                >
-                  be1309.csv
-                </a>{" "}
-                — Deuda PDE por Comunidad Autónoma.
-              </p>
-              <p>
-                <strong className="text-foreground">Indicadores:</strong>
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  <strong className="text-foreground">Deuda/PIB (%)</strong> (be1310): Deuda pública
-                  de cada CCAA como porcentaje de su PIB regional. Datos trimestrales desde 1995.
-                </li>
-                <li>
-                  <strong className="text-foreground">Deuda total (€)</strong> (be1309): Deuda
-                  pública absoluta en miles de euros, convertida a euros. Datos trimestrales desde
-                  1995.
-                </li>
-              </ul>
-              <p>
-                <strong className="text-foreground">Cobertura:</strong> 17 Comunidades Autónomas.
-                Los datos se presentan como ranking ordenado por el indicador seleccionado, con
-                línea de referencia para el total nacional (solo en modo % PIB).
-              </p>
-              <p>
-                <strong className="text-foreground">Método:</strong> Ambos CSVs utilizan el formato
-                transpuesto del BdE (series como columnas). Se extraen los códigos de serie por
-                sufijo numérico (1-17) para mapear a cada comunidad. Se toma el último trimestre con
-                datos disponibles.
-              </p>
-            </div>
-
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
-              Contadores en tiempo real
-            </h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                Los contadores que avanzan cada segundo utilizan{" "}
-                <strong className="text-foreground">regresión lineal</strong> sobre datos históricos
-                para estimar la tendencia y proyectar valores actuales:
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  <strong className="text-foreground">Contador de deuda:</strong> Regresión lineal
-                  sobre los últimos 24 meses de datos del BdE. La pendiente de la recta
-                  (€/milisegundo) se aplica desde el último dato oficial para extrapolar el valor
-                  actual.
-                </li>
-                <li>
-                  <strong className="text-foreground">Contador de pensiones:</strong> Gasto anual
-                  total (nómina mensual × 14) dividido entre 365,25 días y luego entre 86.400
-                  segundos = €/segundo.
-                </li>
-                <li>
-                  Todos los contadores se actualizan a ~60 fotogramas por segundo
-                  (requestAnimationFrame), respetando prefers-reduced-motion, con fuente{" "}
-                  <code className="text-xs">tabular-nums</code> para animación fluida.
-                </li>
-              </ul>
-            </div>
-
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
-              Frecuencia y Desfase Temporal
-            </h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                No todos los datos oficiales se publican con la misma rapidez. Este dashboard maneja
-                distintos horizontes temporales:
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  <strong className="text-foreground">Deuda (BdE) y Pensiones (SS):</strong>{" "}
-                  Mensual, con un retraso de 15-30 días respecto al mes actual.
-                </li>
-                <li>
-                  <strong className="text-foreground">Población Activa (EPA):</strong> Trimestral,
-                  con aprox. 1 mes de desfase.
-                </li>
-                <li>
-                  <strong className="text-foreground">Salario Medio (INE):</strong> Anual, publicado
-                  con aprox. 2 años de retraso (Encuesta de Estructura Salarial).
-                </li>
-                <li>
-                  <strong className="text-foreground">
-                    Gasto Público (IGAE) e Ingresos (Eurostat):
-                  </strong>{" "}
-                  Anual, con 1-2 años de desfase.
-                </li>
-              </ul>
-              <p>
-                Cuando un dato es antiguo (más de un año), se muestra un indicador visual{" "}
-                <span className="px-1 py-0.5 rounded-full text-[8px] font-bold bg-amber-100 text-amber-700 uppercase">
-                  dato YYYY
-                </span>{" "}
-                para advertir al usuario.
-              </p>
-            </div>
-
-            <h3 className="text-base font-semibold mt-6 mb-3 text-foreground">
-              Frecuencia de actualización
-            </h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>
-                Los datos se actualizan automáticamente cada semana mediante{" "}
-                <strong className="text-foreground">GitHub Actions</strong>:
-              </p>
-              <ul className="list-disc list-inside pl-4 space-y-1 text-xs">
-                <li>
-                  Workflow: <code className="text-xs">update-data.yml</code>, ejecutado cada lunes a
-                  las 08:00 UTC
-                </li>
-                <li>
-                  Los scripts descargan datos frescos de cada fuente y los comparan con los
-                  existentes
-                </li>
-                <li>Si hay cambios, se genera un commit automático con los nuevos datos</li>
-                <li>
-                  <strong className="text-foreground">Valores de referencia:</strong> Si una fuente
-                  falla en la descarga, el sistema mantiene los últimos valores conocidos. Estos se
-                  marcan en la interfaz como "(referencia)" para que el usuario sepa que no son el
-                  dato más reciente.
-                </li>
-              </ul>
-            </div>
-
-            <div className="mt-6 pt-4 border-t text-xs text-muted-foreground/80">
-              <p>
-                <strong className="text-foreground">Nota importante:</strong> Este dashboard es un
-                proyecto educativo con fines informativos. Los datos provienen de fuentes oficiales
-                públicas, pero las extrapolaciones y estimaciones son aproximadas. Para datos
-                oficiales y actualizados, consulta siempre las fuentes primarias.
-              </p>
-            </div>
+            <p className="text-muted-foreground">{copy.limitsText}</p>
           </div>
         </CardContent>
       )}

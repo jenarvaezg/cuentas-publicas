@@ -1,6 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/I18nProvider";
 
 function getInitialTheme(): "light" | "dark" {
   try {
@@ -13,6 +14,7 @@ function getInitialTheme(): "light" | "dark" {
 }
 
 export default function ThemeToggle() {
+  const { lang } = useI18n();
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
 
   useEffect(() => {
@@ -26,7 +28,15 @@ export default function ThemeToggle() {
       size="icon"
       className="h-8 w-8"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      aria-label={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+      aria-label={
+        lang === "en"
+          ? theme === "dark"
+            ? "Switch to light mode"
+            : "Switch to dark mode"
+          : theme === "dark"
+            ? "Cambiar a modo claro"
+            : "Cambiar a modo oscuro"
+      }
     >
       {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </Button>

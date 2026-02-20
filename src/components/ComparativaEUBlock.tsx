@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fromAttribution } from "@/data/sources";
 import type { EurostatData } from "@/data/types";
 import { useData } from "@/hooks/useData";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatNumber } from "@/utils/formatters";
 
 const INDICATOR_KEYS = [
@@ -42,20 +43,23 @@ export const CustomTooltip = ({
   active,
   payload,
   unit,
+  fallbackUnit,
 }: {
   active?: boolean;
   payload?: Array<{ payload: ChartDatum }>;
   unit?: string;
+  fallbackUnit?: string;
 }) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
+  const normalizedUnit = unit || fallbackUnit;
 
   return (
     <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
       <p className="font-semibold text-foreground">{d.country}</p>
       <p className="text-muted-foreground">
         {formatNumber(d.value, 1)}
-        {unit ? ` ${unit}` : "%"}
+        {normalizedUnit ? ` ${normalizedUnit}` : "%"}
       </p>
     </div>
   );
@@ -63,17 +67,78 @@ export const CustomTooltip = ({
 
 export function ComparativaEUBlock() {
   const { eurostat } = useData();
+  const { msg, lang } = useI18n();
   const [selectedIndicator, setSelectedIndicator] = useState<IndicatorKey>("debtToGDP");
+
+  const copy =
+    lang === "en"
+      ? {
+          spain: "Spain",
+          otherCountries: "Other countries",
+          eu27Average: "EU-27 average",
+          yearLabel: "Year",
+          dataFrom: "Data from",
+          indicatorLabels: {
+            debtToGDP: "Debt-to-GDP",
+            deficit: "Deficit/surplus",
+            expenditureToGDP: "Public spending/GDP",
+            socialSpendingToGDP: "Social spending/GDP",
+            unemploymentRate: "Unemployment rate",
+          } as Record<IndicatorKey, string>,
+          unitByIndicator: {
+            debtToGDP: "% of GDP",
+            deficit: "% of GDP",
+            expenditureToGDP: "% of GDP",
+            socialSpendingToGDP: "% of GDP",
+            unemploymentRate: "%",
+          } as Record<IndicatorKey, string>,
+          countryNames: {
+            ES: "Spain",
+            DE: "Germany",
+            FR: "France",
+            IT: "Italy",
+            PT: "Portugal",
+            EL: "Greece",
+            NL: "Netherlands",
+            EU27_2020: "EU-27",
+          } as Record<string, string>,
+        }
+      : {
+          spain: "España",
+          otherCountries: "Otros países",
+          eu27Average: "Media UE-27",
+          yearLabel: "Año",
+          dataFrom: "Datos de",
+          indicatorLabels: {
+            debtToGDP: "Deuda/PIB",
+            deficit: "Déficit/superávit",
+            expenditureToGDP: "Gasto público/PIB",
+            socialSpendingToGDP: "Gasto social/PIB",
+            unemploymentRate: "Tasa de paro",
+          } as Record<IndicatorKey, string>,
+          unitByIndicator: {
+            debtToGDP: "% del PIB",
+            deficit: "% del PIB",
+            expenditureToGDP: "% del PIB",
+            socialSpendingToGDP: "% del PIB",
+            unemploymentRate: "%",
+          } as Record<IndicatorKey, string>,
+          countryNames: {} as Record<string, string>,
+        };
 
   const indicatorData = eurostat.indicators[selectedIndicator] ?? {};
   const meta = eurostat.indicatorMeta?.[selectedIndicator];
+  const selectedUnit =
+    lang === "en"
+      ? copy.unitByIndicator[selectedIndicator]
+      : (meta?.unit ?? copy.unitByIndicator[selectedIndicator]);
 
   // Build chart data sorted by value (descending for most, ascending for deficit)
   const data = useMemo<ChartDatum[]>(() => {
     const entries = eurostat.countries
       .filter((code) => indicatorData[code] !== undefined)
       .map((code) => ({
-        country: eurostat.countryNames[code] ?? code,
+        country: copy.countryNames[code] ?? eurostat.countryNames[code] ?? code,
         countryCode: code,
         value: indicatorData[code],
         isSpain: code === "ES",
@@ -88,7 +153,7 @@ export function ComparativaEUBlock() {
     }
 
     return entries;
-  }, [eurostat, indicatorData, selectedIndicator]);
+  }, [copy.countryNames, eurostat, indicatorData, selectedIndicator]);
 
   // EU27 value for reference line
   const eu27Value = indicatorData.EU27_2020;
@@ -104,13 +169,13 @@ export function ComparativaEUBlock() {
     <Card>
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <CardTitle>España en la Unión Europea</CardTitle>
+          <CardTitle>{msg.blocks.eu.title}</CardTitle>
           <div className="flex items-center gap-1.5">
             <label
               htmlFor="eu-indicator"
               className="text-xs text-muted-foreground whitespace-nowrap"
             >
-              Indicador
+              {msg.common.indicator}
             </label>
             <select
               id="eu-indicator"
@@ -120,7 +185,7 @@ export function ComparativaEUBlock() {
             >
               {INDICATOR_KEYS.map((key) => (
                 <option key={key} value={key}>
-                  {eurostat.indicatorMeta?.[key]?.label ?? key}
+                  {copy.indicatorLabels[key]}
                 </option>
               ))}
             </select>
@@ -132,16 +197,16 @@ export function ComparativaEUBlock() {
         <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm" style={{ background: COLOR_SPAIN }} />
-            España
+            {copy.spain}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm" style={{ background: COLOR_OTHER }} />
-            Otros países
+            {copy.otherCountries}
           </span>
           {eu27Value !== undefined && (
             <span className="flex items-center gap-1.5">
               <span className="inline-block w-3 h-0.5 bg-muted-foreground" />
-              Media UE-27
+              {copy.eu27Average}
             </span>
           )}
         </div>
@@ -167,14 +232,21 @@ export function ComparativaEUBlock() {
               tick={{ fontSize: 12 }}
               stroke="hsl(var(--muted-foreground))"
             />
-            <Tooltip content={<CustomTooltip unit={meta?.unit} />} />
+            <Tooltip
+              content={
+                <CustomTooltip
+                  unit={selectedUnit}
+                  fallbackUnit={copy.unitByIndicator[selectedIndicator]}
+                />
+              }
+            />
             {eu27Value !== undefined && (
               <ReferenceLine
                 x={eu27Value}
                 stroke="hsl(var(--muted-foreground))"
                 strokeDasharray="4 4"
                 label={{
-                  value: `UE-27: ${formatNumber(eu27Value, 1)}%`,
+                  value: `${copy.eu27Average}: ${formatNumber(eu27Value, 1)}%`,
                   position: "top",
                   fontSize: 10,
                   fill: "hsl(var(--muted-foreground))",
@@ -195,8 +267,8 @@ export function ComparativaEUBlock() {
           </BarChart>
         </ResponsiveContainer>
 
-        <p className="text-[10px] text-muted-foreground/70 text-center">
-          Datos de{" "}
+        <p className="text-xs text-muted-foreground/80 text-center">
+          {copy.dataFrom}{" "}
           <a
             href={eurostatSource.url}
             target="_blank"
@@ -205,8 +277,8 @@ export function ComparativaEUBlock() {
           >
             Eurostat
           </a>{" "}
-          — Año {eurostat.year}
-          {meta?.unit ? ` — ${meta.unit}` : ""}
+          — {copy.yearLabel} {eurostat.year}
+          {` — ${selectedUnit}`}
         </p>
       </CardContent>
     </Card>
