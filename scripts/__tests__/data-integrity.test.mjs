@@ -59,6 +59,9 @@ describe('data integrity', () => {
     expect(ccaa.ccaa.length).toBe(17)
     expect(ccaa.total.debtToGDP).toBeGreaterThan(0)
     expect(ccaa.total.debtAbsolute).toBeGreaterThan(0)
+    const withYoY = ccaa.ccaa.find((entry) => typeof entry.debtYoYChangeAbsolute === 'number')
+    expect(withYoY).toBeTruthy()
+    expect(typeof ccaa.total.debtYoYChangeAbsolute).toBe('number')
   })
 
   it('valida dataset de ingresos y gastos', () => {

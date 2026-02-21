@@ -1,113 +1,149 @@
 {
-  "lastUpdated": "2026-02-21T08:51:01.756Z",
+  "lastUpdated": "2026-02-21T09:07:18.009Z",
   "quarter": "2025-Q3",
   "ccaa": [
     {
       "code": "CA01",
       "name": "Andalucía",
       "debtAbsolute": 40451574000,
-      "debtToGDP": 18.3
+      "debtToGDP": 18.3,
+      "debtYoYChangeAbsolute": 609821000,
+      "debtYoYChangePct": 1.530607852520947
     },
     {
       "code": "CA02",
       "name": "Aragón",
       "debtAbsolute": 9416139000,
-      "debtToGDP": 18.3
+      "debtToGDP": 18.3,
+      "debtYoYChangeAbsolute": 51219000,
+      "debtYoYChangePct": 0.5469240527415077
     },
     {
       "code": "CA03",
       "name": "Asturias",
       "debtAbsolute": 3934032000,
-      "debtToGDP": 12.6
+      "debtToGDP": 12.6,
+      "debtYoYChangeAbsolute": -161648000,
+      "debtYoYChangePct": -3.9467927181811078
     },
     {
       "code": "CA04",
       "name": "Baleares",
       "debtAbsolute": 8614566000,
-      "debtToGDP": 18.5
+      "debtToGDP": 18.5,
+      "debtYoYChangeAbsolute": -46357000,
+      "debtYoYChangePct": -0.5352431836652976
     },
     {
       "code": "CA05",
       "name": "Canarias",
       "debtAbsolute": 6533546000,
-      "debtToGDP": 10.8
+      "debtToGDP": 10.8,
+      "debtYoYChangeAbsolute": 66940000,
+      "debtYoYChangePct": 1.0351643505109172
     },
     {
       "code": "CA06",
       "name": "Cantabria",
       "debtAbsolute": 3228939000,
-      "debtToGDP": 17.6
+      "debtToGDP": 17.6,
+      "debtYoYChangeAbsolute": -19124000,
+      "debtYoYChangePct": -0.5887816831139051
     },
     {
       "code": "CA07",
       "name": "Castilla-La Mancha",
       "debtAbsolute": 16620828000,
-      "debtToGDP": 28.8
+      "debtToGDP": 28.8,
+      "debtYoYChangeAbsolute": 148213000,
+      "debtYoYChangePct": 0.8997539249232741
     },
     {
       "code": "CA08",
       "name": "Castilla y León",
       "debtAbsolute": 14522773000,
-      "debtToGDP": 18.9
+      "debtToGDP": 18.9,
+      "debtYoYChangeAbsolute": 516376000,
+      "debtYoYChangePct": 3.686715434383304
     },
     {
       "code": "CA09",
       "name": "Cataluña",
       "debtAbsolute": 89069118000,
-      "debtToGDP": 28.4
+      "debtToGDP": 28.4,
+      "debtYoYChangeAbsolute": 152257000,
+      "debtYoYChangePct": 0.17123523962457468
     },
     {
       "code": "CA10",
       "name": "Extremadura",
       "debtAbsolute": 5279075000,
-      "debtToGDP": 19.1
+      "debtToGDP": 19.1,
+      "debtYoYChangeAbsolute": -174135000,
+      "debtYoYChangePct": -3.1932568157103796
     },
     {
       "code": "CA11",
       "name": "Galicia",
       "debtAbsolute": 12051108000,
-      "debtToGDP": 14.2
+      "debtToGDP": 14.2,
+      "debtYoYChangeAbsolute": -102677000,
+      "debtYoYChangePct": -0.8448150103033746
     },
     {
       "code": "CA12",
       "name": "La Rioja",
       "debtAbsolute": 1753364000,
-      "debtToGDP": 15.2
+      "debtToGDP": 15.2,
+      "debtYoYChangeAbsolute": 121617000,
+      "debtYoYChangePct": 7.45317748400947
     },
     {
       "code": "CA13",
       "name": "Madrid",
       "debtAbsolute": 37829395000,
-      "debtToGDP": 11.5
+      "debtToGDP": 11.5,
+      "debtYoYChangeAbsolute": 914428000,
+      "debtYoYChangePct": 2.477119917241156
     },
     {
       "code": "CA14",
       "name": "Murcia",
       "debtAbsolute": 13147005000,
-      "debtToGDP": 29.8
+      "debtToGDP": 29.8,
+      "debtYoYChangeAbsolute": 344883000,
+      "debtYoYChangePct": 2.6939518307980506
     },
     {
       "code": "CA15",
       "name": "Navarra",
       "debtAbsolute": 2737358000,
-      "debtToGDP": 9.9
+      "debtToGDP": 9.9,
+      "debtYoYChangeAbsolute": -79162000,
+      "debtYoYChangePct": -2.810631559513158
     },
     {
       "code": "CA16",
       "name": "País Vasco",
       "debtAbsolute": 11191324000,
-      "debtToGDP": 11.8
+      "debtToGDP": 11.8,
+      "debtYoYChangeAbsolute": 358545000,
+      "debtYoYChangePct": 3.3098155145600217
     },
     {
       "code": "CA17",
       "name": "C. Valenciana",
       "debtAbsolute": 62423500000,
-      "debtToGDP": 40.5
+      "debtToGDP": 40.5,
+      "debtYoYChangeAbsolute": 2925571000,
+      "debtYoYChangePct": 4.91709719845879
     }
   ],
   "total": {
     "debtAbsolute": 338803643000,
-    "debtToGDP": 20.4
+    "debtToGDP": 20.4,
+    "debtYoYChangeAbsolute": 5626768000,
+    "debtYoYChangePct": 1.688823091338497
   },
   "sourceAttribution": {
     "be1309": {

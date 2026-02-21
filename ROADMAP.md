@@ -30,7 +30,7 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 - ✅ Datos desglosados por CCAA (CSV be1309/be1310 del BdE) — ranking general
 - ✅ Selector de Comunidad Autónoma (incluye persistencia en URL)
 - ✅ Recaudación tributaria por impuesto y por CCAA (AEAT series + delegaciones)
-- 🟡 Deuda, déficit y gasto por comunidad (detalle de deuda listo; déficit/gasto pendientes)
+- 🟡 Deuda, déficit y gasto por comunidad (detalle de deuda listo + proxy déficit/gasto integrado con BdE+AEAT; pendiente fuente oficial CN regional)
 - ✅ SEO pre-render + SSG multi-ruta: snapshot estático, sitemap y páginas por sección (`/secciones/*`, `/en/sections/*`)
 - ✅ Compartir: hash + URL state (`section`, `ccaa`, `ccaaMetric`) + export PNG por bloque
 - ✅ PWA offline hardening: runtime caching, fallback offline y registro SW con actualización

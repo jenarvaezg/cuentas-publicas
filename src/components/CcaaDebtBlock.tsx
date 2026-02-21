@@ -44,7 +44,7 @@ function parseCcaaFromQuery(allowedCodes: Set<string>): CcaaSelection {
 }
 
 export function CcaaDebtBlock() {
-  const { ccaaDebt } = useData();
+  const { ccaaDebt, taxRevenue } = useData();
   const { msg, lang } = useI18n();
   const copy =
     lang === "en"
@@ -60,9 +60,16 @@ export function CcaaDebtBlock() {
           ranking: "Ranking",
           ofLabel: "of",
           differenceVsNational: "Difference vs national total",
-          regionalDeficit: "Regional deficit",
-          regionalSpending: "Regional spending",
-          upcomingOfficial: "Coming soon: pending integration of an official source by region.",
+          regionalDeficit: "Regional deficit (proxy)",
+          regionalSpending: "Regional spending (proxy)",
+          deficitProxy: "Debt change proxy (12m)",
+          spendingProxy: "Estimated spending",
+          surplusProxy: "Estimated surplus",
+          proxyNote:
+            "Proxy based on 12m debt change (BdE) and AEAT tax revenue. Not equivalent to national accounts deficit.",
+          unavailableProxy: "Not available for this region/year.",
+          taxRevenueRef: "AEAT tax revenue",
+          basedOnYear: "based on year",
           top3: "Top 3",
           restRegions: "Rest of regions",
           nationalTotal: "National total",
@@ -81,10 +88,16 @@ export function CcaaDebtBlock() {
           ranking: "Ranking",
           ofLabel: "de",
           differenceVsNational: "Diferencia vs total nacional",
-          regionalDeficit: "Déficit CCAA",
-          regionalSpending: "Gasto CCAA",
-          upcomingOfficial:
-            "Próximamente: pendiente de integración de fuente oficial por comunidad.",
+          regionalDeficit: "Déficit CCAA (proxy)",
+          regionalSpending: "Gasto CCAA (proxy)",
+          deficitProxy: "Proxy por variación deuda (12m)",
+          spendingProxy: "Gasto estimado",
+          surplusProxy: "Superávit estimado",
+          proxyNote:
+            "Proxy basado en variación de deuda 12m (BdE) e ingresos tributarios AEAT. No equivale al déficit de contabilidad nacional.",
+          unavailableProxy: "No disponible para esta comunidad/año.",
+          taxRevenueRef: "Ingresos tributarios AEAT",
+          basedOnYear: "base año",
           top3: "Top 3",
           restRegions: "Resto de CCAA",
           nationalTotal: "Total nacional",
@@ -132,6 +145,20 @@ export function CcaaDebtBlock() {
   const selectedMetricValue = selectedEntry ? selectedEntry[selectedMetric] : 0;
   const nationalMetricValue = ccaaDebt.total[selectedMetric];
   const metricDifference = selectedMetricValue - nationalMetricValue;
+  const taxRevenueYear = taxRevenue.latestYear;
+  const taxRevenueByCode = useMemo(() => {
+    const entries = taxRevenue.ccaa[String(taxRevenueYear)]?.entries ?? [];
+    return new Map(entries.map((entry) => [entry.code, entry]));
+  }, [taxRevenue.ccaa, taxRevenueYear]);
+  const selectedTaxRevenue = selectedEntry ? taxRevenueByCode.get(selectedEntry.code) : null;
+
+  const selectedDebtYoYChange = selectedEntry?.debtYoYChangeAbsolute ?? null;
+  const selectedDebtYoYChangePct = selectedEntry?.debtYoYChangePct ?? null;
+  const selectedTaxRevenueEuros = selectedTaxRevenue ? selectedTaxRevenue.total * 1_000_000 : null;
+  const selectedSpendingProxyEuros =
+    selectedDebtYoYChange != null && selectedTaxRevenueEuros != null
+      ? selectedTaxRevenueEuros + selectedDebtYoYChange
+      : null;
 
   useEffect(() => {
     if (selectedCcaa !== "all" && !ccaaCodes.has(selectedCcaa)) {
@@ -263,13 +290,43 @@ export function CcaaDebtBlock() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="rounded-md border border-dashed bg-background p-3">
+              <div className="rounded-md border bg-background p-3">
                 <p className="text-xs font-semibold">{copy.regionalDeficit}</p>
-                <p className="text-xs text-muted-foreground mt-1">{copy.upcomingOfficial}</p>
+                {selectedDebtYoYChange == null ? (
+                  <p className="text-xs text-muted-foreground mt-1">{copy.unavailableProxy}</p>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold mt-1">
+                      {selectedDebtYoYChange >= 0 ? copy.deficitProxy : copy.surplusProxy}:{" "}
+                      {selectedDebtYoYChange >= 0 ? "+" : "-"}
+                      {formatCompact(Math.abs(selectedDebtYoYChange))}
+                    </p>
+                    {selectedDebtYoYChangePct != null && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {selectedDebtYoYChange >= 0 ? "+" : ""}
+                        {formatNumber(selectedDebtYoYChangePct, 1)}%
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">{copy.proxyNote}</p>
+                  </>
+                )}
               </div>
-              <div className="rounded-md border border-dashed bg-background p-3">
+              <div className="rounded-md border bg-background p-3">
                 <p className="text-xs font-semibold">{copy.regionalSpending}</p>
-                <p className="text-xs text-muted-foreground mt-1">{copy.upcomingOfficial}</p>
+                {selectedSpendingProxyEuros == null ? (
+                  <p className="text-xs text-muted-foreground mt-1">{copy.unavailableProxy}</p>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold mt-1">
+                      {copy.spendingProxy}: {formatCompact(selectedSpendingProxyEuros)}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.taxRevenueRef}: {formatCompact(selectedTaxRevenueEuros ?? 0)} (
+                      {copy.basedOnYear} {taxRevenueYear})
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{copy.proxyNote}</p>
+                  </>
+                )}
               </div>
             </div>
           </div>

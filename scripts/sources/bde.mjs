@@ -638,9 +638,16 @@ function dateToQuarter(date) {
  * Row 0: series codes, Row 2: aliases (e.g. "BE_13_9.1" … "BE_13_9.18")
  * Row 6+: data rows — col 0 is date string, rest are values.
  *
- * Returns { latestDate: Date, values: Map<number, number> }
- * where the Map key is the alias suffix integer and value is
- * the latest non-zero reading. Suffix 1 = total, 2-18 = individual CCAA.
+ * Returns:
+ * {
+ *   latestDate: Date|null,
+ *   values: Map<number, number>,
+ *   previousYearValues: Map<number, number>
+ * }
+ * where Map keys are alias suffix integers and values are the
+ * latest non-zero reading and the closest non-zero reading
+ * from ~12 months earlier (same month if available).
+ * Suffix 1 = total, 2-18 = individual CCAA.
  */
 function parseCcaaTransposedCSV(csvText) {
   const lines = csvText.split('\n').filter(line => line.trim() !== '')
@@ -663,8 +670,8 @@ function parseCcaaTransposedCSV(csvText) {
     }
   }
 
-  // Accumulate latest non-zero value per suffix
-  const latestValues = new Map() // suffix → number
+  // Accumulate full series per suffix to compute latest + YoY reference
+  const seriesBySuffix = new Map() // suffix -> Array<{ date: Date, value: number }>
   let latestDate = null
 
   for (let row = 6; row < lines.length; row++) {
@@ -681,7 +688,9 @@ function parseCcaaTransposedCSV(csvText) {
       // BdE CCAA CSVs use international number format (dot = decimal)
       const val = parseFloat(raw.trim().replace(',', '.'))
       if (!isNaN(val) && val !== 0) {
-        latestValues.set(suffix, val)
+        const series = seriesBySuffix.get(suffix) || []
+        series.push({ date, value: val })
+        seriesBySuffix.set(suffix, series)
         rowHasData = true
       }
     }
@@ -691,7 +700,45 @@ function parseCcaaTransposedCSV(csvText) {
     }
   }
 
-  return { latestDate, values: latestValues }
+  const latestValues = new Map()
+  const previousYearValues = new Map()
+
+  if (latestDate) {
+    const prevYear = latestDate.getFullYear() - 1
+    const prevMonth = latestDate.getMonth()
+
+    for (const [suffix, series] of seriesBySuffix) {
+      series.sort((a, b) => a.date - b.date)
+      const latestPoint = series[series.length - 1]
+      latestValues.set(suffix, latestPoint.value)
+
+      // Prefer exact same month one year earlier; fallback to latest point before current.
+      let prevPoint = null
+      for (let i = series.length - 1; i >= 0; i--) {
+        const point = series[i]
+        if (point.date.getFullYear() === prevYear && point.date.getMonth() === prevMonth) {
+          prevPoint = point
+          break
+        }
+      }
+
+      if (!prevPoint) {
+        for (let i = series.length - 1; i >= 0; i--) {
+          const point = series[i]
+          if (point.date < latestDate) {
+            prevPoint = point
+            break
+          }
+        }
+      }
+
+      if (prevPoint) {
+        previousYearValues.set(suffix, prevPoint.value)
+      }
+    }
+  }
+
+  return { latestDate, values: latestValues, previousYearValues }
 }
 
 /**
@@ -704,25 +751,25 @@ function buildFallbackCcaaDebtData() {
     lastUpdated: new Date().toISOString(),
     quarter: '2025-Q3',
     ccaa: [
-      { code: 'CA01', name: 'Andalucía',         debtAbsolute: 40_452_000_000, debtToGDP: 18.3 },
-      { code: 'CA02', name: 'Aragón',             debtAbsolute:  9_416_000_000, debtToGDP: 18.3 },
-      { code: 'CA03', name: 'Asturias',           debtAbsolute:  3_934_000_000, debtToGDP: 12.6 },
-      { code: 'CA04', name: 'Baleares',           debtAbsolute:  8_615_000_000, debtToGDP: 18.5 },
-      { code: 'CA05', name: 'Canarias',           debtAbsolute:  6_534_000_000, debtToGDP: 10.8 },
-      { code: 'CA06', name: 'Cantabria',          debtAbsolute:  3_229_000_000, debtToGDP: 17.6 },
-      { code: 'CA07', name: 'Castilla-La Mancha', debtAbsolute: 16_621_000_000, debtToGDP: 28.8 },
-      { code: 'CA08', name: 'Castilla y León',    debtAbsolute: 14_523_000_000, debtToGDP: 18.9 },
-      { code: 'CA09', name: 'Cataluña',           debtAbsolute: 89_069_000_000, debtToGDP: 28.4 },
-      { code: 'CA10', name: 'Extremadura',        debtAbsolute:  5_279_000_000, debtToGDP: 19.1 },
-      { code: 'CA11', name: 'Galicia',            debtAbsolute: 12_051_000_000, debtToGDP: 14.2 },
-      { code: 'CA12', name: 'La Rioja',           debtAbsolute:  1_753_000_000, debtToGDP: 15.2 },
-      { code: 'CA13', name: 'Madrid',             debtAbsolute: 37_829_000_000, debtToGDP: 11.5 },
-      { code: 'CA14', name: 'Murcia',             debtAbsolute: 13_147_000_000, debtToGDP: 29.8 },
-      { code: 'CA15', name: 'Navarra',            debtAbsolute:  2_737_000_000, debtToGDP:  9.9 },
-      { code: 'CA16', name: 'País Vasco',         debtAbsolute: 11_191_000_000, debtToGDP: 11.8 },
-      { code: 'CA17', name: 'C. Valenciana',      debtAbsolute: 62_424_000_000, debtToGDP: 40.5 },
+      { code: 'CA01', name: 'Andalucía',         debtAbsolute: 40_452_000_000, debtToGDP: 18.3, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA02', name: 'Aragón',             debtAbsolute:  9_416_000_000, debtToGDP: 18.3, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA03', name: 'Asturias',           debtAbsolute:  3_934_000_000, debtToGDP: 12.6, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA04', name: 'Baleares',           debtAbsolute:  8_615_000_000, debtToGDP: 18.5, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA05', name: 'Canarias',           debtAbsolute:  6_534_000_000, debtToGDP: 10.8, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA06', name: 'Cantabria',          debtAbsolute:  3_229_000_000, debtToGDP: 17.6, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA07', name: 'Castilla-La Mancha', debtAbsolute: 16_621_000_000, debtToGDP: 28.8, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA08', name: 'Castilla y León',    debtAbsolute: 14_523_000_000, debtToGDP: 18.9, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA09', name: 'Cataluña',           debtAbsolute: 89_069_000_000, debtToGDP: 28.4, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA10', name: 'Extremadura',        debtAbsolute:  5_279_000_000, debtToGDP: 19.1, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA11', name: 'Galicia',            debtAbsolute: 12_051_000_000, debtToGDP: 14.2, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA12', name: 'La Rioja',           debtAbsolute:  1_753_000_000, debtToGDP: 15.2, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA13', name: 'Madrid',             debtAbsolute: 37_829_000_000, debtToGDP: 11.5, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA14', name: 'Murcia',             debtAbsolute: 13_147_000_000, debtToGDP: 29.8, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA15', name: 'Navarra',            debtAbsolute:  2_737_000_000, debtToGDP:  9.9, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA16', name: 'País Vasco',         debtAbsolute: 11_191_000_000, debtToGDP: 11.8, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
+      { code: 'CA17', name: 'C. Valenciana',      debtAbsolute: 62_424_000_000, debtToGDP: 40.5, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
     ],
-    total: { debtAbsolute: 338_804_000_000, debtToGDP: 20.4 },
+    total: { debtAbsolute: 338_804_000_000, debtToGDP: 20.4, debtYoYChangeAbsolute: null, debtYoYChangePct: null },
     sourceAttribution: {
       be1309: {
         source: 'Valor referencia Q3 2025',
@@ -782,7 +829,16 @@ export async function downloadCcaaDebtData() {
       const suffix = parseInt(suffixStr, 10)
       const debtToGDP = parsed1310.values.get(suffix) ?? 0
       const debtAbsolute = (parsed1309.values.get(suffix) ?? 0) * 1000 // thousands → euros
-      return { code, name, debtAbsolute, debtToGDP }
+      const prevDebtAbsoluteRaw = parsed1309.previousYearValues.get(suffix)
+      const prevDebtAbsolute = prevDebtAbsoluteRaw ? prevDebtAbsoluteRaw * 1000 : null
+      const debtYoYChangeAbsolute =
+        prevDebtAbsolute != null ? debtAbsolute - prevDebtAbsolute : null
+      const debtYoYChangePct =
+        prevDebtAbsolute != null && prevDebtAbsolute !== 0
+          ? (debtYoYChangeAbsolute / prevDebtAbsolute) * 100
+          : null
+
+      return { code, name, debtAbsolute, debtToGDP, debtYoYChangeAbsolute, debtYoYChangePct }
     })
 
     // Total from suffix 1 (or sum of CCAA as fallback)
@@ -790,6 +846,14 @@ export async function downloadCcaaDebtData() {
       ? parsed1309.values.get(CCAA_TOTAL_SUFFIX) * 1000
       : ccaa.reduce((sum, c) => sum + c.debtAbsolute, 0)
     const totalDebtToGDP = parsed1310.values.get(CCAA_TOTAL_SUFFIX) ?? 0
+    const prevTotalDebtRaw = parsed1309.previousYearValues.get(CCAA_TOTAL_SUFFIX)
+    const prevTotalDebtAbsolute = prevTotalDebtRaw ? prevTotalDebtRaw * 1000 : null
+    const totalDebtYoYChangeAbsolute =
+      prevTotalDebtAbsolute != null ? totalDebtAbsolute - prevTotalDebtAbsolute : null
+    const totalDebtYoYChangePct =
+      prevTotalDebtAbsolute != null && prevTotalDebtAbsolute !== 0
+        ? (totalDebtYoYChangeAbsolute / prevTotalDebtAbsolute) * 100
+        : null
 
     console.log(`✅ Deuda CCAA descargada: ${ccaa.length} comunidades, trimestre ${quarter}`)
     console.log(`   Total: ${totalDebtAbsolute.toLocaleString('es-ES')}€ (${totalDebtToGDP.toFixed(1)}% PIB)`)
@@ -798,7 +862,12 @@ export async function downloadCcaaDebtData() {
       lastUpdated: new Date().toISOString(),
       quarter,
       ccaa,
-      total: { debtAbsolute: totalDebtAbsolute, debtToGDP: totalDebtToGDP },
+      total: {
+        debtAbsolute: totalDebtAbsolute,
+        debtToGDP: totalDebtToGDP,
+        debtYoYChangeAbsolute: totalDebtYoYChangeAbsolute,
+        debtYoYChangePct: totalDebtYoYChangePct,
+      },
       sourceAttribution: {
         be1309: {
           source: 'BdE — CSV be1309',

@@ -12,6 +12,7 @@ Dashboard fiscal interactivo que muestra en tiempo real la deuda pública, el ga
 - **Ingresos vs gastos públicos (1995-2024)** — Eurostat (`TR`, `TE`, `B9`, `D2REC`, `D5REC`, `D61REC`)
 - **Recaudación tributaria** — desglose por impuesto (IRPF, IVA, Sociedades, IIEE, IRNR) y por CCAA, con drilldown en subcategorías
 - **Deuda por CCAA** — ranking de 17 comunidades con vista `% PIB` y `€`
+- **Proxy déficit/gasto por CCAA** — estimación direccional basada en variación interanual de deuda BdE + ingresos tributarios AEAT
 - **Comparativa interanual** — modos absoluto, % peso y % cambio, con opción de euros reales (ajustados por IPC) o corrientes
 - **Modo oscuro/claro** — respeta la preferencia del sistema
   - **i18n ES/EN (interfaz + contenidos largos)** — selector persistente (ruta `/en/` para la versión en inglés) + metodología/roadmap bilingües

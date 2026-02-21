@@ -45,10 +45,38 @@ vi.mock("recharts", () => ({
 describe("CcaaDebtBlock", () => {
   const mockCcaaDebt = {
     ccaa: [
-      { code: "CA01", name: "Andalucía", debtToGDP: 18.3, debtAbsolute: 89e9 },
-      { code: "CA09", name: "Cataluña", debtToGDP: 28.4, debtAbsolute: 40e9 },
-      { code: "CA13", name: "Madrid", debtToGDP: 12.1, debtAbsolute: 55e9 },
-      { code: "CA17", name: "C. Valenciana", debtToGDP: 20.7, debtAbsolute: 72e9 },
+      {
+        code: "CA01",
+        name: "Andalucía",
+        debtToGDP: 18.3,
+        debtAbsolute: 89e9,
+        debtYoYChangeAbsolute: 1.2e9,
+        debtYoYChangePct: 1.4,
+      },
+      {
+        code: "CA09",
+        name: "Cataluña",
+        debtToGDP: 28.4,
+        debtAbsolute: 40e9,
+        debtYoYChangeAbsolute: 2.1e9,
+        debtYoYChangePct: 5.5,
+      },
+      {
+        code: "CA13",
+        name: "Madrid",
+        debtToGDP: 12.1,
+        debtAbsolute: 55e9,
+        debtYoYChangeAbsolute: -0.8e9,
+        debtYoYChangePct: -1.4,
+      },
+      {
+        code: "CA17",
+        name: "C. Valenciana",
+        debtToGDP: 20.7,
+        debtAbsolute: 72e9,
+        debtYoYChangeAbsolute: 1.7e9,
+        debtYoYChangePct: 2.4,
+      },
     ],
     total: { debtToGDP: 20.4, debtAbsolute: 338e9 },
     quarter: "2025-Q3",
@@ -58,8 +86,58 @@ describe("CcaaDebtBlock", () => {
     },
   };
 
+  const mockTaxRevenue = {
+    latestYear: 2024,
+    ccaa: {
+      "2024": {
+        entries: [
+          {
+            code: "CA01",
+            name: "Andalucía",
+            total: 18_000,
+            irpf: 0,
+            iva: 0,
+            sociedades: 0,
+            iiee: 0,
+            irnr: 0,
+          },
+          {
+            code: "CA09",
+            name: "Cataluña",
+            total: 22_500,
+            irpf: 0,
+            iva: 0,
+            sociedades: 0,
+            iiee: 0,
+            irnr: 0,
+          },
+          {
+            code: "CA13",
+            name: "Madrid",
+            total: 20_100,
+            irpf: 0,
+            iva: 0,
+            sociedades: 0,
+            iiee: 0,
+            irnr: 0,
+          },
+          {
+            code: "CA17",
+            name: "C. Valenciana",
+            total: 16_400,
+            irpf: 0,
+            iva: 0,
+            sociedades: 0,
+            iiee: 0,
+            irnr: 0,
+          },
+        ],
+      },
+    },
+  };
+
   beforeEach(() => {
-    (useData as any).mockReturnValue({ ccaaDebt: mockCcaaDebt });
+    (useData as any).mockReturnValue({ ccaaDebt: mockCcaaDebt, taxRevenue: mockTaxRevenue });
     window.history.replaceState({}, "", "/");
     tooltipPayload = {
       name: "Cataluña",
@@ -97,8 +175,8 @@ describe("CcaaDebtBlock", () => {
     expect((screen.getByLabelText("Comunidad") as HTMLSelectElement).value).toBe("CA09");
     expect((screen.getByLabelText("Métrica") as HTMLSelectElement).value).toBe("debtAbsolute");
     expect(screen.getByText("Detalle: Cataluña")).toBeInTheDocument();
-    expect(screen.getByText(/Déficit CCAA/)).toBeInTheDocument();
-    expect(screen.getByText(/Gasto CCAA/)).toBeInTheDocument();
+    expect(screen.getByText(/Déficit CCAA \(proxy\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Gasto CCAA \(proxy\)/)).toBeInTheDocument();
   });
 
   it("al cambiar a deuda absoluta reordena y sincroniza URL", () => {
@@ -116,13 +194,15 @@ describe("CcaaDebtBlock", () => {
     expect(window.location.search).not.toContain("section=");
   });
 
-  it("muestra detalle y placeholders al seleccionar comunidad", () => {
+  it("muestra detalle y proxies al seleccionar comunidad", () => {
     render(<CcaaDebtBlock />);
     const communitySelect = screen.getByLabelText("Comunidad") as HTMLSelectElement;
     fireEvent.change(communitySelect, { target: { value: "CA17" } });
 
     expect(screen.getByText("Detalle: C. Valenciana")).toBeInTheDocument();
-    expect(screen.getAllByText(/Próximamente: pendiente de integración/)).toHaveLength(2);
+    expect(screen.getByText(/Proxy por variación deuda/)).toBeInTheDocument();
+    expect(screen.getByText(/Gasto estimado/)).toBeInTheDocument();
+    expect(screen.getByText(/Ingresos tributarios AEAT/)).toBeInTheDocument();
     expect(window.location.search).toContain("ccaa=CA17");
   });
 

@@ -105,13 +105,20 @@ export interface CcaaDebtEntry {
   name: string; // "Andalucía"
   debtAbsolute: number; // euros (converted from thousands in CSV)
   debtToGDP: number; // percentage
+  debtYoYChangeAbsolute?: number | null; // euros (proxy: Δ debt vs same quarter previous year)
+  debtYoYChangePct?: number | null; // percentage
 }
 
 export interface CcaaDebtData {
   lastUpdated: string;
   quarter: string; // "2025-Q3"
   ccaa: CcaaDebtEntry[];
-  total: { debtAbsolute: number; debtToGDP: number };
+  total: {
+    debtAbsolute: number;
+    debtToGDP: number;
+    debtYoYChangeAbsolute?: number | null;
+    debtYoYChangePct?: number | null;
+  };
   sourceAttribution: Record<string, DataSourceAttribution>;
 }
 

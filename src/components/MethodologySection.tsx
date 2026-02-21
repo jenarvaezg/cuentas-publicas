@@ -165,6 +165,8 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         },
         paragraphs: [
           "Se combinan dos CSV oficiales para mostrar ranking por %PIB y deuda absoluta en euros.",
+          "Para el detalle por comunidad también se muestra un proxy de déficit/gasto: variación interanual de deuda PDE (BdE) + ingresos tributarios AEAT de la comunidad.",
+          "Este proxy sirve solo como señal orientativa y no equivale al saldo de contabilidad nacional regional.",
           "El selector por comunidad persiste en URL para compartir estado exacto del bloque.",
         ],
       },
@@ -326,6 +328,8 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         },
         paragraphs: [
           "Two official CSV sources are combined to rank regions by %GDP and absolute debt in euros.",
+          "Region detail also includes a deficit/spending proxy: year-over-year EDP debt change (BdE) + AEAT regional tax revenue.",
+          "This proxy is directional only and is not equivalent to official regional national-accounts balance.",
           "Region and metric selection is persisted in URL query state for shareable deep links.",
         ],
       },
