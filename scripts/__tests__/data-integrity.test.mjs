@@ -74,6 +74,22 @@ describe('data integrity', () => {
     expect(latest.totalExpenditure).toBeGreaterThan(0)
   })
 
+  it('valida balanzas fiscales CCAA', () => {
+    const balances = loadDataFile('ccaa-fiscal-balance.json')
+    expect(Array.isArray(balances.years)).toBe(true)
+    expect(balances.years.length).toBeGreaterThan(0)
+    expect(Number.isFinite(balances.latestYear)).toBe(true)
+
+    const latest = balances.byYear[String(balances.latestYear)]
+    expect(latest).toBeDefined()
+    expect(Array.isArray(latest.entries)).toBe(true)
+    expect(latest.entries.length).toBeGreaterThanOrEqual(10)
+
+    const madrid = latest.entries.find((entry) => entry.code === 'CA13')
+    expect(madrid).toBeDefined()
+    expect(Number.isFinite(madrid.netBalance)).toBe(true)
+  })
+
   it('valida metadatos de frescura por fuente', () => {
     const meta = loadDataFile('meta.json')
     const sourceEntries = Object.entries(meta.sources || {})
@@ -109,6 +125,7 @@ describe('data integrity', () => {
       'ccaa-debt.json',
       'revenue.json',
       'tax-revenue.json',
+      'ccaa-fiscal-balance.json',
       'meta.json',
       'index.json'
     ]
@@ -125,6 +142,9 @@ describe('data integrity', () => {
     expect(apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/tax-revenue.json')).toBe(
       true,
     )
+    expect(
+      apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/ccaa-fiscal-balance.json'),
+    ).toBe(true)
   })
 
   it('valida consistencia entre catálogo API y OpenAPI', () => {

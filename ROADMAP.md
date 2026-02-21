@@ -46,7 +46,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 ### Datos fiscales detallados
 
 - **🟡 Tipos efectivos por impuesto**: proxy implementado (IRPF, IVA y Sociedades sobre recaudación neta total + evolución temporal). Pendiente versión canónica sobre bases imponibles para tipo efectivo económico estricto.
-- **Recaudación por CCAA**: Cuánto aporta cada comunidad autónoma en impuestos cedidos vs transferencias recibidas (balanzas fiscales).
+- **✅ Recaudación por CCAA (balanzas fiscales)**: comparativa de impuestos cedidos vs transferencias recibidas con liquidaciones oficiales de Hacienda para CCAA de régimen común (2019+).
 
 ### Mejoras de datos existentes
 

@@ -212,6 +212,51 @@ export interface TaxRevenueData {
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
+// ── CCAA Fiscal Balance (Hacienda) ─────────────────────────────────
+
+export interface CcaaFiscalBalanceEntry {
+  code: string; // CCAA code aligned with other datasets
+  name: string;
+  cededTaxes: number; // M€ (IRPF + IVA + IIEE)
+  transfers: number; // M€ (Fondo Garantía + Suficiencia + Competitividad + Cooperación)
+  netBalance: number; // M€ (transfers - cededTaxes)
+  transferToTaxRatio: number | null;
+  cededTaxesBreakdown: {
+    irpf: number;
+    iva: number;
+    iiee: number;
+  };
+  transfersBreakdown: {
+    fondoGarantia: number;
+    fondoSuficiencia: number;
+    fondoCompetitividad: number;
+    fondoCooperacion: number;
+  };
+}
+
+export interface CcaaFiscalBalanceYearData {
+  entries: CcaaFiscalBalanceEntry[];
+  totals: {
+    cededTaxes: number;
+    transfers: number;
+    netBalance: number;
+  };
+}
+
+export interface CcaaFiscalBalanceData {
+  lastUpdated: string;
+  years: number[];
+  latestYear: number;
+  byYear: Record<string, CcaaFiscalBalanceYearData>;
+  coverage: {
+    regime: "common";
+    includesCeutaMelilla: boolean;
+    excludesForal: boolean;
+    notes: string;
+  };
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
 // ── Metadata ────────────────────────────────────────────────────────
 
 export interface MetaData {
@@ -226,6 +271,7 @@ export interface MetaData {
     ccaaDebt?: boolean;
     revenue?: boolean;
     taxRevenue?: boolean;
+    ccaaFiscalBalance?: boolean;
   };
   sources: {
     debt: {
@@ -279,6 +325,14 @@ export interface MetaData {
       latestYear: number;
     };
     taxRevenue?: {
+      success: boolean;
+      lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
+      latestYear: number;
+      years: number;
+    };
+    ccaaFiscalBalance?: {
       success: boolean;
       lastUpdated: string;
       lastFetchAt?: string;

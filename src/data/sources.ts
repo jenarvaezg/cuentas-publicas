@@ -102,6 +102,13 @@ export const AEAT_DELEGACIONES: SourceDetail = {
   note: "Recaudación tributaria neta mensual por CCAA",
 };
 
+// Ministerio de Hacienda — financiación autonómica (régimen común)
+export const HACIENDA_CCAA_FINANCIACION: SourceDetail = {
+  name: "Ministerio de Hacienda — Liquidación CCAA",
+  url: "https://www.hacienda.gob.es/es-ES/CDI/Paginas/SistemasFinanciacionDeuda/InformacionCCAAs/Informes%20financiacion%20comunidades%20autonomas2.aspx",
+  note: "Impuestos cedidos y transferencias del sistema de financiación autonómica",
+};
+
 // Eurostat
 export const EUROSTAT: SourceDetail = {
   name: "Eurostat",

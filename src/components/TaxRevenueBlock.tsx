@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AEAT_DELEGACIONES, AEAT_SERIES, CALCULO_DERIVADO } from "@/data/sources";
+import {
+  AEAT_DELEGACIONES,
+  AEAT_SERIES,
+  CALCULO_DERIVADO,
+  HACIENDA_CCAA_FINANCIACION,
+} from "@/data/sources";
 import type {
+  CcaaFiscalBalanceEntry,
   IIEEBreakdown,
   RestoBreakdown,
   TaxRevenueCcaaEntry,
@@ -26,9 +32,13 @@ const TAX_COLORS: Record<string, string> = {
 
 const COLOR_TOP = "hsl(215, 65%, 45%)";
 const COLOR_OTHER = "hsl(215, 30%, 65%)";
+const COLOR_BALANCE_POSITIVE = "hsl(150, 58%, 40%)";
+const COLOR_BALANCE_NEGATIVE = "hsl(0, 67%, 50%)";
 
 type TabKey = "nacional" | "ccaa";
 type TaxTypeKey = "total" | "irpf" | "iva" | "sociedades" | "iiee" | "irnr";
+type CcaaModeKey = "aeat" | "balance";
+type BalanceMetricKey = "netBalance" | "cededTaxes" | "transfers";
 type DrilldownKey = "iiee" | "resto" | null;
 
 interface NationalBarDatum {
@@ -70,6 +80,16 @@ function parseTaxYearFromQuery(years: number[], latestYear: number): number {
   return years.includes(n) ? n : latestYear;
 }
 
+function parseCcaaModeFromQuery(): CcaaModeKey {
+  return getSearchParam("taxCcaaMode") === "balance" ? "balance" : "aeat";
+}
+
+function parseCcaaBalanceMetricFromQuery(): BalanceMetricKey {
+  const allowed: BalanceMetricKey[] = ["netBalance", "cededTaxes", "transfers"];
+  const param = getSearchParam("taxCcaaMetric") as BalanceMetricKey | null;
+  return param && allowed.includes(param) ? param : "netBalance";
+}
+
 const NationalTooltip = ({
   active,
   payload,
@@ -92,16 +112,20 @@ const NationalTooltip = ({
 const CcaaTooltip = ({
   active,
   payload,
+  metricLabel,
 }: {
   active?: boolean;
   payload?: Array<{ payload: CcaaBarDatum }>;
+  metricLabel: string;
 }) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
     <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
       <p className="font-semibold text-foreground">{d.name}</p>
-      <p className="text-muted-foreground">{formatNumber(d.value, 0)} M€</p>
+      <p className="text-muted-foreground">
+        {metricLabel}: {formatNumber(d.value, 0)} M€
+      </p>
     </div>
   );
 };
@@ -142,7 +166,7 @@ const EffectiveRateTooltip = ({
 };
 
 export function TaxRevenueBlock() {
-  const { taxRevenue, demographics } = useData();
+  const { taxRevenue, demographics, ccaaFiscalBalance } = useData();
   const { msg, lang } = useI18n();
 
   const copy =
@@ -164,6 +188,20 @@ export function TaxRevenueBlock() {
           dataInMillions: "Data in millions of euros",
           netRevenue: "Net revenue (after refunds)",
           ccaaNoData: "CCAA data not available for this year.",
+          ccaaMode: "CCAA data",
+          ccaaModeAeat: "AEAT revenue",
+          ccaaModeBalance: "Fiscal balances",
+          balanceMetric: "Balance metric",
+          balanceNet: "Net balance",
+          balanceCeded: "Ceded taxes",
+          balanceTransfers: "Transfers",
+          balanceNoData: "Fiscal-balance data not available for this year.",
+          balanceCoverageNote:
+            "Hacienda settlement data for common-regime regions. Navarra and País Vasco are excluded.",
+          balanceFormulaNote:
+            "Net balance = transfers (Guarantee + Sufficiency + Competitiveness + Cooperation Funds) - ceded taxes (IRPF + VAT + excise duties).",
+          balancePositive: "Positive balance",
+          balanceNegative: "Negative balance",
           irpf: "Personal Income Tax (IRPF)",
           iva: "Value Added Tax (VAT)",
           sociedades: "Corporate Tax",
@@ -217,6 +255,20 @@ export function TaxRevenueBlock() {
           dataInMillions: "Datos en millones de euros",
           netRevenue: "Ingresos netos (tras devoluciones)",
           ccaaNoData: "Datos por CCAA no disponibles para este año.",
+          ccaaMode: "Datos CCAA",
+          ccaaModeAeat: "Recaudación AEAT",
+          ccaaModeBalance: "Balanzas fiscales",
+          balanceMetric: "Métrica de balanza",
+          balanceNet: "Saldo neto",
+          balanceCeded: "Impuestos cedidos",
+          balanceTransfers: "Transferencias",
+          balanceNoData: "Datos de balanzas fiscales no disponibles para este año.",
+          balanceCoverageNote:
+            "Liquidación de Hacienda para CCAA de régimen común. Navarra y País Vasco quedan fuera.",
+          balanceFormulaNote:
+            "Saldo neto = transferencias (Fondos de Garantía, Suficiencia, Competitividad y Cooperación) - impuestos cedidos (IRPF + IVA + IIEE).",
+          balancePositive: "Saldo positivo",
+          balanceNegative: "Saldo negativo",
           irpf: "IRPF",
           iva: "IVA",
           sociedades: "Impuesto de Sociedades",
@@ -268,21 +320,56 @@ export function TaxRevenueBlock() {
   );
 
   const { years, latestYear } = taxRevenue;
+  const balanceYears = ccaaFiscalBalance?.years ?? [];
+  const latestBalanceYear = ccaaFiscalBalance?.latestYear ?? balanceYears[balanceYears.length - 1];
 
   const [activeTab, setActiveTab] = useState<TabKey>(() => parseTabFromQuery());
   const [selectedTaxType, setSelectedTaxType] = useState<TaxTypeKey>(() => parseTaxTypeFromQuery());
+  const [ccaaMode, setCcaaMode] = useState<CcaaModeKey>(() => parseCcaaModeFromQuery());
+  const [selectedBalanceMetric, setSelectedBalanceMetric] = useState<BalanceMetricKey>(() =>
+    parseCcaaBalanceMetricFromQuery(),
+  );
   const [selectedYear, setSelectedYear] = useState<number>(() =>
     parseTaxYearFromQuery(years, latestYear),
   );
   const [drilldown, setDrilldown] = useState<DrilldownKey>(null);
 
+  const yearOptions = useMemo<number[]>(() => {
+    if (activeTab === "ccaa" && ccaaMode === "balance") return balanceYears;
+    return years;
+  }, [activeTab, ccaaMode, balanceYears, years]);
+
+  const defaultYearForMode = useMemo<number>(() => {
+    if (activeTab === "ccaa" && ccaaMode === "balance") {
+      return latestBalanceYear ?? latestYear;
+    }
+    return latestYear;
+  }, [activeTab, ccaaMode, latestBalanceYear, latestYear]);
+
+  useEffect(() => {
+    if (yearOptions.length === 0) return;
+    if (!yearOptions.includes(selectedYear)) {
+      setSelectedYear(defaultYearForMode);
+      setDrilldown(null);
+    }
+  }, [yearOptions, selectedYear, defaultYearForMode]);
+
   useEffect(() => {
     updateSearchParams({
       taxTab: activeTab === "nacional" ? null : activeTab,
       taxType: selectedTaxType === "total" ? null : selectedTaxType,
-      taxYear: selectedYear === latestYear ? null : String(selectedYear),
+      taxCcaaMode: ccaaMode === "aeat" ? null : ccaaMode,
+      taxCcaaMetric: selectedBalanceMetric === "netBalance" ? null : selectedBalanceMetric,
+      taxYear: selectedYear === defaultYearForMode ? null : String(selectedYear),
     });
-  }, [activeTab, selectedTaxType, selectedYear, latestYear]);
+  }, [
+    activeTab,
+    selectedTaxType,
+    ccaaMode,
+    selectedBalanceMetric,
+    selectedYear,
+    defaultYearForMode,
+  ]);
 
   const yearData: TaxRevenueYearNational | undefined = taxRevenue.national[String(selectedYear)];
   const prevYearData: TaxRevenueYearNational | undefined =
@@ -418,20 +505,41 @@ export function TaxRevenueBlock() {
 
   // ── CCAA chart data ──────────────────────────────────────────────────────────
 
-  const ccaaEntries: TaxRevenueCcaaEntry[] = taxRevenue.ccaa[String(selectedYear)]?.entries ?? [];
+  const ccaaRevenueEntries: TaxRevenueCcaaEntry[] =
+    taxRevenue.ccaa[String(selectedYear)]?.entries ?? [];
+  const ccaaBalanceEntries: CcaaFiscalBalanceEntry[] =
+    ccaaFiscalBalance?.byYear?.[String(selectedYear)]?.entries ?? [];
+
+  const ccaaMetricLabel = useMemo(() => {
+    if (ccaaMode === "aeat") {
+      return selectedTaxType === "total"
+        ? copy.netRevenue
+        : (taxNames[selectedTaxType] ?? copy.netRevenue);
+    }
+    if (selectedBalanceMetric === "cededTaxes") return copy.balanceCeded;
+    if (selectedBalanceMetric === "transfers") return copy.balanceTransfers;
+    return copy.balanceNet;
+  }, [ccaaMode, selectedTaxType, selectedBalanceMetric, copy, taxNames]);
 
   const ccaaChartData = useMemo<CcaaBarDatum[]>(() => {
-    if (!ccaaEntries.length) return [];
-    const sorted = ccaaEntries
-      .map((entry) => ({
-        name: entry.name,
-        code: entry.code,
-        value: selectedTaxType === "total" ? entry.total : (entry[selectedTaxType] ?? 0),
-        isTop3: false,
-      }))
+    const base =
+      ccaaMode === "aeat"
+        ? ccaaRevenueEntries.map((entry) => ({
+            name: entry.name,
+            code: entry.code,
+            value: selectedTaxType === "total" ? entry.total : (entry[selectedTaxType] ?? 0),
+          }))
+        : ccaaBalanceEntries.map((entry) => ({
+            name: entry.name,
+            code: entry.code,
+            value: entry[selectedBalanceMetric],
+          }));
+    if (!base.length) return [];
+    const sorted = base
+      .map((entry) => ({ ...entry, isTop3: false }))
       .sort((a, b) => b.value - a.value);
     return sorted.map((d, i) => ({ ...d, isTop3: i < 3 }));
-  }, [ccaaEntries, selectedTaxType]);
+  }, [ccaaMode, ccaaRevenueEntries, ccaaBalanceEntries, selectedTaxType, selectedBalanceMetric]);
 
   // ── Active chart data (drilldown or top-level) ───────────────────────────────
 
@@ -452,7 +560,7 @@ export function TaxRevenueBlock() {
     const values = ccaaChartData.map((d) => d.value);
     const min = Math.min(...values);
     const max = Math.max(...values);
-    return [Math.min(0, min), max];
+    return [Math.min(0, min), Math.max(0, max)];
   }, [ccaaChartData]);
 
   // ── Tab toggle ───────────────────────────────────────────────────────────────
@@ -501,7 +609,7 @@ export function TaxRevenueBlock() {
                   }}
                   className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
                 >
-                  {[...years].reverse().map((y) => (
+                  {[...yearOptions].reverse().map((y) => (
                     <option key={y} value={y}>
                       {y}
                     </option>
@@ -745,50 +853,111 @@ export function TaxRevenueBlock() {
         {/* CCAA tab */}
         {activeTab === "ccaa" && (
           <div className="space-y-4">
-            {/* Tax type selector */}
-            <div className="flex items-center gap-1.5">
-              <label
-                htmlFor="taxrevenue-type"
-                className="text-xs text-muted-foreground whitespace-nowrap"
-              >
-                {copy.taxType}
-              </label>
-              <select
-                id="taxrevenue-type"
-                value={selectedTaxType}
-                onChange={(e) => setSelectedTaxType(e.target.value as TaxTypeKey)}
-                className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
-              >
-                <option value="total">{copy.allTaxes}</option>
-                {(["irpf", "iva", "sociedades", "iiee", "irnr"] as TaxTypeKey[]).map((key) => (
-                  <option key={key} value={key}>
-                    {taxNames[key]}
-                  </option>
-                ))}
-              </select>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex items-center gap-1.5">
+                <label
+                  htmlFor="taxrevenue-ccaa-mode"
+                  className="text-xs text-muted-foreground whitespace-nowrap"
+                >
+                  {copy.ccaaMode}
+                </label>
+                <select
+                  id="taxrevenue-ccaa-mode"
+                  value={ccaaMode}
+                  onChange={(e) => setCcaaMode(e.target.value as CcaaModeKey)}
+                  className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="aeat">{copy.ccaaModeAeat}</option>
+                  <option value="balance">{copy.ccaaModeBalance}</option>
+                </select>
+              </div>
+
+              {ccaaMode === "aeat" ? (
+                <div className="flex items-center gap-1.5">
+                  <label
+                    htmlFor="taxrevenue-type"
+                    className="text-xs text-muted-foreground whitespace-nowrap"
+                  >
+                    {copy.taxType}
+                  </label>
+                  <select
+                    id="taxrevenue-type"
+                    value={selectedTaxType}
+                    onChange={(e) => setSelectedTaxType(e.target.value as TaxTypeKey)}
+                    className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="total">{copy.allTaxes}</option>
+                    {(["irpf", "iva", "sociedades", "iiee", "irnr"] as TaxTypeKey[]).map((key) => (
+                      <option key={key} value={key}>
+                        {taxNames[key]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <label
+                    htmlFor="taxrevenue-balance-metric"
+                    className="text-xs text-muted-foreground whitespace-nowrap"
+                  >
+                    {copy.balanceMetric}
+                  </label>
+                  <select
+                    id="taxrevenue-balance-metric"
+                    value={selectedBalanceMetric}
+                    onChange={(e) => setSelectedBalanceMetric(e.target.value as BalanceMetricKey)}
+                    className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="netBalance">{copy.balanceNet}</option>
+                    <option value="cededTaxes">{copy.balanceCeded}</option>
+                    <option value="transfers">{copy.balanceTransfers}</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {ccaaChartData.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">{copy.ccaaNoData}</p>
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {ccaaMode === "aeat" ? copy.ccaaNoData : copy.balanceNoData}
+              </p>
             ) : (
               <>
                 {/* Legend */}
-                <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <span
-                      className="inline-block w-3 h-3 rounded-sm"
-                      style={{ background: COLOR_TOP }}
-                    />
-                    {copy.top3}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span
-                      className="inline-block w-3 h-3 rounded-sm"
-                      style={{ background: COLOR_OTHER }}
-                    />
-                    {copy.restRegions}
-                  </span>
-                </div>
+                {ccaaMode === "balance" && selectedBalanceMetric === "netBalance" ? (
+                  <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: COLOR_BALANCE_POSITIVE }}
+                      />
+                      {copy.balancePositive}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: COLOR_BALANCE_NEGATIVE }}
+                      />
+                      {copy.balanceNegative}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: COLOR_TOP }}
+                      />
+                      {copy.top3}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: COLOR_OTHER }}
+                      />
+                      {copy.restRegions}
+                    </span>
+                  </div>
+                )}
 
                 <ResponsiveContainer width="100%" height={ccaaChartHeight}>
                   <BarChart
@@ -810,16 +979,34 @@ export function TaxRevenueBlock() {
                       tick={{ fontSize: 11 }}
                       stroke="hsl(var(--muted-foreground))"
                     />
-                    <Tooltip content={<CcaaTooltip />} />
+                    <Tooltip content={<CcaaTooltip metricLabel={ccaaMetricLabel} />} />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                       {ccaaChartData.map((entry) => (
-                        <Cell key={entry.code} fill={entry.isTop3 ? COLOR_TOP : COLOR_OTHER} />
+                        <Cell
+                          key={entry.code}
+                          fill={
+                            ccaaMode === "balance" && selectedBalanceMetric === "netBalance"
+                              ? entry.value < 0
+                                ? COLOR_BALANCE_NEGATIVE
+                                : COLOR_BALANCE_POSITIVE
+                              : entry.isTop3
+                                ? COLOR_TOP
+                                : COLOR_OTHER
+                          }
+                        />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
 
-                <p className="text-xs text-muted-foreground/80 text-center">{copy.foralNote}</p>
+                <p className="text-xs text-muted-foreground/80 text-center">
+                  {ccaaMode === "aeat" ? copy.foralNote : copy.balanceCoverageNote}
+                </p>
+                {ccaaMode === "balance" && (
+                  <p className="text-xs text-muted-foreground/70 text-center">
+                    {copy.balanceFormulaNote}
+                  </p>
+                )}
               </>
             )}
           </div>
@@ -827,14 +1014,24 @@ export function TaxRevenueBlock() {
 
         {/* Footer note */}
         <p className="text-xs text-muted-foreground/80 text-center">
-          {copy.netRevenue} —{" "}
+          {activeTab === "ccaa" && ccaaMode === "balance" ? copy.balanceMetric : copy.netRevenue} —{" "}
           <a
-            href={activeTab === "ccaa" ? AEAT_DELEGACIONES.url : AEAT_SERIES.url}
+            href={
+              activeTab === "ccaa"
+                ? ccaaMode === "balance"
+                  ? HACIENDA_CCAA_FINANCIACION.url
+                  : AEAT_DELEGACIONES.url
+                : AEAT_SERIES.url
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-foreground"
           >
-            {activeTab === "ccaa" ? AEAT_DELEGACIONES.name : AEAT_SERIES.name}
+            {activeTab === "ccaa"
+              ? ccaaMode === "balance"
+                ? HACIENDA_CCAA_FINANCIACION.name
+                : AEAT_DELEGACIONES.name
+              : AEAT_SERIES.name}
           </a>{" "}
           — {copy.dataInMillions} — {selectedYear}
         </p>

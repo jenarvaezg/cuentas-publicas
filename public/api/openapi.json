@@ -63,6 +63,12 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
+    "/api/v1/ccaa-fiscal-balance.json": {
+      "get": {
+        "summary": "Impuestos cedidos vs transferencias por CCAA (régimen común)",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
     "/api/v1/meta.json": {
       "get": {
         "summary": "Estado y frescura del pipeline",

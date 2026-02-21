@@ -6,7 +6,7 @@ Inventario técnico de todos los datos del dashboard: clasificación, fuentes, f
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 6 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 9 archivos JSON en `src/data/` (8 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
+El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT y Ministerio de Hacienda) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 10 archivos JSON en `src/data/` (9 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
 
 **Estado general**: De ~40 métricas mostradas, **~22 son automatizadas**, **~5 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~7 son derivadas** por cálculo.
 
@@ -232,7 +232,26 @@ El dashboard utiliza 6 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 ---
 
-## 9. INFRAESTRUCTURA CI/CD
+## 9. MINISTERIO DE HACIENDA — Balanzas fiscales CCAA (régimen común)
+
+**Script**: `scripts/sources/hacienda-fiscal-balance.mjs` | **Output**: `src/data/ccaa-fiscal-balance.json`
+
+| Dato | Clasificación | Método | Frecuencia | Fragilidad |
+|------|---------------|--------|------------|------------|
+| Impuestos cedidos (IRPF + IVA + IIEE) por CCAA | **AUTOMATIZADO** | XLS `cuadros-liquidacion-YYYY.xlsx`, hoja `3. Liquidación definitiva` | Anual (liquidación) | MEDIA — depende de nombres de columnas |
+| Transferencias (Fondos Garantía + Suficiencia + Competitividad + Cooperación) por CCAA | **AUTOMATIZADO** | Misma hoja, columnas por concepto | Anual | MEDIA |
+| Saldo neto (transferencias - cedidos) | **DERIVADO** | Cálculo sobre columnas anteriores | Anual | BAJA |
+
+**URL índice** (estable):
+- `https://www.hacienda.gob.es/es-ES/CDI/Paginas/SistemasFinanciacionDeuda/InformacionCCAAs/Informes%20financiacion%20comunidades%20autonomas2.aspx`
+
+**Cobertura**: CCAA de régimen común (15 comunidades, años 2019-2023 en el corte actual). Excluye Navarra y País Vasco.
+
+**Fallback**: Dataset de referencia local (2023) con trazabilidad en `sourceAttribution`.
+
+---
+
+## 10. INFRAESTRUCTURA CI/CD
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
@@ -247,7 +266,7 @@ El dashboard utiliza 6 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 ---
 
-## 10. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+## 11. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
 
 ### AUTOMATIZADOS (se actualizan solos cada lunes)
 | Dato | Fuente | Frescura | Confiabilidad |
@@ -269,6 +288,7 @@ El dashboard utiliza 6 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 | Tasa de paro EU | Eurostat API | Anual | Alta |
 | Deuda CCAA % PIB | BdE CSV be1310 | Trimestral | Alta |
 | Deuda CCAA absoluta | BdE CSV be1309 | Trimestral | Alta |
+| Balanzas fiscales CCAA (cedidos/transferencias) | Hacienda XLS liquidación | Anual (liquidación) | Media |
 | Ingresos totales (TR) | Eurostat API gov_10a_main | Anual (~1-2a lag) | Alta |
 | Gastos totales (TE) | Eurostat API gov_10a_main | Anual | Alta |
 | Déficit/superávit (B9) | Eurostat API gov_10a_main | Anual | Alta |
@@ -320,7 +340,7 @@ El dashboard utiliza 6 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 ---
 
-## 11. MAPA DE ARCHIVOS
+## 12. MAPA DE ARCHIVOS
 
 ```
 scripts/
@@ -331,6 +351,8 @@ scripts/
     seguridad-social.mjs         # SS (HTML scraping + Excel)
     igae.mjs                     # IGAE (Excel COFOG)
     eurostat.mjs                 # Eurostat API (5 indicadores EU-27 + 6 revenue ES)
+    aeat.mjs                     # AEAT (series + delegaciones)
+    hacienda-fiscal-balance.mjs  # Hacienda (balanzas fiscales CCAA, régimen común)
   lib/
     fetch-utils.mjs              # fetchWithRetry (backoff + timeout)
     csv-parser.mjs               # Parser CSV formato español
@@ -344,6 +366,8 @@ src/data/
   eurostat.json                  # Comparativa EU-27 (5 indicadores × 8 países)
   ccaa-debt.json                 # Deuda por CCAA (17 comunidades, 2 indicadores)
   revenue.json                   # Ingresos vs gastos AAPP (30 años, 6 indicadores)
+  tax-revenue.json               # Recaudación AEAT (nacional + CCAA)
+  ccaa-fiscal-balance.json       # Balanzas fiscales CCAA (2019-2023, régimen común)
   meta.json                      # Estado última descarga
   types.ts                       # Interfaces TypeScript
   sources.ts                     # Atribución fuentes (URLs, nombres)

@@ -6,6 +6,7 @@ import { downloadPensionData } from './sources/seguridad-social.mjs'
 import { downloadBudgetData } from './sources/igae.mjs'
 import { downloadEurostatData, downloadRevenueData } from './sources/eurostat.mjs'
 import { downloadTaxRevenueData } from './sources/aeat.mjs'
+import { downloadCcaaFiscalBalanceData } from './sources/hacienda-fiscal-balance.mjs'
 
 const SITE_URL = 'https://cuentas-publicas.es'
 
@@ -176,10 +177,21 @@ async function main() {
     downloadEurostatData(),
     downloadCcaaDebtData(),
     downloadRevenueData(),
-    downloadTaxRevenueData()
+    downloadTaxRevenueData(),
+    downloadCcaaFiscalBalanceData()
   ])
 
-  const [debtResult, demographicsResult, pensionsResult, budgetResult, eurostatResult, ccaaDebtResult, revenueResult, taxRevenueResult] = results
+  const [
+    debtResult,
+    demographicsResult,
+    pensionsResult,
+    budgetResult,
+    eurostatResult,
+    ccaaDebtResult,
+    revenueResult,
+    taxRevenueResult,
+    ccaaFiscalBalanceResult
+  ] = results
 
   // Track success/failure
   const status = {
@@ -190,7 +202,8 @@ async function main() {
     eurostat: eurostatResult.status === 'fulfilled',
     ccaaDebt: ccaaDebtResult.status === 'fulfilled',
     revenue: revenueResult.status === 'fulfilled',
-    taxRevenue: taxRevenueResult.status === 'fulfilled'
+    taxRevenue: taxRevenueResult.status === 'fulfilled',
+    ccaaFiscalBalance: ccaaFiscalBalanceResult.status === 'fulfilled'
   }
 
   // Write individual data files
@@ -250,6 +263,13 @@ async function main() {
     console.log('✅ tax-revenue.json')
   } else {
     console.error('❌ tax-revenue.json - Error:', taxRevenueResult.reason?.message)
+  }
+
+  if (status.ccaaFiscalBalance) {
+    writeMirroredDataFile('ccaa-fiscal-balance.json', ccaaFiscalBalanceResult.value)
+    console.log('✅ ccaa-fiscal-balance.json')
+  } else {
+    console.error('❌ ccaa-fiscal-balance.json - Error:', ccaaFiscalBalanceResult.reason?.message)
   }
 
   // Write metadata file
@@ -359,6 +379,19 @@ async function main() {
           : null,
         latestYear: status.taxRevenue ? taxRevenueResult.value.latestYear : null,
         years: status.taxRevenue ? taxRevenueResult.value.years.length : 0
+      },
+      ccaaFiscalBalance: {
+        success: status.ccaaFiscalBalance,
+        lastUpdated: status.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.lastUpdated : null,
+        lastFetchAt: status.ccaaFiscalBalance ? nowIso : null,
+        lastRealDataDate: status.ccaaFiscalBalance
+          ? pickLatestDate([
+            ccaaFiscalBalanceResult.value.latestYear,
+            ...getAttributionDates(ccaaFiscalBalanceResult.value.sourceAttribution)
+          ])
+          : null,
+        latestYear: status.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.latestYear : null,
+        years: status.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.years.length : 0
       }
     }
   }
@@ -532,6 +565,17 @@ async function main() {
   } else {
     console.log('Tax Revenue: ❌ Error')
   }
+
+  if (status.ccaaFiscalBalance && ccaaFiscalBalanceResult.value) {
+    const balanceAttr = ccaaFiscalBalanceResult.value.sourceAttribution?.balances
+    const yearCount = ccaaFiscalBalanceResult.value.years?.length || 0
+    const latestYear = ccaaFiscalBalanceResult.value.latestYear
+    const latestEntries = ccaaFiscalBalanceResult.value.byYear?.[String(latestYear)]?.entries?.length || 0
+    const isLive = balanceAttr?.type === 'xlsx'
+    console.log(`Balanzas CCAA: ${isLive ? '✅' : '⚠️'} ${balanceAttr?.type?.toUpperCase() || 'N/A'} (${yearCount} años, ${latestEntries} CCAA en ${latestYear})`)
+  } else {
+    console.log('Balanzas CCAA: ❌ Error')
+  }
   console.log()
 
   // B3: Éxito parcial. Definir fuentes críticas.
@@ -594,6 +638,7 @@ function buildPublicApiIndex(meta) {
       { path: '/api/v1/eurostat.json', source: 'Eurostat', description: 'Comparativa UE por indicadores fiscales' },
       { path: '/api/v1/ccaa-debt.json', source: 'Banco de España', description: 'Deuda de CCAA por comunidad' },
       { path: '/api/v1/tax-revenue.json', source: 'AEAT', description: 'Recaudación tributaria por impuesto y CCAA' },
+      { path: '/api/v1/ccaa-fiscal-balance.json', source: 'Ministerio de Hacienda', description: 'Impuestos cedidos vs transferencias por CCAA (régimen común)' },
       { path: '/api/v1/meta.json', source: 'Pipeline', description: 'Estado de actualización y frescura de fuentes' }
     ],
     freshness: meta.sources

@@ -157,11 +157,44 @@ const mockDemographics = {
   population: 48_000_000,
 };
 
+const mockCcaaFiscalBalance = {
+  years: [2024],
+  latestYear: 2024,
+  byYear: {
+    "2024": {
+      entries: [
+        {
+          code: "CA13",
+          name: "Madrid",
+          cededTaxes: 1000,
+          transfers: 200,
+          netBalance: -800,
+        },
+        {
+          code: "CA10",
+          name: "C. Valenciana",
+          cededTaxes: 160,
+          transfers: 900,
+          netBalance: 740,
+        },
+        {
+          code: "CA01",
+          name: "Andalucía",
+          cededTaxes: 470,
+          transfers: 750,
+          netBalance: 280,
+        },
+      ],
+    },
+  },
+};
+
 beforeEach(() => {
   vi.resetAllMocks();
   (useData as any).mockReturnValue({
     taxRevenue: mockTaxRevenue,
     demographics: mockDemographics,
+    ccaaFiscalBalance: mockCcaaFiscalBalance,
   });
   window.history.replaceState({}, "", "/");
   capturedNationalData = [];
@@ -333,6 +366,7 @@ describe("TaxRevenueBlock", () => {
         ccaa: {},
       },
       demographics: mockDemographics,
+      ccaaFiscalBalance: mockCcaaFiscalBalance,
     });
 
     render(<TaxRevenueBlock />);
@@ -431,6 +465,7 @@ describe("TaxRevenueBlock", () => {
         },
       },
       demographics: mockDemographics,
+      ccaaFiscalBalance: mockCcaaFiscalBalance,
     });
 
     render(<TaxRevenueBlock />);
@@ -445,5 +480,35 @@ describe("TaxRevenueBlock", () => {
     // Values are preserved as-is, no clamping
     expect(madrid?.value).toBe(65000);
     expect(navarra?.value).toBe(-50);
+  });
+
+  it("CCAA tab supports fiscal-balance mode", () => {
+    render(<TaxRevenueBlock />);
+
+    fireEvent.click(screen.getByText("Por CCAA"));
+    const modeSelect = screen.getByLabelText("Datos CCAA") as HTMLSelectElement;
+    fireEvent.change(modeSelect, { target: { value: "balance" } });
+    expect(modeSelect.value).toBe("balance");
+
+    // Balance mode should render data from ccaaFiscalBalance dataset
+    expect(capturedCcaaData).toHaveLength(3);
+    const metricSelect = screen.getByLabelText("Métrica de balanza") as HTMLSelectElement;
+    expect(metricSelect.value).toBe("netBalance");
+  });
+
+  it("balance metric selector changes chart values", () => {
+    render(<TaxRevenueBlock />);
+
+    fireEvent.click(screen.getByText("Por CCAA"));
+    const modeSelect = screen.getByLabelText("Datos CCAA") as HTMLSelectElement;
+    fireEvent.change(modeSelect, { target: { value: "balance" } });
+
+    const metricSelect = screen.getByLabelText("Métrica de balanza") as HTMLSelectElement;
+    fireEvent.change(metricSelect, { target: { value: "transfers" } });
+    expect(metricSelect.value).toBe("transfers");
+
+    // Transfers: C. Valenciana (900), Andalucía (750), Madrid (200)
+    expect(capturedCcaaData[0].name).toBe("C. Valenciana");
+    expect(capturedCcaaData[0].value).toBe(900);
   });
 });

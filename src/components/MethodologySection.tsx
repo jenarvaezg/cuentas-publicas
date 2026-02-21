@@ -99,11 +99,13 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "Se descargan dos ficheros Excel de la AEAT: series mensuales nacionales (1995-presente) e ingresos por delegaciones/CCAA (2007-presente).",
           "Los datos mensuales se agregan a nivel anual. Se muestran ingresos netos (tras devoluciones) en millones de euros.",
+          "Además, se integra la liquidación anual del sistema de financiación autonómica publicada por Hacienda (régimen común) para comparar impuestos cedidos frente a transferencias recibidas por comunidad.",
         ],
         bullets: [
           "Desglose por impuesto: IRPF, IVA, Sociedades, IRNR, Impuestos Especiales y resto",
           "Sub-desglose de Impuestos Especiales (hidrocarburos, tabaco, alcohol, etc.)",
           "Recaudación por Comunidad Autónoma (delegaciones AEAT)",
+          "Balanzas fiscales CCAA (Hacienda): impuestos cedidos (IRPF+IVA+IIEE) y transferencias (Fondos de Garantía, Suficiencia, Competitividad y Cooperación)",
           "Régimen foral: Navarra y País Vasco recaudan sus propios tributos; las cifras AEAT reflejan solo la cuota estatal",
         ],
       },
@@ -262,11 +264,13 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "Two AEAT Excel files are downloaded: national monthly series (1995-present) and revenue by regional tax offices/CCAA (2007-present).",
           "Monthly figures are aggregated annually. Values shown are net revenue (after refunds) in millions of euros.",
+          "The dashboard also integrates annual regional-financing settlements from the Ministry of Finance (common regime) to compare ceded taxes against transfers received by each region.",
         ],
         bullets: [
           "Tax type breakdown: PIT, VAT, Corporate, Non-resident, Excise duties and other",
           "Excise duty sub-breakdown (hydrocarbons, tobacco, alcohol, etc.)",
           "Revenue by Autonomous Community (AEAT regional offices)",
+          "Regional fiscal balances (Finance Ministry): ceded taxes (PIT+VAT+excise) and transfers (Guarantee, Sufficiency, Competitiveness and Cooperation Funds)",
           "Foral regime: Navarra and País Vasco collect their own taxes; AEAT figures reflect only the central government share",
         ],
       },
