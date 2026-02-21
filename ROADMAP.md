@@ -81,7 +81,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Infraestructura y UX
 
-- **🟡 Explicación detallada por métrica**: Cada dato tiene un botón de información (ℹ), pero actualmente solo muestra un tooltip al hacer hover (no funciona en móvil). Falta: modal o panel que explique qué es el dato, de dónde sale, cómo se calcula y por qué es relevante. Objetivo: que cualquier persona sin formación económica entienda cada cifra.
+- **✅ Explicación detallada por métrica**: El botón de información (ℹ) abre un panel clicable (desktop + móvil) con explicación de qué es, cómo se calcula, por qué importa y fuentes.
 - **✅ Roadmap visible en la web**: Sección integrada en el dashboard (`RoadmapSection`).
 - **✅ Compartir gráficos individuales**: Botón para exportar cada bloque como imagen (PNG).
 - **✅ Notificaciones de datos nuevos (RSS)**: Feed en `/feed.xml` con publicaciones de actualización.

@@ -1,15 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { SourceDetail } from "../StatCard";
 import { StatCard } from "../StatCard";
-
-// Mock Tooltip components to simplify testing
-vi.mock("@/components/ui/tooltip", () => ({
-  Tooltip: ({ children }: any) => <div>{children}</div>,
-  TooltipTrigger: ({ children }: any) => <div>{children}</div>,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
-  TooltipProvider: ({ children }: any) => <div>{children}</div>,
-}));
 
 // Mock SparklineChart
 vi.mock("../SparklineChart", () => ({
@@ -71,7 +63,26 @@ describe("StatCard", () => {
   });
 
   it("renders tooltip if provided", () => {
-    render(<StatCard label="L" value="V" tooltip="Help text" />);
+    render(
+      <StatCard
+        label="L"
+        value="V"
+        tooltip="Help text"
+        sources={[{ name: "Derived calculation", note: "A / B" }]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /más información/i }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeDefined();
     expect(screen.getByText("Help text")).toBeDefined();
+    expect(screen.getByText(/cómo se calcula/i)).toBeDefined();
+    expect(within(dialog).getAllByText("A / B").length).toBeGreaterThan(0);
+  });
+
+  it("does not render info button when no explanation data exists", () => {
+    render(<StatCard label="L" value="V" />);
+    expect(screen.queryByRole("button", { name: /más información/i })).toBeNull();
   });
 });
