@@ -63,7 +63,9 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
     wishlists: [
       {
         title: "Wishlist — Datos fiscales",
-        items: ["Tipos efectivos por impuesto (IRPF, Sociedades, IVA)"],
+        items: [
+          "🟡 Tipos efectivos por impuesto (proxy IRPF/IVA/Sociedades sobre recaudación total ya integrado; pendiente versión canónica sobre bases imponibles)",
+        ],
       },
       {
         title: "Wishlist — Nuevas visualizaciones",
@@ -136,7 +138,9 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
     wishlists: [
       {
         title: "Wishlist — Fiscal data",
-        items: ["Effective tax rates by tax type"],
+        items: [
+          "🟡 Effective tax rates by tax type (IRPF/VAT/Corporate proxy over total revenue already integrated; canonical taxable-base version pending)",
+        ],
       },
       {
         title: "Wishlist — New visualizations",

@@ -45,6 +45,13 @@ interface CcaaBarDatum {
   isTop3: boolean;
 }
 
+interface EffectiveRateDatum {
+  year: number;
+  irpf: number;
+  iva: number;
+  sociedades: number;
+}
+
 function parseTabFromQuery(): TabKey {
   const param = getSearchParam("taxTab");
   return param === "ccaa" ? "ccaa" : "nacional";
@@ -99,6 +106,41 @@ const CcaaTooltip = ({
   );
 };
 
+const EffectiveRateTooltip = ({
+  active,
+  payload,
+  label,
+  irpfLabel,
+  ivaLabel,
+  sociedadesLabel,
+}: {
+  active?: boolean;
+  payload?: Array<{ dataKey: string; value: number }>;
+  label?: number;
+  irpfLabel: string;
+  ivaLabel: string;
+  sociedadesLabel: string;
+}) => {
+  if (!active || !payload?.length || !label) return null;
+  const irpf = payload.find((p) => p.dataKey === "irpf")?.value ?? 0;
+  const iva = payload.find((p) => p.dataKey === "iva")?.value ?? 0;
+  const sociedades = payload.find((p) => p.dataKey === "sociedades")?.value ?? 0;
+  return (
+    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <p className="font-semibold text-foreground">{label}</p>
+      <p className="text-muted-foreground">
+        {irpfLabel}: {formatNumber(irpf, 1)}%
+      </p>
+      <p className="text-muted-foreground">
+        {ivaLabel}: {formatNumber(iva, 1)}%
+      </p>
+      <p className="text-muted-foreground">
+        {sociedadesLabel}: {formatNumber(sociedades, 1)}%
+      </p>
+    </div>
+  );
+};
+
 export function TaxRevenueBlock() {
   const { taxRevenue, demographics } = useData();
   const { msg, lang } = useI18n();
@@ -146,6 +188,17 @@ export function TaxRevenueBlock() {
           tasas: "Fees and duties",
           derivativePerCapita: "Total tax revenue / population",
           derivativeYoY: "((current year - previous year) / previous year) × 100",
+          effectiveRatesTitle: "Effective tax rates by tax (proxy)",
+          effectiveRatesSubtitle: "Time series over total net tax revenue",
+          effectiveRateIrpf: "IRPF effective rate (proxy)",
+          effectiveRateIva: "VAT effective rate (proxy)",
+          effectiveRateSociedades: "Corporate tax effective rate (proxy)",
+          effectiveRateFormulaIrpf: "IRPF net revenue / total net tax revenue × 100",
+          effectiveRateFormulaIva: "VAT net revenue / total net tax revenue × 100",
+          effectiveRateFormulaSociedades: "Corporate tax net revenue / total net tax revenue × 100",
+          effectiveRateProxyNote:
+            "Fiscal proxy: it measures each tax weight within total net revenue, not the legal rate or taxable-base effective rate.",
+          noEffectiveRatesData: "No enough years to build effective-rate series.",
         }
       : {
           nacional: "Nacional",
@@ -188,6 +241,18 @@ export function TaxRevenueBlock() {
           tasas: "Tasas y otros",
           derivativePerCapita: "Recaudación total / población",
           derivativeYoY: "((año actual - año anterior) / año anterior) × 100",
+          effectiveRatesTitle: "Tipos efectivos por impuesto (proxy)",
+          effectiveRatesSubtitle: "Serie temporal sobre recaudación neta total",
+          effectiveRateIrpf: "Tipo efectivo IRPF (proxy)",
+          effectiveRateIva: "Tipo efectivo IVA (proxy)",
+          effectiveRateSociedades: "Tipo efectivo Sociedades (proxy)",
+          effectiveRateFormulaIrpf: "IRPF neto / recaudación neta total × 100",
+          effectiveRateFormulaIva: "IVA neto / recaudación neta total × 100",
+          effectiveRateFormulaSociedades: "Sociedades neto / recaudación neta total × 100",
+          effectiveRateProxyNote:
+            "Proxy fiscal: mide el peso de cada impuesto dentro de la recaudación neta total, no el tipo legal ni el tipo efectivo sobre base imponible.",
+          noEffectiveRatesData:
+            "No hay años suficientes para construir la serie de tipos efectivos.",
         };
 
   const taxNames = useMemo<Record<string, string>>(
@@ -254,6 +319,30 @@ export function TaxRevenueBlock() {
     if (!demographics.population || !totalEuros) return 0;
     return totalEuros / demographics.population;
   }, [totalEuros, demographics.population]);
+
+  const selectedEffectiveRates = useMemo(() => {
+    if (!yearData || !yearData.total) return null;
+    return {
+      irpf: (yearData.irpf / yearData.total) * 100,
+      iva: (yearData.iva / yearData.total) * 100,
+      sociedades: (yearData.sociedades / yearData.total) * 100,
+    };
+  }, [yearData]);
+
+  const effectiveRatesSeries = useMemo<EffectiveRateDatum[]>(() => {
+    return years
+      .map((year) => {
+        const data = taxRevenue.national[String(year)];
+        if (!data || !data.total) return null;
+        return {
+          year,
+          irpf: (data.irpf / data.total) * 100,
+          iva: (data.iva / data.total) * 100,
+          sociedades: (data.sociedades / data.total) * 100,
+        };
+      })
+      .filter((item): item is EffectiveRateDatum => item !== null);
+  }, [years, taxRevenue.national]);
 
   // ── National chart data ──────────────────────────────────────────────────────
 
@@ -476,11 +565,114 @@ export function TaxRevenueBlock() {
             delay={0.2}
             sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePerCapita }, AEAT_SERIES]}
           />
+          <StatCard
+            label={copy.effectiveRateIrpf}
+            value={
+              selectedEffectiveRates ? `${formatNumber(selectedEffectiveRates.irpf, 1)}%` : "—"
+            }
+            delay={0.25}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIrpf }, AEAT_SERIES]}
+          />
+          <StatCard
+            label={copy.effectiveRateIva}
+            value={selectedEffectiveRates ? `${formatNumber(selectedEffectiveRates.iva, 1)}%` : "—"}
+            delay={0.3}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIva }, AEAT_SERIES]}
+          />
+          <StatCard
+            label={copy.effectiveRateSociedades}
+            value={
+              selectedEffectiveRates
+                ? `${formatNumber(selectedEffectiveRates.sociedades, 1)}%`
+                : "—"
+            }
+            delay={0.35}
+            sources={[
+              { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaSociedades },
+              AEAT_SERIES,
+            ]}
+          />
         </div>
 
         {/* Nacional tab */}
         {activeTab === "nacional" && (
-          <div>
+          <div className="space-y-5">
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-1 text-center">
+                {copy.effectiveRatesTitle}
+              </h3>
+              <p className="text-xs text-muted-foreground/80 text-center mb-3">
+                {copy.effectiveRatesSubtitle}
+              </p>
+              {effectiveRatesSeries.length > 1 ? (
+                <>
+                  <ResponsiveContainer width="100%" height={240}>
+                    <BarChart
+                      data={effectiveRatesSeries}
+                      margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                    >
+                      <XAxis
+                        dataKey="year"
+                        tick={{ fontSize: 11 }}
+                        stroke="hsl(var(--muted-foreground))"
+                      />
+                      <YAxis
+                        tickFormatter={(v: number) => `${formatNumber(v, 0)}%`}
+                        tick={{ fontSize: 11 }}
+                        stroke="hsl(var(--muted-foreground))"
+                      />
+                      <Tooltip
+                        content={
+                          <EffectiveRateTooltip
+                            irpfLabel={copy.irpf}
+                            ivaLabel={copy.iva}
+                            sociedadesLabel={copy.sociedades}
+                          />
+                        }
+                      />
+                      <Bar dataKey="irpf" fill={TAX_COLORS.irpf} radius={[3, 3, 0, 0]} />
+                      <Bar dataKey="iva" fill={TAX_COLORS.iva} radius={[3, 3, 0, 0]} />
+                      <Bar
+                        dataKey="sociedades"
+                        fill={TAX_COLORS.sociedades}
+                        radius={[3, 3, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground mt-2">
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: TAX_COLORS.irpf }}
+                      />
+                      {copy.irpf}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: TAX_COLORS.iva }}
+                      />
+                      {copy.iva}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm"
+                        style={{ background: TAX_COLORS.sociedades }}
+                      />
+                      {copy.sociedades}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground/80 text-center mt-2">
+                    {copy.effectiveRateProxyNote}
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  {copy.noEffectiveRatesData}
+                </p>
+              )}
+            </div>
+
             {drilldown && (
               <div className="mb-3">
                 <button

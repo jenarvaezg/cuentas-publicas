@@ -46,7 +46,11 @@ vi.mock("recharts", () => ({
     return (
       <div data-testid="bar-chart">
         {(data ?? []).map((d: any) => (
-          <span key={d.key ?? d.code} data-testid="bar-row" data-key={d.key ?? d.code}>
+          <span
+            key={d.key ?? d.code ?? d.year}
+            data-testid="bar-row"
+            data-key={d.key ?? d.code ?? d.year}
+          >
             {d.name}
           </span>
         ))}
@@ -166,18 +170,21 @@ beforeEach(() => {
 });
 
 describe("TaxRevenueBlock", () => {
-  it("renders title and 4 StatCards", () => {
+  it("renders title and 7 StatCards", () => {
     render(<TaxRevenueBlock />);
     expect(screen.getByText("Recaudación Tributaria")).toBeDefined();
 
     const cards = screen.getAllByTestId("stat-card");
-    expect(cards).toHaveLength(4);
+    expect(cards).toHaveLength(7);
 
     const labels = screen.getAllByTestId("stat-label").map((el) => el.textContent);
     expect(labels).toContain("Recaudación neta total");
     expect(labels).toContain("Mayor impuesto");
     expect(labels).toContain("Variación interanual");
     expect(labels).toContain("Recaudación per cápita");
+    expect(labels).toContain("Tipo efectivo IRPF (proxy)");
+    expect(labels).toContain("Tipo efectivo IVA (proxy)");
+    expect(labels).toContain("Tipo efectivo Sociedades (proxy)");
   });
 
   it("shows correct StatCard values for latest year", () => {
@@ -389,7 +396,7 @@ describe("TaxRevenueBlock", () => {
 
   it("renders national chart component", () => {
     render(<TaxRevenueBlock />);
-    expect(screen.getByTestId("bar-chart")).toBeDefined();
+    expect(screen.getAllByTestId("bar-chart").length).toBeGreaterThan(0);
   });
 
   it("preserves negative CCAA values without clamping", () => {

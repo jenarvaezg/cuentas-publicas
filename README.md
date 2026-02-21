@@ -10,7 +10,7 @@ Dashboard fiscal interactivo que muestra en tiempo real la deuda pública, el ga
 - **Gasto en pensiones** — nómina mensual, pensión media, ratio afiliados/pensionistas
 - **Gasto público COFOG (1995-2024)** — clasificación funcional con drilldown por subcategorías
 - **Ingresos vs gastos públicos (1995-2024)** — Eurostat (`TR`, `TE`, `B9`, `D2REC`, `D5REC`, `D61REC`)
-- **Recaudación tributaria** — desglose por impuesto (IRPF, IVA, Sociedades, IIEE, IRNR) y por CCAA, con drilldown en subcategorías
+- **Recaudación tributaria** — desglose por impuesto (IRPF, IVA, Sociedades, IIEE, IRNR) y por CCAA, con drilldown en subcategorías y tipos efectivos proxy (IRPF/IVA/Sociedades sobre recaudación total)
 - **Deuda por CCAA** — ranking de 17 comunidades con vista `% PIB` y `€`
 - **Proxy déficit/gasto por CCAA** — estimación direccional basada en variación interanual de deuda BdE + ingresos tributarios AEAT
 - **Comparativa interanual** — modos absoluto, % peso y % cambio, con opción de euros reales (ajustados por IPC) o corrientes

@@ -45,7 +45,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Datos fiscales detallados
 
-- **Tipos efectivos por impuesto**: Tipo efectivo medio de IRPF, Sociedades, IVA — evolución temporal.
+- **🟡 Tipos efectivos por impuesto**: proxy implementado (IRPF, IVA y Sociedades sobre recaudación neta total + evolución temporal). Pendiente versión canónica sobre bases imponibles para tipo efectivo económico estricto.
 - **Recaudación por CCAA**: Cuánto aporta cada comunidad autónoma en impuestos cedidos vs transferencias recibidas (balanzas fiscales).
 
 ### Mejoras de datos existentes
