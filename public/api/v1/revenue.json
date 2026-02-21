@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-20T22:00:10.092Z",
+  "lastUpdated": "2026-02-21T08:51:01.958Z",
   "latestYear": 2024,
   "years": [
     1995,
@@ -336,7 +336,7 @@
       "source": "Eurostat",
       "type": "api",
       "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
-      "date": "2026-02-20",
+      "date": "2024-12-31",
       "note": "Ingresos y gastos AAPP España, 30 años (1995–2024)"
     }
   }

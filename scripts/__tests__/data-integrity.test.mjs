@@ -12,6 +12,11 @@ function loadApiFile(name) {
   return JSON.parse(readFileSync(filePath, 'utf-8'))
 }
 
+function loadPublicJson(path) {
+  const filePath = resolve(process.cwd(), 'public', path)
+  return JSON.parse(readFileSync(filePath, 'utf-8'))
+}
+
 function loadPublicText(path) {
   const filePath = resolve(process.cwd(), 'public', path)
   return readFileSync(filePath, 'utf-8')
@@ -77,6 +82,18 @@ describe('data integrity', () => {
       expect(info.lastFetchAt).toBeTruthy()
       expect(info.lastRealDataDate).toBeTruthy()
     }
+
+    if (meta.sources.eurostat) {
+      expect(meta.sources.eurostat.lastRealDataDate).toBe(
+        `${meta.sources.eurostat.year}-12-31`,
+      )
+    }
+
+    if (meta.sources.revenue) {
+      expect(meta.sources.revenue.lastRealDataDate).toBe(
+        `${meta.sources.revenue.latestYear}-12-31`,
+      )
+    }
   })
 
   it('valida publicación de API versionada en public/api/v1', () => {
@@ -88,6 +105,7 @@ describe('data integrity', () => {
       'eurostat.json',
       'ccaa-debt.json',
       'revenue.json',
+      'tax-revenue.json',
       'meta.json',
       'index.json'
     ]
@@ -101,6 +119,21 @@ describe('data integrity', () => {
     expect(apiIndex.apiVersion).toBe('v1')
     expect(Array.isArray(apiIndex.endpoints)).toBe(true)
     expect(apiIndex.endpoints.length).toBeGreaterThan(5)
+    expect(apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/tax-revenue.json')).toBe(
+      true,
+    )
+  })
+
+  it('valida consistencia entre catálogo API y OpenAPI', () => {
+    const apiIndex = loadApiFile('index.json')
+    const openapi = loadPublicJson('api/openapi.json')
+
+    const indexPaths = new Set(apiIndex.endpoints.map((endpoint) => endpoint.path))
+    const openapiPaths = new Set(Object.keys(openapi.paths || {}))
+
+    for (const path of indexPaths) {
+      expect(openapiPaths.has(path)).toBe(true)
+    }
   })
 
   it('valida feed RSS de actualizaciones', () => {

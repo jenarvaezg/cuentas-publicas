@@ -109,7 +109,7 @@ export async function downloadEurostatData() {
           source: usedApi ? 'Eurostat' : 'Eurostat (referencia)',
           type: usedApi ? 'api' : 'fallback',
           url: 'https://ec.europa.eu/eurostat/databrowser/',
-          date: new Date().toISOString().split('T')[0],
+          date: `${latestYear}-12-31`,
           note: usedApi ? `Datos comparativos EU-27 (${latestYear})` : `Valores de referencia (${latestYear})`
         }
       }
@@ -482,7 +482,7 @@ export async function downloadRevenueData() {
           source: 'Eurostat',
           type: 'api',
           url: 'https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/',
-          date: new Date().toISOString().split('T')[0],
+          date: `${latestYear}-12-31`,
           note: `Ingresos y gastos AAPP España, ${validYears.length} años (${validYears[0]}–${latestYear})`
         }
       }
@@ -516,6 +516,7 @@ function buildFallbackRevenueData() {
         source: 'Eurostat (referencia)',
         type: 'fallback',
         url: 'https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/',
+        date: `${REVENUE_FALLBACK.latestYear}-12-31`,
         note: `Valores de referencia ${REVENUE_FALLBACK.latestYear}`
       }
     }
@@ -542,6 +543,7 @@ function buildFallbackEurostatData() {
         source: 'Eurostat (referencia)',
         type: 'fallback',
         url: 'https://ec.europa.eu/eurostat/databrowser/',
+        date: `${FALLBACK_DATA.year}-12-31`,
         note: `Valores de referencia ${FALLBACK_DATA.year}`
       }
     }

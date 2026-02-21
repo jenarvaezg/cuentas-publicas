@@ -6,7 +6,7 @@ Inventario técnico de todos los datos del dashboard: clasificación, fuentes, f
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 5 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 8 archivos JSON en `src/data/` (7 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
+El dashboard utiliza 6 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 9 archivos JSON en `src/data/` (8 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
 
 **Estado general**: De ~40 métricas mostradas, **~22 son automatizadas**, **~5 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~7 son derivadas** por cálculo.
 

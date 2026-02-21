@@ -1,6 +1,6 @@
 export interface DataSourceAttribution {
   source: string;
-  type: "api" | "csv" | "fallback" | "derived";
+  type: "api" | "csv" | "xlsx" | "fallback" | "derived";
   url?: string;
   date?: string;
   note?: string;

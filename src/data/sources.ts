@@ -29,8 +29,8 @@ export const INE_EPA: SourceDetail = {
 
 export const INE_PIB: SourceDetail = {
   name: "INE — Contabilidad Nacional Trimestral",
-  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=24912",
-  note: "Tabla 24912",
+  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=30679",
+  note: "Tabla 30679 (serie CNTR6597)",
 };
 
 // Seguridad Social

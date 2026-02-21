@@ -1,6 +1,6 @@
 # Roadmap — Dashboard Fiscal de España
 
-Estado validado contra el código actual: **20 febrero 2026**.
+Estado validado contra el código actual: **21 febrero 2026**.
 
 Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 
@@ -29,6 +29,7 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 
 - ✅ Datos desglosados por CCAA (CSV be1309/be1310 del BdE) — ranking general
 - ✅ Selector de Comunidad Autónoma (incluye persistencia en URL)
+- ✅ Recaudación tributaria por impuesto y por CCAA (AEAT series + delegaciones)
 - 🟡 Deuda, déficit y gasto por comunidad (detalle de deuda listo; déficit/gasto pendientes)
 - ✅ SEO pre-render + SSG multi-ruta: snapshot estático, sitemap y páginas por sección (`/secciones/*`, `/en/sections/*`)
 - ✅ Compartir: hash + URL state (`section`, `ccaa`, `ccaaMetric`) + export PNG por bloque
@@ -44,7 +45,6 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Datos fiscales detallados
 
-- **Recaudación por impuesto y año**: Desglose de cuánto recauda el gobierno por cada impuesto (IRPF, IVA, Sociedades, IIEE, etc.) año a año. Fuente potencial: AEAT informes mensuales de recaudación (PDF/Excel), o Eurostat `gov_10a_taxag`. Dificultad: ALTA.
 - **Tipos efectivos por impuesto**: Tipo efectivo medio de IRPF, Sociedades, IVA — evolución temporal.
 - **Recaudación por CCAA**: Cuánto aporta cada comunidad autónoma en impuestos cedidos vs transferencias recibidas (balanzas fiscales).
 
@@ -86,7 +86,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 - **✅ Compartir gráficos individuales**: Botón para exportar cada bloque como imagen (PNG).
 - **✅ Notificaciones de datos nuevos (RSS)**: Feed en `/feed.xml` con publicaciones de actualización.
 - **✅ API pública**: endpoints versionados en `/api/v1` + catálogo `index.json` + documentación `API.md`.
-- **✅ Alertas de datos stale**: Si un dato > X meses de antigüedad, crear GitHub Issue automática (umbral actual: 14 días).
+- **✅ Alertas de datos stale**: Si un dato supera su umbral de antigüedad por fuente (mensual/trimestral/anual), crear/actualizar GitHub Issue automática.
 - **✅ Ampliar meta.json**: `lastRealDataDate` y `lastFetchAt` añadidos por fuente.
 - **✅ Tests de integridad**: suite explícita (`scripts/__tests__/data-integrity.test.mjs`) para datasets y metadatos.
 

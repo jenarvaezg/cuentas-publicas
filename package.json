@@ -13,8 +13,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "lint": "biome check src/",
-    "format": "biome format src/ --write",
+    "lint": "biome check src/ scripts/",
+    "format": "biome format src/ scripts/ --write",
     "prepare": "husky"
   },
   "lint-staged": {

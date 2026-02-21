@@ -57,6 +57,12 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
+    "/api/v1/tax-revenue.json": {
+      "get": {
+        "summary": "Recaudación tributaria por impuesto y CCAA",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
     "/api/v1/meta.json": {
       "get": {
         "summary": "Estado y frescura del pipeline",

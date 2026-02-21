@@ -1,6 +1,6 @@
 # API pública (versionada)
 
-Fecha de actualización de esta documentación: **20 febrero 2026**.
+Fecha de actualización de esta documentación: **21 febrero 2026**.
 
 El proyecto expone una API estática versionada en JSON bajo:
 
@@ -18,6 +18,7 @@ No requiere autenticación y está pensada para consumo de lectura (dashboards, 
 - `/api/v1/revenue.json` — ingresos y gastos públicos (Eurostat)
 - `/api/v1/eurostat.json` — comparativa UE por indicador
 - `/api/v1/ccaa-debt.json` — deuda por comunidad autónoma
+- `/api/v1/tax-revenue.json` — recaudación tributaria por impuesto y CCAA (AEAT)
 - `/api/v1/meta.json` — estado del pipeline y frescura por fuente
 - `/api/openapi.json` — especificación OpenAPI mínima del contrato público
 

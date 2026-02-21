@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-20T22:00:09.509Z",
+  "lastUpdated": "2026-02-21T08:51:01.875Z",
   "year": 2024,
   "countries": [
     "ES",
@@ -100,7 +100,7 @@
       "source": "Eurostat",
       "type": "api",
       "url": "https://ec.europa.eu/eurostat/databrowser/",
-      "date": "2026-02-20",
+      "date": "2024-12-31",
       "note": "Datos comparativos EU-27 (2024)"
     }
   }

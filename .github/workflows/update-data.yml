@@ -40,7 +40,16 @@ jobs:
             
             const meta = JSON.parse(fs.readFileSync(path, 'utf8'));
             const now = new Date();
-            const staleThresholdDays = 14;
+            const sourceThresholdDays = {
+              debt: 70,          // mensual con cierto lag oficial
+              pensions: 70,      // mensual (scraping SS)
+              ccaaDebt: 140,     // trimestral
+              taxRevenue: 90,    // mensual agregado anual
+              demographics: 450, // mezcla de series anuales/trimestrales con retraso
+              budget: 800,       // anual (IGAE)
+              eurostat: 800,     // anual (Eurostat)
+              revenue: 800       // anual (Eurostat)
+            };
             const staleSources = [];
             let ssCriticalFallback = null;
 
@@ -61,8 +70,9 @@ jobs:
               }
               const lastUpdated = new Date(freshnessDate);
               const diffDays = (now - lastUpdated) / (1000 * 60 * 60 * 24);
-              if (diffDays > staleThresholdDays) {
-                staleSources.push(`**${name}**: No se actualiza desde hace ${diffDays.toFixed(1)} días (límite: ${staleThresholdDays} días).`);
+              const thresholdDays = sourceThresholdDays[name] || 14;
+              if (diffDays > thresholdDays) {
+                staleSources.push(`**${name}**: No se actualiza desde hace ${diffDays.toFixed(1)} días (límite: ${thresholdDays} días).`);
               }
             }
 

@@ -74,9 +74,9 @@ El proyecto tiene dos runtimes en un solo repo:
 2. **SPA React** (`src/`) — importa los JSON en build time. Sin backend, sin llamadas a API en runtime.
 
 ```
-scripts/sources/{bde,ine,seguridad-social,igae,eurostat}.mjs
+scripts/sources/{bde,ine,seguridad-social,igae,eurostat,aeat}.mjs
   → scripts/download-data.mjs (orquestador, Promise.allSettled)
-    → src/data/{debt,demographics,pensions,budget,eurostat,ccaa-debt,revenue,meta}.json
+    → src/data/{debt,demographics,pensions,budget,eurostat,ccaa-debt,revenue,tax-revenue,meta}.json
     → public/api/v1/*.json + public/feed.xml + public/sitemap.xml + public/secciones/*.html + public/en/sections/*.html
       → src/hooks/useData.ts (useMemo, retorna todos los datos)
         → Componentes (DebtBlock, PensionsBlock, RevenueBlock, BudgetBlock, etc.)
@@ -94,7 +94,7 @@ scripts/sources/{bde,ine,seguridad-social,igae,eurostat}.mjs
 La web expone una API JSON estática versionada en `/api/v1/`.
 
 - Catálogo: `/api/v1/index.json`
-- Datos: `/api/v1/{debt,pensions,demographics,budget,revenue,eurostat,ccaa-debt,meta}.json`
+- Datos: `/api/v1/{debt,pensions,demographics,budget,revenue,eurostat,ccaa-debt,tax-revenue,meta}.json`
 - OpenAPI: `/api/openapi.json`
 
 Documentación y política de versionado: [`API.md`](API.md).

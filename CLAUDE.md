@@ -15,8 +15,8 @@ npm run test             # Vitest (run once)
 npm run test:coverage    # Vitest + coverage report
 npm run test:watch       # Vitest (watch mode)
 npm run test:e2e         # Playwright smoke suite
-npm run lint             # Biome check src/
-npm run format           # Biome format src/ --write
+npm run lint             # Biome check src/ scripts/
+npm run format           # Biome format src/ scripts/ --write
 npm run download-data    # Fetch all data sources → src/data/*.json
 ```
 

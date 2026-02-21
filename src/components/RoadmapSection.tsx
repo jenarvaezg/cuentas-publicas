@@ -21,7 +21,7 @@ interface RoadmapCopy {
 const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   es: {
     intro: "Este es el estado actual del proyecto y las funcionalidades que nos gustaría añadir.",
-    statusLine: "Estado validado: 20 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
+    statusLine: "Estado validado: 21 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
     phases: [
       {
         title: "Fase 1: Deuda + Pensiones (MVP) ✅",
@@ -94,7 +94,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   },
   en: {
     intro: "This is the current project status and the features we want to add next.",
-    statusLine: "Status validated: February 20, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
+    statusLine: "Status validated: February 21, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
     phases: [
       {
         title: "Phase 1: Debt + Pensions (MVP) ✅",
