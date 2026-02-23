@@ -53,6 +53,28 @@ El dashboard utiliza 9 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 **URLs** (estables — API Tempus):
 - Base: `https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/{SERIE}?nult=N`
 
+### Demographic Indicators (new)
+
+| Series Code | Table | Metric | Unit | Coverage |
+|-------------|-------|--------|------|----------|
+| IDB37106 | 1381 | Birth rate (Tasa Bruta de Natalidad) | per 1000 hab | ~30 years |
+| IDB47797 | 1411 | Death rate (Tasa Bruta de Mortalidad) | per 1000 hab | ~30 years |
+| IDB86387 | 1409 | Fertility rate (Indicador Coyuntural de Fecundidad) | children/woman | ~30 years |
+| IDB55340 | 1416 | Natural growth (Crecimiento vegetativo) | per 1000 hab | ~30 years |
+| IDB53772 | 48882 | Life expectancy at birth (both sexes) | years | ~30 years |
+| IDB53773 | 48882 | Life expectancy at birth (males) | years | ~30 years |
+| IDB53774 | 48882 | Life expectancy at birth (females) | years | ~30 years |
+
+### Population Pyramid by Birth Origin (new)
+
+| Table | Metric | Structure |
+|-------|--------|----------|
+| 56943 | Population by age group × sex × birth region | Quarterly, quinquennial age groups |
+
+Birth region groupings: España, UE sin España, Resto de Europa, África, América (Norte+Centro+Sur), Asia+Oceanía.
+
+Derived metrics: dependency ratios (old-age, youth, total), immigration share (total + by region + historical trend).
+
 **Problemas detectados**:
 1. **Salario medio con 3+ años de retraso**: El dato actual (28.050€) es de 2022. INE publica la Encuesta de Estructura Salarial con ~2 años de lag.
 2. **SMI requiere actualización manual** cada enero cuando se publica en el BOE.

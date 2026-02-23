@@ -129,6 +129,28 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         ],
       },
       {
+        title: "Demografía detallada",
+        source: {
+          label: "INE (Indicadores Demográficos + Cifras de Población)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=1381",
+          note: "Series IDB + tabla 56943",
+        },
+        paragraphs: [
+          "Se consumen series de indicadores demográficos básicos (natalidad, mortalidad, fecundidad, crecimiento vegetativo) y tablas de mortalidad (esperanza de vida).",
+          "La pirámide de población combina datos de la tabla 56943 del INE, que desglosa la población por edad quinquenal, sexo y lugar de nacimiento (España, UE, resto de Europa, África, América, Asia+Oceanía).",
+        ],
+        bullets: [
+          "Tasa bruta de natalidad (IDB37106)",
+          "Tasa bruta de mortalidad (IDB47797)",
+          "Indicador coyuntural de fecundidad (IDB86387)",
+          "Crecimiento vegetativo (IDB55340)",
+          "Esperanza de vida al nacer por sexo (IDB53772-74)",
+          "Pirámide de población por origen (tabla 56943)",
+          "Ratios de dependencia (derivados de pirámide)",
+          "Porcentaje de nacidos en el extranjero (derivado de pirámide)",
+        ],
+      },
+      {
         title: "Ingresos y Gastos Públicos",
         source: {
           label: "Eurostat (gov_10a_main)",
@@ -291,6 +313,28 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
           "Nominal GDP (CNTR6597)",
           "Average salary (EAES741)",
           "CPI (IPC278296 + IPC290750)",
+        ],
+      },
+      {
+        title: "Detailed demographics",
+        source: {
+          label: "INE (Demographic Indicators + Population Figures)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=1381",
+          note: "IDB series + table 56943",
+        },
+        paragraphs: [
+          "Basic demographic indicators (birth rate, death rate, fertility, natural growth) and mortality tables (life expectancy) are consumed from INE time series.",
+          "The population pyramid combines data from INE table 56943, which breaks down population by five-year age group, sex and place of birth (Spain, EU, rest of Europe, Africa, Americas, Asia+Oceania).",
+        ],
+        bullets: [
+          "Crude birth rate (IDB37106)",
+          "Crude death rate (IDB47797)",
+          "Total fertility rate (IDB86387)",
+          "Natural population growth (IDB55340)",
+          "Life expectancy at birth by sex (IDB53772-74)",
+          "Population pyramid by birth origin (table 56943)",
+          "Dependency ratios (derived from pyramid)",
+          "Foreign-born population share (derived from pyramid)",
         ],
       },
       {

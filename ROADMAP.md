@@ -37,6 +37,19 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 - ✅ Tests E2E con Playwright (smoke suite)
 - ✅ i18n de interfaz y contenidos largos (castellano + inglés): selector, UI principal, metodología y roadmap
 
+## Fase 4: Demografía 🟡
+
+- 🟡 **Sección de demografía**: Bloque completo con indicadores vitales, pirámide de población e inmigración
+  - ✅ Indicadores demográficos básicos: natalidad, mortalidad, fecundidad, crecimiento natural
+  - ✅ Esperanza de vida: series 30-year con desglose por sexo
+  - ✅ Pirámide de población: desglose por grupos de edad, sexo y origen migratorio (6 regiones)
+  - ✅ Selector de año para evolución histórica de la pirámide
+  - ✅ Gráficos de tendencias históricas (vital stats, life expectancy, inmigración)
+  - ✅ Ratios de dependencia (old-age, youth, total) derivados de la pirámide
+  - ⏳ Desglose provincial
+  - ⏳ Proyecciones demográficas (INE a 20-30 años)
+  - ⏳ Datos de flujos migratorios (entradas/salidas)
+
 ---
 
 ## Wishlist
@@ -65,9 +78,8 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 - **Sankey fiscal ultra detallado**: visualización de flujos desde ingresos (figuras tributarias y no tributarias) hacia usos finales del gasto (subsector, política, programa, capítulo/artículo/concepto), con filtros por Estado/CCAA/Provincia/Ayuntamiento y trazabilidad completa de fuente por nodo y enlace. Objetivo: nivel "aguja en pajar". Especificación: [`SANKEY-1000EUR.md`](SANKEY-1000EUR.md).
 - **"De cada 1.000€ que entran, se reparten así"**: bloque narrativo y comparativo que convierta todo el presupuesto en una unidad fija (por 1.000€ de ingresos) con desglose granular por destino y opción de ver versión consolidada o por administración territorial. Especificación: [`SANKEY-1000EUR.md`](SANKEY-1000EUR.md).
-- **Sección de demografía**: Bloque completo con población en tiempo real (contador estimado), natalidad, mortalidad e inmigración. Desglose por provincia. Fuente: INE (padrón continuo, estadísticas de nacimientos/defunciones, estadística de migraciones). Dificultad: ALTA.
 - **Proyecciones demográficas**: Pirámide de población actual + proyecciones INE a 20-30 años (ratio dependencia futuro).
-- **Población por tramos de edad**: Pirámide demográfica, ratio dependencia. Fuente: INE API — tablas demográficas.
+- **Población por provincia**: Desglose demográfico a nivel provincial. Fuente: INE (padrón continuo, estadísticas de nacimientos/defunciones, estadística de migraciones). Dificultad: ALTA.
 - **Sostenibilidad de la Seguridad Social**: Sección dedicada con serie histórica del déficit contributivo (ingresos vs gastos contributivos desde 2006), déficit como % PIB y % gasto contributivo, saldo contributivo por CCAA, evolución del Fondo de Reserva y patrimonio neto de la SS. Fuentes: Fedea (Ángel de la Fuente, series de SS Ampliada), IGAE, García (2023) para CCAA, Ageing Report 2024 (proyecciones UE). Referencia: informe Hespérides «La (in)sostenibilidad de la Seguridad Social» (gráficos 7-15). Dificultad: ALTA.
 - **Deuda hogares/empresas**: No solo deuda pública — incluir deuda privada para ver el panorama completo (BdE cuentas financieras).
 - **Simulador de ajuste fiscal**: "¿Qué pasaría si subimos/bajamos X impuesto un Y%?" — calculadora interactiva.

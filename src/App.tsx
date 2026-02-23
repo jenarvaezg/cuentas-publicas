@@ -4,6 +4,7 @@ import { CcaaDebtBlock } from "@/components/CcaaDebtBlock";
 import { ComparativaEUBlock } from "@/components/ComparativaEUBlock";
 import { DebtBlock } from "@/components/DebtBlock";
 import { DebtCostBlock } from "@/components/DebtCostBlock";
+import { DemographicsBlock } from "@/components/DemographicsBlock";
 import { EquivalenciasBlock } from "@/components/EquivalenciasBlock";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -33,6 +34,7 @@ const SECTION_IDS = [
   "recaudacion",
   "ue",
   "ccaa",
+  "demografia",
   "metodologia",
 ] as const;
 
@@ -53,6 +55,7 @@ function App() {
       { id: "recaudacion", label: msg.sections.recaudacion },
       { id: "ue", label: msg.sections.ue },
       { id: "ccaa", label: msg.sections.ccaa },
+      { id: "demografia", label: msg.sections.demografia },
       { id: "metodologia", label: msg.sections.metodologia },
     ],
     [msg.sections],
@@ -248,6 +251,13 @@ function App() {
               style={{ animationDelay: "0.5s" }}
             >
               <CcaaDebtBlock />
+            </section>
+            <section
+              id="demografia"
+              className="scroll-mt-28 animate-slide-up"
+              style={{ animationDelay: "0.55s" }}
+            >
+              <DemographicsBlock />
             </section>
             <section id="metodologia" className="scroll-mt-28">
               <MethodologySection />

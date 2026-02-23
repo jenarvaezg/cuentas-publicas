@@ -152,7 +152,7 @@ function getAttributionDates(sourceAttribution) {
 
 const FALLBACK_GUARD_KEYS = {
   debt: ['totalDebt', 'debtBySubsector', 'debtToGDP'],
-  demographics: ['population', 'activePopulation', 'gdp', 'averageSalary', 'cpi'],
+  demographics: ['population', 'activePopulation', 'gdp', 'averageSalary', 'cpi', 'vitalStats', 'lifeExpectancy', 'pyramid'],
   pensions: ['monthlyPayroll', 'monthlyPayrollSS', 'totalPensions', 'averagePensionRetirement'],
   budget: ['budget'],
   eurostat: ['eurostat'],

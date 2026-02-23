@@ -71,7 +71,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — Nuevas visualizaciones",
         items: [
-          "Sección de demografía: población en tiempo real (contador), natalidad, mortalidad, inmigración — desglose por provincia (INE)",
+          "🟡 Sección de demografía: indicadores vitales, pirámide poblacional con inmigración, esperanza de vida (listo); desglose provincial y proyecciones pendientes (INE)",
           "Sostenibilidad SS: serie histórica déficit contributivo (ingresos vs gastos desde 2006), déficit como % PIB, saldo por CCAA, evolución Fondo de Reserva y patrimonio neto SS (Fedea, IGAE, Ageing Report)",
           "Visión unificada ingresos vs gastos: fusionar Ingresos/Gastos (Eurostat), COFOG y Recaudación Tributaria en un panel global y por CCAA con máximo desglose por partidas",
           "Proyecciones demográficas a 20-30 años",
@@ -147,7 +147,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — New visualizations",
         items: [
-          "Demographics section: real-time population counter, birth rate, mortality, immigration — breakdown by province (INE)",
+          "🟡 Demographics section: vital indicators, population pyramid with immigration, life expectancy (done); provincial breakdown and projections pending (INE)",
           "Social Security sustainability: historical contributory deficit (revenue vs spending since 2006), deficit as % GDP, balance by region, Reserve Fund evolution and SS net worth (Fedea, IGAE, Ageing Report)",
           "Unified revenue vs spending view: merge Revenue/Spending (Eurostat), COFOG and Tax Revenue into a single panel with national and regional breakdown by category",
           "20-30 year demographic projections",

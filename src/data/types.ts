@@ -76,6 +76,11 @@ export interface DemographicsData {
     baseYear: number;
     byYear: Record<string, number>;
   };
+  vitalStats?: VitalStatsData;
+  lifeExpectancy?: LifeExpectancyData;
+  pyramid?: PopulationPyramidData;
+  dependencyRatio?: DependencyRatioData;
+  immigrationShare?: ImmigrationShareData;
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
@@ -316,6 +321,59 @@ export interface CcaaForalFlowsData {
     notes: string;
   };
   sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
+// ── Demographics (detailed) ──────────────────────────────────────────
+
+export interface TimeSeriesPoint {
+  year: number;
+  value: number;
+}
+
+export interface VitalStatsData {
+  birthRate: TimeSeriesPoint[];
+  deathRate: TimeSeriesPoint[];
+  fertilityRate: TimeSeriesPoint[];
+  naturalGrowth: TimeSeriesPoint[];
+}
+
+export interface LifeExpectancyData {
+  both: TimeSeriesPoint[];
+  male: TimeSeriesPoint[];
+  female: TimeSeriesPoint[];
+}
+
+export interface PyramidRegionData {
+  spain: number[];
+  eu: number[];
+  restEurope: number[];
+  africa: number[];
+  americas: number[];
+  asiaOceania: number[];
+}
+
+export interface PyramidYearData {
+  male: PyramidRegionData;
+  female: PyramidRegionData;
+}
+
+export interface PopulationPyramidData {
+  years: number[];
+  ageGroups: string[];
+  regions: string[];
+  byYear: Record<string, PyramidYearData>;
+}
+
+export interface DependencyRatioData {
+  oldAge: number;
+  youth: number;
+  total: number;
+}
+
+export interface ImmigrationShareData {
+  total: number;
+  byRegion: Record<string, number>;
+  historical: TimeSeriesPoint[];
 }
 
 // ── Metadata ────────────────────────────────────────────────────────

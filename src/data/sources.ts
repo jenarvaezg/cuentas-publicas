@@ -33,6 +33,24 @@ export const INE_PIB: SourceDetail = {
   note: "Tabla 30679 (serie CNTR6597)",
 };
 
+export const INE_IDB: SourceDetail = {
+  name: "INE — Indicadores Demográficos Básicos",
+  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=1381",
+  note: "Natalidad, mortalidad, fecundidad",
+};
+
+export const INE_LIFE_EXPECTANCY: SourceDetail = {
+  name: "INE — Tablas de Mortalidad",
+  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=48882",
+  note: "Esperanza de vida al nacer",
+};
+
+export const INE_PYRAMID: SourceDetail = {
+  name: "INE — Cifras de Población por lugar de nacimiento",
+  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=56943",
+  note: "Pirámide poblacional con desglose por origen",
+};
+
 // Seguridad Social
 export const SS_NOMINA: SourceDetail = {
   name: "MITES — Estadisticas Seg. Social",
