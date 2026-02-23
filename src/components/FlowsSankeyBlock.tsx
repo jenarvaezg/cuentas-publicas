@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SankeyLink, SankeyNode } from "@/data/types";
 import { useData } from "@/hooks/useData";
+import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact } from "@/utils/formatters";
 
 // Helper to filter graph to a specific selected node's forward/backward paths
@@ -51,21 +52,120 @@ const getFilteredGraph = (
   };
 };
 
-// Colors mapping
+// Colors mapping using React-friendly CSS variables
 const groupColors: Record<string, string> = {
-  core: "#64748b", // slate-500
-  income: "#ef4444", // red-500 (Deficit)
-  income_agg: "#22c55e", // green-500
-  income_type: "#16a34a", // green-600
-  tax_detail: "#15803d", // green-700
-  expense_cofog: "#3b82f6", // blue-500
-  expense_specific: "#0ea5e9", // sky-500
+  core: "hsl(var(--muted-foreground))", // slate-500 equivalent
+  income: "hsl(var(--destructive))", // red-500
+  income_agg: "hsl(142.1 76.2% 36.3%)", // green-600
+  income_type: "hsl(142.1 76.2% 36.3%)", // green-600
+  tax_detail: "hsl(142.1 76.2% 36.3%)", // green-600
+  expense_cofog: "hsl(217.2 91.2% 59.8%)", // blue-500
+  expense_specific: "hsl(199.4 89% 47.6%)", // sky-500
 };
 
 export const FlowsSankeyBlock: React.FC = () => {
   const { flows, taxRevenue, ccaaSpending } = useData();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [excludedRegion, setExcludedRegion] = useState<string | null>(null);
+  const { lang } = useI18n();
+
+  const copy = useMemo(() => {
+    return lang === "en"
+      ? {
+          title: "Public Accounts Circulation",
+          description: `Aggregate flows of income, debt, and spending for ${flows?.latestYear}. Click any node to drill-down into its specific path.`,
+          allSpain: "Spain (Consolidated)",
+          excludeRegionGroup: "Simulate exclusion (What-If):",
+          withoutRegion: "Without",
+          resetView: "Reset View",
+          infoBox:
+            "The flow consolidates data from the Tax Agency (AEAT), General Comptroller (IGAE), and Eurostat guaranteeing a strictly mathematically balanced graph. The ribbons' thickness is proportional to the millions of euros. Hover over a ribbon/node to see the exact amount.",
+          nodeLabels: {
+            // General
+            INGRESOS_TOTALES: "TOTAL INCOME",
+            IMPUESTOS_DIRECTOS: "DIRECT TAXES",
+            IMPUESTOS_INDIRECTOS: "INDIRECT TAXES",
+            COTIZACIONES: "SOCIAL CONTRIBUTIONS",
+            OTROS_INGRESOS: "OTHER INCOME",
+            CONSOLIDADO: "CONSOLIDATED BUDGET",
+            GASTOS_TOTALES: "TOTAL SPENDING",
+            DEFICIT: "DEFICIT (NEW DEBT)",
+
+            // Taxes
+            IRPF: "Personal Income Tax",
+            IS: "Corporate Tax",
+            IRNR: "Non-Resident Tax",
+            IVA: "VAT",
+            IIEE: "Special Taxes",
+            IP_ISD_ITPAJD: "Wealth & Transfer",
+            OTROS_TRIBUTOS: "Other Taxes",
+
+            // COFOG
+            COFOG_01_RESTO: "1. Public Services",
+            COFOG_02: "2. Defence",
+            COFOG_03: "3. Public Order & Safety",
+            COFOG_04: "4. Economic Affairs",
+            COFOG_05: "5. Environment",
+            COFOG_06: "6. Housing & Utilities",
+            COFOG_07: "7. Health",
+            COFOG_08: "8. Culture & Religion",
+            COFOG_09: "9. Education",
+            COFOG_10_RESTO: "10. Social Protection",
+
+            // Others
+            INTERESES_DEUDA: "Debt Interests",
+            PENSIONES: "Pensions",
+            DESEMPLEO: "Unemployment",
+          } as Record<string, string>,
+        }
+      : {
+          title: "Circulación de las Cuentas Públicas",
+          description: `Flujos agregados de ingresos, deuda y gasto para el año ${flows?.latestYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`,
+          allSpain: "España (Consolidado)",
+          excludeRegionGroup: "Simular exclusión (What-If):",
+          withoutRegion: "Sin",
+          resetView: "Restablecer Vista",
+          infoBox:
+            "El flujo consolida los datos de AEAT, IGAE y Eurostat garantizando un balance matemático exacto. El ancho de las cintas es proporcional a los importes en millones de euros. Haz hover sobre una cinta para ver la cantidad exacta.",
+          nodeLabels: {
+            // General
+            INGRESOS_TOTALES: "INGRESOS TOTALES",
+            IMPUESTOS_DIRECTOS: "IMPUESTOS DIRECTOS",
+            IMPUESTOS_INDIRECTOS: "IMPUESTOS INDIRECTOS",
+            COTIZACIONES: "COTIZACIONES SOCIALES",
+            OTROS_INGRESOS: "OTROS INGRESOS",
+            CONSOLIDADO: "PRESUPUESTO CONSOLIDADO",
+            GASTOS_TOTALES: "GASTOS TOTALES",
+            DEFICIT: "DÉFICIT (NUEVA DEUDA)",
+
+            // Taxes
+            IRPF: "IRPF",
+            IS: "Imp. Sociedades",
+            IRNR: "Imp. No Residentes",
+            IVA: "IVA",
+            IIEE: "Imp. Especiales",
+            IP_ISD_ITPAJD: "Patrim. Suces. y Transm.",
+            OTROS_TRIBUTOS: "Otros Tributos",
+
+            // COFOG
+            COFOG_01_RESTO: "1. Servicios Generales",
+            COFOG_02: "2. Defensa",
+            COFOG_03: "3. Orden Público",
+            COFOG_04: "4. Asuntos Económicos",
+            COFOG_05: "5. Medio Ambiente",
+            COFOG_06: "6. Vivienda y S. Comunitarios",
+            COFOG_07: "7. Sanidad",
+            COFOG_08: "8. Cultura y Religión",
+            COFOG_09: "9. Educación",
+            COFOG_10_RESTO: "10. Protección Social",
+
+            // Others
+            INTERESES_DEUDA: "Intereses Deuda",
+            PENSIONES: "Pensiones",
+            DESEMPLEO: "Desempleo",
+          } as Record<string, string>,
+        };
+  }, [lang, flows?.latestYear]);
 
   const ccaaOptions = useMemo(() => {
     if (!ccaaSpending) return [];
@@ -192,13 +292,8 @@ export const FlowsSankeyBlock: React.FC = () => {
       <CardHeader className="bg-muted/30 border-b pb-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              Circulación de las Cuentas Públicas
-            </CardTitle>
-            <CardDescription className="text-base mt-2">
-              Flujos agregados de ingresos, deuda y gasto para el año {flows.latestYear}. Haz clic
-              en cualquier nodo para explorar su rama (zoom-in).
-            </CardDescription>
+            <CardTitle className="flex items-center gap-2 text-2xl">{copy.title}</CardTitle>
+            <CardDescription className="text-base mt-2">{copy.description}</CardDescription>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
             <div className="flex items-center gap-2 bg-muted/50 rounded-md p-1 border">
@@ -211,11 +306,11 @@ export const FlowsSankeyBlock: React.FC = () => {
                   setSelectedNode(null); // Reset drilldown when simulating
                 }}
               >
-                <option value="">España (Consolidado)</option>
-                <optgroup label="Simular exclusión (What-If):">
+                <option value="">{copy.allSpain}</option>
+                <optgroup label={copy.excludeRegionGroup}>
                   {ccaaOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
-                      Sin {opt.label}
+                      {copy.withoutRegion} {opt.label}
                     </option>
                   ))}
                 </optgroup>
@@ -228,38 +323,39 @@ export const FlowsSankeyBlock: React.FC = () => {
                 className="shrink-0 flex items-center gap-2"
               >
                 <ZoomOut className="w-4 h-4" />
-                Restablecer Vista
+                {copy.resetView}
               </Button>
             )}
           </div>
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="h-[600px] w-full px-2 py-4 bg-white/50 backdrop-blur-sm">
+        <div className="h-[650px] w-full px-2 py-4 bg-background/50">
           <ResponsiveSankey
             data={{
               nodes: filteredNodes,
               links: filteredLinks.map((l) => ({ ...l, value: l.amount })),
             }}
-            margin={{ top: 20, right: 120, bottom: 20, left: 120 }}
+            margin={{ top: 20, right: 180, bottom: 20, left: 180 }}
             align="justify"
-            colors={(node: any) => groupColors[node.group] || "#cbd5e1"}
+            colors={(node: any) => groupColors[node.group] || "hsl(var(--muted-foreground))"}
             nodeOpacity={1}
             nodeHoverOthersOpacity={0.1}
-            nodeThickness={18}
+            nodeThickness={20}
             nodeSpacing={24}
-            nodeBorderWidth={0}
-            nodeBorderColor={{ from: "color", modifiers: [["darker", 0.8]] }}
+            nodeBorderWidth={1}
+            nodeBorderColor={{ from: "color", modifiers: [["darker", 0.5]] }}
             nodeBorderRadius={3}
-            linkOpacity={0.3}
-            nodeHoverOpacity={0.8}
+            linkOpacity={0.25}
+            nodeHoverOpacity={0.9}
             linkHoverOthersOpacity={0.05}
             linkContract={3}
             enableLinkGradient={true}
             labelPosition="outside"
             labelOrientation="horizontal"
             labelPadding={16}
-            labelTextColor={{ from: "color", modifiers: [["darker", 1.5]] }}
+            label={(node) => copy.nodeLabels[node.id] || node.id.toString()}
+            labelTextColor="hsl(var(--foreground))"
             onClick={(data) => {
               // Toggle node drill-down
               if ("sourceLinks" in data) {
@@ -267,14 +363,15 @@ export const FlowsSankeyBlock: React.FC = () => {
                 setSelectedNode((prev) => (prev === data.id ? null : data.id.toString()));
               }
             }}
-            valueFormat={(value: number) => formatCompact(value)}
+            valueFormat={(value: number) => formatCompact(value) + " €"}
             theme={{
               tooltip: {
                 container: {
-                  background: "rgba(255, 255, 255, 0.95)",
-                  color: "#1e293b",
+                  background: "hsl(var(--popover))",
+                  color: "hsl(var(--popover-foreground))",
                   fontSize: "14px",
                   borderRadius: "6px",
+                  border: "1px solid hsl(var(--border))",
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
                 },
               },
@@ -289,13 +386,9 @@ export const FlowsSankeyBlock: React.FC = () => {
           />
         </div>
         {!selectedNode && (
-          <div className="bg-muted/20 p-4 border-t text-sm text-slate-500 flex items-start gap-2">
+          <div className="bg-muted/20 p-4 border-t text-sm text-muted-foreground flex items-start gap-2">
             <Info className="w-4 h-4 mt-0.5 shrink-0" />
-            <p>
-              El flujo consolida los datos de AEAT, IGAE y Eurostat garantizando un balance
-              matemático exacto. El ancho de las cintas es proporcional a los importes en millones
-              de euros. Haz hover sobre una cinta para ver la cantidad exacta.
-            </p>
+            <p>{copy.infoBox}</p>
           </div>
         )}
       </CardContent>
