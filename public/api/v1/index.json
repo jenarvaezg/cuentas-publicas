@@ -1,6 +1,6 @@
 {
   "apiVersion": "v1",
-  "generatedAt": "2026-02-23T16:22:36.159Z",
+  "generatedAt": "2026-02-23T17:41:55.448Z",
   "basePath": "/api/v1",
   "endpoints": [
     {
@@ -69,8 +69,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:13.452Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:32.976Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2025-11-30",
       "dataPoints": 373
     },
@@ -78,16 +78,16 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:13.721Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:33.078Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2025-12-31"
     },
     "pensions": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:13.852Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:33.915Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "criticalFallback": false,
       "criticalFallbackReason": null,
       "lastRealDataDate": "2026-01-01",
@@ -97,8 +97,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:14.180Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:33.302Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2024-12-31",
       "years": 30
     },
@@ -106,8 +106,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:13.447Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:33.092Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2024-12-31",
       "year": 2024
     },
@@ -115,8 +115,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:13.459Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:32.944Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2025-09-30",
       "quarter": "2025-Q3"
     },
@@ -124,8 +124,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:13.448Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:33.117Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024
     },
@@ -133,8 +133,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:19.474Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:37.964Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2025-12-31",
       "latestYear": 2025,
       "years": 31
@@ -143,8 +143,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:22.709Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:38.031Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2023-12-31",
       "latestYear": 2023,
       "years": 5
@@ -153,8 +153,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:36.122Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:55.424Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "years": 13
@@ -163,8 +163,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-23T16:22:13.803Z",
-      "lastFetchAt": "2026-02-23T16:22:36.159Z",
+      "lastUpdated": "2026-02-23T17:41:33.671Z",
+      "lastFetchAt": "2026-02-23T17:41:55.448Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "communities": 2
