@@ -188,6 +188,8 @@ export const FlowsSankeyBlock: React.FC = () => {
     // --- MATH MODIFICATION: WHAT-IF SUBTRACTION (MULTI-REGION) ---
     if (excludedRegions.length > 0) {
       let totalIncomeSubtracted = 0;
+      let directTaxesSubtracted = 0;
+      let indirectTaxesSubtracted = 0;
       let totalExpenseSubtracted = 0;
 
       const subtractFromNodeAndLink = (
@@ -231,12 +233,13 @@ export const FlowsSankeyBlock: React.FC = () => {
         );
         if (taxLatest) {
           subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
-          subtractFromNodeAndLink("IVA", taxLatest.iva, true);
           subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
-          subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
           subtractFromNodeAndLink("IRNR", taxLatest.irnr, true);
-          totalIncomeSubtracted +=
-            taxLatest.irpf + taxLatest.iva + taxLatest.sociedades + taxLatest.iiee + taxLatest.irnr;
+          directTaxesSubtracted += taxLatest.irpf + taxLatest.sociedades + taxLatest.irnr;
+
+          subtractFromNodeAndLink("IVA", taxLatest.iva, true);
+          subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
+          indirectTaxesSubtracted += taxLatest.iva + taxLatest.iiee;
         }
 
         // 2. Subtract Expenses (General Spending executed by Regional Govt)
@@ -251,7 +254,17 @@ export const FlowsSankeyBlock: React.FC = () => {
         }
       }
 
-      // Propagate aggregated income subtraction to aggregators
+      totalIncomeSubtracted = directTaxesSubtracted + indirectTaxesSubtracted;
+
+      // Propagate aggregated income subtraction to intermediate aggregators
+      if (directTaxesSubtracted > 0) {
+        subtractFromNodeAndLink("IMPUESTOS_DIRECTOS", directTaxesSubtracted, true);
+      }
+      if (indirectTaxesSubtracted > 0) {
+        subtractFromNodeAndLink("IMPUESTOS_INDIRECTOS", indirectTaxesSubtracted, true);
+      }
+
+      // Propagate aggregated income subtraction to global aggregator
       const ingresosTotales = currentNodes.find((n) => n.id === "INGRESOS_TOTALES");
       if (ingresosTotales && totalIncomeSubtracted > 0) {
         ingresosTotales.amount = Math.max(0, ingresosTotales.amount - totalIncomeSubtracted);
