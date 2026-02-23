@@ -124,7 +124,8 @@ test.describe('Smoke', () => {
     await expect(ccaaSection.getByLabel('Métrica')).toHaveValue('debtAbsolute')
     await expect(ccaaSection.getByText('Detalle: Cataluña')).toBeVisible()
     await expect(ccaaSection.getByText('Déficit CCAA')).toBeVisible()
-    await expect(ccaaSection.getByText('Gasto CCAA')).toBeVisible()
+    await expect(ccaaSection.getByText('Gasto CCAA (oficial)')).toBeVisible()
+    await expect(ccaaSection.getByText('Gasto CCAA (proxy)')).toBeVisible()
 
     await ccaaSection.getByLabel('Comunidad').selectOption('CA13')
     await expect(page).toHaveURL(/ccaa=CA13/)

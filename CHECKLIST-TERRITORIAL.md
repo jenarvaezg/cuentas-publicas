@@ -76,6 +76,12 @@ Construir cobertura fiscal territorial máxima y fresca para responder, con traz
 - [ ] CA16 País Vasco: completar fuente foral equivalente, provincia y ayuntamientos.
 - [ ] CA17 La Rioja: completar ayuntamientos.
 
+## Pendientes transversales (documentación y gobernanza)
+
+- [ ] Registrar formalmente `ccaa-foral-flows` en `DATA-REGISTRY.md` (fuente, cobertura, frecuencia, fallback y mapa de archivos).
+- [ ] Verificar que `API.md` documenta el endpoint `/api/v1/ccaa-foral-flows.json` y su semántica de comparabilidad foral vs régimen común.
+- [ ] Añadir regla operativa: alta de dataset en pipeline/API implica actualización obligatoria de `DATA-REGISTRY.md` y `API.md` en el mismo PR.
+
 ## Orden recomendado de ejecución
 
 1. **Bajar a provincia** empezando por CCAA con mayor peso presupuestario (Andalucía, Cataluña, Madrid, C. Valenciana).
