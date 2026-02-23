@@ -76,8 +76,8 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Nuevas visualizaciones
 
-- **Sankey fiscal ultra detallado**: visualización de flujos desde ingresos (figuras tributarias y no tributarias) hacia usos finales del gasto (subsector, política, programa, capítulo/artículo/concepto), con filtros por Estado/CCAA/Provincia/Ayuntamiento y trazabilidad completa de fuente por nodo y enlace. Objetivo: nivel "aguja en pajar". Especificación: [`SANKEY-1000EUR.md`](SANKEY-1000EUR.md).
-- **"De cada 1.000€ que entran, se reparten así"**: bloque narrativo y comparativo que convierta todo el presupuesto en una unidad fija (por 1.000€ de ingresos) con desglose granular por destino y opción de ver versión consolidada o por administración territorial. Especificación: [`SANKEY-1000EUR.md`](SANKEY-1000EUR.md).
+- **✅ Sankey fiscal ultra detallado**: visualización interactiva de flujos desde ingresos territoriales hacia usos finales del gasto, con simulador "What-If" para CCAA.
+- **✅ "De cada 1.000€ que entran, se reparten así"**: Integrado en el visor Sankey como herramienta proporcional del presupuesto consolidado.
 - **Proyecciones demográficas**: Pirámide de población actual + proyecciones INE a 20-30 años (ratio dependencia futuro).
 - **Población por provincia**: Desglose demográfico a nivel provincial. Fuente: INE (padrón continuo, estadísticas de nacimientos/defunciones, estadística de migraciones). Dificultad: ALTA.
 - **Sostenibilidad de la Seguridad Social**: Sección dedicada con serie histórica del déficit contributivo (ingresos vs gastos contributivos desde 2006), déficit como % PIB y % gasto contributivo, saldo contributivo por CCAA, evolución del Fondo de Reserva y patrimonio neto de la SS. Fuentes: Fedea (Ángel de la Fuente, series de SS Ampliada), IGAE, García (2023) para CCAA, Ageing Report 2024 (proyecciones UE). Referencia: informe Hespérides «La (in)sostenibilidad de la Seguridad Social» (gráficos 7-15). Dificultad: ALTA.
