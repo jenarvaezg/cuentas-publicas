@@ -1,6 +1,6 @@
 # Roadmap — Dashboard Fiscal de España
 
-Estado validado contra el código actual: **21 febrero 2026**.
+Estado validado contra el código actual: **23 febrero 2026**.
 
 Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 
@@ -91,7 +91,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 - **✅ Alertas de datos stale**: Si un dato supera su umbral de antigüedad por fuente (mensual/trimestral/anual), crear/actualizar GitHub Issue automática.
 - **✅ Ampliar meta.json**: `lastRealDataDate` y `lastFetchAt` añadidos por fuente.
 - **✅ Tests de integridad**: suite explícita (`scripts/__tests__/data-integrity.test.mjs`) para datasets y metadatos.
-- **🟡 Sincronización de documentación técnica de datasets**: mantener `DATA-REGISTRY.md`/`API.md` alineados con cada alta de dataset en pipeline (pendiente registrar formalmente `ccaa-foral-flows` y su cobertura foral en el inventario).
+- **✅ Sincronización de documentación técnica de datasets**: `DATA-REGISTRY.md`, `API.md` y `openapi.json` alineados con todos los datasets publicados en `/api/v1` (incluidos `ccaa-spending` y `ccaa-foral-flows`).
 
 ---
 
@@ -101,5 +101,5 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
    Último gran bloque funcional pendiente antes de nuevas líneas de producto.
 2. **Ejecutar checklist territorial CCAA→Provincia→Ayuntamiento**  
    Seguir [`CHECKLIST-TERRITORIAL.md`](CHECKLIST-TERRITORIAL.md) comunidad a comunidad, con foco en máxima profundidad y frescura.
-3. **Cerrar deuda documental del inventario de datos**  
-   Reflejar inmediatamente en `DATA-REGISTRY.md`/`API.md` cada dataset nuevo publicado en `/api/v1`.
+3. ~~**Cerrar deuda documental del inventario de datos**~~
+   ✅ `DATA-REGISTRY.md`, `API.md` y `openapi.json` alineados con los 11 datasets publicados en `/api/v1`.

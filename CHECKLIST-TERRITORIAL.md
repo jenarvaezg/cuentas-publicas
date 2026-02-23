@@ -78,9 +78,9 @@ Construir cobertura fiscal territorial máxima y fresca para responder, con traz
 
 ## Pendientes transversales (documentación y gobernanza)
 
-- [ ] Registrar formalmente `ccaa-foral-flows` en `DATA-REGISTRY.md` (fuente, cobertura, frecuencia, fallback y mapa de archivos).
-- [ ] Verificar que `API.md` documenta el endpoint `/api/v1/ccaa-foral-flows.json` y su semántica de comparabilidad foral vs régimen común.
-- [ ] Añadir regla operativa: alta de dataset en pipeline/API implica actualización obligatoria de `DATA-REGISTRY.md` y `API.md` en el mismo PR.
+- [x] Registrar formalmente `ccaa-foral-flows` en `DATA-REGISTRY.md` (fuente, cobertura, frecuencia, fallback y mapa de archivos).
+- [x] Verificar que `API.md` documenta el endpoint `/api/v1/ccaa-foral-flows.json` y su semántica de comparabilidad foral vs régimen común.
+- [x] Añadir regla operativa: alta de dataset en pipeline/API implica actualización obligatoria de `DATA-REGISTRY.md` y `API.md` en el mismo PR (añadido en `CLAUDE.md` → "Data registry sync").
 
 ## Orden recomendado de ejecución
 

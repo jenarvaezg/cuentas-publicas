@@ -2,13 +2,13 @@
 
 Inventario técnico de todos los datos del dashboard: clasificación, fuentes, fragilidad y estado. Para wishlist, recomendaciones y roadmap, ver [`ROADMAP.md`](ROADMAP.md).
 
-> **Última auditoría**: febrero 2026
+> **Última auditoría**: 23 febrero 2026
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT y Ministerio de Hacienda) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 11 archivos JSON en `src/data/` (10 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
+El dashboard utiliza 9 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT, Ministerio de Hacienda, Gobierno de Navarra y Gobierno Vasco) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 12 archivos JSON en `src/data/` (11 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
 
-**Estado general**: De ~40 métricas mostradas, **~22 son automatizadas**, **~5 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~7 son derivadas** por cálculo.
+**Estado general**: De ~43 métricas mostradas, **~23 son automatizadas**, **~7 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~8 son derivadas** por cálculo.
 
 ---
 
@@ -275,7 +275,38 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 ---
 
-## 11. INFRAESTRUCTURA CI/CD
+## 11. GOBIERNO DE NAVARRA + GOBIERNO VASCO — Flujos Forales CCAA
+
+**Script**: `scripts/sources/ccaa-foral-flows.mjs` | **Output**: `src/data/ccaa-foral-flows.json`
+
+| Dato | Clasificación | Método | Frecuencia | Fragilidad |
+|------|---------------|--------|------------|------------|
+| Aportación neta Navarra (pagos + ajustes fiscales) | **SEMI-AUTOMATIZADO** | HTML scraping Cuadro nº 64, tabla de flujos financieros del Convenio Económico | Anual | ALTA — scraping HTML |
+| Cupo líquido provisional País Vasco | **SEMI-AUTOMATIZADO** | HTML scraping nota de prensa CMCE, regex sobre cifra | Anual | MUY ALTA — regex sobre prosa |
+| Flujo neto Navarra (aportación - ajustes) | **DERIVADO** | paymentToState - adjustmentsWithState | Anual | BAJA |
+
+**URLs** (variables — dependientes de edición anual):
+- Navarra: `https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico`
+- Euskadi: `https://www.euskadi.eus/noticia/2024/la-cmce-acuerda-modificacion-del-concierto-economico-...`
+
+**Cobertura**: 2 comunidades forales (Navarra y País Vasco), año 2024. No equivalente metodológicamente a la liquidación de régimen común (`ccaa-fiscal-balance.json`).
+
+**Método**:
+1. Navarra: descarga HTML del Cuadro nº 64 (Memoria del Convenio Económico), extrae tabla HTML, localiza filas "Total Pagos Aportación Neta" y "Total Ajustes fiscales" por label, parsea cifras en miles de € y convierte a M€.
+2. Euskadi: descarga HTML de la nota de prensa de la CMCE, busca regex `CUPO LÍQUIDO PROV M€` seguido de cifra en formato español. Solo se obtiene el cupo líquido; ajustes no publicados.
+3. Fallback `fetch` → `curl` para ambas fuentes (tolerancia a TLS/redirects).
+
+**Problemas detectados**:
+1. **URLs anuales**: las URL cambian cada año con la publicación de la nueva Memoria (Navarra) o nueva nota CMCE (Euskadi). Requiere actualización manual del script.
+2. **Scraping HTML frágil**: la estructura de la tabla de Navarra y de la nota de Euskadi puede cambiar sin aviso.
+3. **País Vasco incompleto**: solo se obtiene el cupo líquido provisional; los ajustes y el flujo neto son `null`.
+4. **Sin serie histórica**: solo hay datos del año más reciente (2024).
+
+**Fallback**: Valores de referencia hardcodeados 2024 (Navarra: 698,6 M€ pagos, 1.375,9 M€ ajustes; Euskadi: 1.504,5 M€ cupo).
+
+---
+
+## 12. INFRAESTRUCTURA CI/CD
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
@@ -290,7 +321,7 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 ---
 
-## 12. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+## 13. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
 
 ### AUTOMATIZADOS (se actualizan solos cada lunes)
 | Dato | Fuente | Frescura | Confiabilidad |
@@ -314,6 +345,7 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 | Deuda CCAA absoluta | BdE CSV be1309 | Trimestral | Alta |
 | Balanzas fiscales CCAA (cedidos/transferencias) | Hacienda XLS liquidación | Anual (liquidación) | Media |
 | Gasto funcional CCAA (COFOG detalle) | IGAE XLS CCAA-A | Anual | Media |
+| Flujos forales Navarra (aportación + ajustes) | Gobierno de Navarra HTML | Anual | Media |
 | Ingresos totales (TR) | Eurostat API gov_10a_main | Anual (~1-2a lag) | Alta |
 | Gastos totales (TE) | Eurostat API gov_10a_main | Anual | Alta |
 | Déficit/superávit (B9) | Eurostat API gov_10a_main | Anual | Alta |
@@ -328,6 +360,7 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 | N.° pensiones | Seg. Social Excel | MUY ALTO |
 | Pensión media jubilación | Seg. Social Excel | MUY ALTO |
 | Subcategorías COFOG (~70) | IGAE Excel | MEDIA — detección dinámica con fallback a rangos hardcodeados |
+| Cupo líquido País Vasco | Gobierno Vasco HTML (CMCE) | MUY ALTO — regex sobre nota de prensa |
 | Salario medio | INE API EAES741 | MEDIO — dato de hace 3 años |
 
 ### HARDCODEADOS / MANUALES (requieren intervención humana)
@@ -360,12 +393,13 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 | Deuda en años de pensiones | deuda / gastoAnualPensiones | Semi-auto |
 | Intereses en días de gasto | intereses / gastoDiario | Hardcodeado + automatizado |
 | Gasto público diario | gastoAnual / 365 | Automatizado |
+| Flujo neto Navarra | paymentToState - adjustmentsWithState | Semi-automatizado |
 | Otros ingresos | TR - D2REC - D5REC - D61REC | Automatizados |
 | Presión fiscal | ingresosTotales / PIB × 100 | Automatizados |
 
 ---
 
-## 13. MAPA DE ARCHIVOS
+## 14. MAPA DE ARCHIVOS
 
 ```
 scripts/
@@ -379,6 +413,7 @@ scripts/
     aeat.mjs                     # AEAT (series + delegaciones)
     hacienda-fiscal-balance.mjs  # Hacienda (balanzas fiscales CCAA, régimen común)
     ccaa-spending.mjs            # IGAE (gasto funcional CCAA, detalle COFOG)
+    ccaa-foral-flows.mjs         # Navarra + Euskadi (flujos forales, scraping HTML)
   lib/
     fetch-utils.mjs              # fetchWithRetry (backoff + timeout)
     csv-parser.mjs               # Parser CSV formato español
@@ -395,6 +430,7 @@ src/data/
   tax-revenue.json               # Recaudación AEAT (nacional + CCAA)
   ccaa-fiscal-balance.json       # Balanzas fiscales CCAA (2019-2023, régimen común)
   ccaa-spending.json             # Gasto funcional CCAA (COFOG detalle, 17 CCAA)
+  ccaa-foral-flows.json          # Flujos forales Navarra y País Vasco (aportación/cupo)
   meta.json                      # Estado última descarga
   types.ts                       # Interfaces TypeScript
   sources.ts                     # Atribución fuentes (URLs, nombres)
