@@ -616,7 +616,7 @@ async function fetchVitalStats(fetcher) {
   const seriesDefs = [
     { code: 'IDB37106', key: 'birthRate', label: 'Tasa Bruta de Natalidad' },
     { code: 'IDB47797', key: 'deathRate', label: 'Tasa Bruta de Mortalidad' },
-    { code: 'IDB86387', key: 'fertilityRate', label: 'Indicador Coyuntural de Fecundidad' },
+    { code: 'IDB72160', key: 'fertilityRate', label: 'Indicador Coyuntural de Fecundidad' },
     { code: 'IDB55340', key: 'naturalGrowth', label: 'Crecimiento Vegetativo' },
   ]
 
