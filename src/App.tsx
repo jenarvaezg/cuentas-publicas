@@ -6,6 +6,7 @@ import { DebtBlock } from "@/components/DebtBlock";
 import { DebtCostBlock } from "@/components/DebtCostBlock";
 import { DemographicsBlock } from "@/components/DemographicsBlock";
 import { EquivalenciasBlock } from "@/components/EquivalenciasBlock";
+import { FlowsSankeyBlock } from "@/components/FlowsSankeyBlock";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MethodologySection } from "@/components/MethodologySection";
@@ -30,6 +31,7 @@ const SECTION_IDS = [
   "coste-deuda",
   "pensiones",
   "ingresos-gastos",
+  "mapa-fiscal",
   "gasto-cofog",
   "recaudacion",
   "ue",
@@ -51,6 +53,7 @@ function App() {
       { id: "coste-deuda", label: msg.sections.costeDeuda },
       { id: "pensiones", label: msg.sections.pensiones },
       { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
+      { id: "mapa-fiscal", label: "Mapa Fiscal" },
       { id: "gasto-cofog", label: msg.sections.gastoCofog },
       { id: "recaudacion", label: msg.sections.recaudacion },
       { id: "ue", label: msg.sections.ue },
@@ -223,6 +226,13 @@ function App() {
               style={{ animationDelay: "0.3s" }}
             >
               <RevenueBlock />
+            </section>
+            <section
+              id="mapa-fiscal"
+              className="scroll-mt-28 animate-slide-up"
+              style={{ animationDelay: "0.32s" }}
+            >
+              <FlowsSankeyBlock />
             </section>
             <section
               id="gasto-cofog"
