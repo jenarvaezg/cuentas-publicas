@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, ExternalLink, Info, X } from "lucide-react";
-import { memo, useEffect, useId, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,12 @@ export const StatCard = memo(function StatCard({
 }: StatCardProps) {
   const { msg, lang } = useI18n();
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [popoverPos, setPopoverPos] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const infoDialogId = useId();
   const hasInfo = Boolean(tooltip) || Boolean(sources?.length);
 
@@ -92,6 +98,28 @@ export const StatCard = memo(function StatCard({
   const staleDate = staleSource?.realDataDate || staleSource?.date;
   const staleYear = staleDate ? new Date(staleDate).getFullYear() : null;
 
+  const openInfo = useCallback(() => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    const popoverWidth = 384;
+    const popoverMaxHeight = 400;
+    const margin = 8;
+
+    let top = rect.bottom + margin;
+    let left = rect.left + rect.width / 2 - popoverWidth / 2;
+
+    // Constrain horizontally
+    left = Math.max(margin, Math.min(left, window.innerWidth - popoverWidth - margin));
+
+    // If no room below, show above
+    if (top + popoverMaxHeight > window.innerHeight - margin) {
+      top = Math.max(margin, rect.top - popoverMaxHeight - margin);
+    }
+
+    setPopoverPos({ top, left });
+    setIsInfoOpen(true);
+  }, []);
+
   useEffect(() => {
     if (!isInfoOpen || typeof window === "undefined") return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -99,15 +127,6 @@ export const StatCard = memo(function StatCard({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isInfoOpen]);
-
-  useEffect(() => {
-    if (!isInfoOpen || typeof document === "undefined") return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
   }, [isInfoOpen]);
 
   return (
@@ -125,11 +144,12 @@ export const StatCard = memo(function StatCard({
               <div className="text-sm font-medium text-muted-foreground">{label}</div>
               {hasInfo && (
                 <button
+                  ref={buttonRef}
                   type="button"
                   aria-haspopup="dialog"
                   aria-expanded={isInfoOpen}
                   aria-controls={infoDialogId}
-                  onClick={() => setIsInfoOpen(true)}
+                  onClick={openInfo}
                   className="text-muted-foreground/50 hover:text-foreground transition-colors"
                 >
                   <Info className="h-3.5 w-3.5" />
@@ -203,20 +223,22 @@ export const StatCard = memo(function StatCard({
         </CardContent>
       </Card>
 
-      {hasInfo && isInfoOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 p-3 sm:p-6 flex items-end sm:items-center justify-center">
+      {hasInfo && isInfoOpen && popoverPos && (
+        <>
           <button
             type="button"
             onClick={() => setIsInfoOpen(false)}
-            className="absolute inset-0 h-full w-full bg-transparent border-0 p-0"
+            className="fixed inset-0 z-40 bg-transparent border-0 p-0 cursor-default"
             aria-label={copy.close}
           />
           <div
+            ref={popoverRef}
             id={infoDialogId}
             role="dialog"
-            aria-modal="true"
+            aria-modal="false"
             aria-labelledby={`${infoDialogId}-title`}
-            className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border bg-card p-4 shadow-2xl"
+            className="fixed z-50 w-96 max-w-[calc(100vw-1rem)] max-h-[400px] overflow-y-auto rounded-xl border bg-card p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+            style={{ top: popoverPos.top, left: popoverPos.left }}
           >
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -292,7 +314,7 @@ export const StatCard = memo(function StatCard({
               </section>
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
