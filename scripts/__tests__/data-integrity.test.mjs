@@ -74,6 +74,45 @@ describe('data integrity', () => {
     expect(latest.totalExpenditure).toBeGreaterThan(0)
   })
 
+  it('valida integridad de recaudación tributaria AEAT', () => {
+    const taxRevenue = loadDataFile('tax-revenue.json')
+    expect(Array.isArray(taxRevenue.years)).toBe(true)
+    expect(taxRevenue.years.length).toBeGreaterThan(5)
+    expect(Number.isFinite(taxRevenue.latestYear)).toBe(true)
+
+    const latest = taxRevenue.national[String(taxRevenue.latestYear)]
+    expect(latest).toBeDefined()
+    expect(latest.total).toBeGreaterThan(0)
+    expect(latest.irpf).toBeGreaterThanOrEqual(0)
+    expect(latest.iva).toBeGreaterThanOrEqual(0)
+    expect(latest.sociedades).toBeGreaterThanOrEqual(0)
+    expect(latest.irnr).toBeGreaterThanOrEqual(0)
+    expect(latest.iiee).toBeGreaterThanOrEqual(0)
+    expect(latest.resto).toBeGreaterThanOrEqual(0)
+
+    const components = latest.irpf + latest.iva + latest.sociedades + latest.irnr + latest.iiee + latest.resto
+    const tolerance = Math.max(1, latest.total * 0.02)
+    expect(Math.abs(components - latest.total)).toBeLessThanOrEqual(tolerance)
+
+    const iieeBreakdown = Object.values(latest.iieeBreakdown || {}).reduce((acc, value) => acc + value, 0)
+    expect(iieeBreakdown).toBeGreaterThanOrEqual(0)
+    expect(iieeBreakdown).toBeLessThanOrEqual(Math.max(1, latest.iiee * 1.05))
+
+    const latestCcaa = taxRevenue.ccaa?.[String(taxRevenue.latestYear)]
+    if (latestCcaa) {
+      expect(Array.isArray(latestCcaa.entries)).toBe(true)
+      expect(latestCcaa.entries.length).toBeGreaterThanOrEqual(10)
+
+      for (const entry of latestCcaa.entries) {
+        expect(typeof entry.code).toBe('string')
+        expect(typeof entry.name).toBe('string')
+        expect(Number.isFinite(entry.total)).toBe(true)
+        expect(Number.isFinite(entry.irpf)).toBe(true)
+        expect(Number.isFinite(entry.iva)).toBe(true)
+      }
+    }
+  })
+
   it('valida balanzas fiscales CCAA', () => {
     const balances = loadDataFile('ccaa-fiscal-balance.json')
     expect(Array.isArray(balances.years)).toBe(true)

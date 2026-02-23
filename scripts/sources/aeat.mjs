@@ -6,10 +6,9 @@ const AEAT_SERIES_URL =
 const AEAT_DELEGACIONES_URL =
   'https://sede.agenciatributaria.gob.es/static_files/Sede/Tema/Estadisticas/Recaudacion_Tributaria/Informes_mensuales/Ingresos_por_Delegaciones.xlsx'
 
-// Column indices (0-indexed) in the "Ingresos tributarios" sheet.
-// Row format: [year, month, monthName, ...211 data columns]
-// These indices are into the full row (col 0 = year, col 1 = month, col 2 = monthName).
-const COL = {
+// Legacy column indices (0-indexed) in the "Ingresos tributarios" sheet.
+// Used as fallback when header-based detection cannot be resolved safely.
+const LEGACY_COL = {
   total: 6,
   irpf: 29,
   sociedades: 65,
@@ -35,6 +34,80 @@ const COL = {
   restoServiciosDigitales: 186,
   restoJuego: 187,
   restoTasas: 188,
+}
+
+const NATIONAL_COLUMN_RULES = {
+  total: {
+    patterns: [/\btotal\b.*\b(ingres|recaud)/, /\b(ingres|recaud).*\btotal\b/],
+    exclude: /\b(irpf|iva|sociedades?|irnr|ii ee|impuestos especiales|resto)\b/,
+    reference: LEGACY_COL.total,
+  },
+  irpf: {
+    patterns: [/\birpf\b/, /\bpersonas?\s+fisicas\b/, /\brenta\b.*\bpersonas?\b/],
+    reference: LEGACY_COL.irpf,
+  },
+  sociedades: { patterns: [/\bsociedad(?:es)?\b/], reference: LEGACY_COL.sociedades },
+  irnr: { patterns: [/\birnr\b/, /\bno\s+residentes?\b/], reference: LEGACY_COL.irnr },
+  iva: { patterns: [/\biva\b/, /\bvalor\s+anadido\b/], reference: LEGACY_COL.iva },
+  iieeTotal: {
+    patterns: [
+      /\b(ii ee|impuestos especiales)\b.*\b(total|ingres|recaud)\b/,
+      /\btotal\b.*\b(ii ee|impuestos especiales)\b/,
+    ],
+    reference: LEGACY_COL.iieeTotal,
+  },
+  resto: {
+    patterns: [/\bresto\b.*\b(ingres|recaud|net)\b/, /\bresto\b/],
+    exclude:
+      /\b(medioambient|ambiental|trafico|exterior|seguros|transacciones|digitales?|juego|tasas?)\b/,
+    reference: LEGACY_COL.resto,
+  },
+  iieeAlcohol: { patterns: [/\balcohol\b/], reference: LEGACY_COL.iieeAlcohol },
+  iieeCerveza: { patterns: [/\bcerveza\b/], reference: LEGACY_COL.iieeCerveza },
+  iieeProductosIntermedios: {
+    patterns: [/\bproductos?\s+intermedios?\b/],
+    reference: LEGACY_COL.iieeProductosIntermedios,
+  },
+  iieeHidrocarburos: {
+    patterns: [/\bhidrocarbur/],
+    reference: LEGACY_COL.iieeHidrocarburos,
+  },
+  iieeTabaco: { patterns: [/\b(tabaco|labores?)\b/], reference: LEGACY_COL.iieeTabaco },
+  iieeElectricidad: {
+    patterns: [/\belectricidad\b/],
+    reference: LEGACY_COL.iieeElectricidad,
+  },
+  iieeEnvasesPlastico: {
+    patterns: [/\benvases?\b.*\bplastic/, /\bplastic\b.*\benvases?\b/],
+    reference: LEGACY_COL.iieeEnvasesPlastico,
+  },
+  iieeCarbon: { patterns: [/\bcarbon\b/], reference: LEGACY_COL.iieeCarbon },
+  iieeMediosTransporte: {
+    patterns: [/\bmedios?\b.*\btransporte\b/, /\bdeterminados?\b.*\btransporte\b/],
+    reference: LEGACY_COL.iieeMediosTransporte,
+  },
+  restoMedioambientales: {
+    patterns: [/\bmedioambient/, /\bambientales?\b/],
+    reference: LEGACY_COL.restoMedioambientales,
+  },
+  restoTraficoExterior: {
+    patterns: [/\btrafico\b.*\bexterior\b/, /\bcomercio\b.*\bexterior\b/, /\baduan/],
+    reference: LEGACY_COL.restoTraficoExterior,
+  },
+  restoPrimasSeguros: {
+    patterns: [/\bprimas?\b.*\bseguros?\b/, /\bseguros?\b.*\bprimas?\b/],
+    reference: LEGACY_COL.restoPrimasSeguros,
+  },
+  restoTransaccionesFinancieras: {
+    patterns: [/\btransacciones?\b.*\bfinancieras?\b/, /\bitf\b/],
+    reference: LEGACY_COL.restoTransaccionesFinancieras,
+  },
+  restoServiciosDigitales: {
+    patterns: [/\bservicios?\b.*\bdigitales?\b/, /\bisd\b/],
+    reference: LEGACY_COL.restoServiciosDigitales,
+  },
+  restoJuego: { patterns: [/\bjuego\b/], reference: LEGACY_COL.restoJuego },
+  restoTasas: { patterns: [/\btasas?\b/], reference: LEGACY_COL.restoTasas },
 }
 
 const CCAA_MAP = {
@@ -65,8 +138,8 @@ const CONCEPT_MAP = [
   { match: 'total ingresos netos', key: 'total' },
   { match: 'irpf ingresos netos', key: 'irpf' },
   { match: 'iva ingresos netos', key: 'iva' },
-  { match: 'i.sociedades ingresos netos', key: 'sociedades' },
-  { match: 'ii.ee. ingresos netos', key: 'iiee' },
+  { match: 'i sociedades ingresos netos', key: 'sociedades' },
+  { match: 'ii ee ingresos netos', key: 'iiee' },
   { match: 'irnr ingresos netos', key: 'irnr' },
 ]
 
@@ -123,6 +196,18 @@ function toNum(val) {
 }
 
 /**
+ * Normalize cell text to robustly compare labels with accents/punctuation differences.
+ */
+function normalizeCellText(val) {
+  return String(val ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+}
+
+/**
  * Thousands → millions
  */
 function thousandsToMillions(val) {
@@ -133,11 +218,117 @@ function thousandsToMillions(val) {
  * Find which concept key matches a concept cell string.
  */
 function matchConcept(conceptCell) {
-  const lower = String(conceptCell || '').toLowerCase()
+  const lower = normalizeCellText(conceptCell)
   for (const { match, key } of CONCEPT_MAP) {
-    if (lower.includes(match.toLowerCase())) return key
+    if (lower.includes(match)) return key
   }
   return null
+}
+
+function isNationalDataRow(row) {
+  if (!Array.isArray(row)) return false
+  const yearRaw = row[0]
+  const yearVal = typeof yearRaw === 'number' ? yearRaw : parseInt(String(yearRaw), 10)
+  if (!Number.isInteger(yearVal) || yearVal < 1990 || yearVal > 2100) return false
+  const month = toNum(row[1])
+  return month >= 1 && month <= 12
+}
+
+function findFirstNationalDataRow(rows) {
+  for (let i = 0; i < rows.length; i++) {
+    if (isNationalDataRow(rows[i])) return i
+  }
+  return -1
+}
+
+function buildNationalColumnLabels(rows, firstDataRowIdx) {
+  const headerRows = rows.slice(0, Math.max(firstDataRowIdx, 0))
+  const maxCols = rows.reduce((max, row) => Math.max(max, Array.isArray(row) ? row.length : 0), 0)
+  const expandedRows = headerRows.map((row) => expandHeaderRow(row, maxCols))
+  const labels = Array.from({ length: maxCols }, () => '')
+
+  for (let col = 0; col < maxCols; col++) {
+    const parts = []
+    for (const row of expandedRows) {
+      const normalized = normalizeCellText(row?.[col])
+      if (!normalized) continue
+      if (parts.at(-1) === normalized) continue
+      parts.push(normalized)
+    }
+    labels[col] = parts.join(' ')
+  }
+
+  return labels
+}
+
+/**
+ * Expand sparse header rows to account for merged cells in Excel exports.
+ * This propagates the last non-empty token to the right on sparse rows only.
+ */
+function expandHeaderRow(row, maxCols) {
+  const normalized = Array.from({ length: maxCols }, (_, col) => normalizeCellText(row?.[col]))
+  const nonEmptyCount = normalized.filter(Boolean).length
+  const density = maxCols > 0 ? nonEmptyCount / maxCols : 0
+
+  if (density > 0.45) return normalized
+
+  const expanded = [...normalized]
+  let current = ''
+  for (let col = 0; col < expanded.length; col++) {
+    if (expanded[col]) {
+      current = expanded[col]
+      continue
+    }
+    if (current) expanded[col] = current
+  }
+
+  return expanded
+}
+
+function detectNationalColumns(rows) {
+  const firstDataRowIdx = findFirstNationalDataRow(rows)
+  if (firstDataRowIdx <= 0) return null
+
+  const labels = buildNationalColumnLabels(rows, firstDataRowIdx)
+  const labeledCols = labels.filter(Boolean).length
+  if (labeledCols < 6) return null
+
+  const mapping = {}
+  const usedCols = new Set()
+  const missing = []
+
+  for (const [key, rule] of Object.entries(NATIONAL_COLUMN_RULES)) {
+    const matches = []
+    for (let col = 0; col < labels.length; col++) {
+      if (usedCols.has(col)) continue
+      const label = labels[col]
+      if (!label) continue
+      if (rule.exclude?.test(label)) continue
+      if (!rule.patterns.some((pattern) => pattern.test(label))) continue
+      matches.push(col)
+    }
+
+    if (matches.length === 0) {
+      missing.push(key)
+      continue
+    }
+
+    matches.sort((a, b) => {
+      const distance = Math.abs(a - rule.reference) - Math.abs(b - rule.reference)
+      return distance !== 0 ? distance : a - b
+    })
+
+    const selected = matches[0]
+    mapping[key] = selected
+    usedCols.add(selected)
+  }
+
+  if (missing.length > 0) {
+    console.warn(`    ⚠️  AEAT series: faltan columnas por cabecera (${missing.join(', ')})`)
+    return null
+  }
+
+  return mapping
 }
 
 // ─────────────────────────────────────────────
@@ -150,6 +341,22 @@ function matchConcept(conceptCell) {
  */
 function parseNationalSheet(ws) {
   const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
+  const detectedCols = detectNationalColumns(rows)
+  const cols = detectedCols || LEGACY_COL
+  const keys = Object.keys(LEGACY_COL)
+
+  if (detectedCols) {
+    const shiftedKeys = keys.filter((key) => detectedCols[key] !== LEGACY_COL[key])
+    if (shiftedKeys.length > 0) {
+      console.log(
+        `    ℹ️  AEAT series: detección dinámica aplicada (${shiftedKeys.length} columnas difieren de índices legacy)`,
+      )
+    } else {
+      console.log('    ℹ️  AEAT series: cabeceras detectadas y alineadas con índices esperados')
+    }
+  } else {
+    console.warn('    ⚠️  AEAT series: usando índices legacy por falta de cabeceras detectables')
+  }
 
   // Accumulate per-year monthly data
   const yearAccum = {}
@@ -166,13 +373,13 @@ function parseNationalSheet(ws) {
 
     if (!yearAccum[yearStr]) {
       yearAccum[yearStr] = { months: new Set(), sums: {} }
-      for (const key of Object.keys(COL)) {
+      for (const key of keys) {
         yearAccum[yearStr].sums[key] = 0
       }
     }
 
     yearAccum[yearStr].months.add(month)
-    for (const [key, colIdx] of Object.entries(COL)) {
+    for (const [key, colIdx] of Object.entries(cols)) {
       yearAccum[yearStr].sums[key] += toNum(row[colIdx])
     }
   }

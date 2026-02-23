@@ -148,6 +148,44 @@ function getAttributionDates(sourceAttribution) {
     .filter(Boolean)
 }
 
+const FALLBACK_GUARD_KEYS = {
+  debt: ['totalDebt', 'debtBySubsector', 'debtToGDP'],
+  demographics: ['population', 'activePopulation', 'gdp', 'averageSalary', 'cpi'],
+  pensions: ['monthlyPayroll', 'monthlyPayrollSS', 'totalPensions', 'averagePensionRetirement'],
+  budget: ['budget'],
+  eurostat: ['eurostat'],
+  ccaaDebt: ['be1309', 'be1310'],
+  revenue: ['revenue'],
+  taxRevenue: ['series', 'delegaciones'],
+  ccaaFiscalBalance: ['balances']
+}
+
+function getFallbackKeys(sourceName, payload) {
+  const sourceAttribution = payload?.sourceAttribution
+  if (!sourceAttribution || typeof sourceAttribution !== 'object') return []
+
+  const guardKeys = FALLBACK_GUARD_KEYS[sourceName]
+  const entries = guardKeys
+    ? guardKeys.map(key => [key, sourceAttribution[key]])
+    : Object.entries(sourceAttribution)
+
+  return entries
+    .filter(([, attr]) => String(attr?.type || '').toLowerCase() === 'fallback')
+    .map(([key]) => key)
+}
+
+function getSourceFailureReason(result, fallbackKeys) {
+  if (result?.status !== 'fulfilled') {
+    return result?.reason?.message || 'Error desconocido'
+  }
+
+  if (fallbackKeys.length > 0) {
+    return `Fallback detectado en: ${fallbackKeys.join(', ')}`
+  }
+
+  return 'Fuente inválida'
+}
+
 /**
  * Main orchestrator - downloads all data sources and writes JSON files
  */
@@ -193,18 +231,43 @@ async function main() {
     ccaaFiscalBalanceResult
   ] = results
 
-  // Track success/failure
-  const status = {
-    debt: debtResult.status === 'fulfilled',
-    demographics: demographicsResult.status === 'fulfilled',
-    pensions: pensionsResult.status === 'fulfilled',
-    budget: budgetResult.status === 'fulfilled',
-    eurostat: eurostatResult.status === 'fulfilled',
-    ccaaDebt: ccaaDebtResult.status === 'fulfilled',
-    revenue: revenueResult.status === 'fulfilled',
-    taxRevenue: taxRevenueResult.status === 'fulfilled',
-    ccaaFiscalBalance: ccaaFiscalBalanceResult.status === 'fulfilled'
+  const sourceResults = {
+    debt: debtResult,
+    demographics: demographicsResult,
+    pensions: pensionsResult,
+    budget: budgetResult,
+    eurostat: eurostatResult,
+    ccaaDebt: ccaaDebtResult,
+    revenue: revenueResult,
+    taxRevenue: taxRevenueResult,
+    ccaaFiscalBalance: ccaaFiscalBalanceResult
   }
+
+  const fulfilled = Object.fromEntries(
+    Object.entries(sourceResults).map(([sourceName, result]) => [
+      sourceName,
+      result.status === 'fulfilled'
+    ])
+  )
+
+  const fallbackKeys = Object.fromEntries(
+    Object.entries(sourceResults).map(([sourceName, result]) => [
+      sourceName,
+      fulfilled[sourceName] ? getFallbackKeys(sourceName, result.value) : []
+    ])
+  )
+
+  // Track success/failure (fallback is treated as error)
+  const status = Object.fromEntries(
+    Object.keys(sourceResults).map(sourceName => [
+      sourceName,
+      fulfilled[sourceName] && fallbackKeys[sourceName].length === 0
+    ])
+  )
+
+  const fallbackSources = Object.entries(fallbackKeys)
+    .filter(([, keys]) => keys.length > 0)
+    .map(([sourceName]) => sourceName)
 
   // Write individual data files
   console.log('\n=== Escribiendo archivos JSON ===')
@@ -213,63 +276,63 @@ async function main() {
     writeMirroredDataFile('debt.json', debtResult.value)
     console.log('✅ debt.json')
   } else {
-    console.error('❌ debt.json - Error:', debtResult.reason?.message)
+    console.error('❌ debt.json - Error:', getSourceFailureReason(debtResult, fallbackKeys.debt))
   }
 
   if (status.demographics) {
     writeMirroredDataFile('demographics.json', demographicsResult.value)
     console.log('✅ demographics.json')
   } else {
-    console.error('❌ demographics.json - Error:', demographicsResult.reason?.message)
+    console.error('❌ demographics.json - Error:', getSourceFailureReason(demographicsResult, fallbackKeys.demographics))
   }
 
   if (status.pensions) {
     writeMirroredDataFile('pensions.json', pensionsResult.value)
     console.log('✅ pensions.json')
   } else {
-    console.error('❌ pensions.json - Error:', pensionsResult.reason?.message)
+    console.error('❌ pensions.json - Error:', getSourceFailureReason(pensionsResult, fallbackKeys.pensions))
   }
 
   if (status.budget) {
     writeMirroredDataFile('budget.json', budgetResult.value)
     console.log('✅ budget.json')
   } else {
-    console.error('❌ budget.json - Error:', budgetResult.reason?.message)
+    console.error('❌ budget.json - Error:', getSourceFailureReason(budgetResult, fallbackKeys.budget))
   }
 
   if (status.eurostat) {
     writeMirroredDataFile('eurostat.json', eurostatResult.value)
     console.log('✅ eurostat.json')
   } else {
-    console.error('❌ eurostat.json - Error:', eurostatResult.reason?.message)
+    console.error('❌ eurostat.json - Error:', getSourceFailureReason(eurostatResult, fallbackKeys.eurostat))
   }
 
   if (status.ccaaDebt) {
     writeMirroredDataFile('ccaa-debt.json', ccaaDebtResult.value)
     console.log('✅ ccaa-debt.json')
   } else {
-    console.error('❌ ccaa-debt.json - Error:', ccaaDebtResult.reason?.message)
+    console.error('❌ ccaa-debt.json - Error:', getSourceFailureReason(ccaaDebtResult, fallbackKeys.ccaaDebt))
   }
 
   if (status.revenue) {
     writeMirroredDataFile('revenue.json', revenueResult.value)
     console.log('✅ revenue.json')
   } else {
-    console.error('❌ revenue.json - Error:', revenueResult.reason?.message)
+    console.error('❌ revenue.json - Error:', getSourceFailureReason(revenueResult, fallbackKeys.revenue))
   }
 
   if (status.taxRevenue) {
     writeMirroredDataFile('tax-revenue.json', taxRevenueResult.value)
     console.log('✅ tax-revenue.json')
   } else {
-    console.error('❌ tax-revenue.json - Error:', taxRevenueResult.reason?.message)
+    console.error('❌ tax-revenue.json - Error:', getSourceFailureReason(taxRevenueResult, fallbackKeys.taxRevenue))
   }
 
   if (status.ccaaFiscalBalance) {
     writeMirroredDataFile('ccaa-fiscal-balance.json', ccaaFiscalBalanceResult.value)
     console.log('✅ ccaa-fiscal-balance.json')
   } else {
-    console.error('❌ ccaa-fiscal-balance.json - Error:', ccaaFiscalBalanceResult.reason?.message)
+    console.error('❌ ccaa-fiscal-balance.json - Error:', getSourceFailureReason(ccaaFiscalBalanceResult, fallbackKeys.ccaaFiscalBalance))
   }
 
   // Write metadata file
@@ -281,21 +344,25 @@ async function main() {
     sources: {
       debt: {
         success: status.debt,
-        lastUpdated: status.debt ? debtResult.value.lastUpdated : null,
-        lastFetchAt: status.debt ? nowIso : null,
-        lastRealDataDate: status.debt
+        fallbackDetected: fallbackKeys.debt.length > 0,
+        fallbackKeys: fallbackKeys.debt,
+        lastUpdated: fulfilled.debt ? debtResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.debt ? nowIso : null,
+        lastRealDataDate: fulfilled.debt
           ? pickLatestDate([
             debtResult.value.historical?.[debtResult.value.historical.length - 1]?.date,
             ...getAttributionDates(debtResult.value.sourceAttribution)
           ])
           : null,
-        dataPoints: status.debt ? debtResult.value.historical.length : 0
+        dataPoints: fulfilled.debt ? debtResult.value.historical.length : 0
       },
       demographics: {
         success: status.demographics,
-        lastUpdated: status.demographics ? demographicsResult.value.lastUpdated : null,
-        lastFetchAt: status.demographics ? nowIso : null,
-        lastRealDataDate: status.demographics
+        fallbackDetected: fallbackKeys.demographics.length > 0,
+        fallbackKeys: fallbackKeys.demographics,
+        lastUpdated: fulfilled.demographics ? demographicsResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.demographics ? nowIso : null,
+        lastRealDataDate: fulfilled.demographics
           ? pickLatestDate([
             ...getAttributionDates(demographicsResult.value.sourceAttribution)
           ])
@@ -303,95 +370,109 @@ async function main() {
       },
       pensions: {
         success: status.pensions,
-        lastUpdated: status.pensions ? pensionsResult.value.lastUpdated : null,
-        lastFetchAt: status.pensions ? nowIso : null,
-        criticalFallback: status.pensions
+        fallbackDetected: fallbackKeys.pensions.length > 0,
+        fallbackKeys: fallbackKeys.pensions,
+        lastUpdated: fulfilled.pensions ? pensionsResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.pensions ? nowIso : null,
+        criticalFallback: fulfilled.pensions
           ? Boolean(pensionsResult.value.pipeline?.criticalFallback)
           : false,
-        criticalFallbackReason: status.pensions
+        criticalFallbackReason: fulfilled.pensions
           ? pensionsResult.value.pipeline?.fallbackReason || null
           : null,
-        lastRealDataDate: status.pensions
+        lastRealDataDate: fulfilled.pensions
           ? pickLatestDate([
             pensionsResult.value.historical?.[pensionsResult.value.historical.length - 1]?.date,
             ...getAttributionDates(pensionsResult.value.sourceAttribution)
           ])
           : null,
-        dataPoints: status.pensions ? pensionsResult.value.historical.length : 0
+        dataPoints: fulfilled.pensions ? pensionsResult.value.historical.length : 0
       },
       budget: {
         success: status.budget,
-        lastUpdated: status.budget ? budgetResult.value.lastUpdated : null,
-        lastFetchAt: status.budget ? nowIso : null,
-        lastRealDataDate: status.budget
+        fallbackDetected: fallbackKeys.budget.length > 0,
+        fallbackKeys: fallbackKeys.budget,
+        lastUpdated: fulfilled.budget ? budgetResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.budget ? nowIso : null,
+        lastRealDataDate: fulfilled.budget
           ? pickLatestDate([
             budgetResult.value.latestYear,
             ...getAttributionDates(budgetResult.value.sourceAttribution)
           ])
           : null,
-        years: status.budget ? budgetResult.value.years.length : 0
+        years: fulfilled.budget ? budgetResult.value.years.length : 0
       },
       eurostat: {
         success: status.eurostat,
-        lastUpdated: status.eurostat ? eurostatResult.value.lastUpdated : null,
-        lastFetchAt: status.eurostat ? nowIso : null,
-        lastRealDataDate: status.eurostat
+        fallbackDetected: fallbackKeys.eurostat.length > 0,
+        fallbackKeys: fallbackKeys.eurostat,
+        lastUpdated: fulfilled.eurostat ? eurostatResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.eurostat ? nowIso : null,
+        lastRealDataDate: fulfilled.eurostat
           ? pickLatestDate([
             eurostatResult.value.year,
             ...getAttributionDates(eurostatResult.value.sourceAttribution)
           ])
           : null,
-        year: status.eurostat ? eurostatResult.value.year : null
+        year: fulfilled.eurostat ? eurostatResult.value.year : null
       },
       ccaaDebt: {
         success: status.ccaaDebt,
-        lastUpdated: status.ccaaDebt ? ccaaDebtResult.value.lastUpdated : null,
-        lastFetchAt: status.ccaaDebt ? nowIso : null,
-        lastRealDataDate: status.ccaaDebt
+        fallbackDetected: fallbackKeys.ccaaDebt.length > 0,
+        fallbackKeys: fallbackKeys.ccaaDebt,
+        lastUpdated: fulfilled.ccaaDebt ? ccaaDebtResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.ccaaDebt ? nowIso : null,
+        lastRealDataDate: fulfilled.ccaaDebt
           ? pickLatestDate([
             ccaaDebtResult.value.quarter,
             ...getAttributionDates(ccaaDebtResult.value.sourceAttribution)
           ])
           : null,
-        quarter: status.ccaaDebt ? ccaaDebtResult.value.quarter : null
+        quarter: fulfilled.ccaaDebt ? ccaaDebtResult.value.quarter : null
       },
       revenue: {
         success: status.revenue,
-        lastUpdated: status.revenue ? revenueResult.value.lastUpdated : null,
-        lastFetchAt: status.revenue ? nowIso : null,
-        lastRealDataDate: status.revenue
+        fallbackDetected: fallbackKeys.revenue.length > 0,
+        fallbackKeys: fallbackKeys.revenue,
+        lastUpdated: fulfilled.revenue ? revenueResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.revenue ? nowIso : null,
+        lastRealDataDate: fulfilled.revenue
           ? pickLatestDate([
             revenueResult.value.latestYear,
             ...getAttributionDates(revenueResult.value.sourceAttribution)
           ])
           : null,
-        latestYear: status.revenue ? revenueResult.value.latestYear : null
+        latestYear: fulfilled.revenue ? revenueResult.value.latestYear : null
       },
       taxRevenue: {
         success: status.taxRevenue,
-        lastUpdated: status.taxRevenue ? taxRevenueResult.value.lastUpdated : null,
-        lastFetchAt: status.taxRevenue ? nowIso : null,
-        lastRealDataDate: status.taxRevenue
+        fallbackDetected: fallbackKeys.taxRevenue.length > 0,
+        fallbackKeys: fallbackKeys.taxRevenue,
+        lastUpdated: fulfilled.taxRevenue ? taxRevenueResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.taxRevenue ? nowIso : null,
+        lastRealDataDate: fulfilled.taxRevenue
           ? pickLatestDate([
             taxRevenueResult.value.latestYear,
             ...getAttributionDates(taxRevenueResult.value.sourceAttribution)
           ])
           : null,
-        latestYear: status.taxRevenue ? taxRevenueResult.value.latestYear : null,
-        years: status.taxRevenue ? taxRevenueResult.value.years.length : 0
+        latestYear: fulfilled.taxRevenue ? taxRevenueResult.value.latestYear : null,
+        years: fulfilled.taxRevenue ? taxRevenueResult.value.years.length : 0
       },
       ccaaFiscalBalance: {
         success: status.ccaaFiscalBalance,
-        lastUpdated: status.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.lastUpdated : null,
-        lastFetchAt: status.ccaaFiscalBalance ? nowIso : null,
-        lastRealDataDate: status.ccaaFiscalBalance
+        fallbackDetected: fallbackKeys.ccaaFiscalBalance.length > 0,
+        fallbackKeys: fallbackKeys.ccaaFiscalBalance,
+        lastUpdated: fulfilled.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.ccaaFiscalBalance ? nowIso : null,
+        lastRealDataDate: fulfilled.ccaaFiscalBalance
           ? pickLatestDate([
             ccaaFiscalBalanceResult.value.latestYear,
             ...getAttributionDates(ccaaFiscalBalanceResult.value.sourceAttribution)
           ])
           : null,
-        latestYear: status.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.latestYear : null,
-        years: status.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.years.length : 0
+        latestYear: fulfilled.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.latestYear : null,
+        years: fulfilled.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.years.length : 0
       }
     }
   }
@@ -577,6 +658,15 @@ async function main() {
     console.log('Balanzas CCAA: ❌ Error')
   }
   console.log()
+
+  // Fallbacks are treated as errors (potential endpoint/schema mismatch).
+  if (fallbackSources.length > 0) {
+    console.error('❌ Error: se detectó fallback en fuentes:')
+    for (const sourceName of fallbackSources) {
+      console.error(`  - ${sourceName}: ${fallbackKeys[sourceName].join(', ')}`)
+    }
+    process.exit(1)
+  }
 
   // B3: Éxito parcial. Definir fuentes críticas.
   const CRITICAL_SOURCES = ['debt', 'demographics', 'pensions', 'budget']

@@ -20,9 +20,61 @@ vi.mock("xlsx", () => ({
 // Test data builders
 // ─────────────────────────────────────────────
 
+const LEGACY_COL = {
+  total: 6,
+  irpf: 29,
+  sociedades: 65,
+  irnr: 82,
+  iva: 107,
+  iieeTotal: 137,
+  resto: 178,
+  iieeAlcohol: 142,
+  iieeCerveza: 147,
+  iieeProductosIntermedios: 152,
+  iieeHidrocarburos: 157,
+  iieeTabaco: 162,
+  iieeElectricidad: 168,
+  iieeEnvasesPlastico: 173,
+  iieeCarbon: 174,
+  iieeMediosTransporte: 175,
+  restoMedioambientales: 180,
+  restoTraficoExterior: 183,
+  restoPrimasSeguros: 184,
+  restoTransaccionesFinancieras: 185,
+  restoServiciosDigitales: 186,
+  restoJuego: 187,
+  restoTasas: 188,
+};
+
+const NATIONAL_HEADER_LABELS = {
+  total: "Total Ingresos netos",
+  irpf: "IRPF Ingresos netos",
+  sociedades: "I.Sociedades Ingresos netos",
+  irnr: "IRNR Ingresos netos",
+  iva: "IVA Ingresos netos",
+  iieeTotal: "II.EE. Ingresos netos Total",
+  resto: "Resto Ingresos netos",
+  iieeAlcohol: "II.EE. Alcohol y bebidas derivadas",
+  iieeCerveza: "II.EE. Cerveza",
+  iieeProductosIntermedios: "II.EE. Productos intermedios",
+  iieeHidrocarburos: "II.EE. Hidrocarburos",
+  iieeTabaco: "II.EE. Tabaco",
+  iieeElectricidad: "II.EE. Electricidad",
+  iieeEnvasesPlastico: "II.EE. Envases de plástico",
+  iieeCarbon: "II.EE. Carbón",
+  iieeMediosTransporte: "II.EE. Medios de transporte",
+  restoMedioambientales: "Resto impuestos medioambientales",
+  restoTraficoExterior: "Resto Tráfico Exterior",
+  restoPrimasSeguros: "Resto Primas de Seguros",
+  restoTransaccionesFinancieras: "Resto Transacciones financieras",
+  restoServiciosDigitales: "Resto Servicios digitales",
+  restoJuego: "Resto Juego",
+  restoTasas: "Resto Tasas",
+};
+
 /**
  * Build a national "Ingresos tributarios" row for a given year/month.
- * Column indices must match COL in aeat.mjs:
+ * Column indices must match LEGACY_COL in aeat.mjs:
  *   0=year, 1=month, 2=monthName, 6=total, 29=irpf, 65=sociedades,
  *   82=irnr, 107=iva, 137=iieeTotal, 178=resto
  * Sub-columns for IIEE and Resto also populated.
@@ -95,6 +147,93 @@ function buildCompleteYear(year, values = {}) {
   return Array.from({ length: 12 }, (_, i) =>
     buildNationalRow(year, i + 1, values),
   );
+}
+
+function buildNationalHeaderRows(columnShift = 0) {
+  const rowA = new Array(230 + columnShift).fill("");
+  const rowB = new Array(230 + columnShift).fill("");
+
+  rowA[0] = "Ejercicio";
+  rowA[1] = "Mes";
+  rowA[2] = "Mes nombre";
+
+  for (const [key, colIdx] of Object.entries(LEGACY_COL)) {
+    rowB[colIdx + columnShift] = NATIONAL_HEADER_LABELS[key];
+  }
+
+  return [rowA, rowB];
+}
+
+function buildNationalRowWithShift(year, month, values = {}, columnShift = 0) {
+  if (columnShift === 0) return buildNationalRow(year, month, values);
+
+  const baseRow = buildNationalRow(year, month, values);
+  const shifted = new Array(230 + columnShift).fill(0);
+  shifted[0] = year;
+  shifted[1] = month;
+  shifted[2] = baseRow[2];
+
+  for (const colIdx of Object.values(LEGACY_COL)) {
+    shifted[colIdx + columnShift] = baseRow[colIdx];
+  }
+
+  return shifted;
+}
+
+function buildCompleteYearWithShift(year, values = {}, columnShift = 0) {
+  return Array.from({ length: 12 }, (_, i) =>
+    buildNationalRowWithShift(year, i + 1, values, columnShift),
+  );
+}
+
+function buildMergedNationalHeaderRows() {
+  const row1 = new Array(230).fill("");
+  const row2 = new Array(230).fill("");
+  const row3 = new Array(230).fill("");
+
+  row1[0] = "PERIODO";
+  row1[3] = "Ingresos tributarios";
+  row1[11] = "Impuesto sobre la Renta de las Personas Físicas";
+  row1[47] = "Impuesto sobre Sociedades";
+  row1[78] = "Impuesto sobre la Renta de No Residentes";
+  row1[86] = "Impuesto sobre el Valor Añadido";
+  row1[112] = "Impuestos Especiales";
+  row1[176] = "Resto de ingresos tributarios";
+
+  row2[6] = "Ingresos netos";
+  row2[29] = "Ingresos netos";
+  row2[65] = "Ingresos netos";
+  row2[82] = "Ingresos netos";
+  row2[107] = "Ingresos netos";
+  row2[137] = "Ingresos netos";
+  row2[178] = "Ingresos netos";
+
+  row3[6] = "Total";
+  row3[29] = "Total";
+  row3[65] = "Total";
+  row3[82] = "Total";
+  row3[107] = "Total";
+  row3[137] = "Total";
+  row3[178] = "Total";
+
+  row3[142] = "Alcohol y Bebidas Derivadas";
+  row3[147] = "Cerveza";
+  row3[152] = "Productos Intermedios";
+  row3[157] = "Hidrocarburos";
+  row3[162] = "Labores del Tabaco";
+  row3[168] = "Electricidad";
+  row3[173] = "Envases de Plástico no reutilizables";
+  row3[174] = "Carbón";
+  row3[175] = "Determinados Medios de Transporte";
+  row3[180] = "Impuestos medioambientales";
+  row3[183] = "Impuesto sobre Tráfico Exterior";
+  row3[184] = "Impuesto sobre las Primas de Seguros";
+  row3[185] = "Impuesto sobre las Transacciones Financieras";
+  row3[186] = "Impuesto sobre los Servicios Digitales";
+  row3[187] = "Impuesto sobre Actividades del Juego";
+  row3[188] = "Tasas";
+
+  return [row1, row2, row3];
 }
 
 /**
@@ -345,6 +484,89 @@ describe("aeat source script", () => {
 
       // CA01 (Andalucía), CA09 (Cataluña), CA13 (Madrid)
       expect(codes).toEqual(["CA01", "CA09", "CA13"]);
+    });
+  });
+
+  describe("detección dinámica de columnas nacionales", () => {
+    it("parsea correctamente cuando la hoja desplaza columnas y hay cabeceras", async () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      mockFetchBothOk();
+
+      const columnShift = 9;
+      const nationalRows = [
+        ...buildNationalHeaderRows(columnShift),
+        ...buildCompleteYearWithShift(
+          2024,
+          {
+            total: 125000,
+            irpf: 45000,
+            iva: 35000,
+            sociedades: 22000,
+            irnr: 3000,
+            iiee: 12000,
+            resto: 8000,
+          },
+          columnShift,
+        ),
+      ];
+
+      mockXlsxBoth(nationalRows, [buildDelegacionesHeader()]);
+
+      const result = await downloadTaxRevenueData();
+      const y2024 = result.national["2024"];
+
+      expect(y2024.total).toBe(1500);
+      expect(y2024.irpf).toBe(540);
+      expect(y2024.iva).toBe(420);
+      expect(y2024.sociedades).toBe(264);
+      expect(y2024.irnr).toBe(36);
+      expect(y2024.iiee).toBe(144);
+      expect(y2024.resto).toBe(96);
+      expect(
+        warnSpy.mock.calls.some(([msg]) =>
+          String(msg).includes("usando índices legacy"),
+        ),
+      ).toBe(false);
+
+      warnSpy.mockRestore();
+    });
+
+    it("detecta columnas con cabeceras combinadas estilo AEAT real", async () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      mockFetchBothOk();
+
+      const nationalRows = [
+        ...buildMergedNationalHeaderRows(),
+        ...buildCompleteYear(2024, {
+          total: 1000,
+          irpf: 400,
+          iva: 300,
+          sociedades: 200,
+          irnr: 20,
+          iiee: 60,
+          resto: 20,
+        }),
+      ];
+
+      mockXlsxBoth(nationalRows, [buildDelegacionesHeader()]);
+
+      const result = await downloadTaxRevenueData();
+      const y2024 = result.national["2024"];
+
+      expect(y2024.total).toBe(12);
+      expect(y2024.irpf).toBe(5);
+      expect(y2024.iva).toBe(4);
+      expect(y2024.sociedades).toBe(2);
+      expect(y2024.irnr).toBe(0);
+      expect(y2024.iiee).toBe(1);
+      expect(y2024.resto).toBe(0);
+      expect(
+        warnSpy.mock.calls.some(([msg]) =>
+          String(msg).includes("usando índices legacy"),
+        ),
+      ).toBe(false);
+
+      warnSpy.mockRestore();
     });
   });
 

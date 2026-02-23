@@ -1,22 +1,20 @@
 # Discrepancias Pendientes
 
-Última revisión interna: **20 febrero 2026**.
+Última revisión interna: **23 febrero 2026**.
 
-## AEAT — Índices de columna para subcategorías IIEE y Resto
+## Estado actual
 
-**Severidad**: Media — afecta al drilldown de subcategorías, no a los totales.
+No hay discrepancias abiertas de severidad media/alta.
 
-Los índices de columna hardcodeados en `scripts/sources/aeat.mjs` (constante `COL`) para las subcategorías de Impuestos Especiales (IIEE) y Resto pueden estar desalineados respecto al Excel real. Se observan diferencias significativas entre los datos de referencia del plan y los datos descargados:
+## AEAT — Índices de columna para subcategorías IIEE y Resto (resuelto)
 
-| Subcategoría IIEE | Referencia (plan) | Descargado (2024) |
-|---|---|---|
-| alcohol | 371 | 824 |
-| cerveza | 464 | 346 |
-| mediosTransporte | 2.321 | 0 |
-| carbon | 0 | 20 |
+**Severidad previa**: Media.
 
-Los totales de IIEE sí cuadran (22.150 vs 22.128 — diferencia de redondeo), por lo que el índice del total IIEE (`COL.iieeTotal = 137`) es correcto. El problema está en los sub-índices (142-175).
+Se ha sustituido la lectura por índices hardcodeados por **detección dinámica de columnas por cabecera** en `scripts/sources/aeat.mjs`, con fallback a índices legacy solo cuando no se detectan cabeceras válidas.
 
-**Acción pendiente**: Verificar manualmente las cabeceras de columna del Excel "Cuadros_estadisticos_series_es_es.xlsx", hoja "Ingresos tributarios", y ajustar los índices `COL.iiee*` y `COL.resto*` si es necesario. Los datos de referencia (fallback) en `REFERENCE_NATIONAL` también deben actualizarse una vez confirmados los índices correctos.
+**Controles añadidos**:
+- Test unitario en `scripts/__tests__/aeat.test.mjs` para validar que un desplazamiento de columnas sigue parseando correctamente.
+- Test de integridad en `scripts/__tests__/data-integrity.test.mjs` para validar consistencia agregada de `tax-revenue.json`.
 
-**Impacto**: El desglose por subcategoría en el drilldown de IIEE y Resto puede mostrar valores incorrectos en las categorías individuales. Los 6 impuestos principales (IRPF, IVA, Sociedades, IIEE, IRNR, Resto) y sus totales NO están afectados.
+**Riesgo residual**:
+- Si AEAT renombra radicalmente las cabeceras, el parser entra en fallback y deja traza en logs.

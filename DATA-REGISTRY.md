@@ -206,15 +206,15 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 | Dato | Clasificación | Método | Frecuencia | Fragilidad |
 |------|---------------|--------|------------|------------|
-| Total recaudación neta | **AUTOMATIZADO** | Excel Series mensuales, col 6 | Mensual | MEDIA — índices de columna hardcodeados |
-| IRPF netos | **AUTOMATIZADO** | Excel Series mensuales, col 29 | Mensual | MEDIA |
-| IVA netos | **AUTOMATIZADO** | Excel Series mensuales, col 107 | Mensual | MEDIA |
-| Sociedades netos | **AUTOMATIZADO** | Excel Series mensuales, col 65 | Mensual | MEDIA |
-| IRNR netos | **AUTOMATIZADO** | Excel Series mensuales, col 82 | Mensual | MEDIA |
-| IIEE total netos | **AUTOMATIZADO** | Excel Series mensuales, col 137 | Mensual | MEDIA |
-| IIEE sub-desglose (9 conceptos) | **AUTOMATIZADO** | Excel Series mensuales, cols 142-175 | Mensual | MEDIA |
-| Resto impuestos netos | **AUTOMATIZADO** | Excel Series mensuales, col 178 | Mensual | MEDIA |
-| Resto sub-desglose (7 conceptos) | **AUTOMATIZADO** | Excel Series mensuales, cols 180-188 | Mensual | MEDIA |
+| Total recaudación neta | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera (fallback a índices legacy) | Mensual | MEDIA-BAJA |
+| IRPF netos | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
+| IVA netos | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
+| Sociedades netos | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
+| IRNR netos | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
+| IIEE total netos | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
+| IIEE sub-desglose (9 conceptos) | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
+| Resto impuestos netos | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
+| Resto sub-desglose (7 conceptos) | **AUTOMATIZADO** | Excel Series mensuales, detección por cabecera | Mensual | MEDIA-BAJA |
 | Recaudación por CCAA (17 comunidades) | **AUTOMATIZADO** | Excel Delegaciones, columnas D.E. | Mensual | MEDIA — matching headers CCAA |
 | Recaudación per cápita | **DERIVADO** | Total netos × 1M / población INE | — | BAJA |
 
@@ -223,6 +223,11 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 - Delegaciones: `https://sede.agenciatributaria.gob.es/.../Ingresos_por_Delegaciones.xlsx` (~11 MB, timeout 60s)
 
 **Validación**: suma de componentes ≈ total (tolerancia 1%).
+
+**Robustez aplicada**:
+1. Detección dinámica de columnas por cabecera en la hoja de series nacionales.
+2. Fallback automático a índices legacy cuando faltan cabeceras esperadas.
+3. Test unitario de desplazamiento de columnas + test de integridad de `tax-revenue.json`.
 
 **Desfase**: ~1 mes (datos publicados con retraso de un mes).
 
