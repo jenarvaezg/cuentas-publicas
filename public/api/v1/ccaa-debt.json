@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-21T09:42:12.652Z",
+  "lastUpdated": "2026-02-23T08:58:05.209Z",
   "quarter": "2025-Q3",
   "ccaa": [
     {
@@ -150,13 +150,13 @@
       "source": "BdE — CSV be1309",
       "type": "csv",
       "url": "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1309.csv",
-      "date": "2025-08-31"
+      "date": "2025-09-01"
     },
     "be1310": {
       "source": "BdE — CSV be1310",
       "type": "csv",
       "url": "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1310.csv",
-      "date": "2025-08-31"
+      "date": "2025-09-01"
     }
   }
 }

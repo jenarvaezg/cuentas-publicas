@@ -1,6 +1,6 @@
 {
   "apiVersion": "v1",
-  "generatedAt": "2026-02-21T09:42:19.456Z",
+  "generatedAt": "2026-02-23T08:58:47.549Z",
   "basePath": "/api/v1",
   "endpoints": [
     {
@@ -57,21 +57,21 @@
   "freshness": {
     "debt": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:12.672Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
-      "lastRealDataDate": "2025-11-30",
+      "lastUpdated": "2026-02-23T08:58:05.121Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
+      "lastRealDataDate": "2025-12-01",
       "dataPoints": 373
     },
     "demographics": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:12.794Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:05.547Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "lastRealDataDate": "2025-12-31"
     },
     "pensions": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:13.568Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:05.712Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "criticalFallback": false,
       "criticalFallbackReason": null,
       "lastRealDataDate": "2026-01-01",
@@ -79,47 +79,47 @@
     },
     "budget": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:13.009Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:06.642Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "lastRealDataDate": "2024-12-31",
       "years": 30
     },
     "eurostat": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:12.771Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:05.125Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "lastRealDataDate": "2024-12-31",
       "year": 2024
     },
     "ccaaDebt": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:12.652Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:05.209Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "lastRealDataDate": "2025-09-30",
       "quarter": "2025-Q3"
     },
     "revenue": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:12.775Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:05.141Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024
     },
     "taxRevenue": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:17.420Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:35.040Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "lastRealDataDate": "2025-12-31",
       "latestYear": 2025,
       "years": 31
     },
     "ccaaFiscalBalance": {
       "success": true,
-      "lastUpdated": "2026-02-21T09:42:19.449Z",
-      "lastFetchAt": "2026-02-21T09:42:19.456Z",
+      "lastUpdated": "2026-02-23T08:58:47.539Z",
+      "lastFetchAt": "2026-02-23T08:58:47.549Z",
       "lastRealDataDate": "2023-12-31",
       "latestYear": 2023,
-      "years": 5
+      "years": 1
     }
   }
 }
