@@ -1,0 +1,64 @@
+{
+  "lastUpdated": "2026-02-23T16:22:13.803Z",
+  "years": [
+    2024
+  ],
+  "latestYear": 2024,
+  "byYear": {
+    "2024": {
+      "entries": [
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "regime": "foral",
+          "paymentToState": 698.644,
+          "adjustmentsWithState": 1375.927,
+          "netFlowToState": -677.283,
+          "detail": {
+            "paymentLabel": "Total Pagos Aportación Neta",
+            "adjustmentsLabel": "Total Ajustes fiscales",
+            "unit": "M€"
+          }
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "regime": "foral",
+          "paymentToState": 1504.5,
+          "adjustmentsWithState": null,
+          "netFlowToState": null,
+          "detail": {
+            "paymentLabel": "Cupo líquido provisional",
+            "adjustmentsLabel": null,
+            "unit": "M€"
+          }
+        }
+      ]
+    }
+  },
+  "coverage": {
+    "regime": "foral",
+    "notes": "Indicadores forales (Navarra y País Vasco) no equivalentes metodológicamente a la liquidación de régimen común."
+  },
+  "sourceAttribution": {
+    "foral": {
+      "source": "Gobierno de Navarra + Gobierno Vasco (CMCE)",
+      "type": "api",
+      "url": "https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico",
+      "date": "2024-12-31",
+      "note": "Navarra: Cuadro nº 64 (Aportación neta y ajustes fiscales). Euskadi: nota CMCE 2024 (cupo líquido provisional)."
+    },
+    "navarra": {
+      "source": "Gobierno de Navarra — Cuadro nº 64",
+      "type": "api",
+      "url": "https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico",
+      "date": "2024-12-31"
+    },
+    "euskadi": {
+      "source": "Gobierno Vasco — CMCE 2024",
+      "type": "api",
+      "url": "https://www.euskadi.eus/noticia/2024/la-cmce-acuerda-modificacion-del-concierto-economico-aumentando-autogobierno-economico-y-participacion-instituciones-vascas-foros-fiscales-internacionales/web01-ejeduki/es/",
+      "date": "2024-11-13"
+    }
+  }
+}

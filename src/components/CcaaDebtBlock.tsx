@@ -44,7 +44,7 @@ function parseCcaaFromQuery(allowedCodes: Set<string>): CcaaSelection {
 }
 
 export function CcaaDebtBlock() {
-  const { ccaaDebt, taxRevenue } = useData();
+  const { ccaaDebt, taxRevenue, ccaaFiscalBalance, ccaaForalFlows, ccaaSpending } = useData();
   const { msg, lang } = useI18n();
   const copy =
     lang === "en"
@@ -62,6 +62,36 @@ export function CcaaDebtBlock() {
           differenceVsNational: "Difference vs national total",
           regionalDeficit: "Regional deficit (proxy)",
           regionalSpending: "Regional spending (proxy)",
+          officialBalance: "Regional balance (official)",
+          officialNetBalance: "Net balance",
+          officialCededTaxes: "Ceded taxes",
+          officialTransfers: "Transfers",
+          foralPaymentToState: "Payment to the State",
+          foralAdjustmentsWithState: "Adjustments with the State",
+          foralNetFlowToState: "Net flow",
+          foralBasedOnYear: "foral year",
+          officialBasedOnYear: "official year",
+          officialUnavailable: "Official balance not available for this region/year.",
+          officialUnavailableForalFlow:
+            "For this region, foral flow references are shown instead of common-regime balance.",
+          officialSpending: "Regional spending (official)",
+          officialSpendingTotal: "Total spending",
+          officialSpendingTopDivision: "Top function",
+          cofogDivisionLabels: {
+            "01": "General public services",
+            "02": "Defence",
+            "03": "Public order and safety",
+            "04": "Economic affairs",
+            "05": "Environmental protection",
+            "06": "Housing and community amenities",
+            "07": "Health",
+            "08": "Recreation, culture and religion",
+            "09": "Education",
+            "10": "Social protection",
+          } as Record<string, string>,
+          officialForalNote:
+            "Navarra and País Vasco are excluded from this dataset (common-regime settlement).",
+          officialFormulaNote: "Net balance = transfers - ceded taxes.",
           deficitProxy: "Debt change proxy (12m)",
           spendingProxy: "Estimated spending",
           surplusProxy: "Estimated surplus",
@@ -90,6 +120,36 @@ export function CcaaDebtBlock() {
           differenceVsNational: "Diferencia vs total nacional",
           regionalDeficit: "Déficit CCAA (proxy)",
           regionalSpending: "Gasto CCAA (proxy)",
+          officialBalance: "Saldo CCAA (oficial)",
+          officialNetBalance: "Saldo neto",
+          officialCededTaxes: "Impuestos cedidos",
+          officialTransfers: "Transferencias",
+          foralPaymentToState: "Pago al Estado",
+          foralAdjustmentsWithState: "Ajustes con el Estado",
+          foralNetFlowToState: "Flujo neto",
+          foralBasedOnYear: "año foral",
+          officialBasedOnYear: "año oficial",
+          officialUnavailable: "Balanza oficial no disponible para esta comunidad/año.",
+          officialUnavailableForalFlow:
+            "Para esta comunidad se muestran referencias forales en lugar de la balanza de régimen común.",
+          officialSpending: "Gasto CCAA (oficial)",
+          officialSpendingTotal: "Gasto total",
+          officialSpendingTopDivision: "Función principal",
+          cofogDivisionLabels: {
+            "01": "Servicios públicos generales",
+            "02": "Defensa",
+            "03": "Orden público y seguridad",
+            "04": "Asuntos económicos",
+            "05": "Protección del medio ambiente",
+            "06": "Vivienda y servicios comunitarios",
+            "07": "Salud",
+            "08": "Ocio, cultura y religión",
+            "09": "Educación",
+            "10": "Protección social",
+          } as Record<string, string>,
+          officialForalNote:
+            "Navarra y País Vasco quedan fuera de este dataset (liquidación de régimen común).",
+          officialFormulaNote: "Saldo neto = transferencias - impuestos cedidos.",
           deficitProxy: "Proxy por variación deuda (12m)",
           spendingProxy: "Gasto estimado",
           surplusProxy: "Superávit estimado",
@@ -159,6 +219,39 @@ export function CcaaDebtBlock() {
     selectedDebtYoYChange != null && selectedTaxRevenueEuros != null
       ? selectedTaxRevenueEuros + selectedDebtYoYChange
       : null;
+
+  const balanceYears = ccaaFiscalBalance?.years ?? [];
+  const latestBalanceYear = ccaaFiscalBalance?.latestYear ?? balanceYears[balanceYears.length - 1];
+  const balanceByCode = useMemo(() => {
+    if (!ccaaFiscalBalance || latestBalanceYear == null) return new Map();
+    const entries = ccaaFiscalBalance.byYear?.[String(latestBalanceYear)]?.entries ?? [];
+    return new Map(entries.map((entry) => [entry.code, entry]));
+  }, [ccaaFiscalBalance, latestBalanceYear]);
+  const selectedBalance = selectedEntry ? balanceByCode.get(selectedEntry.code) : undefined;
+  const selectedIsForal = selectedEntry?.code === "CA15" || selectedEntry?.code === "CA16";
+  const foralYears = ccaaForalFlows?.years ?? [];
+  const latestForalYear = ccaaForalFlows?.latestYear ?? foralYears[foralYears.length - 1];
+  const foralByCode = useMemo(() => {
+    if (!ccaaForalFlows || latestForalYear == null) return new Map();
+    const entries = ccaaForalFlows.byYear?.[String(latestForalYear)]?.entries ?? [];
+    return new Map(entries.map((entry) => [entry.code, entry]));
+  }, [ccaaForalFlows, latestForalYear]);
+  const selectedForalFlow = selectedEntry ? foralByCode.get(selectedEntry.code) : undefined;
+
+  const spendingYears = ccaaSpending?.years ?? [];
+  const latestSpendingYear = ccaaSpending?.latestYear ?? spendingYears[spendingYears.length - 1];
+  const spendingByCode = useMemo(() => {
+    if (!ccaaSpending || latestSpendingYear == null) return new Map();
+    const entries = ccaaSpending.byYear?.[String(latestSpendingYear)]?.entries ?? [];
+    return new Map(entries.map((entry) => [entry.code, entry]));
+  }, [ccaaSpending, latestSpendingYear]);
+  const selectedOfficialSpending = selectedEntry
+    ? spendingByCode.get(selectedEntry.code)
+    : undefined;
+  const selectedTopDivisionLabel = selectedOfficialSpending
+    ? (copy.cofogDivisionLabels[selectedOfficialSpending.topDivisionCode] ??
+      selectedOfficialSpending.topDivisionName)
+    : null;
 
   useEffect(() => {
     if (selectedCcaa !== "all" && !ccaaCodes.has(selectedCcaa)) {
@@ -289,7 +382,80 @@ export function CcaaDebtBlock() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+              <div className="rounded-md border bg-background p-3">
+                <p className="text-xs font-semibold">{copy.officialBalance}</p>
+                {selectedBalance ? (
+                  <>
+                    <p className="text-sm font-semibold mt-1">
+                      {copy.officialNetBalance}: {selectedBalance.netBalance >= 0 ? "+" : ""}
+                      {formatNumber(selectedBalance.netBalance, 0)} M€
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.officialCededTaxes}: {formatNumber(selectedBalance.cededTaxes, 0)} M€
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.officialTransfers}: {formatNumber(selectedBalance.transfers, 0)} M€
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.officialBasedOnYear} {latestBalanceYear} · {copy.officialFormulaNote}
+                    </p>
+                  </>
+                ) : selectedForalFlow ? (
+                  <>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.officialUnavailableForalFlow}
+                    </p>
+                    <p className="text-sm font-semibold mt-1">
+                      {copy.foralPaymentToState}:{" "}
+                      {formatNumber(selectedForalFlow.paymentToState, 0)} M€
+                    </p>
+                    {selectedForalFlow.adjustmentsWithState != null && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {copy.foralAdjustmentsWithState}:{" "}
+                        {formatNumber(selectedForalFlow.adjustmentsWithState, 0)} M€
+                      </p>
+                    )}
+                    {selectedForalFlow.netFlowToState != null && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {copy.foralNetFlowToState}:{" "}
+                        {selectedForalFlow.netFlowToState >= 0 ? "+" : ""}
+                        {formatNumber(selectedForalFlow.netFlowToState, 0)} M€
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.foralBasedOnYear} {latestForalYear} · {copy.officialForalNote}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-muted-foreground mt-1">{copy.officialUnavailable}</p>
+                    {selectedIsForal && (
+                      <p className="text-xs text-muted-foreground mt-1">{copy.officialForalNote}</p>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="rounded-md border bg-background p-3">
+                <p className="text-xs font-semibold">{copy.officialSpending}</p>
+                {selectedOfficialSpending ? (
+                  <>
+                    <p className="text-sm font-semibold mt-1">
+                      {copy.officialSpendingTotal}:{" "}
+                      {formatNumber(selectedOfficialSpending.total, 0)} M€
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.officialSpendingTopDivision}: {selectedTopDivisionLabel} (
+                      {formatNumber(selectedOfficialSpending.topDivisionPct, 1)}%)
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.officialBasedOnYear} {latestSpendingYear}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-1">{copy.officialUnavailable}</p>
+                )}
+              </div>
               <div className="rounded-md border bg-background p-3">
                 <p className="text-xs font-semibold">{copy.regionalDeficit}</p>
                 {selectedDebtYoYChange == null ? (

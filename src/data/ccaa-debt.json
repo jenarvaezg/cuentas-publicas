@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-23T15:09:59.792Z",
+  "lastUpdated": "2026-02-23T16:22:13.459Z",
   "quarter": "2025-Q3",
   "ccaa": [
     {
@@ -51,7 +51,7 @@
       "debtYoYChangePct": -0.5887816831139051
     },
     {
-      "code": "CA07",
+      "code": "CA08",
       "name": "Castilla-La Mancha",
       "debtAbsolute": 16620828000,
       "debtToGDP": 28.8,
@@ -59,7 +59,7 @@
       "debtYoYChangePct": 0.8997539249232741
     },
     {
-      "code": "CA08",
+      "code": "CA07",
       "name": "Castilla y León",
       "debtAbsolute": 14522773000,
       "debtToGDP": 18.9,
@@ -75,7 +75,7 @@
       "debtYoYChangePct": 0.17123523962457468
     },
     {
-      "code": "CA10",
+      "code": "CA11",
       "name": "Extremadura",
       "debtAbsolute": 5279075000,
       "debtToGDP": 19.1,
@@ -83,7 +83,7 @@
       "debtYoYChangePct": -3.1932568157103796
     },
     {
-      "code": "CA11",
+      "code": "CA12",
       "name": "Galicia",
       "debtAbsolute": 12051108000,
       "debtToGDP": 14.2,
@@ -91,7 +91,7 @@
       "debtYoYChangePct": -0.8448150103033746
     },
     {
-      "code": "CA12",
+      "code": "CA17",
       "name": "La Rioja",
       "debtAbsolute": 1753364000,
       "debtToGDP": 15.2,
@@ -131,7 +131,7 @@
       "debtYoYChangePct": 3.3098155145600217
     },
     {
-      "code": "CA17",
+      "code": "CA10",
       "name": "C. Valenciana",
       "debtAbsolute": 62423500000,
       "debtToGDP": 40.5,

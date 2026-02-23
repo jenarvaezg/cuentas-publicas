@@ -69,6 +69,18 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
+    "/api/v1/ccaa-spending.json": {
+      "get": {
+        "summary": "Gasto funcional COFOG por CCAA (administración regional)",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/ccaa-foral-flows.json": {
+      "get": {
+        "summary": "Flujos forales de Navarra y País Vasco (aportación/cupo)",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
     "/api/v1/meta.json": {
       "get": {
         "summary": "Estado y frescura del pipeline",

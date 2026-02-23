@@ -1,0 +1,4918 @@
+{
+  "lastUpdated": "2026-02-23T16:22:36.122Z",
+  "years": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+  ],
+  "latestYear": 2024,
+  "byYear": {
+    "2012": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 31194,
+          "divisions": {
+            "10": 1689,
+            "01": 7993,
+            "02": 0,
+            "03": 590,
+            "04": 2597,
+            "05": 608,
+            "06": 392,
+            "07": 9200,
+            "08": 519,
+            "09": 7606
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9200,
+          "topDivisionPct": 29.49
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 5572,
+          "divisions": {
+            "10": 302,
+            "01": 1353,
+            "02": 0,
+            "03": 72,
+            "04": 640,
+            "05": 83,
+            "06": 27,
+            "07": 1880,
+            "08": 105,
+            "09": 1110
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1880,
+          "topDivisionPct": 33.74
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 4541,
+          "divisions": {
+            "10": 319,
+            "01": 1230,
+            "02": 0,
+            "03": 49,
+            "04": 441,
+            "05": 62,
+            "06": 39,
+            "07": 1526,
+            "08": 83,
+            "09": 792
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1526,
+          "topDivisionPct": 33.6
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 4994,
+          "divisions": {
+            "10": 80,
+            "01": 2247,
+            "02": 0,
+            "03": 4,
+            "04": 328,
+            "05": 25,
+            "06": 88,
+            "07": 1297,
+            "08": 87,
+            "09": 838
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 2247,
+          "topDivisionPct": 44.99
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 7899,
+          "divisions": {
+            "10": 196,
+            "01": 2581,
+            "02": 0,
+            "03": 169,
+            "04": 523,
+            "05": 45,
+            "06": 125,
+            "07": 2545,
+            "08": 110,
+            "09": 1605
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 2581,
+          "topDivisionPct": 32.68
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2677,
+          "divisions": {
+            "10": 214,
+            "01": 560,
+            "02": 0,
+            "03": 36,
+            "04": 318,
+            "05": 108,
+            "06": 58,
+            "07": 803,
+            "08": 40,
+            "09": 540
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 803,
+          "topDivisionPct": 30
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 10553,
+          "divisions": {
+            "10": 598,
+            "01": 2744,
+            "02": 0,
+            "03": 12,
+            "04": 1099,
+            "05": 153,
+            "06": 75,
+            "07": 3532,
+            "08": 167,
+            "09": 2173
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3532,
+          "topDivisionPct": 33.47
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 7722,
+          "divisions": {
+            "10": 543,
+            "01": 1934,
+            "02": 0,
+            "03": 15,
+            "04": 518,
+            "05": 153,
+            "06": 82,
+            "07": 2631,
+            "08": 87,
+            "09": 1759
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2631,
+          "topDivisionPct": 34.07
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 34569,
+          "divisions": {
+            "10": 2222,
+            "01": 10347,
+            "02": 0,
+            "03": 1992,
+            "04": 2864,
+            "05": 131,
+            "06": 527,
+            "07": 9668,
+            "08": 725,
+            "09": 6093
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 10347,
+          "topDivisionPct": 29.93
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 19910,
+          "divisions": {
+            "10": 772,
+            "01": 5580,
+            "02": 0,
+            "03": 322,
+            "04": 1431,
+            "05": 348,
+            "06": 426,
+            "07": 6687,
+            "08": 411,
+            "09": 3933
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 6687,
+          "topDivisionPct": 33.59
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4805,
+          "divisions": {
+            "10": 295,
+            "01": 1144,
+            "02": 0,
+            "03": 36,
+            "04": 571,
+            "05": 16,
+            "06": 88,
+            "07": 1571,
+            "08": 99,
+            "09": 985
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1571,
+          "topDivisionPct": 32.7
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 11287,
+          "divisions": {
+            "10": 528,
+            "01": 2826,
+            "02": 0,
+            "03": 176,
+            "04": 1048,
+            "05": 102,
+            "06": 376,
+            "07": 3645,
+            "08": 261,
+            "09": 2325
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3645,
+          "topDivisionPct": 32.29
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 26704,
+          "divisions": {
+            "10": 1550,
+            "01": 9046,
+            "02": 0,
+            "03": 580,
+            "04": 2300,
+            "05": 152,
+            "06": 177,
+            "07": 7918,
+            "08": 304,
+            "09": 4677
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 9046,
+          "topDivisionPct": 33.88
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5642,
+          "divisions": {
+            "10": 308,
+            "01": 1300,
+            "02": 0,
+            "03": 41,
+            "04": 353,
+            "05": 102,
+            "06": 53,
+            "07": 2032,
+            "08": 72,
+            "09": 1381
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2032,
+          "topDivisionPct": 36.02
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 3672,
+          "divisions": {
+            "10": 349,
+            "01": 1122,
+            "02": 0,
+            "03": 106,
+            "04": 418,
+            "05": 46,
+            "06": 76,
+            "07": 921,
+            "08": 70,
+            "09": 564
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1122,
+          "topDivisionPct": 30.56
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 10070,
+          "divisions": {
+            "10": 575,
+            "01": 887,
+            "02": 0,
+            "03": 721,
+            "04": 1188,
+            "05": 90,
+            "06": 127,
+            "07": 3457,
+            "08": 268,
+            "09": 2757
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3457,
+          "topDivisionPct": 34.33
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1333,
+          "divisions": {
+            "10": 104,
+            "01": 283,
+            "02": 0,
+            "03": 21,
+            "04": 157,
+            "05": 48,
+            "06": 9,
+            "07": 431,
+            "08": 20,
+            "09": 260
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 431,
+          "topDivisionPct": 32.33
+        }
+      ],
+      "totals": {
+        "total": 193144,
+        "divisions": {
+          "10": 10644,
+          "01": 53177,
+          "02": 0,
+          "03": 4942,
+          "04": 16794,
+          "05": 2272,
+          "06": 2745,
+          "07": 59744,
+          "08": 3428,
+          "09": 39398
+        }
+      }
+    },
+    "2013": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 25857,
+          "divisions": {
+            "10": 1604,
+            "01": 3679,
+            "02": 0,
+            "03": 545,
+            "04": 2158,
+            "05": 461,
+            "06": 205,
+            "07": 9298,
+            "08": 445,
+            "09": 7462
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9298,
+          "topDivisionPct": 35.96
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 4908,
+          "divisions": {
+            "10": 289,
+            "01": 649,
+            "02": 0,
+            "03": 82,
+            "04": 679,
+            "05": 103,
+            "06": 51,
+            "07": 1865,
+            "08": 91,
+            "09": 1099
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1865,
+          "topDivisionPct": 38
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 3866,
+          "divisions": {
+            "10": 343,
+            "01": 506,
+            "02": 0,
+            "03": 40,
+            "04": 465,
+            "05": 59,
+            "06": 62,
+            "07": 1531,
+            "08": 70,
+            "09": 790
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1531,
+          "topDivisionPct": 39.6
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 4350,
+          "divisions": {
+            "10": 90,
+            "01": 1708,
+            "02": 0,
+            "03": 2,
+            "04": 230,
+            "05": 47,
+            "06": 68,
+            "07": 1311,
+            "08": 57,
+            "09": 837
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1708,
+          "topDivisionPct": 39.26
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 7389,
+          "divisions": {
+            "10": 207,
+            "01": 2095,
+            "02": 0,
+            "03": 155,
+            "04": 543,
+            "05": 47,
+            "06": 49,
+            "07": 2565,
+            "08": 108,
+            "09": 1620
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2565,
+          "topDivisionPct": 34.71
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2397,
+          "divisions": {
+            "10": 188,
+            "01": 311,
+            "02": 0,
+            "03": 33,
+            "04": 302,
+            "05": 91,
+            "06": 60,
+            "07": 849,
+            "08": 29,
+            "09": 534
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 849,
+          "topDivisionPct": 35.42
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 8718,
+          "divisions": {
+            "10": 577,
+            "01": 1166,
+            "02": 0,
+            "03": 12,
+            "04": 1056,
+            "05": 153,
+            "06": 58,
+            "07": 3422,
+            "08": 143,
+            "09": 2131
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3422,
+          "topDivisionPct": 39.25
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 6863,
+          "divisions": {
+            "10": 505,
+            "01": 1076,
+            "02": 0,
+            "03": 9,
+            "04": 758,
+            "05": 111,
+            "06": 100,
+            "07": 2571,
+            "08": 89,
+            "09": 1644
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2571,
+          "topDivisionPct": 37.46
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 29326,
+          "divisions": {
+            "10": 2074,
+            "01": 6618,
+            "02": 0,
+            "03": 1904,
+            "04": 2507,
+            "05": 130,
+            "06": 375,
+            "07": 9435,
+            "08": 654,
+            "09": 5625
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9435,
+          "topDivisionPct": 32.17
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 16408,
+          "divisions": {
+            "10": 613,
+            "01": 3726,
+            "02": 0,
+            "03": 290,
+            "04": 1175,
+            "05": 316,
+            "06": 123,
+            "07": 5981,
+            "08": 306,
+            "09": 3878
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 5981,
+          "topDivisionPct": 36.45
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4245,
+          "divisions": {
+            "10": 297,
+            "01": 560,
+            "02": 0,
+            "03": 40,
+            "04": 596,
+            "05": 26,
+            "06": 76,
+            "07": 1546,
+            "08": 98,
+            "09": 1006
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1546,
+          "topDivisionPct": 36.42
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 9603,
+          "divisions": {
+            "10": 514,
+            "01": 1265,
+            "02": 0,
+            "03": 177,
+            "04": 862,
+            "05": 92,
+            "06": 383,
+            "07": 3747,
+            "08": 238,
+            "09": 2325
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3747,
+          "topDivisionPct": 39.02
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 21967,
+          "divisions": {
+            "10": 1448,
+            "01": 5716,
+            "02": 0,
+            "03": 534,
+            "04": 1775,
+            "05": 134,
+            "06": -6,
+            "07": 7460,
+            "08": 237,
+            "09": 4669
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 7460,
+          "topDivisionPct": 33.96
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5053,
+          "divisions": {
+            "10": 254,
+            "01": 916,
+            "02": 0,
+            "03": 36,
+            "04": 291,
+            "05": 113,
+            "06": 38,
+            "07": 2011,
+            "08": 48,
+            "09": 1346
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2011,
+          "topDivisionPct": 39.8
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 3595,
+          "divisions": {
+            "10": 270,
+            "01": 1159,
+            "02": 0,
+            "03": 109,
+            "04": 377,
+            "05": 46,
+            "06": 43,
+            "07": 909,
+            "08": 75,
+            "09": 607
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1159,
+          "topDivisionPct": 32.24
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 9556,
+          "divisions": {
+            "10": 569,
+            "01": 923,
+            "02": 0,
+            "03": 697,
+            "04": 930,
+            "05": 61,
+            "06": 115,
+            "07": 3415,
+            "08": 258,
+            "09": 2588
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3415,
+          "topDivisionPct": 35.74
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1219,
+          "divisions": {
+            "10": 89,
+            "01": 154,
+            "02": 0,
+            "03": 23,
+            "04": 194,
+            "05": 45,
+            "06": 6,
+            "07": 425,
+            "08": 20,
+            "09": 263
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 425,
+          "topDivisionPct": 34.86
+        }
+      ],
+      "totals": {
+        "total": 165320,
+        "divisions": {
+          "10": 9931,
+          "01": 32227,
+          "02": 0,
+          "03": 4688,
+          "04": 14898,
+          "05": 2035,
+          "06": 1806,
+          "07": 58341,
+          "08": 2966,
+          "09": 38424
+        }
+      }
+    },
+    "2014": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 25514,
+          "divisions": {
+            "10": 1400,
+            "01": 3424,
+            "02": 0,
+            "03": 504,
+            "04": 2587,
+            "05": 497,
+            "06": 259,
+            "07": 8857,
+            "08": 411,
+            "09": 7575
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8857,
+          "topDivisionPct": 34.71
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 4754,
+          "divisions": {
+            "10": 297,
+            "01": 649,
+            "02": 0,
+            "03": 75,
+            "04": 571,
+            "05": 109,
+            "06": 26,
+            "07": 1838,
+            "08": 87,
+            "09": 1102
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1838,
+          "topDivisionPct": 38.66
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 3859,
+          "divisions": {
+            "10": 338,
+            "01": 541,
+            "02": 0,
+            "03": 19,
+            "04": 394,
+            "05": 77,
+            "06": 59,
+            "07": 1586,
+            "08": 69,
+            "09": 776
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1586,
+          "topDivisionPct": 41.1
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 4364,
+          "divisions": {
+            "10": 111,
+            "01": 1660,
+            "02": 0,
+            "03": 1,
+            "04": 236,
+            "05": 29,
+            "06": 55,
+            "07": 1352,
+            "08": 67,
+            "09": 853
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1660,
+          "topDivisionPct": 38.04
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 7502,
+          "divisions": {
+            "10": 224,
+            "01": 2113,
+            "02": 0,
+            "03": 142,
+            "04": 507,
+            "05": 52,
+            "06": 44,
+            "07": 2632,
+            "08": 126,
+            "09": 1662
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2632,
+          "topDivisionPct": 35.08
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2318,
+          "divisions": {
+            "10": 184,
+            "01": 247,
+            "02": 0,
+            "03": 32,
+            "04": 255,
+            "05": 105,
+            "06": 37,
+            "07": 871,
+            "08": 31,
+            "09": 556
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 871,
+          "topDivisionPct": 37.58
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 8528,
+          "divisions": {
+            "10": 586,
+            "01": 1198,
+            "02": 0,
+            "03": 10,
+            "04": 942,
+            "05": 134,
+            "06": 42,
+            "07": 3397,
+            "08": 130,
+            "09": 2089
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3397,
+          "topDivisionPct": 39.83
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 6532,
+          "divisions": {
+            "10": 509,
+            "01": 880,
+            "02": 0,
+            "03": 8,
+            "04": 663,
+            "05": 108,
+            "06": 84,
+            "07": 2559,
+            "08": 100,
+            "09": 1621
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2559,
+          "topDivisionPct": 39.18
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 30000,
+          "divisions": {
+            "10": 2432,
+            "01": 6873,
+            "02": 0,
+            "03": 1830,
+            "04": 2708,
+            "05": 128,
+            "06": 351,
+            "07": 9475,
+            "08": 604,
+            "09": 5599
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9475,
+          "topDivisionPct": 31.58
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 16736,
+          "divisions": {
+            "10": 685,
+            "01": 3685,
+            "02": 0,
+            "03": 325,
+            "04": 1052,
+            "05": 348,
+            "06": 82,
+            "07": 6317,
+            "08": 291,
+            "09": 3951
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 6317,
+          "topDivisionPct": 37.74
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4288,
+          "divisions": {
+            "10": 321,
+            "01": 526,
+            "02": 0,
+            "03": 39,
+            "04": 602,
+            "05": 37,
+            "06": 68,
+            "07": 1566,
+            "08": 106,
+            "09": 1023
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1566,
+          "topDivisionPct": 36.52
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 9381,
+          "divisions": {
+            "10": 524,
+            "01": 1354,
+            "02": 0,
+            "03": 173,
+            "04": 817,
+            "05": 88,
+            "06": 290,
+            "07": 3612,
+            "08": 220,
+            "09": 2303
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3612,
+          "topDivisionPct": 38.5
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 22411,
+          "divisions": {
+            "10": 1476,
+            "01": 5698,
+            "02": 0,
+            "03": 539,
+            "04": 1881,
+            "05": 120,
+            "06": 194,
+            "07": 7640,
+            "08": 234,
+            "09": 4629
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 7640,
+          "topDivisionPct": 34.09
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 4912,
+          "divisions": {
+            "10": 249,
+            "01": 784,
+            "02": 0,
+            "03": 36,
+            "04": 291,
+            "05": 115,
+            "06": 39,
+            "07": 2015,
+            "08": 60,
+            "09": 1323
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2015,
+          "topDivisionPct": 41.02
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 3578,
+          "divisions": {
+            "10": 285,
+            "01": 1160,
+            "02": 0,
+            "03": 111,
+            "04": 340,
+            "05": 34,
+            "06": 43,
+            "07": 921,
+            "08": 70,
+            "09": 614
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1160,
+          "topDivisionPct": 32.42
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 9847,
+          "divisions": {
+            "10": 588,
+            "01": 1005,
+            "02": 0,
+            "03": 697,
+            "04": 985,
+            "05": 69,
+            "06": 95,
+            "07": 3445,
+            "08": 266,
+            "09": 2697
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3445,
+          "topDivisionPct": 34.99
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1194,
+          "divisions": {
+            "10": 86,
+            "01": 140,
+            "02": 0,
+            "03": 29,
+            "04": 183,
+            "05": 42,
+            "06": 6,
+            "07": 425,
+            "08": 17,
+            "09": 266
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 425,
+          "topDivisionPct": 35.59
+        }
+      ],
+      "totals": {
+        "total": 165718,
+        "divisions": {
+          "10": 10295,
+          "01": 31937,
+          "02": 0,
+          "03": 4570,
+          "04": 15014,
+          "05": 2092,
+          "06": 1774,
+          "07": 58508,
+          "08": 2889,
+          "09": 38639
+        }
+      }
+    },
+    "2015": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 25989,
+          "divisions": {
+            "10": 1448,
+            "01": 3519,
+            "02": 0,
+            "03": 557,
+            "04": 2255,
+            "05": 454,
+            "06": 363,
+            "07": 9236,
+            "08": 407,
+            "09": 7750
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9236,
+          "topDivisionPct": 35.54
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 4992,
+          "divisions": {
+            "10": 291,
+            "01": 746,
+            "02": 0,
+            "03": 71,
+            "04": 633,
+            "05": 96,
+            "06": 29,
+            "07": 1920,
+            "08": 90,
+            "09": 1116
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1920,
+          "topDivisionPct": 38.46
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 4023,
+          "divisions": {
+            "10": 365,
+            "01": 512,
+            "02": 0,
+            "03": 19,
+            "04": 529,
+            "05": 51,
+            "06": 54,
+            "07": 1615,
+            "08": 69,
+            "09": 809
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1615,
+          "topDivisionPct": 40.14
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 4833,
+          "divisions": {
+            "10": 106,
+            "01": 1824,
+            "02": 0,
+            "03": 1,
+            "04": 360,
+            "05": 38,
+            "06": 60,
+            "07": 1451,
+            "08": 73,
+            "09": 920
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1824,
+          "topDivisionPct": 37.74
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 7850,
+          "divisions": {
+            "10": 227,
+            "01": 2287,
+            "02": 0,
+            "03": 139,
+            "04": 497,
+            "05": 67,
+            "06": 51,
+            "07": 2769,
+            "08": 131,
+            "09": 1682
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2769,
+          "topDivisionPct": 35.27
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2437,
+          "divisions": {
+            "10": 185,
+            "01": 258,
+            "02": 0,
+            "03": 32,
+            "04": 295,
+            "05": 105,
+            "06": 30,
+            "07": 943,
+            "08": 31,
+            "09": 558
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 943,
+          "topDivisionPct": 38.7
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 9012,
+          "divisions": {
+            "10": 628,
+            "01": 1236,
+            "02": 0,
+            "03": 11,
+            "04": 1041,
+            "05": 125,
+            "06": 42,
+            "07": 3626,
+            "08": 128,
+            "09": 2175
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3626,
+          "topDivisionPct": 40.24
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 6623,
+          "divisions": {
+            "10": 500,
+            "01": 664,
+            "02": 0,
+            "03": 9,
+            "04": 729,
+            "05": 127,
+            "06": 88,
+            "07": 2713,
+            "08": 92,
+            "09": 1701
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2713,
+          "topDivisionPct": 40.96
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 31588,
+          "divisions": {
+            "10": 2032,
+            "01": 5919,
+            "02": 0,
+            "03": 2602,
+            "04": 4001,
+            "05": 140,
+            "06": 369,
+            "07": 9810,
+            "08": 636,
+            "09": 6079
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9810,
+          "topDivisionPct": 31.06
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 17089,
+          "divisions": {
+            "10": 839,
+            "01": 3425,
+            "02": 0,
+            "03": 297,
+            "04": 949,
+            "05": 322,
+            "06": 117,
+            "07": 6615,
+            "08": 246,
+            "09": 4279
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 6615,
+          "topDivisionPct": 38.71
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4607,
+          "divisions": {
+            "10": 336,
+            "01": 607,
+            "02": 0,
+            "03": 39,
+            "04": 703,
+            "05": 37,
+            "06": 64,
+            "07": 1633,
+            "08": 103,
+            "09": 1085
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1633,
+          "topDivisionPct": 35.45
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 9795,
+          "divisions": {
+            "10": 527,
+            "01": 1252,
+            "02": 0,
+            "03": 138,
+            "04": 1124,
+            "05": 94,
+            "06": 165,
+            "07": 3878,
+            "08": 241,
+            "09": 2376
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3878,
+          "topDivisionPct": 39.59
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 23311,
+          "divisions": {
+            "10": 1564,
+            "01": 5791,
+            "02": 0,
+            "03": 528,
+            "04": 1984,
+            "05": 125,
+            "06": 140,
+            "07": 8093,
+            "08": 287,
+            "09": 4799
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8093,
+          "topDivisionPct": 34.72
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5006,
+          "divisions": {
+            "10": 264,
+            "01": 687,
+            "02": 0,
+            "03": 37,
+            "04": 285,
+            "05": 139,
+            "06": 37,
+            "07": 2131,
+            "08": 50,
+            "09": 1376
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2131,
+          "topDivisionPct": 42.57
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 3787,
+          "divisions": {
+            "10": 304,
+            "01": 1263,
+            "02": 0,
+            "03": 110,
+            "04": 337,
+            "05": 38,
+            "06": 25,
+            "07": 977,
+            "08": 104,
+            "09": 629
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1263,
+          "topDivisionPct": 33.35
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 9911,
+          "divisions": {
+            "10": 617,
+            "01": 815,
+            "02": 0,
+            "03": 704,
+            "04": 998,
+            "05": 98,
+            "06": 80,
+            "07": 3537,
+            "08": 267,
+            "09": 2795
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3537,
+          "topDivisionPct": 35.69
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1261,
+          "divisions": {
+            "10": 89,
+            "01": 161,
+            "02": 0,
+            "03": 27,
+            "04": 178,
+            "05": 41,
+            "06": 6,
+            "07": 439,
+            "08": 18,
+            "09": 302
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 439,
+          "topDivisionPct": 34.81
+        }
+      ],
+      "totals": {
+        "total": 172114,
+        "divisions": {
+          "10": 10322,
+          "01": 30966,
+          "02": 0,
+          "03": 5321,
+          "04": 16898,
+          "05": 2097,
+          "06": 1720,
+          "07": 61386,
+          "08": 2973,
+          "09": 40431
+        }
+      }
+    },
+    "2016": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 25679,
+          "divisions": {
+            "10": 1530,
+            "01": 3030,
+            "02": 0,
+            "03": 522,
+            "04": 1961,
+            "05": 443,
+            "06": 229,
+            "07": 9567,
+            "08": 431,
+            "09": 7966
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9567,
+          "topDivisionPct": 37.26
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 4901,
+          "divisions": {
+            "10": 327,
+            "01": 591,
+            "02": 0,
+            "03": 74,
+            "04": 556,
+            "05": 92,
+            "06": 25,
+            "07": 1973,
+            "08": 87,
+            "09": 1176
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1973,
+          "topDivisionPct": 40.26
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 3878,
+          "divisions": {
+            "10": 393,
+            "01": 511,
+            "02": 0,
+            "03": 22,
+            "04": 364,
+            "05": 43,
+            "06": 51,
+            "07": 1620,
+            "08": 59,
+            "09": 815
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1620,
+          "topDivisionPct": 41.77
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 4666,
+          "divisions": {
+            "10": 113,
+            "01": 1688,
+            "02": 0,
+            "03": 5,
+            "04": 210,
+            "05": 26,
+            "06": 121,
+            "07": 1471,
+            "08": 85,
+            "09": 947
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1688,
+          "topDivisionPct": 36.18
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 7991,
+          "divisions": {
+            "10": 231,
+            "01": 2317,
+            "02": 0,
+            "03": 151,
+            "04": 497,
+            "05": 52,
+            "06": 59,
+            "07": 2834,
+            "08": 125,
+            "09": 1725
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2834,
+          "topDivisionPct": 35.46
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2383,
+          "divisions": {
+            "10": 193,
+            "01": 269,
+            "02": 0,
+            "03": 33,
+            "04": 264,
+            "05": 108,
+            "06": 37,
+            "07": 873,
+            "08": 24,
+            "09": 582
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 873,
+          "topDivisionPct": 36.63
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 8643,
+          "divisions": {
+            "10": 645,
+            "01": 989,
+            "02": 0,
+            "03": 12,
+            "04": 808,
+            "05": 180,
+            "06": 35,
+            "07": 3635,
+            "08": 126,
+            "09": 2213
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3635,
+          "topDivisionPct": 42.06
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 6347,
+          "divisions": {
+            "10": 506,
+            "01": 586,
+            "02": 0,
+            "03": 6,
+            "04": 518,
+            "05": 122,
+            "06": 80,
+            "07": 2725,
+            "08": 89,
+            "09": 1715
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2725,
+          "topDivisionPct": 42.93
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 29841,
+          "divisions": {
+            "10": 2070,
+            "01": 5581,
+            "02": 0,
+            "03": 2021,
+            "04": 2518,
+            "05": 182,
+            "06": 462,
+            "07": 9995,
+            "08": 658,
+            "09": 6354
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9995,
+          "topDivisionPct": 33.49
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 17074,
+          "divisions": {
+            "10": 864,
+            "01": 3203,
+            "02": 0,
+            "03": 299,
+            "04": 940,
+            "05": 300,
+            "06": 105,
+            "07": 6904,
+            "08": 185,
+            "09": 4274
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 6904,
+          "topDivisionPct": 40.44
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4343,
+          "divisions": {
+            "10": 362,
+            "01": 485,
+            "02": 0,
+            "03": 40,
+            "04": 539,
+            "05": 24,
+            "06": 45,
+            "07": 1667,
+            "08": 92,
+            "09": 1089
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1667,
+          "topDivisionPct": 38.38
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 9555,
+          "divisions": {
+            "10": 551,
+            "01": 1069,
+            "02": 0,
+            "03": 119,
+            "04": 994,
+            "05": 96,
+            "06": 126,
+            "07": 3925,
+            "08": 212,
+            "09": 2463
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3925,
+          "topDivisionPct": 41.08
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 23866,
+          "divisions": {
+            "10": 1646,
+            "01": 6166,
+            "02": 0,
+            "03": 550,
+            "04": 2182,
+            "05": 119,
+            "06": 115,
+            "07": 8042,
+            "08": 250,
+            "09": 4796
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8042,
+          "topDivisionPct": 33.7
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5009,
+          "divisions": {
+            "10": 284,
+            "01": 668,
+            "02": 0,
+            "03": 37,
+            "04": 275,
+            "05": 94,
+            "06": 30,
+            "07": 2165,
+            "08": 49,
+            "09": 1407
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2165,
+          "topDivisionPct": 43.22
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 3759,
+          "divisions": {
+            "10": 350,
+            "01": 1210,
+            "02": 0,
+            "03": 111,
+            "04": 324,
+            "05": 38,
+            "06": 22,
+            "07": 995,
+            "08": 63,
+            "09": 646
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1210,
+          "topDivisionPct": 32.19
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 10137,
+          "divisions": {
+            "10": 622,
+            "01": 707,
+            "02": 0,
+            "03": 723,
+            "04": 1099,
+            "05": 86,
+            "06": 82,
+            "07": 3678,
+            "08": 259,
+            "09": 2881
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3678,
+          "topDivisionPct": 36.28
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1218,
+          "divisions": {
+            "10": 94,
+            "01": 126,
+            "02": 0,
+            "03": 22,
+            "04": 171,
+            "05": 41,
+            "06": 6,
+            "07": 446,
+            "08": 18,
+            "09": 294
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 446,
+          "topDivisionPct": 36.62
+        }
+      ],
+      "totals": {
+        "total": 169290,
+        "divisions": {
+          "10": 10781,
+          "01": 29196,
+          "02": 0,
+          "03": 4747,
+          "04": 14220,
+          "05": 2046,
+          "06": 1630,
+          "07": 62515,
+          "08": 2812,
+          "09": 41343
+        }
+      }
+    },
+    "2017": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 26295,
+          "divisions": {
+            "10": 1556,
+            "01": 2982,
+            "02": 0,
+            "03": 540,
+            "04": 2137,
+            "05": 518,
+            "06": 269,
+            "07": 9730,
+            "08": 440,
+            "09": 8123
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9730,
+          "topDivisionPct": 37
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 5100,
+          "divisions": {
+            "10": 359,
+            "01": 586,
+            "02": 0,
+            "03": 73,
+            "04": 623,
+            "05": 98,
+            "06": 3,
+            "07": 2026,
+            "08": 95,
+            "09": 1237
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2026,
+          "topDivisionPct": 39.73
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 3953,
+          "divisions": {
+            "10": 406,
+            "01": 447,
+            "02": 0,
+            "03": 22,
+            "04": 403,
+            "05": 50,
+            "06": 62,
+            "07": 1659,
+            "08": 71,
+            "09": 833
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1659,
+          "topDivisionPct": 41.97
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 4782,
+          "divisions": {
+            "10": 141,
+            "01": 1677,
+            "02": 0,
+            "03": 5,
+            "04": 240,
+            "05": 22,
+            "06": 95,
+            "07": 1535,
+            "08": 78,
+            "09": 989
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1677,
+          "topDivisionPct": 35.07
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 8279,
+          "divisions": {
+            "10": 260,
+            "01": 2330,
+            "02": 0,
+            "03": 150,
+            "04": 574,
+            "05": 45,
+            "06": 80,
+            "07": 2917,
+            "08": 141,
+            "09": 1782
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2917,
+          "topDivisionPct": 35.23
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2407,
+          "divisions": {
+            "10": 197,
+            "01": 246,
+            "02": 0,
+            "03": 33,
+            "04": 284,
+            "05": 106,
+            "06": 33,
+            "07": 895,
+            "08": 30,
+            "09": 583
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 895,
+          "topDivisionPct": 37.18
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 9001,
+          "divisions": {
+            "10": 689,
+            "01": 935,
+            "02": 0,
+            "03": 11,
+            "04": 933,
+            "05": 183,
+            "06": 40,
+            "07": 3843,
+            "08": 137,
+            "09": 2230
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3843,
+          "topDivisionPct": 42.7
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 6638,
+          "divisions": {
+            "10": 526,
+            "01": 598,
+            "02": 0,
+            "03": 7,
+            "04": 575,
+            "05": 138,
+            "06": 92,
+            "07": 2827,
+            "08": 83,
+            "09": 1792
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2827,
+          "topDivisionPct": 42.59
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 30884,
+          "divisions": {
+            "10": 2256,
+            "01": 5686,
+            "02": 0,
+            "03": 2036,
+            "04": 2830,
+            "05": 145,
+            "06": 466,
+            "07": 10301,
+            "08": 649,
+            "09": 6515
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 10301,
+          "topDivisionPct": 33.35
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 17358,
+          "divisions": {
+            "10": 894,
+            "01": 3117,
+            "02": 0,
+            "03": 304,
+            "04": 1086,
+            "05": 330,
+            "06": 61,
+            "07": 6931,
+            "08": 221,
+            "09": 4414
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 6931,
+          "topDivisionPct": 39.93
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4381,
+          "divisions": {
+            "10": 353,
+            "01": 427,
+            "02": 0,
+            "03": 40,
+            "04": 579,
+            "05": 23,
+            "06": 61,
+            "07": 1699,
+            "08": 97,
+            "09": 1102
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1699,
+          "topDivisionPct": 38.78
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 9739,
+          "divisions": {
+            "10": 584,
+            "01": 1099,
+            "02": 0,
+            "03": 118,
+            "04": 1018,
+            "05": 100,
+            "06": 123,
+            "07": 3974,
+            "08": 223,
+            "09": 2500
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3974,
+          "topDivisionPct": 40.81
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 25366,
+          "divisions": {
+            "10": 1802,
+            "01": 6837,
+            "02": 0,
+            "03": 580,
+            "04": 2409,
+            "05": 91,
+            "06": 166,
+            "07": 8291,
+            "08": 261,
+            "09": 4929
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8291,
+          "topDivisionPct": 32.69
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5149,
+          "divisions": {
+            "10": 296,
+            "01": 633,
+            "02": 0,
+            "03": 36,
+            "04": 320,
+            "05": 96,
+            "06": 36,
+            "07": 2241,
+            "08": 54,
+            "09": 1437
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2241,
+          "topDivisionPct": 43.52
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 3699,
+          "divisions": {
+            "10": 375,
+            "01": 920,
+            "02": 0,
+            "03": 118,
+            "04": 426,
+            "05": 44,
+            "06": 33,
+            "07": 1036,
+            "08": 61,
+            "09": 686
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1036,
+          "topDivisionPct": 28.01
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 10369,
+          "divisions": {
+            "10": 617,
+            "01": 842,
+            "02": 0,
+            "03": 722,
+            "04": 1098,
+            "05": 81,
+            "06": 74,
+            "07": 3723,
+            "08": 266,
+            "09": 2946
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3723,
+          "topDivisionPct": 35.91
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1254,
+          "divisions": {
+            "10": 100,
+            "01": 136,
+            "02": 0,
+            "03": 22,
+            "04": 173,
+            "05": 45,
+            "06": 11,
+            "07": 449,
+            "08": 20,
+            "09": 298
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 449,
+          "topDivisionPct": 35.81
+        }
+      ],
+      "totals": {
+        "total": 174654,
+        "divisions": {
+          "10": 11411,
+          "01": 29498,
+          "02": 0,
+          "03": 4817,
+          "04": 15708,
+          "05": 2115,
+          "06": 1705,
+          "07": 64077,
+          "08": 2927,
+          "09": 42396
+        }
+      }
+    },
+    "2018": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 27859,
+          "divisions": {
+            "10": 1571,
+            "01": 3205,
+            "02": 0,
+            "03": 602,
+            "04": 2478,
+            "05": 488,
+            "06": 414,
+            "07": 10304,
+            "08": 451,
+            "09": 8346
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 10304,
+          "topDivisionPct": 36.99
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 5293,
+          "divisions": {
+            "10": 349,
+            "01": 634,
+            "02": 0,
+            "03": 78,
+            "04": 666,
+            "05": 102,
+            "06": 3,
+            "07": 2077,
+            "08": 99,
+            "09": 1285
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2077,
+          "topDivisionPct": 39.24
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 4081,
+          "divisions": {
+            "10": 404,
+            "01": 484,
+            "02": 0,
+            "03": 22,
+            "04": 410,
+            "05": 75,
+            "06": 58,
+            "07": 1717,
+            "08": 66,
+            "09": 845
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1717,
+          "topDivisionPct": 42.07
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 5453,
+          "divisions": {
+            "10": 156,
+            "01": 1977,
+            "02": 0,
+            "03": 14,
+            "04": 290,
+            "05": 36,
+            "06": 209,
+            "07": 1645,
+            "08": 82,
+            "09": 1044
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1977,
+          "topDivisionPct": 36.26
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 8790,
+          "divisions": {
+            "10": 264,
+            "01": 2619,
+            "02": 0,
+            "03": 154,
+            "04": 532,
+            "05": 47,
+            "06": 67,
+            "07": 3097,
+            "08": 157,
+            "09": 1853
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3097,
+          "topDivisionPct": 35.23
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2520,
+          "divisions": {
+            "10": 206,
+            "01": 284,
+            "02": 0,
+            "03": 36,
+            "04": 282,
+            "05": 107,
+            "06": 34,
+            "07": 937,
+            "08": 34,
+            "09": 600
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 937,
+          "topDivisionPct": 37.18
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 8996,
+          "divisions": {
+            "10": 700,
+            "01": 889,
+            "02": 0,
+            "03": 12,
+            "04": 893,
+            "05": 182,
+            "06": 38,
+            "07": 3857,
+            "08": 137,
+            "09": 2288
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3857,
+          "topDivisionPct": 42.87
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 6951,
+          "divisions": {
+            "10": 556,
+            "01": 656,
+            "02": 0,
+            "03": 7,
+            "04": 603,
+            "05": 138,
+            "06": 83,
+            "07": 2961,
+            "08": 93,
+            "09": 1854
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2961,
+          "topDivisionPct": 42.6
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 32164,
+          "divisions": {
+            "10": 2393,
+            "01": 6461,
+            "02": 0,
+            "03": 2048,
+            "04": 2616,
+            "05": 133,
+            "06": 428,
+            "07": 10644,
+            "08": 650,
+            "09": 6791
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 10644,
+          "topDivisionPct": 33.09
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 18876,
+          "divisions": {
+            "10": 1078,
+            "01": 3442,
+            "02": 0,
+            "03": 336,
+            "04": 1393,
+            "05": 370,
+            "06": 84,
+            "07": 7278,
+            "08": 300,
+            "09": 4595
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 7278,
+          "topDivisionPct": 38.56
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4488,
+          "divisions": {
+            "10": 362,
+            "01": 467,
+            "02": 0,
+            "03": 39,
+            "04": 584,
+            "05": 30,
+            "06": 44,
+            "07": 1725,
+            "08": 102,
+            "09": 1135
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1725,
+          "topDivisionPct": 38.44
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 10012,
+          "divisions": {
+            "10": 603,
+            "01": 1071,
+            "02": 0,
+            "03": 155,
+            "04": 1112,
+            "05": 104,
+            "06": 121,
+            "07": 4076,
+            "08": 237,
+            "09": 2533
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4076,
+          "topDivisionPct": 40.71
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 26386,
+          "divisions": {
+            "10": 1871,
+            "01": 7346,
+            "02": 0,
+            "03": 609,
+            "04": 2325,
+            "05": 100,
+            "06": 161,
+            "07": 8724,
+            "08": 270,
+            "09": 4980
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8724,
+          "topDivisionPct": 33.06
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5364,
+          "divisions": {
+            "10": 313,
+            "01": 669,
+            "02": 0,
+            "03": 41,
+            "04": 385,
+            "05": 94,
+            "06": 30,
+            "07": 2287,
+            "08": 54,
+            "09": 1491
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2287,
+          "topDivisionPct": 42.64
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 4041,
+          "divisions": {
+            "10": 401,
+            "01": 1172,
+            "02": 0,
+            "03": 122,
+            "04": 413,
+            "05": 46,
+            "06": 31,
+            "07": 1073,
+            "08": 71,
+            "09": 712
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1172,
+          "topDivisionPct": 29
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 10545,
+          "divisions": {
+            "10": 561,
+            "01": 895,
+            "02": 0,
+            "03": 721,
+            "04": 1109,
+            "05": 77,
+            "06": 94,
+            "07": 3850,
+            "08": 278,
+            "09": 2960
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3850,
+          "topDivisionPct": 36.51
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1300,
+          "divisions": {
+            "10": 105,
+            "01": 139,
+            "02": 0,
+            "03": 23,
+            "04": 180,
+            "05": 47,
+            "06": 7,
+            "07": 472,
+            "08": 21,
+            "09": 306
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 472,
+          "topDivisionPct": 36.31
+        }
+      ],
+      "totals": {
+        "total": 183119,
+        "divisions": {
+          "10": 11893,
+          "01": 32410,
+          "02": 0,
+          "03": 5019,
+          "04": 16271,
+          "05": 2176,
+          "06": 1906,
+          "07": 66724,
+          "08": 3102,
+          "09": 43618
+        }
+      }
+    },
+    "2019": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 28677,
+          "divisions": {
+            "10": 1659,
+            "01": 3535,
+            "02": 0,
+            "03": 619,
+            "04": 2429,
+            "05": 444,
+            "06": 234,
+            "07": 10654,
+            "08": 452,
+            "09": 8651
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 10654,
+          "topDivisionPct": 37.15
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 5491,
+          "divisions": {
+            "10": 387,
+            "01": 687,
+            "02": 0,
+            "03": 72,
+            "04": 633,
+            "05": 104,
+            "06": 20,
+            "07": 2169,
+            "08": 98,
+            "09": 1321
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2169,
+          "topDivisionPct": 39.5
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 4292,
+          "divisions": {
+            "10": 421,
+            "01": 522,
+            "02": 0,
+            "03": 52,
+            "04": 421,
+            "05": 85,
+            "06": 69,
+            "07": 1772,
+            "08": 66,
+            "09": 884
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1772,
+          "topDivisionPct": 41.29
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 5670,
+          "divisions": {
+            "10": 175,
+            "01": 2088,
+            "02": 0,
+            "03": 31,
+            "04": 278,
+            "05": 34,
+            "06": 102,
+            "07": 1770,
+            "08": 92,
+            "09": 1100
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 2088,
+          "topDivisionPct": 36.83
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 9294,
+          "divisions": {
+            "10": 263,
+            "01": 2789,
+            "02": 0,
+            "03": 164,
+            "04": 524,
+            "05": 39,
+            "06": 101,
+            "07": 3306,
+            "08": 168,
+            "09": 1940
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3306,
+          "topDivisionPct": 35.57
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2675,
+          "divisions": {
+            "10": 214,
+            "01": 308,
+            "02": 0,
+            "03": 45,
+            "04": 296,
+            "05": 117,
+            "06": 35,
+            "07": 992,
+            "08": 31,
+            "09": 637
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 992,
+          "topDivisionPct": 37.08
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 9793,
+          "divisions": {
+            "10": 759,
+            "01": 1086,
+            "02": 0,
+            "03": 12,
+            "04": 1036,
+            "05": 204,
+            "06": 62,
+            "07": 4177,
+            "08": 147,
+            "09": 2310
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4177,
+          "topDivisionPct": 42.65
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 7489,
+          "divisions": {
+            "10": 587,
+            "01": 733,
+            "02": 0,
+            "03": 10,
+            "04": 688,
+            "05": 175,
+            "06": 100,
+            "07": 3133,
+            "08": 97,
+            "09": 1966
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3133,
+          "topDivisionPct": 41.83
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 34437,
+          "divisions": {
+            "10": 2572,
+            "01": 6887,
+            "02": 0,
+            "03": 2135,
+            "04": 2982,
+            "05": 205,
+            "06": 525,
+            "07": 11416,
+            "08": 665,
+            "09": 7050
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 11416,
+          "topDivisionPct": 33.15
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 20005,
+          "divisions": {
+            "10": 1322,
+            "01": 3663,
+            "02": 0,
+            "03": 360,
+            "04": 1397,
+            "05": 380,
+            "06": 95,
+            "07": 7621,
+            "08": 334,
+            "09": 4833
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 7621,
+          "topDivisionPct": 38.1
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4721,
+          "divisions": {
+            "10": 374,
+            "01": 469,
+            "02": 0,
+            "03": 40,
+            "04": 631,
+            "05": 42,
+            "06": 49,
+            "07": 1793,
+            "08": 145,
+            "09": 1178
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1793,
+          "topDivisionPct": 37.98
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 10689,
+          "divisions": {
+            "10": 657,
+            "01": 1232,
+            "02": 0,
+            "03": 180,
+            "04": 1206,
+            "05": 108,
+            "06": 115,
+            "07": 4301,
+            "08": 271,
+            "09": 2619
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4301,
+          "topDivisionPct": 40.24
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 27835,
+          "divisions": {
+            "10": 2002,
+            "01": 7560,
+            "02": 0,
+            "03": 648,
+            "04": 2424,
+            "05": 104,
+            "06": 194,
+            "07": 9184,
+            "08": 315,
+            "09": 5404
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9184,
+          "topDivisionPct": 32.99
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5709,
+          "divisions": {
+            "10": 342,
+            "01": 724,
+            "02": 0,
+            "03": 42,
+            "04": 351,
+            "05": 95,
+            "06": 31,
+            "07": 2421,
+            "08": 51,
+            "09": 1652
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2421,
+          "topDivisionPct": 42.41
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 4286,
+          "divisions": {
+            "10": 420,
+            "01": 1305,
+            "02": 0,
+            "03": 122,
+            "04": 429,
+            "05": 41,
+            "06": 34,
+            "07": 1124,
+            "08": 65,
+            "09": 746
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1305,
+          "topDivisionPct": 30.45
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 11071,
+          "divisions": {
+            "10": 553,
+            "01": 905,
+            "02": 0,
+            "03": 751,
+            "04": 1143,
+            "05": 98,
+            "06": 122,
+            "07": 4118,
+            "08": 280,
+            "09": 3101
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4118,
+          "topDivisionPct": 37.2
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1381,
+          "divisions": {
+            "10": 110,
+            "01": 167,
+            "02": 0,
+            "03": 26,
+            "04": 200,
+            "05": 44,
+            "06": 10,
+            "07": 490,
+            "08": 17,
+            "09": 317
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 490,
+          "topDivisionPct": 35.48
+        }
+      ],
+      "totals": {
+        "total": 193515,
+        "divisions": {
+          "10": 12817,
+          "01": 34660,
+          "02": 0,
+          "03": 5309,
+          "04": 17068,
+          "05": 2319,
+          "06": 1898,
+          "07": 70441,
+          "08": 3294,
+          "09": 45709
+        }
+      }
+    },
+    "2020": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 30375,
+          "divisions": {
+            "10": 1807,
+            "01": 3157,
+            "02": 0,
+            "03": 645,
+            "04": 2405,
+            "05": 532,
+            "06": 226,
+            "07": 12095,
+            "08": 472,
+            "09": 9036
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 12095,
+          "topDivisionPct": 39.82
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 5685,
+          "divisions": {
+            "10": 394,
+            "01": 627,
+            "02": 0,
+            "03": 73,
+            "04": 693,
+            "05": 107,
+            "06": 19,
+            "07": 2324,
+            "08": 91,
+            "09": 1357
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2324,
+          "topDivisionPct": 40.88
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 4471,
+          "divisions": {
+            "10": 417,
+            "01": 513,
+            "02": 0,
+            "03": 50,
+            "04": 438,
+            "05": 80,
+            "06": 81,
+            "07": 1919,
+            "08": 54,
+            "09": 919
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1919,
+          "topDivisionPct": 42.92
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 6040,
+          "divisions": {
+            "10": 163,
+            "01": 2176,
+            "02": 0,
+            "03": 7,
+            "04": 400,
+            "05": 46,
+            "06": 103,
+            "07": 1959,
+            "08": 83,
+            "09": 1103
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 2176,
+          "topDivisionPct": 36.03
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 9580,
+          "divisions": {
+            "10": 325,
+            "01": 2426,
+            "02": 0,
+            "03": 177,
+            "04": 589,
+            "05": 57,
+            "06": 91,
+            "07": 3667,
+            "08": 184,
+            "09": 2064
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3667,
+          "topDivisionPct": 38.28
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2704,
+          "divisions": {
+            "10": 227,
+            "01": 245,
+            "02": 0,
+            "03": 45,
+            "04": 292,
+            "05": 115,
+            "06": 38,
+            "07": 1060,
+            "08": 29,
+            "09": 653
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1060,
+          "topDivisionPct": 39.2
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 10283,
+          "divisions": {
+            "10": 833,
+            "01": 996,
+            "02": 0,
+            "03": 14,
+            "04": 1201,
+            "05": 237,
+            "06": 26,
+            "07": 4456,
+            "08": 148,
+            "09": 2372
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4456,
+          "topDivisionPct": 43.33
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 7922,
+          "divisions": {
+            "10": 592,
+            "01": 676,
+            "02": 0,
+            "03": 10,
+            "04": 787,
+            "05": 144,
+            "06": 74,
+            "07": 3525,
+            "08": 94,
+            "09": 2020
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3525,
+          "topDivisionPct": 44.5
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 38000,
+          "divisions": {
+            "10": 2886,
+            "01": 7136,
+            "02": 0,
+            "03": 2218,
+            "04": 3386,
+            "05": 171,
+            "06": 575,
+            "07": 13537,
+            "08": 698,
+            "09": 7393
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 13537,
+          "topDivisionPct": 35.62
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 21198,
+          "divisions": {
+            "10": 1690,
+            "01": 3636,
+            "02": 0,
+            "03": 404,
+            "04": 1390,
+            "05": 398,
+            "06": 136,
+            "07": 8211,
+            "08": 299,
+            "09": 5034
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8211,
+          "topDivisionPct": 38.73
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 4819,
+          "divisions": {
+            "10": 407,
+            "01": 431,
+            "02": 0,
+            "03": 40,
+            "04": 646,
+            "05": 30,
+            "06": 50,
+            "07": 1906,
+            "08": 104,
+            "09": 1205
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1906,
+          "topDivisionPct": 39.55
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 11336,
+          "divisions": {
+            "10": 729,
+            "01": 1120,
+            "02": 0,
+            "03": 162,
+            "04": 1400,
+            "05": 116,
+            "06": 173,
+            "07": 4614,
+            "08": 262,
+            "09": 2760
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4614,
+          "topDivisionPct": 40.7
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 30962,
+          "divisions": {
+            "10": 1975,
+            "01": 7631,
+            "02": 0,
+            "03": 671,
+            "04": 2853,
+            "05": 121,
+            "06": 195,
+            "07": 11478,
+            "08": 287,
+            "09": 5751
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 11478,
+          "topDivisionPct": 37.07
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 5992,
+          "divisions": {
+            "10": 360,
+            "01": 676,
+            "02": 0,
+            "03": 42,
+            "04": 403,
+            "05": 109,
+            "06": 34,
+            "07": 2671,
+            "08": 50,
+            "09": 1647
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2671,
+          "topDivisionPct": 44.58
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 4486,
+          "divisions": {
+            "10": 460,
+            "01": 1246,
+            "02": 0,
+            "03": 127,
+            "04": 454,
+            "05": 44,
+            "06": 38,
+            "07": 1248,
+            "08": 68,
+            "09": 801
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1248,
+          "topDivisionPct": 27.82
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 11473,
+          "divisions": {
+            "10": 567,
+            "01": 901,
+            "02": 0,
+            "03": 780,
+            "04": 1235,
+            "05": 114,
+            "06": 127,
+            "07": 4296,
+            "08": 292,
+            "09": 3161
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4296,
+          "topDivisionPct": 37.44
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1436,
+          "divisions": {
+            "10": 140,
+            "01": 177,
+            "02": 0,
+            "03": 24,
+            "04": 194,
+            "05": 13,
+            "06": 14,
+            "07": 528,
+            "08": 18,
+            "09": 328
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 528,
+          "topDivisionPct": 36.77
+        }
+      ],
+      "totals": {
+        "total": 206762,
+        "divisions": {
+          "10": 13972,
+          "01": 33770,
+          "02": 0,
+          "03": 5489,
+          "04": 18766,
+          "05": 2434,
+          "06": 2000,
+          "07": 79494,
+          "08": 3233,
+          "09": 47604
+        }
+      }
+    },
+    "2021": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 34118,
+          "divisions": {
+            "10": 1885,
+            "01": 3906,
+            "02": 0,
+            "03": 741,
+            "04": 3327,
+            "05": 571,
+            "06": 281,
+            "07": 13113,
+            "08": 528,
+            "09": 9766
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 13113,
+          "topDivisionPct": 38.43
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 6140,
+          "divisions": {
+            "10": 389,
+            "01": 717,
+            "02": 0,
+            "03": 75,
+            "04": 797,
+            "05": 121,
+            "06": 30,
+            "07": 2486,
+            "08": 98,
+            "09": 1427
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2486,
+          "topDivisionPct": 40.49
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 4807,
+          "divisions": {
+            "10": 425,
+            "01": 577,
+            "02": 0,
+            "03": 65,
+            "04": 585,
+            "05": 80,
+            "06": 82,
+            "07": 1991,
+            "08": 68,
+            "09": 934
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1991,
+          "topDivisionPct": 41.42
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 6916,
+          "divisions": {
+            "10": 212,
+            "01": 2075,
+            "02": 0,
+            "03": 7,
+            "04": 1170,
+            "05": 47,
+            "06": 137,
+            "07": 2029,
+            "08": 76,
+            "09": 1163
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 2075,
+          "topDivisionPct": 30
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 11877,
+          "divisions": {
+            "10": 407,
+            "01": 2622,
+            "02": 0,
+            "03": 185,
+            "04": 2074,
+            "05": 75,
+            "06": 116,
+            "07": 3957,
+            "08": 186,
+            "09": 2255
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3957,
+          "topDivisionPct": 33.32
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 2907,
+          "divisions": {
+            "10": 219,
+            "01": 276,
+            "02": 0,
+            "03": 47,
+            "04": 373,
+            "05": 126,
+            "06": 29,
+            "07": 1118,
+            "08": 35,
+            "09": 684
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1118,
+          "topDivisionPct": 38.46
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 11056,
+          "divisions": {
+            "10": 785,
+            "01": 1227,
+            "02": 0,
+            "03": 12,
+            "04": 1484,
+            "05": 215,
+            "06": 28,
+            "07": 4604,
+            "08": 161,
+            "09": 2540
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4604,
+          "topDivisionPct": 41.64
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 8492,
+          "divisions": {
+            "10": 620,
+            "01": 680,
+            "02": 0,
+            "03": 9,
+            "04": 829,
+            "05": 163,
+            "06": 96,
+            "07": 3794,
+            "08": 113,
+            "09": 2188
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3794,
+          "topDivisionPct": 44.68
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 41818,
+          "divisions": {
+            "10": 3574,
+            "01": 7475,
+            "02": 0,
+            "03": 2423,
+            "04": 4798,
+            "05": 163,
+            "06": 569,
+            "07": 14238,
+            "08": 722,
+            "09": 7856
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 14238,
+          "topDivisionPct": 34.05
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 22940,
+          "divisions": {
+            "10": 1679,
+            "01": 4004,
+            "02": 0,
+            "03": 401,
+            "04": 1928,
+            "05": 409,
+            "06": 153,
+            "07": 8666,
+            "08": 347,
+            "09": 5353
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8666,
+          "topDivisionPct": 37.78
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 5300,
+          "divisions": {
+            "10": 434,
+            "01": 518,
+            "02": 0,
+            "03": 46,
+            "04": 807,
+            "05": 42,
+            "06": 60,
+            "07": 2008,
+            "08": 108,
+            "09": 1277
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2008,
+          "topDivisionPct": 37.89
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 12155,
+          "divisions": {
+            "10": 783,
+            "01": 1175,
+            "02": 0,
+            "03": 170,
+            "04": 1690,
+            "05": 124,
+            "06": 152,
+            "07": 4918,
+            "08": 276,
+            "09": 2867
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4918,
+          "topDivisionPct": 40.46
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 31477,
+          "divisions": {
+            "10": 2015,
+            "01": 8061,
+            "02": 0,
+            "03": 672,
+            "04": 3190,
+            "05": 126,
+            "06": 324,
+            "07": 10713,
+            "08": 298,
+            "09": 6078
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 10713,
+          "topDivisionPct": 34.03
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 6539,
+          "divisions": {
+            "10": 367,
+            "01": 778,
+            "02": 0,
+            "03": 45,
+            "04": 521,
+            "05": 109,
+            "06": 40,
+            "07": 2897,
+            "08": 58,
+            "09": 1724
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2897,
+          "topDivisionPct": 44.3
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 4724,
+          "divisions": {
+            "10": 450,
+            "01": 1253,
+            "02": 0,
+            "03": 134,
+            "04": 541,
+            "05": 44,
+            "06": 62,
+            "07": 1320,
+            "08": 67,
+            "09": 853
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1320,
+          "topDivisionPct": 27.94
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 12355,
+          "divisions": {
+            "10": 633,
+            "01": 947,
+            "02": 0,
+            "03": 850,
+            "04": 1524,
+            "05": 103,
+            "06": 121,
+            "07": 4549,
+            "08": 307,
+            "09": 3321
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4549,
+          "topDivisionPct": 36.82
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1626,
+          "divisions": {
+            "10": 119,
+            "01": 261,
+            "02": 0,
+            "03": 25,
+            "04": 264,
+            "05": 12,
+            "06": 12,
+            "07": 540,
+            "08": 18,
+            "09": 375
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 540,
+          "topDivisionPct": 33.21
+        }
+      ],
+      "totals": {
+        "total": 225247,
+        "divisions": {
+          "10": 14996,
+          "01": 36552,
+          "02": 0,
+          "03": 5907,
+          "04": 25902,
+          "05": 2530,
+          "06": 2292,
+          "07": 82941,
+          "08": 3466,
+          "09": 50661
+        }
+      }
+    },
+    "2022": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 36198,
+          "divisions": {
+            "10": 1717,
+            "01": 5672,
+            "02": 0,
+            "03": 704,
+            "04": 2709,
+            "05": 613,
+            "06": 299,
+            "07": 13657,
+            "08": 542,
+            "09": 10285
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 13657,
+          "topDivisionPct": 37.73
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 6541,
+          "divisions": {
+            "10": 410,
+            "01": 977,
+            "02": 0,
+            "03": 79,
+            "04": 793,
+            "05": 126,
+            "06": 19,
+            "07": 2541,
+            "08": 108,
+            "09": 1488
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2541,
+          "topDivisionPct": 38.85
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 5172,
+          "divisions": {
+            "10": 421,
+            "01": 840,
+            "02": 0,
+            "03": 60,
+            "04": 501,
+            "05": 105,
+            "06": 99,
+            "07": 2078,
+            "08": 77,
+            "09": 991
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2078,
+          "topDivisionPct": 40.18
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 6540,
+          "divisions": {
+            "10": 257,
+            "01": 2267,
+            "02": 0,
+            "03": 11,
+            "04": 373,
+            "05": 33,
+            "06": 122,
+            "07": 2156,
+            "08": 94,
+            "09": 1227
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 2267,
+          "topDivisionPct": 34.66
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 11993,
+          "divisions": {
+            "10": 430,
+            "01": 3380,
+            "02": 0,
+            "03": 193,
+            "04": 995,
+            "05": 100,
+            "06": 145,
+            "07": 4176,
+            "08": 224,
+            "09": 2350
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4176,
+          "topDivisionPct": 34.82
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 3225,
+          "divisions": {
+            "10": 226,
+            "01": 502,
+            "02": 0,
+            "03": 49,
+            "04": 339,
+            "05": 125,
+            "06": 46,
+            "07": 1148,
+            "08": 44,
+            "09": 746
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1148,
+          "topDivisionPct": 35.6
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 11866,
+          "divisions": {
+            "10": 891,
+            "01": 1786,
+            "02": 0,
+            "03": 15,
+            "04": 1250,
+            "05": 294,
+            "06": 49,
+            "07": 4787,
+            "08": 182,
+            "09": 2612
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4787,
+          "topDivisionPct": 40.34
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 9149,
+          "divisions": {
+            "10": 684,
+            "01": 1227,
+            "02": 0,
+            "03": 9,
+            "04": 819,
+            "05": 188,
+            "06": 92,
+            "07": 3767,
+            "08": 113,
+            "09": 2250
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3767,
+          "topDivisionPct": 41.17
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 43178,
+          "divisions": {
+            "10": 3207,
+            "01": 9044,
+            "02": 0,
+            "03": 2561,
+            "04": 3795,
+            "05": 174,
+            "06": 637,
+            "07": 14695,
+            "08": 808,
+            "09": 8257
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 14695,
+          "topDivisionPct": 34.03
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 25332,
+          "divisions": {
+            "10": 1774,
+            "01": 5659,
+            "02": 0,
+            "03": 438,
+            "04": 1727,
+            "05": 441,
+            "06": 236,
+            "07": 8964,
+            "08": 385,
+            "09": 5708
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 8964,
+          "topDivisionPct": 35.39
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 5744,
+          "divisions": {
+            "10": 436,
+            "01": 926,
+            "02": 0,
+            "03": 51,
+            "04": 721,
+            "05": 25,
+            "06": 70,
+            "07": 2056,
+            "08": 164,
+            "09": 1295
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2056,
+          "topDivisionPct": 35.79
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 12878,
+          "divisions": {
+            "10": 774,
+            "01": 1950,
+            "02": 0,
+            "03": 170,
+            "04": 1445,
+            "05": 127,
+            "06": 157,
+            "07": 5051,
+            "08": 283,
+            "09": 2921
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 5051,
+          "topDivisionPct": 39.22
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 33853,
+          "divisions": {
+            "10": 2390,
+            "01": 9488,
+            "02": 0,
+            "03": 716,
+            "04": 2712,
+            "05": 146,
+            "06": 234,
+            "07": 11557,
+            "08": 323,
+            "09": 6287
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 11557,
+          "topDivisionPct": 34.14
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 7096,
+          "divisions": {
+            "10": 405,
+            "01": 1157,
+            "02": 0,
+            "03": 43,
+            "04": 516,
+            "05": 115,
+            "06": 28,
+            "07": 3008,
+            "08": 64,
+            "09": 1760
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3008,
+          "topDivisionPct": 42.39
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 5476,
+          "divisions": {
+            "10": 502,
+            "01": 1631,
+            "02": 0,
+            "03": 147,
+            "04": 746,
+            "05": 67,
+            "06": 45,
+            "07": 1365,
+            "08": 68,
+            "09": 905
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1631,
+          "topDivisionPct": 29.78
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 13243,
+          "divisions": {
+            "10": 703,
+            "01": 941,
+            "02": 0,
+            "03": 856,
+            "04": 1663,
+            "05": 102,
+            "06": 152,
+            "07": 4976,
+            "08": 323,
+            "09": 3527
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4976,
+          "topDivisionPct": 37.57
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1735,
+          "divisions": {
+            "10": 121,
+            "01": 285,
+            "02": 0,
+            "03": 27,
+            "04": 272,
+            "05": 15,
+            "06": 15,
+            "07": 567,
+            "08": 18,
+            "09": 415
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 567,
+          "topDivisionPct": 32.68
+        }
+      ],
+      "totals": {
+        "total": 239219,
+        "divisions": {
+          "10": 15348,
+          "01": 47732,
+          "02": 0,
+          "03": 6129,
+          "04": 21376,
+          "05": 2796,
+          "06": 2445,
+          "07": 86549,
+          "08": 3820,
+          "09": 53024
+        }
+      }
+    },
+    "2023": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 37654,
+          "divisions": {
+            "10": 1871,
+            "01": 4566,
+            "02": 0,
+            "03": 726,
+            "04": 3536,
+            "05": 775,
+            "06": 418,
+            "07": 14364,
+            "08": 538,
+            "09": 10860
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 14364,
+          "topDivisionPct": 38.15
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 6814,
+          "divisions": {
+            "10": 429,
+            "01": 840,
+            "02": 0,
+            "03": 82,
+            "04": 820,
+            "05": 115,
+            "06": 9,
+            "07": 2822,
+            "08": 113,
+            "09": 1584
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2822,
+          "topDivisionPct": 41.41
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 5271,
+          "divisions": {
+            "10": 463,
+            "01": 662,
+            "02": 0,
+            "03": 70,
+            "04": 557,
+            "05": 104,
+            "06": 109,
+            "07": 2191,
+            "08": 78,
+            "09": 1037
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2191,
+          "topDivisionPct": 41.57
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 6916,
+          "divisions": {
+            "10": 328,
+            "01": 2178,
+            "02": 0,
+            "03": 15,
+            "04": 454,
+            "05": 36,
+            "06": 152,
+            "07": 2296,
+            "08": 97,
+            "09": 1360
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2296,
+          "topDivisionPct": 33.2
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 12798,
+          "divisions": {
+            "10": 501,
+            "01": 3664,
+            "02": 0,
+            "03": 202,
+            "04": 1000,
+            "05": 83,
+            "06": 203,
+            "07": 4400,
+            "08": 225,
+            "09": 2520
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4400,
+          "topDivisionPct": 34.38
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 3252,
+          "divisions": {
+            "10": 256,
+            "01": 294,
+            "02": 0,
+            "03": 55,
+            "04": 376,
+            "05": 137,
+            "06": 52,
+            "07": 1227,
+            "08": 69,
+            "09": 786
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1227,
+          "topDivisionPct": 37.73
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 12435,
+          "divisions": {
+            "10": 1036,
+            "01": 1378,
+            "02": 0,
+            "03": 22,
+            "04": 1440,
+            "05": 434,
+            "06": 69,
+            "07": 5019,
+            "08": 204,
+            "09": 2833
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 5019,
+          "topDivisionPct": 40.36
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 9395,
+          "divisions": {
+            "10": 755,
+            "01": 764,
+            "02": 0,
+            "03": 11,
+            "04": 994,
+            "05": 211,
+            "06": 157,
+            "07": 4024,
+            "08": 127,
+            "09": 2352
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4024,
+          "topDivisionPct": 42.83
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 45274,
+          "divisions": {
+            "10": 3291,
+            "01": 8442,
+            "02": 0,
+            "03": 2672,
+            "04": 4025,
+            "05": 196,
+            "06": 868,
+            "07": 15926,
+            "08": 926,
+            "09": 8928
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 15926,
+          "topDivisionPct": 35.18
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 26400,
+          "divisions": {
+            "10": 1978,
+            "01": 5044,
+            "02": 0,
+            "03": 488,
+            "04": 1889,
+            "05": 482,
+            "06": 201,
+            "07": 9751,
+            "08": 413,
+            "09": 6154
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 9751,
+          "topDivisionPct": 36.94
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 5966,
+          "divisions": {
+            "10": 506,
+            "01": 642,
+            "02": 0,
+            "03": 56,
+            "04": 846,
+            "05": 34,
+            "06": 102,
+            "07": 2260,
+            "08": 129,
+            "09": 1391
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2260,
+          "topDivisionPct": 37.88
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 13690,
+          "divisions": {
+            "10": 939,
+            "01": 1456,
+            "02": 0,
+            "03": 182,
+            "04": 1861,
+            "05": 166,
+            "06": 246,
+            "07": 5521,
+            "08": 331,
+            "09": 2988
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 5521,
+          "topDivisionPct": 40.33
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 36698,
+          "divisions": {
+            "10": 2727,
+            "01": 10018,
+            "02": 0,
+            "03": 781,
+            "04": 3450,
+            "05": 163,
+            "06": 225,
+            "07": 12168,
+            "08": 350,
+            "09": 6816
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 12168,
+          "topDivisionPct": 33.16
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 7378,
+          "divisions": {
+            "10": 486,
+            "01": 919,
+            "02": 0,
+            "03": 54,
+            "04": 525,
+            "05": 117,
+            "06": 34,
+            "07": 3284,
+            "08": 70,
+            "09": 1889
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3284,
+          "topDivisionPct": 44.51
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 5862,
+          "divisions": {
+            "10": 646,
+            "01": 1763,
+            "02": 0,
+            "03": 173,
+            "04": 632,
+            "05": 75,
+            "06": 65,
+            "07": 1450,
+            "08": 83,
+            "09": 975
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1763,
+          "topDivisionPct": 30.08
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 14225,
+          "divisions": {
+            "10": 952,
+            "01": 1210,
+            "02": 0,
+            "03": 924,
+            "04": 1753,
+            "05": 113,
+            "06": 190,
+            "07": 4950,
+            "08": 356,
+            "09": 3777
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4950,
+          "topDivisionPct": 34.8
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1807,
+          "divisions": {
+            "10": 146,
+            "01": 196,
+            "02": 0,
+            "03": 27,
+            "04": 307,
+            "05": 22,
+            "06": 16,
+            "07": 634,
+            "08": 21,
+            "09": 438
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 634,
+          "topDivisionPct": 35.09
+        }
+      ],
+      "totals": {
+        "total": 251835,
+        "divisions": {
+          "10": 17310,
+          "01": 44036,
+          "02": 0,
+          "03": 6540,
+          "04": 24465,
+          "05": 3263,
+          "06": 3116,
+          "07": 92287,
+          "08": 4130,
+          "09": 56688
+        }
+      }
+    },
+    "2024": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 38935,
+          "divisions": {
+            "10": 2156,
+            "01": 4786,
+            "02": 0,
+            "03": 749,
+            "04": 3402,
+            "05": 862,
+            "06": 489,
+            "07": 14660,
+            "08": 575,
+            "09": 11256
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 14660,
+          "topDivisionPct": 37.65
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 7223,
+          "divisions": {
+            "10": 454,
+            "01": 896,
+            "02": 0,
+            "03": 88,
+            "04": 883,
+            "05": 153,
+            "06": 26,
+            "07": 2904,
+            "08": 127,
+            "09": 1692
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2904,
+          "topDivisionPct": 40.2
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 5633,
+          "divisions": {
+            "10": 494,
+            "01": 701,
+            "02": 0,
+            "03": 82,
+            "04": 637,
+            "05": 108,
+            "06": 111,
+            "07": 2333,
+            "08": 71,
+            "09": 1096
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2333,
+          "topDivisionPct": 41.42
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 7798,
+          "divisions": {
+            "10": 320,
+            "01": 2616,
+            "02": 0,
+            "03": 14,
+            "04": 555,
+            "05": 37,
+            "06": 151,
+            "07": 2521,
+            "08": 111,
+            "09": 1473
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 2616,
+          "topDivisionPct": 33.55
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 13465,
+          "divisions": {
+            "10": 632,
+            "01": 3847,
+            "02": 0,
+            "03": 211,
+            "04": 1020,
+            "05": 84,
+            "06": 205,
+            "07": 4624,
+            "08": 234,
+            "09": 2608
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4624,
+          "topDivisionPct": 34.34
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 3411,
+          "divisions": {
+            "10": 266,
+            "01": 312,
+            "02": 0,
+            "03": 56,
+            "04": 359,
+            "05": 150,
+            "06": 52,
+            "07": 1315,
+            "08": 70,
+            "09": 831
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 1315,
+          "topDivisionPct": 38.55
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 13045,
+          "divisions": {
+            "10": 1080,
+            "01": 1384,
+            "02": 0,
+            "03": 23,
+            "04": 1472,
+            "05": 431,
+            "06": 69,
+            "07": 5372,
+            "08": 216,
+            "09": 2998
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 5372,
+          "topDivisionPct": 41.18
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 9735,
+          "divisions": {
+            "10": 769,
+            "01": 848,
+            "02": 0,
+            "03": 11,
+            "04": 1000,
+            "05": 212,
+            "06": 152,
+            "07": 4194,
+            "08": 128,
+            "09": 2421
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 4194,
+          "topDivisionPct": 43.08
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 49980,
+          "divisions": {
+            "10": 3945,
+            "01": 10205,
+            "02": 0,
+            "03": 2865,
+            "04": 4563,
+            "05": 216,
+            "06": 831,
+            "07": 16862,
+            "08": 979,
+            "09": 9514
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 16862,
+          "topDivisionPct": 33.74
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 28400,
+          "divisions": {
+            "10": 2175,
+            "01": 5768,
+            "02": 0,
+            "03": 601,
+            "04": 2033,
+            "05": 502,
+            "06": 197,
+            "07": 10252,
+            "08": 402,
+            "09": 6470
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 10252,
+          "topDivisionPct": 36.1
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 6120,
+          "divisions": {
+            "10": 504,
+            "01": 686,
+            "02": 0,
+            "03": 56,
+            "04": 830,
+            "05": 37,
+            "06": 89,
+            "07": 2333,
+            "08": 154,
+            "09": 1431
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 2333,
+          "topDivisionPct": 38.12
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 14223,
+          "divisions": {
+            "10": 1044,
+            "01": 1556,
+            "02": 0,
+            "03": 190,
+            "04": 1839,
+            "05": 167,
+            "06": 207,
+            "07": 5795,
+            "08": 339,
+            "09": 3086
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 5795,
+          "topDivisionPct": 40.74
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 39233,
+          "divisions": {
+            "10": 2920,
+            "01": 11288,
+            "02": 0,
+            "03": 852,
+            "04": 3598,
+            "05": 165,
+            "06": 214,
+            "07": 12534,
+            "08": 366,
+            "09": 7296
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 12534,
+          "topDivisionPct": 31.95
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 7862,
+          "divisions": {
+            "10": 547,
+            "01": 1122,
+            "02": 0,
+            "03": 53,
+            "04": 518,
+            "05": 117,
+            "06": 36,
+            "07": 3347,
+            "08": 71,
+            "09": 2051
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 3347,
+          "topDivisionPct": 42.57
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": 6075,
+          "divisions": {
+            "10": 664,
+            "01": 1781,
+            "02": 0,
+            "03": 184,
+            "04": 660,
+            "05": 72,
+            "06": 78,
+            "07": 1535,
+            "08": 85,
+            "09": 1016
+          },
+          "topDivisionCode": "01",
+          "topDivisionName": "Servicios públicos generales",
+          "topDivisionAmount": 1781,
+          "topDivisionPct": 29.32
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 15008,
+          "divisions": {
+            "10": 1010,
+            "01": 1208,
+            "02": 0,
+            "03": 975,
+            "04": 1803,
+            "05": 134,
+            "06": 179,
+            "07": 5256,
+            "08": 387,
+            "09": 4056
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 5256,
+          "topDivisionPct": 35.02
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1985,
+          "divisions": {
+            "10": 139,
+            "01": 252,
+            "02": 0,
+            "03": 28,
+            "04": 366,
+            "05": 22,
+            "06": 15,
+            "07": 664,
+            "08": 28,
+            "09": 471
+          },
+          "topDivisionCode": "07",
+          "topDivisionName": "Salud",
+          "topDivisionAmount": 664,
+          "topDivisionPct": 33.45
+        }
+      ],
+      "totals": {
+        "total": 268131,
+        "divisions": {
+          "10": 19119,
+          "01": 49256,
+          "02": 0,
+          "03": 7038,
+          "04": 25538,
+          "05": 3469,
+          "06": 3101,
+          "07": 96501,
+          "08": 4343,
+          "09": 59766
+        }
+      }
+    }
+  },
+  "sourceAttribution": {
+    "spending": {
+      "source": "IGAE — COFOG Administración regional (2012-2024)",
+      "type": "xlsx",
+      "url": "https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-A/COFOG_A_Detalle_CCAA_2024.xlsx",
+      "date": "2024-12-31",
+      "note": "Detalle funcional COFOG por CCAA (subsector Administración regional), millones de euros."
+    }
+  }
+}

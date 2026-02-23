@@ -48,7 +48,8 @@ jobs:
               demographics: 450, // mezcla de series anuales/trimestrales con retraso
               budget: 800,       // anual (IGAE)
               eurostat: 800,     // anual (Eurostat)
-              revenue: 800       // anual (Eurostat)
+              revenue: 800,      // anual (Eurostat)
+              ccaaSpending: 800  // anual (IGAE CCAA detalle)
             };
             const staleSources = [];
             let ssCriticalFallback = null;

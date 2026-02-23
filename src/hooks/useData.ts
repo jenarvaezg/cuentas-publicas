@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import budgetJson from "@/data/budget.json";
 import ccaaDebtJson from "@/data/ccaa-debt.json";
 import ccaaFiscalBalanceJson from "@/data/ccaa-fiscal-balance.json";
+import ccaaForalFlowsJson from "@/data/ccaa-foral-flows.json";
+import ccaaSpendingJson from "@/data/ccaa-spending.json";
 import debtJson from "@/data/debt.json";
 import demographicsJson from "@/data/demographics.json";
 import eurostatJson from "@/data/eurostat.json";
@@ -13,6 +15,8 @@ import type {
   BudgetData,
   CcaaDebtData,
   CcaaFiscalBalanceData,
+  CcaaForalFlowsData,
+  CcaaSpendingData,
   DebtData,
   DemographicsData,
   EurostatData,
@@ -31,6 +35,8 @@ export function useData() {
     const eurostat = eurostatJson as EurostatData;
     const ccaaDebt = ccaaDebtJson as CcaaDebtData;
     const ccaaFiscalBalance = ccaaFiscalBalanceJson as CcaaFiscalBalanceData;
+    const ccaaForalFlows = ccaaForalFlowsJson as CcaaForalFlowsData;
+    const ccaaSpending = ccaaSpendingJson as CcaaSpendingData;
     const revenue = revenueJson as RevenueData;
     const taxRevenue = taxRevenueJson as TaxRevenueData;
 
@@ -42,6 +48,8 @@ export function useData() {
       eurostat,
       ccaaDebt,
       ccaaFiscalBalance,
+      ccaaForalFlows,
+      ccaaSpending,
       revenue,
       taxRevenue,
       meta: metaJson as MetaData,

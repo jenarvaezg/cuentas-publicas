@@ -257,6 +257,67 @@ export interface CcaaFiscalBalanceData {
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
+// ── CCAA Spending (IGAE COFOG detalle) ─────────────────────────────
+
+export interface CcaaSpendingEntry {
+  code: string; // "CA01"..."CA17"
+  name: string;
+  total: number; // M€
+  divisions: Record<string, number>; // COFOG division code -> M€
+  topDivisionCode: string; // "01"..."10"
+  topDivisionName: string;
+  topDivisionAmount: number; // M€
+  topDivisionPct: number; // %
+}
+
+export interface CcaaSpendingYearData {
+  entries: CcaaSpendingEntry[];
+  totals: {
+    total: number;
+    divisions: Record<string, number>;
+  };
+}
+
+export interface CcaaSpendingData {
+  lastUpdated: string;
+  years: number[];
+  latestYear: number;
+  byYear: Record<string, CcaaSpendingYearData>;
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
+// ── CCAA Foral Flows (Navarra + País Vasco) ───────────────────────
+
+export interface CcaaForalFlowEntry {
+  code: string; // CA15, CA16
+  name: string;
+  regime: "foral";
+  paymentToState: number; // M€
+  adjustmentsWithState: number | null; // M€
+  netFlowToState: number | null; // M€ (payment - adjustments)
+  detail: {
+    paymentLabel: string;
+    adjustmentsLabel: string | null;
+    unit: string;
+  };
+}
+
+export interface CcaaForalFlowYearData {
+  entries: CcaaForalFlowEntry[];
+}
+
+export interface CcaaForalFlowsData {
+  lastUpdated: string;
+  years: number[];
+  latestYear: number;
+  byYear: Record<string, CcaaForalFlowYearData>;
+  coverage: {
+    regime: "foral";
+    notes: string;
+  };
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
 // ── Metadata ────────────────────────────────────────────────────────
 
 export interface MetaData {
@@ -272,6 +333,8 @@ export interface MetaData {
     revenue?: boolean;
     taxRevenue?: boolean;
     ccaaFiscalBalance?: boolean;
+    ccaaSpending?: boolean;
+    ccaaForalFlows?: boolean;
   };
   sources: {
     debt: {
@@ -339,6 +402,22 @@ export interface MetaData {
       lastRealDataDate?: string;
       latestYear: number;
       years: number;
+    };
+    ccaaSpending?: {
+      success: boolean;
+      lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
+      latestYear: number;
+      years: number;
+    };
+    ccaaForalFlows?: {
+      success: boolean;
+      lastUpdated: string;
+      lastFetchAt?: string;
+      lastRealDataDate?: string;
+      latestYear: number;
+      communities: number;
     };
   };
 }

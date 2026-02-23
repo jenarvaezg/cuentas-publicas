@@ -6,7 +6,7 @@ Inventario técnico de todos los datos del dashboard: clasificación, fuentes, f
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT y Ministerio de Hacienda) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 10 archivos JSON en `src/data/` (9 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
+El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT y Ministerio de Hacienda) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 11 archivos JSON en `src/data/` (10 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
 
 **Estado general**: De ~40 métricas mostradas, **~22 son automatizadas**, **~5 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~7 son derivadas** por cálculo.
 
@@ -256,7 +256,26 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 ---
 
-## 10. INFRAESTRUCTURA CI/CD
+## 10. IGAE — Gasto funcional CCAA (detalle COFOG)
+
+**Script**: `scripts/sources/ccaa-spending.mjs` | **Output**: `src/data/ccaa-spending.json`
+
+| Dato | Clasificación | Método | Frecuencia | Fragilidad |
+|------|---------------|--------|------------|------------|
+| Gasto total por CCAA | **AUTOMATIZADO** | XLS `COFOG_A_Detalle_CCAA_YYYY.xlsx`, fila `GASTO TOTAL` | Anual | MEDIA |
+| 10 divisiones COFOG por CCAA | **AUTOMATIZADO** | Parse dinámico de cabecera `01..10` + `TOTAL` | Anual | MEDIA |
+| Función principal por CCAA | **DERIVADO** | `argmax` sobre divisiones COFOG | Anual | BAJA |
+
+**URL documento**:
+- `https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-A/COFOG_A_Detalle_CCAA_YYYY.xlsx`
+
+**Cobertura**: 17/17 CCAA (incluye Navarra y País Vasco) en el corte actual (2024).
+
+**Fallback**: Dataset local de referencia 2024 con trazabilidad en `sourceAttribution`.
+
+---
+
+## 11. INFRAESTRUCTURA CI/CD
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
@@ -264,14 +283,14 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 | `update-data.yml` | Lunes 08:00 UTC + manual | `npm run download-data` -> check stale -> auto-commit |
 
 **Lógica de robustez en CI**:
-1. **Éxito parcial**: El script de descarga devuelve exit 0 si las fuentes críticas (deuda, demografía, pensiones, presupuestos) son correctas, permitiendo fallos temporales en fuentes secundarias (Eurostat, CCAA).
+1. **Fail-fast ante fallback**: cualquier fuente que termine en fallback se marca como error de pipeline (no se considera éxito parcial), para evitar publicar datos potencialmente inconsistentes o desactualizados.
 2. **Alertas de datos obsoletos (Stale)**: Tras la descarga, el workflow verifica si alguna fuente tiene un desfase > 14 días. Si es así, crea automáticamente una GitHub Issue detallando el problema.
-3. **Auto-commit**: Solo se guardan cambios si las fuentes críticas están OK (datasets + API pública + artefactos SEO/SSG + RSS).
+3. **Auto-commit**: Solo se guardan cambios cuando todas las fuentes exigidas por el pipeline pasan sin fallback (datasets + API pública + artefactos SEO/SSG + RSS).
 4. **Validación de cabeceras**: Los scripts de Seguridad Social e IGAE validan la estructura del Excel antes de procesar, emitiendo avisos ante cambios de formato.
 
 ---
 
-## 11. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+## 12. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
 
 ### AUTOMATIZADOS (se actualizan solos cada lunes)
 | Dato | Fuente | Frescura | Confiabilidad |
@@ -294,6 +313,7 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 | Deuda CCAA % PIB | BdE CSV be1310 | Trimestral | Alta |
 | Deuda CCAA absoluta | BdE CSV be1309 | Trimestral | Alta |
 | Balanzas fiscales CCAA (cedidos/transferencias) | Hacienda XLS liquidación | Anual (liquidación) | Media |
+| Gasto funcional CCAA (COFOG detalle) | IGAE XLS CCAA-A | Anual | Media |
 | Ingresos totales (TR) | Eurostat API gov_10a_main | Anual (~1-2a lag) | Alta |
 | Gastos totales (TE) | Eurostat API gov_10a_main | Anual | Alta |
 | Déficit/superávit (B9) | Eurostat API gov_10a_main | Anual | Alta |
@@ -345,7 +365,7 @@ El dashboard utiliza 7 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 
 ---
 
-## 12. MAPA DE ARCHIVOS
+## 13. MAPA DE ARCHIVOS
 
 ```
 scripts/
@@ -358,6 +378,7 @@ scripts/
     eurostat.mjs                 # Eurostat API (5 indicadores EU-27 + 6 revenue ES)
     aeat.mjs                     # AEAT (series + delegaciones)
     hacienda-fiscal-balance.mjs  # Hacienda (balanzas fiscales CCAA, régimen común)
+    ccaa-spending.mjs            # IGAE (gasto funcional CCAA, detalle COFOG)
   lib/
     fetch-utils.mjs              # fetchWithRetry (backoff + timeout)
     csv-parser.mjs               # Parser CSV formato español
@@ -373,6 +394,7 @@ src/data/
   revenue.json                   # Ingresos vs gastos AAPP (30 años, 6 indicadores)
   tax-revenue.json               # Recaudación AEAT (nacional + CCAA)
   ccaa-fiscal-balance.json       # Balanzas fiscales CCAA (2019-2023, régimen común)
+  ccaa-spending.json             # Gasto funcional CCAA (COFOG detalle, 17 CCAA)
   meta.json                      # Estado última descarga
   types.ts                       # Interfaces TypeScript
   sources.ts                     # Atribución fuentes (URLs, nombres)

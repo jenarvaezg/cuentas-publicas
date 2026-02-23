@@ -13,6 +13,8 @@ describe("useData", () => {
     expect(result.current.eurostat).toBeDefined();
     expect(result.current.ccaaDebt).toBeDefined();
     expect(result.current.ccaaFiscalBalance).toBeDefined();
+    expect(result.current.ccaaForalFlows).toBeDefined();
+    expect(result.current.ccaaSpending).toBeDefined();
     expect(result.current.revenue).toBeDefined();
     expect(result.current.taxRevenue).toBeDefined();
     expect(result.current.meta).toBeDefined();

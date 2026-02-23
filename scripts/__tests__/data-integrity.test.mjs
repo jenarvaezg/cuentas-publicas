@@ -64,6 +64,54 @@ describe('data integrity', () => {
     expect(typeof ccaa.total.debtYoYChangeAbsolute).toBe('number')
   })
 
+  it('valida consistencia de códigos CCAA entre datasets territoriales', () => {
+    const ccaaDebt = loadDataFile('ccaa-debt.json')
+    const taxRevenue = loadDataFile('tax-revenue.json')
+    const fiscalBalance = loadDataFile('ccaa-fiscal-balance.json')
+    const ccaaSpending = loadDataFile('ccaa-spending.json')
+    const ccaaForalFlows = loadDataFile('ccaa-foral-flows.json')
+
+    const debtCodes = new Set(ccaaDebt.ccaa.map((entry) => entry.code))
+    expect(debtCodes.size).toBe(17)
+
+    const latestTaxCcaaYear = Math.max(
+      ...Object.keys(taxRevenue.ccaa || {}).map((year) => Number(year)),
+    )
+    expect(Number.isFinite(latestTaxCcaaYear)).toBe(true)
+    const taxEntries = taxRevenue.ccaa?.[String(latestTaxCcaaYear)]?.entries || []
+    const taxCodes = new Set(taxEntries.map((entry) => entry.code))
+
+    // AEAT delegaciones debe cubrir 17 CCAA (incluye forales, aunque con alcance limitado)
+    expect(taxCodes.size).toBe(17)
+    expect([...debtCodes].every((code) => taxCodes.has(code))).toBe(true)
+
+    const latestBalanceYear = String(fiscalBalance.latestYear)
+    const balanceEntries = fiscalBalance.byYear?.[latestBalanceYear]?.entries || []
+    const balanceCodes = new Set(balanceEntries.map((entry) => entry.code))
+
+    // Hacienda (régimen común) excluye forales: esperamos 15 códigos solapados
+    expect(balanceCodes.size).toBe(15)
+    const overlap = [...balanceCodes].filter((code) => debtCodes.has(code))
+    expect(overlap.length).toBe(15)
+
+    // Guardrail explícito: forales no deben aparecer en balance de régimen común
+    expect(balanceCodes.has('CA15')).toBe(false)
+    expect(balanceCodes.has('CA16')).toBe(false)
+
+    const latestSpendingYear = String(ccaaSpending.latestYear)
+    const spendingEntries = ccaaSpending.byYear?.[latestSpendingYear]?.entries || []
+    const spendingCodes = new Set(spendingEntries.map((entry) => entry.code))
+    expect(spendingCodes.size).toBe(17)
+    expect([...debtCodes].every((code) => spendingCodes.has(code))).toBe(true)
+
+    const latestForalYear = String(ccaaForalFlows.latestYear)
+    const foralEntries = ccaaForalFlows.byYear?.[latestForalYear]?.entries || []
+    const foralCodes = new Set(foralEntries.map((entry) => entry.code))
+    expect(foralCodes.size).toBe(2)
+    expect(foralCodes.has('CA15')).toBe(true)
+    expect(foralCodes.has('CA16')).toBe(true)
+  })
+
   it('valida dataset de ingresos y gastos', () => {
     const revenue = loadDataFile('revenue.json')
     expect(Array.isArray(revenue.years)).toBe(true)
@@ -129,6 +177,43 @@ describe('data integrity', () => {
     expect(Number.isFinite(madrid.netBalance)).toBe(true)
   })
 
+  it('valida gasto funcional CCAA (IGAE detalle)', () => {
+    const spending = loadDataFile('ccaa-spending.json')
+    expect(Array.isArray(spending.years)).toBe(true)
+    expect(spending.years.length).toBeGreaterThan(0)
+    expect(Number.isFinite(spending.latestYear)).toBe(true)
+
+    const latest = spending.byYear[String(spending.latestYear)]
+    expect(latest).toBeDefined()
+    expect(Array.isArray(latest.entries)).toBe(true)
+    expect(latest.entries.length).toBe(17)
+
+    const madrid = latest.entries.find((entry) => entry.code === 'CA13')
+    expect(madrid).toBeDefined()
+    expect(madrid.total).toBeGreaterThan(0)
+    expect(Number.isFinite(madrid.divisions['07'])).toBe(true)
+    expect(Number.isFinite(madrid.topDivisionPct)).toBe(true)
+  })
+
+  it('valida flujos forales CCAA (Navarra y País Vasco)', () => {
+    const foral = loadDataFile('ccaa-foral-flows.json')
+    expect(Array.isArray(foral.years)).toBe(true)
+    expect(foral.years.length).toBeGreaterThan(0)
+    expect(Number.isFinite(foral.latestYear)).toBe(true)
+
+    const latest = foral.byYear[String(foral.latestYear)]
+    expect(latest).toBeDefined()
+    expect(Array.isArray(latest.entries)).toBe(true)
+    expect(latest.entries.length).toBe(2)
+
+    const navarra = latest.entries.find((entry) => entry.code === 'CA15')
+    const paisVasco = latest.entries.find((entry) => entry.code === 'CA16')
+    expect(navarra).toBeDefined()
+    expect(paisVasco).toBeDefined()
+    expect(Number.isFinite(navarra.paymentToState)).toBe(true)
+    expect(Number.isFinite(paisVasco.paymentToState)).toBe(true)
+  })
+
   it('valida metadatos de frescura por fuente', () => {
     const meta = loadDataFile('meta.json')
     const sourceEntries = Object.entries(meta.sources || {})
@@ -165,6 +250,8 @@ describe('data integrity', () => {
       'revenue.json',
       'tax-revenue.json',
       'ccaa-fiscal-balance.json',
+      'ccaa-spending.json',
+      'ccaa-foral-flows.json',
       'meta.json',
       'index.json'
     ]
@@ -184,6 +271,12 @@ describe('data integrity', () => {
     expect(
       apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/ccaa-fiscal-balance.json'),
     ).toBe(true)
+    expect(apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/ccaa-spending.json')).toBe(
+      true,
+    )
+    expect(apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/ccaa-foral-flows.json')).toBe(
+      true,
+    )
   })
 
   it('valida consistencia entre catálogo API y OpenAPI', () => {

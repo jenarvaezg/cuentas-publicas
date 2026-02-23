@@ -77,6 +77,14 @@ describe("CcaaDebtBlock", () => {
         debtYoYChangeAbsolute: 1.7e9,
         debtYoYChangePct: 2.4,
       },
+      {
+        code: "CA15",
+        name: "Navarra",
+        debtToGDP: 14.2,
+        debtAbsolute: 9e9,
+        debtYoYChangeAbsolute: 0.2e9,
+        debtYoYChangePct: 2.1,
+      },
     ],
     total: { debtToGDP: 20.4, debtAbsolute: 338e9 },
     quarter: "2025-Q3",
@@ -131,13 +139,111 @@ describe("CcaaDebtBlock", () => {
             iiee: 0,
             irnr: 0,
           },
+          {
+            code: "CA15",
+            name: "Navarra",
+            total: 3_200,
+            irpf: 0,
+            iva: 0,
+            sociedades: 0,
+            iiee: 0,
+            irnr: 0,
+          },
+        ],
+      },
+    },
+  };
+
+  const mockCcaaFiscalBalance = {
+    years: [2023],
+    latestYear: 2023,
+    byYear: {
+      "2023": {
+        entries: [
+          {
+            code: "CA09",
+            name: "Cataluña",
+            cededTaxes: 1267,
+            transfers: 1457,
+            netBalance: 190,
+            transferToTaxRatio: 1.15,
+            cededTaxesBreakdown: { irpf: 0, iva: 0, iiee: 0 },
+            transfersBreakdown: {
+              fondoGarantia: 0,
+              fondoSuficiencia: 0,
+              fondoCompetitividad: 0,
+              fondoCooperacion: 0,
+            },
+          },
+        ],
+      },
+    },
+  };
+
+  const mockCcaaSpending = {
+    years: [2024],
+    latestYear: 2024,
+    byYear: {
+      "2024": {
+        entries: [
+          {
+            code: "CA09",
+            name: "Cataluña",
+            total: 109_200,
+            divisions: {
+              "01": 11_100,
+              "02": 0,
+              "03": 3_200,
+              "04": 8_400,
+              "05": 2_600,
+              "06": 1_700,
+              "07": 42_900,
+              "08": 2_800,
+              "09": 25_700,
+              "10": 10_800,
+            },
+            topDivisionCode: "07",
+            topDivisionName: "Salud",
+            topDivisionAmount: 42_900,
+            topDivisionPct: 39.3,
+          },
+        ],
+      },
+    },
+  };
+
+  const mockCcaaForalFlows = {
+    years: [2024],
+    latestYear: 2024,
+    byYear: {
+      "2024": {
+        entries: [
+          {
+            code: "CA15",
+            name: "Navarra",
+            regime: "foral",
+            paymentToState: 699,
+            adjustmentsWithState: 1376,
+            netFlowToState: -677,
+            detail: {
+              paymentLabel: "Total Pagos Aportación Neta",
+              adjustmentsLabel: "Total Ajustes fiscales",
+              unit: "M€",
+            },
+          },
         ],
       },
     },
   };
 
   beforeEach(() => {
-    (useData as any).mockReturnValue({ ccaaDebt: mockCcaaDebt, taxRevenue: mockTaxRevenue });
+    (useData as any).mockReturnValue({
+      ccaaDebt: mockCcaaDebt,
+      taxRevenue: mockTaxRevenue,
+      ccaaFiscalBalance: mockCcaaFiscalBalance,
+      ccaaForalFlows: mockCcaaForalFlows,
+      ccaaSpending: mockCcaaSpending,
+    });
     window.history.replaceState({}, "", "/");
     tooltipPayload = {
       name: "Cataluña",
@@ -153,7 +259,7 @@ describe("CcaaDebtBlock", () => {
     render(<CcaaDebtBlock />);
     expect(screen.getByText("Deuda por Comunidad Autónoma")).toBeDefined();
 
-    expect(capturedRows).toEqual(["Cataluña", "C. Valenciana", "Andalucía", "Madrid"]);
+    expect(capturedRows).toEqual(["Cataluña", "C. Valenciana", "Andalucía", "Navarra", "Madrid"]);
     expect(screen.getByText(/be1310/)).toBeDefined();
     expect(screen.getByTestId("ref-line")).toBeDefined();
     expect(screen.getByText("Total nacional")).toBeInTheDocument();
@@ -184,7 +290,7 @@ describe("CcaaDebtBlock", () => {
     const metricSelect = screen.getByLabelText("Métrica") as HTMLSelectElement;
     fireEvent.change(metricSelect, { target: { value: "debtAbsolute" } });
 
-    expect(capturedRows).toEqual(["Andalucía", "C. Valenciana", "Madrid", "Cataluña"]);
+    expect(capturedRows).toEqual(["Andalucía", "C. Valenciana", "Madrid", "Cataluña", "Navarra"]);
     expect(screen.getByText(/be1309/)).toBeDefined();
     expect(screen.queryByTestId("ref-line")).toBeNull();
     expect(screen.queryByText("Total nacional")).toBeNull();
@@ -204,6 +310,31 @@ describe("CcaaDebtBlock", () => {
     expect(screen.getByText(/Gasto estimado/)).toBeInTheDocument();
     expect(screen.getByText(/Ingresos tributarios AEAT/)).toBeInTheDocument();
     expect(window.location.search).toContain("ccaa=CA17");
+  });
+
+  it("muestra saldo oficial de Hacienda cuando hay dato para la comunidad", () => {
+    window.history.replaceState({}, "", "/?section=ccaa&ccaa=CA09");
+    render(<CcaaDebtBlock />);
+
+    expect(screen.getByText(/Saldo CCAA \(oficial\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Saldo neto:\s*\+190 M€/)).toBeInTheDocument();
+    expect(screen.getByText(/Gasto CCAA \(oficial\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Gasto total:\s*109\.200 M€/)).toBeInTheDocument();
+    expect(screen.getByText(/Función principal:\s*Salud/)).toBeInTheDocument();
+    expect(screen.getByText(/año oficial 2023/)).toBeInTheDocument();
+  });
+
+  it("muestra referencias forales cuando no hay balanza de régimen común", () => {
+    window.history.replaceState({}, "", "/?section=ccaa&ccaa=CA15");
+    render(<CcaaDebtBlock />);
+
+    expect(
+      screen.getByText(/Para esta comunidad se muestran referencias forales/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Pago al Estado:\s*699 M€/)).toBeInTheDocument();
+    expect(screen.getByText(/Ajustes con el Estado:\s*1[.,]?376 M€/)).toBeInTheDocument();
+    expect(screen.getByText(/Flujo neto:\s*-677 M€/)).toBeInTheDocument();
+    expect(screen.getByText(/año foral 2024/)).toBeInTheDocument();
   });
 
   it("no ensucia la URL en el montaje con valores por defecto", () => {

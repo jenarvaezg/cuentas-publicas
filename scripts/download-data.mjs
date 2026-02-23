@@ -7,6 +7,8 @@ import { downloadBudgetData } from './sources/igae.mjs'
 import { downloadEurostatData, downloadRevenueData } from './sources/eurostat.mjs'
 import { downloadTaxRevenueData } from './sources/aeat.mjs'
 import { downloadCcaaFiscalBalanceData } from './sources/hacienda-fiscal-balance.mjs'
+import { downloadCcaaSpendingData } from './sources/ccaa-spending.mjs'
+import { downloadCcaaForalFlowsData } from './sources/ccaa-foral-flows.mjs'
 
 const SITE_URL = 'https://cuentas-publicas.es'
 
@@ -157,7 +159,9 @@ const FALLBACK_GUARD_KEYS = {
   ccaaDebt: ['be1309', 'be1310'],
   revenue: ['revenue'],
   taxRevenue: ['series', 'delegaciones'],
-  ccaaFiscalBalance: ['balances']
+  ccaaFiscalBalance: ['balances'],
+  ccaaSpending: ['spending'],
+  ccaaForalFlows: ['foral']
 }
 
 function getFallbackKeys(sourceName, payload) {
@@ -216,7 +220,9 @@ async function main() {
     downloadCcaaDebtData(),
     downloadRevenueData(),
     downloadTaxRevenueData(),
-    downloadCcaaFiscalBalanceData()
+    downloadCcaaFiscalBalanceData(),
+    downloadCcaaSpendingData(),
+    downloadCcaaForalFlowsData()
   ])
 
   const [
@@ -228,7 +234,9 @@ async function main() {
     ccaaDebtResult,
     revenueResult,
     taxRevenueResult,
-    ccaaFiscalBalanceResult
+    ccaaFiscalBalanceResult,
+    ccaaSpendingResult,
+    ccaaForalFlowsResult
   ] = results
 
   const sourceResults = {
@@ -240,7 +248,9 @@ async function main() {
     ccaaDebt: ccaaDebtResult,
     revenue: revenueResult,
     taxRevenue: taxRevenueResult,
-    ccaaFiscalBalance: ccaaFiscalBalanceResult
+    ccaaFiscalBalance: ccaaFiscalBalanceResult,
+    ccaaSpending: ccaaSpendingResult,
+    ccaaForalFlows: ccaaForalFlowsResult
   }
 
   const fulfilled = Object.fromEntries(
@@ -333,6 +343,20 @@ async function main() {
     console.log('✅ ccaa-fiscal-balance.json')
   } else {
     console.error('❌ ccaa-fiscal-balance.json - Error:', getSourceFailureReason(ccaaFiscalBalanceResult, fallbackKeys.ccaaFiscalBalance))
+  }
+
+  if (status.ccaaSpending) {
+    writeMirroredDataFile('ccaa-spending.json', ccaaSpendingResult.value)
+    console.log('✅ ccaa-spending.json')
+  } else {
+    console.error('❌ ccaa-spending.json - Error:', getSourceFailureReason(ccaaSpendingResult, fallbackKeys.ccaaSpending))
+  }
+
+  if (status.ccaaForalFlows) {
+    writeMirroredDataFile('ccaa-foral-flows.json', ccaaForalFlowsResult.value)
+    console.log('✅ ccaa-foral-flows.json')
+  } else {
+    console.error('❌ ccaa-foral-flows.json - Error:', getSourceFailureReason(ccaaForalFlowsResult, fallbackKeys.ccaaForalFlows))
   }
 
   // Write metadata file
@@ -473,6 +497,38 @@ async function main() {
           : null,
         latestYear: fulfilled.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.latestYear : null,
         years: fulfilled.ccaaFiscalBalance ? ccaaFiscalBalanceResult.value.years.length : 0
+      },
+      ccaaSpending: {
+        success: status.ccaaSpending,
+        fallbackDetected: fallbackKeys.ccaaSpending.length > 0,
+        fallbackKeys: fallbackKeys.ccaaSpending,
+        lastUpdated: fulfilled.ccaaSpending ? ccaaSpendingResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.ccaaSpending ? nowIso : null,
+        lastRealDataDate: fulfilled.ccaaSpending
+          ? pickLatestDate([
+            ccaaSpendingResult.value.latestYear,
+            ...getAttributionDates(ccaaSpendingResult.value.sourceAttribution)
+          ])
+          : null,
+        latestYear: fulfilled.ccaaSpending ? ccaaSpendingResult.value.latestYear : null,
+        years: fulfilled.ccaaSpending ? ccaaSpendingResult.value.years.length : 0
+      },
+      ccaaForalFlows: {
+        success: status.ccaaForalFlows,
+        fallbackDetected: fallbackKeys.ccaaForalFlows.length > 0,
+        fallbackKeys: fallbackKeys.ccaaForalFlows,
+        lastUpdated: fulfilled.ccaaForalFlows ? ccaaForalFlowsResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.ccaaForalFlows ? nowIso : null,
+        lastRealDataDate: fulfilled.ccaaForalFlows
+          ? pickLatestDate([
+            ccaaForalFlowsResult.value.latestYear,
+            ...getAttributionDates(ccaaForalFlowsResult.value.sourceAttribution)
+          ])
+          : null,
+        latestYear: fulfilled.ccaaForalFlows ? ccaaForalFlowsResult.value.latestYear : null,
+        communities: fulfilled.ccaaForalFlows
+          ? ccaaForalFlowsResult.value.byYear?.[String(ccaaForalFlowsResult.value.latestYear)]?.entries?.length || 0
+          : 0
       }
     }
   }
@@ -657,6 +713,27 @@ async function main() {
   } else {
     console.log('Balanzas CCAA: ❌ Error')
   }
+
+  if (status.ccaaSpending && ccaaSpendingResult.value) {
+    const spendingAttr = ccaaSpendingResult.value.sourceAttribution?.spending
+    const yearCount = ccaaSpendingResult.value.years?.length || 0
+    const latestYear = ccaaSpendingResult.value.latestYear
+    const latestEntries = ccaaSpendingResult.value.byYear?.[String(latestYear)]?.entries?.length || 0
+    const isLive = spendingAttr?.type === 'xlsx'
+    console.log(`Gasto CCAA: ${isLive ? '✅' : '⚠️'} ${spendingAttr?.type?.toUpperCase() || 'N/A'} (${yearCount} años, ${latestEntries} CCAA en ${latestYear})`)
+  } else {
+    console.log('Gasto CCAA: ❌ Error')
+  }
+
+  if (status.ccaaForalFlows && ccaaForalFlowsResult.value) {
+    const foralAttr = ccaaForalFlowsResult.value.sourceAttribution?.foral
+    const latestYear = ccaaForalFlowsResult.value.latestYear
+    const latestEntries = ccaaForalFlowsResult.value.byYear?.[String(latestYear)]?.entries?.length || 0
+    const isLive = foralAttr?.type === 'api'
+    console.log(`Flujos forales: ${isLive ? '✅' : '⚠️'} ${foralAttr?.type?.toUpperCase() || 'N/A'} (${latestEntries} CCAA en ${latestYear})`)
+  } else {
+    console.log('Flujos forales: ❌ Error')
+  }
   console.log()
 
   // Fallbacks are treated as errors (potential endpoint/schema mismatch).
@@ -729,6 +806,8 @@ function buildPublicApiIndex(meta) {
       { path: '/api/v1/ccaa-debt.json', source: 'Banco de España', description: 'Deuda de CCAA por comunidad' },
       { path: '/api/v1/tax-revenue.json', source: 'AEAT', description: 'Recaudación tributaria por impuesto y CCAA' },
       { path: '/api/v1/ccaa-fiscal-balance.json', source: 'Ministerio de Hacienda', description: 'Impuestos cedidos vs transferencias por CCAA (régimen común)' },
+      { path: '/api/v1/ccaa-spending.json', source: 'IGAE', description: 'Gasto funcional COFOG por CCAA (administración regional)' },
+      { path: '/api/v1/ccaa-foral-flows.json', source: 'Gobierno de Navarra + Gobierno Vasco', description: 'Flujos forales de Navarra y País Vasco (aportación/cupo)' },
       { path: '/api/v1/meta.json', source: 'Pipeline', description: 'Estado de actualización y frescura de fuentes' }
     ],
     freshness: meta.sources

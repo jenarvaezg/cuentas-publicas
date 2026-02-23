@@ -63,6 +63,8 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Nuevas visualizaciones
 
+- **Sankey fiscal ultra detallado**: visualización de flujos desde ingresos (figuras tributarias y no tributarias) hacia usos finales del gasto (subsector, política, programa, capítulo/artículo/concepto), con filtros por Estado/CCAA/Provincia/Ayuntamiento y trazabilidad completa de fuente por nodo y enlace. Objetivo: nivel "aguja en pajar". Especificación: [`SANKEY-1000EUR.md`](SANKEY-1000EUR.md).
+- **"De cada 1.000€ que entran, se reparten así"**: bloque narrativo y comparativo que convierta todo el presupuesto en una unidad fija (por 1.000€ de ingresos) con desglose granular por destino y opción de ver versión consolidada o por administración territorial. Especificación: [`SANKEY-1000EUR.md`](SANKEY-1000EUR.md).
 - **Sección de demografía**: Bloque completo con población en tiempo real (contador estimado), natalidad, mortalidad e inmigración. Desglose por provincia. Fuente: INE (padrón continuo, estadísticas de nacimientos/defunciones, estadística de migraciones). Dificultad: ALTA.
 - **Proyecciones demográficas**: Pirámide de población actual + proyecciones INE a 20-30 años (ratio dependencia futuro).
 - **Población por tramos de edad**: Pirámide demográfica, ratio dependencia. Fuente: INE API — tablas demográficas.
@@ -96,3 +98,5 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 1. **Completar CCAA (déficit y gasto por comunidad)**  
    Último gran bloque funcional pendiente antes de nuevas líneas de producto.
+2. **Ejecutar checklist territorial CCAA→Provincia→Ayuntamiento**  
+   Seguir [`CHECKLIST-TERRITORIAL.md`](CHECKLIST-TERRITORIAL.md) comunidad a comunidad, con foco en máxima profundidad y frescura.
