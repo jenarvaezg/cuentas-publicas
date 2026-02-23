@@ -1,5 +1,5 @@
 import { ResponsiveSankey } from "@nivo/sankey";
-import { Info, Settings2, ZoomOut } from "lucide-react";
+import { Info, ZoomOut } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ const groupColors: Record<string, string> = {
 export const FlowsSankeyBlock: React.FC = () => {
   const { flows, taxRevenue, ccaaSpending } = useData();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [excludedRegion, setExcludedRegion] = useState<string | null>(null);
+  const [excludedRegions, setExcludedRegions] = useState<string[]>([]);
   const { lang } = useI18n();
 
   const copy = useMemo(() => {
@@ -75,7 +75,8 @@ export const FlowsSankeyBlock: React.FC = () => {
           title: "Public Accounts Circulation",
           description: `Aggregate flows of income, debt, and spending for ${flows?.latestYear}. Click any node to drill-down into its specific path.`,
           allSpain: "Spain (Consolidated)",
-          excludeRegionGroup: "Simulate exclusion (What-If):",
+          excludeRegionGroup: "Exclude regions from balance (What-If):",
+          clearExclusions: "Clear Exclusions",
           withoutRegion: "Without",
           resetView: "Reset View",
           infoBox:
@@ -122,7 +123,8 @@ export const FlowsSankeyBlock: React.FC = () => {
           title: "Circulación de las Cuentas Públicas",
           description: `Flujos agregados de ingresos, deuda y gasto para el año ${flows?.latestYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`,
           allSpain: "España (Consolidado)",
-          excludeRegionGroup: "Simular exclusión (What-If):",
+          excludeRegionGroup: "Excluir regiones del balance (What-If):",
+          clearExclusions: "Limpiar Exclusiones",
           withoutRegion: "Sin",
           resetView: "Restablecer Vista",
           infoBox:
@@ -183,15 +185,8 @@ export const FlowsSankeyBlock: React.FC = () => {
     const currentNodes = flows.nodes.map((n) => ({ ...n }));
     const currentLinks = flows.links.map((l) => ({ ...l }));
 
-    // --- MATH MODIFICATION: WHAT-IF SUBTRACTION ---
-    if (excludedRegion) {
-      const taxLatest = taxRevenue?.ccaa[taxRevenue.latestYear]?.entries.find(
-        (e) => e.code === excludedRegion,
-      );
-      const spendLatest = ccaaSpending?.byYear[ccaaSpending.latestYear]?.entries.find(
-        (e) => e.code === excludedRegion,
-      );
-
+    // --- MATH MODIFICATION: WHAT-IF SUBTRACTION (MULTI-REGION) ---
+    if (excludedRegions.length > 0) {
       let totalIncomeSubtracted = 0;
       let totalExpenseSubtracted = 0;
 
@@ -228,18 +223,35 @@ export const FlowsSankeyBlock: React.FC = () => {
         }
       };
 
-      // 1. Subtract Incomes (Taxes Collected in Region)
-      if (taxLatest) {
-        subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
-        subtractFromNodeAndLink("IVA", taxLatest.iva, true);
-        subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
-        subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
-        subtractFromNodeAndLink("IRNR", taxLatest.irnr, true);
-        totalIncomeSubtracted =
-          taxLatest.irpf + taxLatest.iva + taxLatest.sociedades + taxLatest.iiee + taxLatest.irnr;
+      // Aggregate subtractions across all excluded regions
+      for (const regionId of excludedRegions) {
+        // 1. Subtract Incomes (Taxes Collected in Region)
+        const taxLatest = taxRevenue?.ccaa[taxRevenue.latestYear]?.entries.find(
+          (e) => e.code === regionId,
+        );
+        if (taxLatest) {
+          subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
+          subtractFromNodeAndLink("IVA", taxLatest.iva, true);
+          subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
+          subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
+          subtractFromNodeAndLink("IRNR", taxLatest.irnr, true);
+          totalIncomeSubtracted +=
+            taxLatest.irpf + taxLatest.iva + taxLatest.sociedades + taxLatest.iiee + taxLatest.irnr;
+        }
+
+        // 2. Subtract Expenses (General Spending executed by Regional Govt)
+        const spendLatest = ccaaSpending?.byYear[ccaaSpending.latestYear]?.entries.find(
+          (e) => e.code === regionId,
+        );
+        if (spendLatest) {
+          for (const [cofog, amount] of Object.entries(spendLatest.divisions)) {
+            subtractFromNodeAndLink(`COFOG_${cofog}`, amount, false);
+            totalExpenseSubtracted += amount;
+          }
+        }
       }
 
-      // Propagate income subtraction to aggregators
+      // Propagate aggregated income subtraction to aggregators
       const ingresosTotales = currentNodes.find((n) => n.id === "INGRESOS_TOTALES");
       if (ingresosTotales && totalIncomeSubtracted > 0) {
         ingresosTotales.amount = Math.max(0, ingresosTotales.amount - totalIncomeSubtracted);
@@ -249,17 +261,9 @@ export const FlowsSankeyBlock: React.FC = () => {
         if (sumInLink) sumInLink.amount = Math.max(0, sumInLink.amount - totalIncomeSubtracted);
       }
 
-      // 2. Subtract Expenses (General Spending executed by Regional Govt)
-      if (spendLatest) {
-        for (const [cofog, amount] of Object.entries(spendLatest.divisions)) {
-          subtractFromNodeAndLink(`COFOG_${cofog}`, amount, false);
-          totalExpenseSubtracted += amount;
-        }
-      }
-
       // 3. Re-balance the deficit and central nodes
       const consolidadoNode = currentNodes.find((n) => n.id === "CONSOLIDADO");
-      if (consolidadoNode) {
+      if (consolidadoNode && totalExpenseSubtracted > 0) {
         consolidadoNode.amount = Math.max(0, consolidadoNode.amount - totalExpenseSubtracted);
       }
 
@@ -278,7 +282,7 @@ export const FlowsSankeyBlock: React.FC = () => {
     }
 
     return { activeNodes: currentNodes, activeLinks: currentLinks };
-  }, [flows, excludedRegion, taxRevenue, ccaaSpending]);
+  }, [flows, excludedRegions, taxRevenue, ccaaSpending]);
 
   const { filteredNodes, filteredLinks } = useMemo(() => {
     const { nodes, links } = getFilteredGraph(activeNodes, activeLinks, selectedNode);
@@ -295,28 +299,60 @@ export const FlowsSankeyBlock: React.FC = () => {
             <CardTitle className="flex items-center gap-2 text-2xl">{copy.title}</CardTitle>
             <CardDescription className="text-base mt-2">{copy.description}</CardDescription>
           </div>
-          <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
-            <div className="flex items-center gap-2 bg-muted/50 rounded-md p-1 border">
-              <Settings2 className="w-4 h-4 text-muted-foreground ml-2" />
-              <select
-                className="bg-transparent text-sm border-0 focus:ring-0 cursor-pointer pr-2 py-1 outline-none text-foreground font-medium"
-                value={excludedRegion || ""}
-                onChange={(e) => {
-                  setExcludedRegion(e.target.value === "" ? null : e.target.value);
-                  setSelectedNode(null); // Reset drilldown when simulating
+        </div>
+
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              {copy.excludeRegionGroup}
+            </span>
+            {excludedRegions.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setExcludedRegions([]);
+                  setSelectedNode(null);
                 }}
+                className="h-8 text-xs text-muted-foreground hover:text-foreground"
               >
-                <option value="">{copy.allSpain}</option>
-                <optgroup label={copy.excludeRegionGroup}>
-                  {ccaaOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {copy.withoutRegion} {opt.label}
-                    </option>
-                  ))}
-                </optgroup>
-              </select>
-            </div>
-            {selectedNode && (
+                {copy.clearExclusions}
+              </Button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-2 items-center">
+            {ccaaOptions.map((opt) => {
+              const isExcluded = excludedRegions.includes(opt.value);
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    setExcludedRegions(
+                      (prev) =>
+                        prev.includes(opt.value)
+                          ? prev.filter((r) => r !== opt.value) // Remove
+                          : [...prev, opt.value], // Add
+                    );
+                    setSelectedNode(null); // Reset drilldown when simulating
+                  }}
+                  className={`
+                    px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
+                    ${
+                      isExcluded
+                        ? "bg-destructive/10 border-destructive/20 text-destructive line-through decoration-destructive/50"
+                        : "bg-background border-border text-foreground hover:bg-muted"
+                    }
+                  `}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {selectedNode && (
+            <div className="mt-4 flex justify-end">
               <Button
                 variant="outline"
                 onClick={() => setSelectedNode(null)}
@@ -325,8 +361,8 @@ export const FlowsSankeyBlock: React.FC = () => {
                 <ZoomOut className="w-4 h-4" />
                 {copy.resetView}
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-0">
