@@ -142,21 +142,24 @@ export function PopulationPyramidChart({ data, selectedYear }: PopulationPyramid
     const yearData = data.byYear[selectedYear];
     if (!yearData) return [];
 
-    return data.ageGroups.map((ageGroup, idx) => ({
-      ageGroup,
-      maleSpain: -(yearData.male.spain[idx] ?? 0),
-      maleEu: -(yearData.male.eu[idx] ?? 0),
-      maleRestEurope: -(yearData.male.restEurope[idx] ?? 0),
-      maleAfrica: -(yearData.male.africa[idx] ?? 0),
-      maleAmericas: -(yearData.male.americas[idx] ?? 0),
-      maleAsiaOceania: -(yearData.male.asiaOceania[idx] ?? 0),
-      femaleSpain: yearData.female.spain[idx] ?? 0,
-      femaleEu: yearData.female.eu[idx] ?? 0,
-      femaleRestEurope: yearData.female.restEurope[idx] ?? 0,
-      femaleAfrica: yearData.female.africa[idx] ?? 0,
-      femaleAmericas: yearData.female.americas[idx] ?? 0,
-      femaleAsiaOceania: yearData.female.asiaOceania[idx] ?? 0,
-    }));
+    return [...data.ageGroups].reverse().map((ageGroup, idx) => {
+      const srcIdx = data.ageGroups.length - 1 - idx;
+      return {
+        ageGroup,
+        maleSpain: -(yearData.male.spain[srcIdx] ?? 0),
+        maleEu: -(yearData.male.eu[srcIdx] ?? 0),
+        maleRestEurope: -(yearData.male.restEurope[srcIdx] ?? 0),
+        maleAfrica: -(yearData.male.africa[srcIdx] ?? 0),
+        maleAmericas: -(yearData.male.americas[srcIdx] ?? 0),
+        maleAsiaOceania: -(yearData.male.asiaOceania[srcIdx] ?? 0),
+        femaleSpain: yearData.female.spain[srcIdx] ?? 0,
+        femaleEu: yearData.female.eu[srcIdx] ?? 0,
+        femaleRestEurope: yearData.female.restEurope[srcIdx] ?? 0,
+        femaleAfrica: yearData.female.africa[srcIdx] ?? 0,
+        femaleAmericas: yearData.female.americas[srcIdx] ?? 0,
+        femaleAsiaOceania: yearData.female.asiaOceania[srcIdx] ?? 0,
+      };
+    });
   }, [data.ageGroups, data.byYear, selectedYear]);
 
   if (chartData.length === 0) return null;
@@ -209,37 +212,37 @@ export function PopulationPyramidChart({ data, selectedYear }: PopulationPyramid
         {/* Male bars (negative / left side) */}
         <Bar
           dataKey="maleSpain"
-          stackId="male"
+          stackId="pyramid"
           fill={REGION_COLORS.spain}
           name={`${dm.pyramidMale} - ${dm.regionSpain}`}
         />
         <Bar
           dataKey="maleEu"
-          stackId="male"
+          stackId="pyramid"
           fill={REGION_COLORS.eu}
           name={`${dm.pyramidMale} - ${dm.regionEU}`}
         />
         <Bar
           dataKey="maleRestEurope"
-          stackId="male"
+          stackId="pyramid"
           fill={REGION_COLORS.restEurope}
           name={`${dm.pyramidMale} - ${dm.regionRestEurope}`}
         />
         <Bar
           dataKey="maleAfrica"
-          stackId="male"
+          stackId="pyramid"
           fill={REGION_COLORS.africa}
           name={`${dm.pyramidMale} - ${dm.regionAfrica}`}
         />
         <Bar
           dataKey="maleAmericas"
-          stackId="male"
+          stackId="pyramid"
           fill={REGION_COLORS.americas}
           name={`${dm.pyramidMale} - ${dm.regionAmericas}`}
         />
         <Bar
           dataKey="maleAsiaOceania"
-          stackId="male"
+          stackId="pyramid"
           fill={REGION_COLORS.asiaOceania}
           name={`${dm.pyramidMale} - ${dm.regionAsiaOceania}`}
         />
@@ -247,37 +250,37 @@ export function PopulationPyramidChart({ data, selectedYear }: PopulationPyramid
         {/* Female bars (positive / right side) */}
         <Bar
           dataKey="femaleSpain"
-          stackId="female"
+          stackId="pyramid"
           fill={REGION_COLORS.spain}
           name={`${dm.pyramidFemale} - ${dm.regionSpain}`}
         />
         <Bar
           dataKey="femaleEu"
-          stackId="female"
+          stackId="pyramid"
           fill={REGION_COLORS.eu}
           name={`${dm.pyramidFemale} - ${dm.regionEU}`}
         />
         <Bar
           dataKey="femaleRestEurope"
-          stackId="female"
+          stackId="pyramid"
           fill={REGION_COLORS.restEurope}
           name={`${dm.pyramidFemale} - ${dm.regionRestEurope}`}
         />
         <Bar
           dataKey="femaleAfrica"
-          stackId="female"
+          stackId="pyramid"
           fill={REGION_COLORS.africa}
           name={`${dm.pyramidFemale} - ${dm.regionAfrica}`}
         />
         <Bar
           dataKey="femaleAmericas"
-          stackId="female"
+          stackId="pyramid"
           fill={REGION_COLORS.americas}
           name={`${dm.pyramidFemale} - ${dm.regionAmericas}`}
         />
         <Bar
           dataKey="femaleAsiaOceania"
-          stackId="female"
+          stackId="pyramid"
           fill={REGION_COLORS.asiaOceania}
           name={`${dm.pyramidFemale} - ${dm.regionAsiaOceania}`}
         />
