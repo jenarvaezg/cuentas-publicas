@@ -72,8 +72,8 @@ Construir cobertura fiscal territorial máxima y fresca para responder, con traz
 - [ ] CA12 Galicia: completar provincia y ayuntamientos.
 - [ ] CA13 Madrid: completar ayuntamientos.
 - [ ] CA14 Murcia: completar ayuntamientos.
-- [ ] CA15 Navarra: completar fuente foral equivalente, provincia y ayuntamientos.
-- [ ] CA16 País Vasco: completar fuente foral equivalente, provincia y ayuntamientos.
+- [ ] CA15 Navarra: bajar a nivel provincial y ayuntamientos (fuente foral agregada).
+- [ ] CA16 País Vasco: bajar a nivel provincial y ayuntamientos (fuente foral agregada).
 - [ ] CA17 La Rioja: completar ayuntamientos.
 
 ## Pendientes transversales (documentación y gobernanza)

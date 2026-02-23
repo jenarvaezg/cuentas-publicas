@@ -99,6 +99,7 @@ export function CcaaDebtBlock() {
             "Proxy based on 12m debt change (BdE) and AEAT tax revenue. Not equivalent to national accounts deficit.",
           unavailableProxy: "Not available for this region/year.",
           taxRevenueRef: "AEAT tax revenue",
+          foralTaxRevenueRef: "Foral tax revenue",
           basedOnYear: "based on year",
           top3: "Top 3",
           restRegions: "Rest of regions",
@@ -157,6 +158,7 @@ export function CcaaDebtBlock() {
             "Proxy basado en variación de deuda 12m (BdE) e ingresos tributarios AEAT. No equivale al déficit de contabilidad nacional.",
           unavailableProxy: "No disponible para esta comunidad/año.",
           taxRevenueRef: "Ingresos tributarios AEAT",
+          foralTaxRevenueRef: "Recaudación Tributaria Foral",
           basedOnYear: "base año",
           top3: "Top 3",
           restRegions: "Resto de CCAA",
@@ -212,14 +214,6 @@ export function CcaaDebtBlock() {
   }, [taxRevenue.ccaa, taxRevenueYear]);
   const selectedTaxRevenue = selectedEntry ? taxRevenueByCode.get(selectedEntry.code) : null;
 
-  const selectedDebtYoYChange = selectedEntry?.debtYoYChangeAbsolute ?? null;
-  const selectedDebtYoYChangePct = selectedEntry?.debtYoYChangePct ?? null;
-  const selectedTaxRevenueEuros = selectedTaxRevenue ? selectedTaxRevenue.total * 1_000_000 : null;
-  const selectedSpendingProxyEuros =
-    selectedDebtYoYChange != null && selectedTaxRevenueEuros != null
-      ? selectedTaxRevenueEuros + selectedDebtYoYChange
-      : null;
-
   const balanceYears = ccaaFiscalBalance?.years ?? [];
   const latestBalanceYear = ccaaFiscalBalance?.latestYear ?? balanceYears[balanceYears.length - 1];
   const balanceByCode = useMemo(() => {
@@ -229,6 +223,7 @@ export function CcaaDebtBlock() {
   }, [ccaaFiscalBalance, latestBalanceYear]);
   const selectedBalance = selectedEntry ? balanceByCode.get(selectedEntry.code) : undefined;
   const selectedIsForal = selectedEntry?.code === "CA15" || selectedEntry?.code === "CA16";
+
   const foralYears = ccaaForalFlows?.years ?? [];
   const latestForalYear = ccaaForalFlows?.latestYear ?? foralYears[foralYears.length - 1];
   const foralByCode = useMemo(() => {
@@ -237,6 +232,21 @@ export function CcaaDebtBlock() {
     return new Map(entries.map((entry) => [entry.code, entry]));
   }, [ccaaForalFlows, latestForalYear]);
   const selectedForalFlow = selectedEntry ? foralByCode.get(selectedEntry.code) : undefined;
+
+  const selectedDebtYoYChange = selectedEntry?.debtYoYChangeAbsolute ?? null;
+  const selectedDebtYoYChangePct = selectedEntry?.debtYoYChangePct ?? null;
+
+  const selectedTaxRevenueEuros =
+    selectedIsForal && selectedForalFlow?.taxRevenue != null
+      ? selectedForalFlow.taxRevenue * 1_000_000
+      : selectedTaxRevenue
+        ? selectedTaxRevenue.total * 1_000_000
+        : null;
+
+  const selectedSpendingProxyEuros =
+    selectedDebtYoYChange != null && selectedTaxRevenueEuros != null
+      ? selectedTaxRevenueEuros + selectedDebtYoYChange
+      : null;
 
   const spendingYears = ccaaSpending?.years ?? [];
   const latestSpendingYear = ccaaSpending?.latestYear ?? spendingYears[spendingYears.length - 1];
@@ -487,8 +497,9 @@ export function CcaaDebtBlock() {
                       {copy.spendingProxy}: {formatCompact(selectedSpendingProxyEuros)}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {copy.taxRevenueRef}: {formatCompact(selectedTaxRevenueEuros ?? 0)} (
-                      {copy.basedOnYear} {taxRevenueYear})
+                      {selectedIsForal ? copy.foralTaxRevenueRef : copy.taxRevenueRef}:{" "}
+                      {formatCompact(selectedTaxRevenueEuros ?? 0)} ({copy.basedOnYear}{" "}
+                      {selectedIsForal ? latestForalYear : taxRevenueYear})
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">{copy.proxyNote}</p>
                   </>

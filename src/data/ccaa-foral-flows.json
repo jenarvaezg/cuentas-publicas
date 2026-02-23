@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-23T17:41:33.671Z",
+  "lastUpdated": "2026-02-23T20:44:41.316Z",
   "years": [
     2024
   ],
@@ -14,6 +14,7 @@
           "paymentToState": 698.644,
           "adjustmentsWithState": 1375.927,
           "netFlowToState": -677.283,
+          "taxRevenue": 5433,
           "detail": {
             "paymentLabel": "Total Pagos Aportación Neta",
             "adjustmentsLabel": "Total Ajustes fiscales",
@@ -27,6 +28,7 @@
           "paymentToState": 1504.5,
           "adjustmentsWithState": null,
           "netFlowToState": null,
+          "taxRevenue": 18310,
           "detail": {
             "paymentLabel": "Cupo líquido provisional",
             "adjustmentsLabel": null,

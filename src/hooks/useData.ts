@@ -7,6 +7,7 @@ import ccaaSpendingJson from "@/data/ccaa-spending.json";
 import debtJson from "@/data/debt.json";
 import demographicsJson from "@/data/demographics.json";
 import eurostatJson from "@/data/eurostat.json";
+import flowsJson from "@/data/flows.json";
 import metaJson from "@/data/meta.json";
 import pensionsJson from "@/data/pensions.json";
 import revenueJson from "@/data/revenue.json";
@@ -20,6 +21,7 @@ import type {
   DebtData,
   DemographicsData,
   EurostatData,
+  FlowsData,
   MetaData,
   PensionData,
   RevenueData,
@@ -39,6 +41,7 @@ export function useData() {
     const ccaaSpending = ccaaSpendingJson as CcaaSpendingData;
     const revenue = revenueJson as RevenueData;
     const taxRevenue = taxRevenueJson as TaxRevenueData;
+    const flows = flowsJson as FlowsData;
 
     return {
       debt,
@@ -52,6 +55,7 @@ export function useData() {
       ccaaSpending,
       revenue,
       taxRevenue,
+      flows,
       meta: metaJson as MetaData,
     };
   }, []);

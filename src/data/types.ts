@@ -25,6 +25,32 @@ export interface DebtData {
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
+export interface SankeyNode {
+  id: string;
+  label: string;
+  group: string;
+  amount: number;
+  format: "currency" | "percentage" | "none" | string;
+  note?: string;
+}
+
+export interface SankeyLink {
+  id: string;
+  source: string;
+  target: string;
+  amount: number;
+  label: string;
+  note?: string;
+}
+
+export interface FlowsData {
+  lastUpdated: string;
+  latestYear: number;
+  nodes: SankeyNode[];
+  links: SankeyLink[];
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
 export interface PensionData {
   lastUpdated: string;
   pipeline?: {
@@ -300,6 +326,7 @@ export interface CcaaForalFlowEntry {
   paymentToState: number; // M€
   adjustmentsWithState: number | null; // M€
   netFlowToState: number | null; // M€ (payment - adjustments)
+  taxRevenue?: number; // M€
   detail: {
     paymentLabel: string;
     adjustmentsLabel: string | null;
@@ -393,6 +420,7 @@ export interface MetaData {
     ccaaFiscalBalance?: boolean;
     ccaaSpending?: boolean;
     ccaaForalFlows?: boolean;
+    flowsSankey?: boolean;
   };
   sources: {
     debt: {
@@ -476,6 +504,11 @@ export interface MetaData {
       lastRealDataDate?: string;
       latestYear: number;
       communities: number;
+    };
+    flowsSankey?: {
+      success: boolean;
+      lastUpdated: string;
+      lastFetchAt?: string;
     };
   };
 }

@@ -11,11 +11,13 @@ const FALLBACK_2024 = {
     paymentToState: 698.644,
     adjustmentsWithState: 1375.927,
     netFlowToState: -677.283,
+    taxRevenue: 5433,
   },
   paisVasco: {
     paymentToState: 1504.5,
     adjustmentsWithState: null,
     netFlowToState: null,
+    taxRevenue: 18310,
   },
 }
 
@@ -96,6 +98,7 @@ export function parseNavarraForalFlow(html) {
     paymentToState,
     adjustmentsWithState,
     netFlowToState: Number((paymentToState - adjustmentsWithState).toFixed(3)),
+    taxRevenue: FALLBACK_2024.navarra.taxRevenue,
   }
 }
 
@@ -118,6 +121,7 @@ export function parseEuskadiForalFlow(html) {
     paymentToState: Number(paymentToState.toFixed(3)),
     adjustmentsWithState: null,
     netFlowToState: null,
+    taxRevenue: FALLBACK_2024.paisVasco.taxRevenue,
   }
 }
 
@@ -167,6 +171,7 @@ function buildFallbackDataset() {
             paymentToState: FALLBACK_2024.navarra.paymentToState,
             adjustmentsWithState: FALLBACK_2024.navarra.adjustmentsWithState,
             netFlowToState: FALLBACK_2024.navarra.netFlowToState,
+            taxRevenue: FALLBACK_2024.navarra.taxRevenue,
             detail: {
               paymentLabel: 'Total Pagos Aportación Neta',
               adjustmentsLabel: 'Total Ajustes fiscales',
@@ -180,6 +185,7 @@ function buildFallbackDataset() {
             paymentToState: FALLBACK_2024.paisVasco.paymentToState,
             adjustmentsWithState: FALLBACK_2024.paisVasco.adjustmentsWithState,
             netFlowToState: FALLBACK_2024.paisVasco.netFlowToState,
+            taxRevenue: FALLBACK_2024.paisVasco.taxRevenue,
             detail: {
               paymentLabel: 'Cupo líquido provisional',
               adjustmentsLabel: null,
@@ -247,6 +253,7 @@ export async function downloadCcaaForalFlowsData() {
               paymentToState: navarra.paymentToState,
               adjustmentsWithState: navarra.adjustmentsWithState,
               netFlowToState: navarra.netFlowToState,
+              taxRevenue: navarra.taxRevenue,
               detail: {
                 paymentLabel: 'Total Pagos Aportación Neta',
                 adjustmentsLabel: 'Total Ajustes fiscales',
@@ -260,6 +267,7 @@ export async function downloadCcaaForalFlowsData() {
               paymentToState: paisVasco.paymentToState,
               adjustmentsWithState: paisVasco.adjustmentsWithState,
               netFlowToState: paisVasco.netFlowToState,
+              taxRevenue: paisVasco.taxRevenue,
               detail: {
                 paymentLabel: 'Cupo líquido provisional',
                 adjustmentsLabel: null,

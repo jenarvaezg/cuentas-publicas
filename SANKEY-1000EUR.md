@@ -25,6 +25,8 @@ Para cada corte (año, territorio, administración):
 1. `peso = partida / ingresos_totales`
 2. `euros_por_1000 = peso * 1000`
 3. Mostrar ranking de destinos de mayor a menor `euros_por_1000`.
+4. Tambien podría hacerse al reves. Cuantos impuestos se tienen que recaudar para que se gasten 1000 en sanidad?
+5. Estudiar si lo de los 1000 euros realmente aporta o si tiene mas sentido un sankey con los datos reales
 
 Ejemplo de copy esperado:
 

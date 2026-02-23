@@ -6,9 +6,9 @@ Inventario técnico de todos los datos del dashboard: clasificación, fuentes, f
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 9 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT, Ministerio de Hacienda, Gobierno de Navarra y Gobierno Vasco) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 12 archivos JSON en `src/data/` (11 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
+El dashboard utiliza 9 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT, Ministerio de Hacienda, Gobierno de Navarra y Gobierno Vasco) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 13 archivos JSON en `src/data/` (12 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
 
-**Estado general**: De ~43 métricas mostradas, **~23 son automatizadas**, **~7 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~8 son derivadas** por cálculo.
+**Estado general**: De ~44 métricas mostradas, **~23 son automatizadas**, **~7 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~9 son derivadas** por cálculo.
 
 ---
 
@@ -306,6 +306,7 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 | Aportación neta Navarra (pagos + ajustes fiscales) | **SEMI-AUTOMATIZADO** | HTML scraping Cuadro nº 64, tabla de flujos financieros del Convenio Económico | Anual | ALTA — scraping HTML |
 | Cupo líquido provisional País Vasco | **SEMI-AUTOMATIZADO** | HTML scraping nota de prensa CMCE, regex sobre cifra | Anual | MUY ALTA — regex sobre prosa |
 | Flujo neto Navarra (aportación - ajustes) | **DERIVADO** | paymentToState - adjustmentsWithState | Anual | BAJA |
+| Recaudación tributaria (Haciendas Forales) | **HARDCODEADO** | Búsqueda manual en memorias e informes de recaudación (Diputaciones + Navarra) | Anual | ALTA — actualización manual |
 
 **URLs** (variables — dependientes de edición anual):
 - Navarra: `https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico`
@@ -324,11 +325,28 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 3. **País Vasco incompleto**: solo se obtiene el cupo líquido provisional; los ajustes y el flujo neto son `null`.
 4. **Sin serie histórica**: solo hay datos del año más reciente (2024).
 
-**Fallback**: Valores de referencia hardcodeados 2024 (Navarra: 698,6 M€ pagos, 1.375,9 M€ ajustes; Euskadi: 1.504,5 M€ cupo).
+**Fallback**: Valores de referencia hardcodeados 2024 (Navarra: 698,6 M€ pagos, 1.375,9 M€ ajustes, 5.433 M€ recaudación; Euskadi: 1.504,5 M€ cupo, 18.310 M€ recaudación conjunta).
 
 ---
 
-## 12. INFRAESTRUCTURA CI/CD
+## 12. DERIVADOS — Diagrama Sankey (Flujos Consolidados)
+
+**Script**: `scripts/sources/flows-sankey.mjs` | **Output**: `src/data/flows.json`
+
+| Dato | Clasificación | Entradas | Detalles | Fragilidad |
+|------|---------------|----------|----------|------------|
+| Nodos y Enlaces | **DERIVADO** | `revenue.json`, `tax-revenue.json`, `pensions.json`, `budget.json`, `debt.json` | Consolidación macro y micro de ingresos y gastos. | BAJA |
+| Gasto escalado | **DERIVADO** | `budget.json` escalado a Eurostat TE | Utiliza multiplicador para cuadrar masa. | BAJA |
+| Enlace de redondeo | **DERIVADO** | Ajuste matemático | Fuerza balance total exacto (`revenue.json` deficit) al último nodo (`Resto del Gasto`). | BAJA |
+
+**Lógica de Consolidado:**
+El script genera nodos y enlaces que permiten representar un Sankey. Se basa exclusivamente en archivos JSON ya descargados por el resto del pipeline ETL. Prioriza la cuadratura matemática estricta a través de reescalado y absorción de diferencias en el nodo de mayor volumen (resto del gasto).
+
+---
+
+---
+
+## 13. INFRAESTRUCTURA CI/CD
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
@@ -343,7 +361,7 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 
 ---
 
-## 13. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+## 14. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
 
 ### AUTOMATIZADOS (se actualizan solos cada lunes)
 | Dato | Fuente | Frescura | Confiabilidad |
@@ -453,6 +471,7 @@ src/data/
   ccaa-fiscal-balance.json       # Balanzas fiscales CCAA (2019-2023, régimen común)
   ccaa-spending.json             # Gasto funcional CCAA (COFOG detalle, 17 CCAA)
   ccaa-foral-flows.json          # Flujos forales Navarra y País Vasco (aportación/cupo)
+  flows.json                     # Red consolidada de flujos ingresos/gastos (Sankey)
   meta.json                      # Estado última descarga
   types.ts                       # Interfaces TypeScript
   sources.ts                     # Atribución fuentes (URLs, nombres)

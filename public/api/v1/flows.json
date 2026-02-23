@@ -1,0 +1,345 @@
+{
+  "lastUpdated": "2026-02-23T20:44:40.446Z",
+  "latestYear": 2024,
+  "nodes": [
+    {
+      "id": "CONSOLIDADO",
+      "label": "Presupuesto Consolidado",
+      "group": "core",
+      "amount": 725001,
+      "format": "currency",
+      "note": "Total de cuentas públicas"
+    },
+    {
+      "id": "DEFICIT",
+      "label": "Déficit (Nueva Deuda)",
+      "group": "income",
+      "amount": 51267,
+      "format": "currency"
+    },
+    {
+      "id": "INGRESOS_TOTALES",
+      "label": "Ingresos Públicos",
+      "group": "income_agg",
+      "amount": 673734,
+      "format": "currency"
+    },
+    {
+      "id": "COTIZACIONES",
+      "label": "Cotizaciones Sociales",
+      "group": "income_type",
+      "amount": 210337,
+      "format": "currency"
+    },
+    {
+      "id": "IMPUESTOS_DIRECTOS",
+      "label": "Impuestos Directos",
+      "group": "income_type",
+      "amount": 198711,
+      "format": "currency"
+    },
+    {
+      "id": "IRPF",
+      "label": "IRPF",
+      "group": "tax_detail",
+      "amount": 149038,
+      "format": "currency"
+    },
+    {
+      "id": "IS",
+      "label": "Impuesto Sociedades",
+      "group": "tax_detail",
+      "amount": 45026,
+      "format": "currency"
+    },
+    {
+      "id": "IRNR",
+      "label": "Impuesto Renta No Residentes",
+      "group": "tax_detail",
+      "amount": 4647,
+      "format": "currency"
+    },
+    {
+      "id": "IMPUESTOS_INDIRECTOS",
+      "label": "Impuestos Indirectos",
+      "group": "income_type",
+      "amount": 176937,
+      "format": "currency"
+    },
+    {
+      "id": "IVA",
+      "label": "IVA",
+      "group": "tax_detail",
+      "amount": 142187,
+      "format": "currency"
+    },
+    {
+      "id": "IIEE",
+      "label": "Impuestos Especiales",
+      "group": "tax_detail",
+      "amount": 34750,
+      "format": "currency"
+    },
+    {
+      "id": "OTROS_INGRESOS",
+      "label": "Otros Ingresos",
+      "group": "income_type",
+      "amount": 87749,
+      "format": "currency"
+    },
+    {
+      "id": "GASTO_INTERESES",
+      "label": "Intereses Deuda Pública",
+      "group": "expense_specific",
+      "amount": 39644,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_01_RESTO",
+      "label": "Servicios Públicos Generales (Resto)",
+      "group": "expense_cofog",
+      "amount": 52907,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_02",
+      "label": "Defensa",
+      "group": "expense_cofog",
+      "amount": 14233,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_03",
+      "label": "Orden público y seguridad",
+      "group": "expense_cofog",
+      "amount": 28628,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_04",
+      "label": "Asuntos económicos",
+      "group": "expense_cofog",
+      "amount": 80908,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_05",
+      "label": "Protección del medio ambiente",
+      "group": "expense_cofog",
+      "amount": 15539,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_06",
+      "label": "Vivienda y servicios comunitarios",
+      "group": "expense_cofog",
+      "amount": 7613,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_07",
+      "label": "Salud",
+      "group": "expense_cofog",
+      "amount": 102942,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_08",
+      "label": "Ocio, cultura y religión",
+      "group": "expense_cofog",
+      "amount": 19193,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_09",
+      "label": "Educación",
+      "group": "expense_cofog",
+      "amount": 65862,
+      "format": "currency"
+    },
+    {
+      "id": "GASTO_PENSIONES",
+      "label": "Pensiones",
+      "group": "expense_specific",
+      "amount": 222736,
+      "format": "currency"
+    },
+    {
+      "id": "COFOG_10_RESTO",
+      "label": "Resto Protección Social",
+      "group": "expense_cofog",
+      "amount": 74796,
+      "format": "currency"
+    }
+  ],
+  "links": [
+    {
+      "id": "l_0",
+      "source": "DEFICIT",
+      "target": "CONSOLIDADO",
+      "amount": 51267,
+      "label": "Financiación Vía Deuda"
+    },
+    {
+      "id": "l_1",
+      "source": "INGRESOS_TOTALES",
+      "target": "CONSOLIDADO",
+      "amount": 673734,
+      "label": "Recaudación"
+    },
+    {
+      "id": "l_2",
+      "source": "COTIZACIONES",
+      "target": "INGRESOS_TOTALES",
+      "amount": 210337,
+      "label": ""
+    },
+    {
+      "id": "l_3",
+      "source": "IMPUESTOS_DIRECTOS",
+      "target": "INGRESOS_TOTALES",
+      "amount": 198711,
+      "label": ""
+    },
+    {
+      "id": "l_4",
+      "source": "IRPF",
+      "target": "IMPUESTOS_DIRECTOS",
+      "amount": 149038,
+      "label": ""
+    },
+    {
+      "id": "l_5",
+      "source": "IS",
+      "target": "IMPUESTOS_DIRECTOS",
+      "amount": 45026,
+      "label": ""
+    },
+    {
+      "id": "l_6",
+      "source": "IRNR",
+      "target": "IMPUESTOS_DIRECTOS",
+      "amount": 4647,
+      "label": ""
+    },
+    {
+      "id": "l_7",
+      "source": "IMPUESTOS_INDIRECTOS",
+      "target": "INGRESOS_TOTALES",
+      "amount": 176937,
+      "label": ""
+    },
+    {
+      "id": "l_8",
+      "source": "IVA",
+      "target": "IMPUESTOS_INDIRECTOS",
+      "amount": 142187,
+      "label": ""
+    },
+    {
+      "id": "l_9",
+      "source": "IIEE",
+      "target": "IMPUESTOS_INDIRECTOS",
+      "amount": 34750,
+      "label": ""
+    },
+    {
+      "id": "l_10",
+      "source": "OTROS_INGRESOS",
+      "target": "INGRESOS_TOTALES",
+      "amount": 87749,
+      "label": ""
+    },
+    {
+      "id": "l_11",
+      "source": "CONSOLIDADO",
+      "target": "GASTO_INTERESES",
+      "amount": 39644,
+      "label": ""
+    },
+    {
+      "id": "l_12",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_01_RESTO",
+      "amount": 52907,
+      "label": ""
+    },
+    {
+      "id": "l_13",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_02",
+      "amount": 14233,
+      "label": ""
+    },
+    {
+      "id": "l_14",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_03",
+      "amount": 28628,
+      "label": ""
+    },
+    {
+      "id": "l_15",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_04",
+      "amount": 80908,
+      "label": ""
+    },
+    {
+      "id": "l_16",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_05",
+      "amount": 15539,
+      "label": ""
+    },
+    {
+      "id": "l_17",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_06",
+      "amount": 7613,
+      "label": ""
+    },
+    {
+      "id": "l_18",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_07",
+      "amount": 102942,
+      "label": ""
+    },
+    {
+      "id": "l_19",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_08",
+      "amount": 19193,
+      "label": ""
+    },
+    {
+      "id": "l_20",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_09",
+      "amount": 65862,
+      "label": ""
+    },
+    {
+      "id": "l_21",
+      "source": "CONSOLIDADO",
+      "target": "GASTO_PENSIONES",
+      "amount": 222736,
+      "label": ""
+    },
+    {
+      "id": "l_22",
+      "source": "CONSOLIDADO",
+      "target": "COFOG_10_RESTO",
+      "amount": 74796,
+      "label": ""
+    }
+  ],
+  "sourceAttribution": {
+    "consolidated": {
+      "source": "Pipeline Interno (Consolidación Eurostat, AEAT, IGAE, SS, BdE)",
+      "type": "derived",
+      "note": "Grafo Dirigido Acíclico (DAG) balanceado para visualización Sankey."
+    }
+  }
+}

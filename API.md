@@ -21,7 +21,8 @@ No requiere autenticación y está pensada para consumo de lectura (dashboards, 
 - `/api/v1/tax-revenue.json` — recaudación tributaria por impuesto y CCAA (AEAT)
 - `/api/v1/ccaa-fiscal-balance.json` — impuestos cedidos vs transferencias por CCAA (régimen común, Hacienda)
 - `/api/v1/ccaa-spending.json` — gasto funcional COFOG por CCAA (administración regional, IGAE)
-- `/api/v1/ccaa-foral-flows.json` — flujos forales de Navarra y País Vasco (aportación/cupo)
+- `/api/v1/ccaa-foral-flows.json` — flujos forales de Navarra y País Vasco (aportación/cupo) y recaudación tributaria (`taxRevenue`)
+- `/api/v1/flows.json` — red de flujos balanceada (nodos y enlaces Sankey) consolidando ingresos y gastos
 - `/api/v1/meta.json` — estado del pipeline y frescura por fuente
 - `/api/openapi.json` — especificación OpenAPI mínima del contrato público
 
@@ -56,6 +57,33 @@ immigrationShare: {                    // derived from pyramid
   total: number,                       // fraction foreign-born
   byRegion: { [region]: number },
   historical: [{ year, share }],
+}
+```
+
+### flows.json — Schema
+
+Contiene los nodos, los enlaces balanceados y el agregado macro para el diagrama de Sankey.
+
+```
+nodes: [{ 
+  id: string, 
+  label: string, 
+  group: string,         // e.g., "income", "expense"
+  amount: number,        // absolute value
+  format: string         // "currency", "percentage", "none"
+}],
+links: [{ 
+  id: string, 
+  source: string, 
+  target: string, 
+  amount: number, 
+  label: string 
+}],
+macro: {
+  revenue: number,
+  expenditure: number,
+  deficit: number,
+  surplus: number
 }
 ```
 

@@ -9,6 +9,7 @@ import { downloadTaxRevenueData } from './sources/aeat.mjs'
 import { downloadCcaaFiscalBalanceData } from './sources/hacienda-fiscal-balance.mjs'
 import { downloadCcaaSpendingData } from './sources/ccaa-spending.mjs'
 import { downloadCcaaForalFlowsData } from './sources/ccaa-foral-flows.mjs'
+import { downloadFlowsSankeyData } from './sources/flows-sankey.mjs'
 
 const SITE_URL = 'https://cuentas-publicas.es'
 
@@ -161,7 +162,8 @@ const FALLBACK_GUARD_KEYS = {
   taxRevenue: ['series', 'delegaciones'],
   ccaaFiscalBalance: ['balances'],
   ccaaSpending: ['spending'],
-  ccaaForalFlows: ['foral']
+  ccaaForalFlows: ['foral'],
+  flowsSankey: ['sankey']
 }
 
 function getFallbackKeys(sourceName, payload) {
@@ -222,7 +224,8 @@ async function main() {
     downloadTaxRevenueData(),
     downloadCcaaFiscalBalanceData(),
     downloadCcaaSpendingData(),
-    downloadCcaaForalFlowsData()
+    downloadCcaaForalFlowsData(),
+    downloadFlowsSankeyData()
   ])
 
   const [
@@ -236,7 +239,8 @@ async function main() {
     taxRevenueResult,
     ccaaFiscalBalanceResult,
     ccaaSpendingResult,
-    ccaaForalFlowsResult
+    ccaaForalFlowsResult,
+    flowsSankeyResult
   ] = results
 
   const sourceResults = {
@@ -250,7 +254,8 @@ async function main() {
     taxRevenue: taxRevenueResult,
     ccaaFiscalBalance: ccaaFiscalBalanceResult,
     ccaaSpending: ccaaSpendingResult,
-    ccaaForalFlows: ccaaForalFlowsResult
+    ccaaForalFlows: ccaaForalFlowsResult,
+    flowsSankey: flowsSankeyResult
   }
 
   const fulfilled = Object.fromEntries(
@@ -357,6 +362,13 @@ async function main() {
     console.log('✅ ccaa-foral-flows.json')
   } else {
     console.error('❌ ccaa-foral-flows.json - Error:', getSourceFailureReason(ccaaForalFlowsResult, fallbackKeys.ccaaForalFlows))
+  }
+
+  if (status.flowsSankey) {
+    writeMirroredDataFile('flows.json', flowsSankeyResult.value)
+    console.log('✅ flows.json')
+  } else {
+    console.error('❌ flows.json - Error:', getSourceFailureReason(flowsSankeyResult, fallbackKeys.flowsSankey))
   }
 
   // Write metadata file
@@ -529,6 +541,22 @@ async function main() {
         communities: fulfilled.ccaaForalFlows
           ? ccaaForalFlowsResult.value.byYear?.[String(ccaaForalFlowsResult.value.latestYear)]?.entries?.length || 0
           : 0
+      },
+      flowsSankey: {
+        success: status.flowsSankey,
+        fallbackDetected: fallbackKeys.flowsSankey.length > 0,
+        fallbackKeys: fallbackKeys.flowsSankey,
+        lastUpdated: fulfilled.flowsSankey ? flowsSankeyResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.flowsSankey ? nowIso : null,
+        lastRealDataDate: fulfilled.flowsSankey
+          ? pickLatestDate([
+            flowsSankeyResult.value.latestYear,
+            ...getAttributionDates(flowsSankeyResult.value.sourceAttribution)
+          ])
+          : null,
+        latestYear: fulfilled.flowsSankey ? flowsSankeyResult.value.latestYear : null,
+        nodes: fulfilled.flowsSankey ? flowsSankeyResult.value.nodes?.length : 0,
+        links: fulfilled.flowsSankey ? flowsSankeyResult.value.links?.length : 0
       }
     }
   }
