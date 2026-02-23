@@ -10,6 +10,7 @@ import { downloadCcaaFiscalBalanceData } from './sources/hacienda-fiscal-balance
 import { downloadCcaaSpendingData } from './sources/ccaa-spending.mjs'
 import { downloadCcaaForalFlowsData } from './sources/ccaa-foral-flows.mjs'
 import { downloadFlowsSankeyData } from './sources/flows-sankey.mjs'
+import { downloadSSSustainability } from './sources/ss-sustainability.mjs'
 
 const SITE_URL = 'https://cuentas-publicas.es'
 
@@ -96,6 +97,15 @@ const SECTION_PAGE_DEFS = [
     descriptionEn: 'Ranking and details of debt across autonomous regions.',
   },
   {
+    id: 'sostenibilidad-ss',
+    slugEs: 'sostenibilidad-ss',
+    slugEn: 'ss-sustainability',
+    titleEs: 'Sostenibilidad de la Seguridad Social',
+    titleEn: 'Social Security Sustainability',
+    descriptionEs: 'Ingresos, gastos, Fondo de Reserva, cotizantes/pensionista y proyecciones del sistema de pensiones.',
+    descriptionEn: 'Revenue, expenditure, Reserve Fund, contributors per pensioner and pension system projections.',
+  },
+  {
     id: 'metodologia',
     slugEs: 'metodologia',
     slugEn: 'methodology',
@@ -163,7 +173,8 @@ const FALLBACK_GUARD_KEYS = {
   ccaaFiscalBalance: ['balances'],
   ccaaSpending: ['spending'],
   ccaaForalFlows: ['foral'],
-  flowsSankey: ['sankey']
+  flowsSankey: ['sankey'],
+  ssSustainability: ['ssSustainability']
 }
 
 function getFallbackKeys(sourceName, payload) {
@@ -225,7 +236,8 @@ async function main() {
     downloadCcaaFiscalBalanceData(),
     downloadCcaaSpendingData(),
     downloadCcaaForalFlowsData(),
-    downloadFlowsSankeyData()
+    downloadFlowsSankeyData(),
+    downloadSSSustainability()
   ])
 
   const [
@@ -240,7 +252,8 @@ async function main() {
     ccaaFiscalBalanceResult,
     ccaaSpendingResult,
     ccaaForalFlowsResult,
-    flowsSankeyResult
+    flowsSankeyResult,
+    ssSustainabilityResult
   ] = results
 
   const sourceResults = {
@@ -255,7 +268,8 @@ async function main() {
     ccaaFiscalBalance: ccaaFiscalBalanceResult,
     ccaaSpending: ccaaSpendingResult,
     ccaaForalFlows: ccaaForalFlowsResult,
-    flowsSankey: flowsSankeyResult
+    flowsSankey: flowsSankeyResult,
+    ssSustainability: ssSustainabilityResult
   }
 
   const fulfilled = Object.fromEntries(
@@ -369,6 +383,13 @@ async function main() {
     console.log('✅ flows.json')
   } else {
     console.error('❌ flows.json - Error:', getSourceFailureReason(flowsSankeyResult, fallbackKeys.flowsSankey))
+  }
+
+  if (status.ssSustainability) {
+    writeMirroredDataFile('ss-sustainability.json', ssSustainabilityResult.value)
+    console.log('✅ ss-sustainability.json')
+  } else {
+    console.error('❌ ss-sustainability.json - Error:', getSourceFailureReason(ssSustainabilityResult, fallbackKeys.ssSustainability))
   }
 
   // Write metadata file
@@ -557,6 +578,21 @@ async function main() {
         latestYear: fulfilled.flowsSankey ? flowsSankeyResult.value.latestYear : null,
         nodes: fulfilled.flowsSankey ? flowsSankeyResult.value.nodes?.length : 0,
         links: fulfilled.flowsSankey ? flowsSankeyResult.value.links?.length : 0
+      },
+      ssSustainability: {
+        success: status.ssSustainability,
+        fallbackDetected: fallbackKeys.ssSustainability.length > 0,
+        fallbackKeys: fallbackKeys.ssSustainability,
+        lastUpdated: fulfilled.ssSustainability ? ssSustainabilityResult.value.lastUpdated : null,
+        lastFetchAt: fulfilled.ssSustainability ? nowIso : null,
+        lastRealDataDate: fulfilled.ssSustainability
+          ? pickLatestDate([
+            ssSustainabilityResult.value.latestYear,
+            ...getAttributionDates(ssSustainabilityResult.value.sourceAttribution)
+          ])
+          : null,
+        latestYear: fulfilled.ssSustainability ? ssSustainabilityResult.value.latestYear : null,
+        years: fulfilled.ssSustainability ? ssSustainabilityResult.value.years?.length : 0
       }
     }
   }
@@ -836,6 +872,7 @@ function buildPublicApiIndex(meta) {
       { path: '/api/v1/ccaa-fiscal-balance.json', source: 'Ministerio de Hacienda', description: 'Impuestos cedidos vs transferencias por CCAA (régimen común)' },
       { path: '/api/v1/ccaa-spending.json', source: 'IGAE', description: 'Gasto funcional COFOG por CCAA (administración regional)' },
       { path: '/api/v1/ccaa-foral-flows.json', source: 'Gobierno de Navarra + Gobierno Vasco', description: 'Flujos forales de Navarra y País Vasco (aportación/cupo)' },
+      { path: '/api/v1/ss-sustainability.json', source: 'Eurostat + Ageing Report', description: 'Sostenibilidad de la Seguridad Social: cotizaciones, gasto pensiones, Fondo de Reserva y proyecciones' },
       { path: '/api/v1/meta.json', source: 'Pipeline', description: 'Estado de actualización y frescura de fuentes' }
     ],
     freshness: meta.sources

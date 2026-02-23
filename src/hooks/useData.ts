@@ -11,6 +11,7 @@ import flowsJson from "@/data/flows.json";
 import metaJson from "@/data/meta.json";
 import pensionsJson from "@/data/pensions.json";
 import revenueJson from "@/data/revenue.json";
+import ssSustainabilityJson from "@/data/ss-sustainability.json";
 import taxRevenueJson from "@/data/tax-revenue.json";
 import type {
   BudgetData,
@@ -25,6 +26,7 @@ import type {
   MetaData,
   PensionData,
   RevenueData,
+  SSSustainabilityData,
   TaxRevenueData,
 } from "@/data/types";
 
@@ -42,6 +44,7 @@ export function useData() {
     const revenue = revenueJson as RevenueData;
     const taxRevenue = taxRevenueJson as TaxRevenueData;
     const flows = flowsJson as FlowsData;
+    const ssSustainability = ssSustainabilityJson as SSSustainabilityData;
 
     return {
       debt,
@@ -56,6 +59,7 @@ export function useData() {
       revenue,
       taxRevenue,
       flows,
+      ssSustainability,
       meta: metaJson as MetaData,
     };
   }, []);

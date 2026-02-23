@@ -403,6 +403,40 @@ export interface ImmigrationShareData {
   historical: TimeSeriesPoint[];
 }
 
+// ── SS Sustainability ────────────────────────────────────────────────
+
+export interface SSSustainabilityYearData {
+  socialContributions: number; // M€
+  pensionExpenditure: number; // M€
+  ssBalance: number; // M€ (contributions - pension expenditure)
+  pensionToGDP: number; // %
+}
+
+export interface SSSustainabilityProjectionPoint {
+  year: number;
+  pensionToGDP: number;
+}
+
+export interface SSSustainabilityData {
+  lastUpdated: string;
+  latestYear: number;
+  years: number[];
+  byYear: Record<string, SSSustainabilityYearData>;
+  pensionToGDP: {
+    spain: { byYear: Record<string, number>; years: number[] };
+    eu27: { byYear: Record<string, number>; years: number[] };
+  };
+  reserveFund: Array<{ year: number; balance: number }>;
+  contributorsPerPensioner: Array<{ year: number; ratio: number }>;
+  projections: {
+    source: string;
+    url: string;
+    spain: SSSustainabilityProjectionPoint[];
+    eu27: SSSustainabilityProjectionPoint[];
+  };
+  sourceAttribution: Record<string, DataSourceAttribution>;
+}
+
 // ── Metadata ────────────────────────────────────────────────────────
 
 export interface MetaData {

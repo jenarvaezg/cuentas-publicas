@@ -24,6 +24,7 @@ export const messages = {
       ue: "Comparativa UE",
       ccaa: "CCAA",
       demografia: "Demografía",
+      sostenibilidadSS: "Sostenibilidad SS",
       metodologia: "Metodología",
     },
     app: {
@@ -108,6 +109,9 @@ export const messages = {
         regionAmericas: "América",
         regionAsiaOceania: "Asia + Oceanía",
       },
+      sustainability: {
+        title: "Sostenibilidad de la Seguridad Social",
+      },
       methodology: {
         title: "Metodología y fuentes",
       },
@@ -146,6 +150,7 @@ export const messages = {
       ue: "EU comparison",
       ccaa: "Regions",
       demografia: "Demographics",
+      sostenibilidadSS: "SS Sustainability",
       metodologia: "Methodology",
     },
     app: {
@@ -228,6 +233,9 @@ export const messages = {
         regionAfrica: "Africa",
         regionAmericas: "Americas",
         regionAsiaOceania: "Asia + Oceania",
+      },
+      sustainability: {
+        title: "Social Security Sustainability",
       },
       methodology: {
         title: "Methodology and sources",

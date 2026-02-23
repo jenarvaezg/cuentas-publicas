@@ -81,6 +81,18 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
+    "/api/v1/flows.json": {
+      "get": {
+        "summary": "Red de flujos balanceada (nodos y enlaces Sankey)",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/ss-sustainability.json": {
+      "get": {
+        "summary": "Sostenibilidad SS: cotizaciones, gasto pensiones, Fondo de Reserva y proyecciones",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
     "/api/v1/meta.json": {
       "get": {
         "summary": "Estado y frescura del pipeline",

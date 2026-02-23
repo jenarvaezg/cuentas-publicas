@@ -16,6 +16,7 @@ import { RealtimeCounter } from "@/components/RealtimeCounter";
 import { RevenueBlock } from "@/components/RevenueBlock";
 import { RoadmapSection } from "@/components/RoadmapSection";
 import { SectionNav, type SectionNavItem } from "@/components/SectionNav";
+import { SustainabilityBlock } from "@/components/SustainabilityBlock";
 import { TaxRevenueBlock } from "@/components/TaxRevenueBlock";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BDE_BE11B, CALCULO_DERIVADO, SS_NOMINA } from "@/data/sources";
@@ -37,6 +38,7 @@ const SECTION_IDS = [
   "ue",
   "ccaa",
   "demografia",
+  "sostenibilidad-ss",
   "metodologia",
 ] as const;
 
@@ -59,6 +61,7 @@ function App() {
       { id: "ue", label: msg.sections.ue },
       { id: "ccaa", label: msg.sections.ccaa },
       { id: "demografia", label: msg.sections.demografia },
+      { id: "sostenibilidad-ss", label: msg.sections.sostenibilidadSS },
       { id: "metodologia", label: msg.sections.metodologia },
     ],
     [msg.sections],
@@ -268,6 +271,13 @@ function App() {
               style={{ animationDelay: "0.55s" }}
             >
               <DemographicsBlock />
+            </section>
+            <section
+              id="sostenibilidad-ss"
+              className="scroll-mt-28 animate-slide-up"
+              style={{ animationDelay: "0.6s" }}
+            >
+              <SustainabilityBlock />
             </section>
             <section id="metodologia" className="scroll-mt-28">
               <MethodologySection />

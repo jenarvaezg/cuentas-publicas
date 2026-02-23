@@ -127,6 +127,25 @@ export const HACIENDA_CCAA_FINANCIACION: SourceDetail = {
   note: "Impuestos cedidos y transferencias del sistema de financiación autonómica",
 };
 
+// SS Sustainability
+export const EUROSTAT_GOV_EXP: SourceDetail = {
+  name: "Eurostat — gov_10a_exp",
+  url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/",
+  note: "Gasto publico por funcion COFOG, SEC 2010",
+};
+
+export const SS_FONDO_RESERVA: SourceDetail = {
+  name: "Ministerio Inclusion — Fondo de Reserva SS",
+  url: "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas",
+  note: "Evolucion anual del Fondo de Reserva de la Seguridad Social",
+};
+
+export const AGEING_REPORT: SourceDetail = {
+  name: "European Commission — 2024 Ageing Report",
+  url: "https://economy-finance.ec.europa.eu/publications/2024-ageing-report_en",
+  note: "Proyecciones de gasto en pensiones 2022-2070",
+};
+
 // Eurostat
 export const EUROSTAT: SourceDetail = {
   name: "Eurostat",

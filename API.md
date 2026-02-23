@@ -23,6 +23,7 @@ No requiere autenticación y está pensada para consumo de lectura (dashboards, 
 - `/api/v1/ccaa-spending.json` — gasto funcional COFOG por CCAA (administración regional, IGAE)
 - `/api/v1/ccaa-foral-flows.json` — flujos forales de Navarra y País Vasco (aportación/cupo) y recaudación tributaria (`taxRevenue`)
 - `/api/v1/flows.json` — red de flujos balanceada (nodos y enlaces Sankey) consolidando ingresos y gastos
+- `/api/v1/ss-sustainability.json` — sostenibilidad SS: cotizaciones, gasto pensiones, Fondo de Reserva, cotizantes/pensionista y proyecciones
 - `/api/v1/meta.json` — estado del pipeline y frescura por fuente
 - `/api/openapi.json` — especificación OpenAPI mínima del contrato público
 
@@ -85,6 +86,36 @@ macro: {
   deficit: number,
   surplus: number
 }
+```
+
+### ss-sustainability.json — Schema
+
+Sostenibilidad del sistema de Seguridad Social: serie histórica de cotizaciones vs gasto en pensiones, Fondo de Reserva, ratio cotizantes/pensionista y proyecciones del Ageing Report.
+
+```
+latestYear: number,
+years: number[],
+byYear: {
+  [year]: {
+    socialContributions: number,   // M EUR
+    pensionExpenditure: number,    // M EUR
+    ssBalance: number,             // cotizaciones - gasto
+    pensionToGDP: number,          // % PIB
+  }
+},
+pensionToGDP: {
+  spain: { years: number[], byYear: { [year]: number } },
+  eu27:  { years: number[], byYear: { [year]: number } },
+},
+reserveFund: [{ year: number, balance: number }],          // M EUR, 2000-2025
+contributorsPerPensioner: [{ year: number, ratio: number }], // 2006-2025
+projections: {
+  source: string,
+  url: string,
+  spain: [{ year: number, pensionToGDP: number }],         // 2022-2070
+  eu27:  [{ year: number, pensionToGDP: number }],
+},
+sourceAttribution: { ssSustainability: DataSourceAttribution }
 ```
 
 ## Contrato de versión

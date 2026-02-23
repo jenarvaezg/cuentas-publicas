@@ -21,6 +21,11 @@ test.describe("Smoke", () => {
     await expect(
       page.getByRole("heading", { name: "Demografía" }),
     ).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "Sostenibilidad de la Seguridad Social",
+      }),
+    ).toBeVisible();
   });
 
   test("cambia entre tema claro y oscuro y persiste en localStorage", async ({

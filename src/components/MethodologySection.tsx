@@ -201,6 +201,25 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
           "Deuda: extrapolación lineal desde dato oficial mensual. Pensiones: prorrateo de nómina anualizada por segundo.",
         ],
       },
+      {
+        title: "Sostenibilidad de la Seguridad Social",
+        source: {
+          label: "Eurostat (gov_10a_exp, gov_10a_main) + Ageing Report 2024",
+          url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/",
+          note: "Gasto en pensiones, cotizaciones sociales y proyecciones",
+        },
+        paragraphs: [
+          "Se consultan tres series Eurostat: gasto en pensiones (COFOG GF1002) en millones de euros y como % del PIB (España y EU-27), y cotizaciones sociales (D61REC).",
+          "El balance del sistema se calcula como cotizaciones menos gasto en pensiones. Se complementa con datos de referencia del Fondo de Reserva, ratio cotizantes/pensionista y proyecciones del Ageing Report 2024.",
+        ],
+        bullets: [
+          "Ingresos por cotizaciones vs gasto en pensiones (serie anual)",
+          "Gasto en pensiones como % del PIB: España vs EU-27",
+          "Evolución del Fondo de Reserva de la Seguridad Social (2000-2025)",
+          "Ratio cotizantes por pensionista (2006-2025)",
+          "Proyecciones de gasto/PIB hasta 2070 (Ageing Report)",
+        ],
+      },
     ],
     refreshTitle: "Frecuencia de actualización",
     refreshBullets: [
@@ -386,6 +405,25 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "Counters are rendered client-side with periodic updates and tabular numerals for stable display.",
           "Debt uses regression extrapolation; pensions use annualized payroll converted to per-second flow.",
+        ],
+      },
+      {
+        title: "Social Security Sustainability",
+        source: {
+          label: "Eurostat (gov_10a_exp, gov_10a_main) + 2024 Ageing Report",
+          url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/",
+          note: "Pension expenditure, social contributions and projections",
+        },
+        paragraphs: [
+          "Three Eurostat series are queried: pension expenditure (COFOG GF1002) in millions of euros and as % of GDP (Spain and EU-27), and social contributions (D61REC).",
+          "System balance is computed as contributions minus pension expenditure. Reference data for the Reserve Fund, contributors-per-pensioner ratio and 2024 Ageing Report projections complement the Eurostat series.",
+        ],
+        bullets: [
+          "Contribution income vs pension expenditure (annual series)",
+          "Pension spending as % of GDP: Spain vs EU-27",
+          "Social Security Reserve Fund evolution (2000-2025)",
+          "Contributors per pensioner ratio (2006-2025)",
+          "Spending/GDP projections to 2070 (Ageing Report)",
         ],
       },
     ],
