@@ -185,7 +185,7 @@ function App() {
         <Header />
         <SectionNav groups={sectionGroups} />
 
-        <main className="max-w-5xl mx-auto px-4 py-6 lg:py-8 space-y-8">
+        <main className="w-full max-w-[95vw] 2xl:max-w-[1600px] mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-12">
           <section id="resumen" className="scroll-mt-28 relative">
             {/* Background Glows for the hero section */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none -z-10" />

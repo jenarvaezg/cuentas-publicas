@@ -112,8 +112,13 @@ export const StatCard = memo(function StatCard({
     const popoverMaxHeight = 400;
     const margin = 8;
 
+    let left = rect.left;
     let top = rect.bottom + margin;
-    let left = rect.left + rect.width / 2 - popoverWidth / 2;
+
+    // Prevent popover from bleeding off the right side of the screen
+    if (left + popoverWidth > window.innerWidth - margin) {
+      left = Math.max(margin, window.innerWidth - popoverWidth - margin);
+    }
 
     // Constrain horizontally
     left = Math.max(margin, Math.min(left, window.innerWidth - popoverWidth - margin));
