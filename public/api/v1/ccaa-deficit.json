@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "lastUpdated": "2026-02-24T10:44:59.443Z",
+  "latestYear": 2023,
+  "data": {
+    "CA01": -1486,
+    "CA02": -317,
+    "CA03": 153,
+    "CA04": 342,
+    "CA05": 236,
+    "CA06": -60,
+    "CA07": -152,
+    "CA08": -359,
+    "CA09": -3616,
+    "CA10": -3358,
+    "CA11": -64,
+    "CA12": -193,
+    "CA13": -2385,
+    "CA14": -946,
+    "CA15": 147,
+    "CA16": -117,
+    "CA17": -43
+  },
+  "source": "igae-cn-regional",
+  "note": "Capacidad/Necesidad de financiación (B.9) SEC 2010. Utilizando datos fallback debido a protección anti-scraping en origen."
+}

@@ -83,8 +83,8 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — Mejoras de datos",
         items: [
-          "Afiliados SS automatizados",
-          "Cotizaciones sociales reales",
+          "✅ Afiliados SS automatizados (derivado de cotizantes/pensionista × pensionistas, pipeline ss-sustainability)",
+          "✅ Cotizaciones sociales reales (Eurostat gov_10a_main D61REC via pipeline ss-sustainability)",
           "Serie histórica de pensiones real",
           "Tipo de interés medio de la deuda",
           "SMI automático",
@@ -159,8 +159,8 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — Data improvements",
         items: [
-          "Automated Social Security affiliates",
-          "Real social contributions",
+          "✅ Automated Social Security affiliates (derived from contributors-per-pensioner × pensioners, ss-sustainability pipeline)",
+          "✅ Real social contributions (Eurostat gov_10a_main D61REC via ss-sustainability pipeline)",
           "Real pension historical series",
           "Average debt interest rate",
           "Automatic minimum wage updates",

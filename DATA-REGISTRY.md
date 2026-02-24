@@ -93,11 +93,11 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 | Nómina Clases Pasivas | **HARDCODEADO** | Ministerio Hacienda (sin API) | 1.659 M€ (estimación) | MUY ALTA |
 | N.° pensiones | **SEMI-AUTOMATIZADO** | Mismo Excel SS | 10.452.674 | MUY ALTA |
 | Pensión media jubilación | **SEMI-AUTOMATIZADO** | Mismo Excel SS | 1.563,56€ | MUY ALTA |
-| N.° afiliados | **HARDCODEADO** | No hay API pública | 21.300.000 (estimación) | MUY ALTA |
-| Cotizaciones sociales | **HARDCODEADO** | PGE 2025 | 180.000 M€/año | ALTA |
+| N.° afiliados | **DERIVADO** | Ratio cotizantes/pensionista × totalPensiones (cross-reference ss-sustainability) | ~21.000.000 (derivado) | MEDIA |
+| Cotizaciones sociales | **AUTOMATIZADO** | Eurostat `gov_10a_main` D61REC (cross-reference pipeline ss-sustainability) | ~185.000 M€/año | MEDIA |
 | Déficit contributivo anual | **DERIVADO** | gasto anual - cotizaciones | 42.736 M€ | MEDIA |
 | Déficit acumulado (desde 2011) | **HARDCODEADO** | UV-Eje, Fedea SSA, BdE | 300.000 M€ (base ene 2026) | MUY ALTA |
-| Fondo de Reserva | **HARDCODEADO** | Ministerio | 2.100 M€ | ALTA |
+| Fondo de Reserva | **AUTOMATIZADO** | Serie RESERVE_FUND_HISTORY del pipeline ss-sustainability (Ministerio de Inclusión) | 7.500 M€ (2025) | MEDIA |
 | Gasto por segundo | **DERIVADO** | nómina × 14 / 365,25 / 86400 | 7.058 €/s | BAJA |
 | Serie histórica | **HARDCODEADA** | 11 puntos interpolados a mano + último punto live/fallback | 2020-2026 | MUY ALTA |
 
@@ -117,9 +117,7 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 4. **"Total sistema" como ancla**: Si cambian a "TOTAL SISTEMA" o "Total del Sistema", no encuentra la fila.
 5. **Clases Pasivas sin fuente**: No hay API ni archivo descargable. Se estima como ~11,6% de la nómina SS.
 6. **Serie histórica inventada**: Los 11 puntos base (2020-2025) son valores interpolados a mano, no descargados.
-7. **Afiliados sin fuente**: 21.3M es estimación. SS publica afiliados pero no en formato fácilmente automatizable.
-8. **Cotizaciones sociales**: 180.000 M€ del PGE 2025. Actualizar manualmente con cada PGE.
-9. **Déficit acumulado 300.000 M€**: Estimación conservadora basada en literatura. Requiere revisión manual periódica.
+7. **Déficit acumulado 300.000 M€**: Estimación conservadora basada en literatura. Requiere revisión manual periódica.
 
 ---
 
@@ -414,6 +412,8 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 | Impuestos indirectos (D2REC) | Eurostat API gov_10a_main | Anual | Alta |
 | Impuestos directos (D5REC) | Eurostat API gov_10a_main | Anual | Alta |
 | Cotizaciones sociales (D61REC) | Eurostat API gov_10a_main | Anual | Alta |
+| Fondo de Reserva SS | ss-sustainability (RESERVE_FUND_HISTORY) | Anual | Media |
+| Cotizaciones sociales pensiones | ss-sustainability (D61REC cross-ref) | Anual | Media |
 
 ### SEMI-AUTOMATIZADOS (se descargan pero con riesgo de rotura)
 | Dato | Fuente | Riesgo |
@@ -430,9 +430,6 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 |------|-------------|-------------------|-------|
 | SMI | 1.221€/mes (2026) | Cada enero (BOE) | `ine.mjs` -> valor hardcodeado `smi: 1_221` |
 | Clases Pasivas | 1.659 M€/mes | Cuando haya datos | `seguridad-social.mjs` -> `REFERENCE_DATA` |
-| N.° afiliados | 21.300.000 | Trimestralmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
-| Cotizaciones sociales | 180.000 M€/año | Con cada PGE | `seguridad-social.mjs` -> `REFERENCE_DATA` |
-| Fondo de Reserva | 2.100 M€ | Cuando se publique | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Déficit acumulado (base) | 300.000 M€ (ene 2026) | Anualmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Gasto en intereses | 39.000 M€ (PGE 2025) | Con cada PGE | `bde.mjs` -> `REFERENCE_INTEREST_EXPENSE` |
 | Serie hist. pensiones | 11 puntos interpolados + 1 punto actual | Con cada descarga exitosa | `seguridad-social.mjs` |
@@ -444,6 +441,7 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 | Deuda por contribuyente | totalDebt / poblaciónActiva | Automatizados |
 | Déficit contributivo anual | gastoAnual - cotizaciones | Semi-auto + hardcodeado |
 | Gasto anual pensiones | nómina × 14 pagas | Semi-automatizado |
+| N.° afiliados | cotizantes/pensionista (ss-sustainability) × totalPensiones | Cross-reference derivado |
 | Contribuyentes/pensionista | afiliados / pensionistas | Hardcodeado / semi-auto |
 | Gasto por segundo (pensiones) | gastoAnual / 365,25 / 86400 | Derivado |
 | Deuda por segundo | Regresión lineal 24 meses | Automatizado |

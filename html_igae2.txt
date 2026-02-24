@@ -1,0 +1,18 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /><meta name="SharePointError" content=""/>
+<meta name="Description" content=""/>
+<meta name="Keywords" content=""/>
+<meta name="Robots" content="NOINDEX"/>
+<script type="text/javascript">
+<!--
+window.location.replace("https:\u002f\u002fwww.igae.pap.hacienda.gob.es\u002fsitios\u002figae\u002fPaginas\u002fPageNotFoundError.aspx?requestUrl=https:\u002f\u002fwww.igae.pap.hacienda.gob.es\u002fsitios\u002figae\u002fes-ES\u002fContabilidad\u002fContabilidadNacional\u002fPublicaciones\u002fPaginas\u002fimnofinancieras.aspx")
+-->
+</script>
+</head>
+<body>
+<!------------------------------------------------------------------------->
+File Not Found
+<!------------------------------------------------------------------------->
+</body>
+</html>

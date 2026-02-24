@@ -58,6 +58,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "El pipeline localiza la URL mensual del Excel de pensiones contributivas y procesa la hoja con el total del sistema.",
           "Si falla la descarga de Excel vivo, se activa fallback con el último dataset válido y queda trazado en metadatos/alertas.",
+          "Las cotizaciones sociales, el Fondo de Reserva y el número de afiliados se enriquecen automáticamente desde el pipeline de Sostenibilidad SS (Eurostat gov_10a_main D61REC, serie histórica del Ministerio de Inclusión y ratio cotizantes/pensionista respectivamente), sustituyendo las estimaciones anteriores.",
         ],
         ordered: [
           "Descarga de HTML de estadísticas.",
@@ -264,6 +265,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "The pipeline resolves the current monthly Excel URL and parses the total-system row.",
           "If live Excel retrieval fails, a critical fallback uses the last valid dataset and the event is persisted in metadata/alerts.",
+          "Social contributions, the Reserve Fund and the affiliates count are automatically enriched from the SS Sustainability pipeline (Eurostat gov_10a_main D61REC, Ministry of Inclusion historical series and contributors-per-pensioner ratio respectively), replacing the previous hardcoded estimates.",
         ],
         ordered: [
           "Download statistics HTML page.",

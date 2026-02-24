@@ -15,6 +15,7 @@ import { downloadTaxRevenueData } from "./sources/aeat.mjs";
 import { downloadCcaaFiscalBalanceData } from "./sources/hacienda-fiscal-balance.mjs";
 import { downloadCcaaSpendingData } from "./sources/ccaa-spending.mjs";
 import { downloadCcaaForalFlowsData } from "./sources/ccaa-foral-flows.mjs";
+import downloadCcaaDeficitData from "./sources/ccaa-deficit.mjs";
 import { downloadFlowsSankeyData } from "./sources/flows-sankey.mjs";
 import { downloadSSSustainability } from "./sources/ss-sustainability.mjs";
 import {
@@ -50,9 +51,7 @@ function toIsoDateString(value) {
   const quarterMatch = valueStr.match(/^(\d{4})-Q([1-4])$/i);
   if (quarterMatch) {
     const [_, year, quarter] = quarterMatch;
-    const quarterEndMonth = { "1": "03", "2": "06", "3": "09", "4": "12" }[
-      quarter
-    ];
+    const quarterEndMonth = { 1: "03", 2: "06", 3: "09", 4: "12" }[quarter];
     const quarterEndDay =
       quarter === "1"
         ? "31"
@@ -120,6 +119,7 @@ const FALLBACK_GUARD_KEYS = {
   ccaaFiscalBalance: ["balances"],
   ccaaSpending: ["spending"],
   ccaaForalFlows: ["foral"],
+  ccaaDeficit: ["igae-cn-regional"],
   flowsSankey: ["sankey"],
   ssSustainability: ["ssSustainability"],
 };
@@ -279,6 +279,18 @@ const SOURCE_REGISTRY = [
     }),
   },
   {
+    name: "ccaaDeficit",
+    fileName: "ccaa-deficit.json",
+    download: downloadCcaaDeficitData,
+    metaExtractor: (r) => ({
+      lastRealDataDate: pickLatestDate([
+        r.latestYear,
+        ...getAttributionDates(r.sourceAttribution),
+      ]),
+      latestYear: r.latestYear || null,
+    }),
+  },
+  {
     name: "ccaaForalFlows",
     fileName: "ccaa-foral-flows.json",
     download: downloadCcaaForalFlowsData,
@@ -288,8 +300,7 @@ const SOURCE_REGISTRY = [
         ...getAttributionDates(r.sourceAttribution),
       ]),
       latestYear: r.latestYear || null,
-      communities:
-        r.byYear?.[String(r.latestYear)]?.entries?.length || 0,
+      communities: r.byYear?.[String(r.latestYear)]?.entries?.length || 0,
     }),
   },
   {
@@ -427,14 +438,12 @@ function buildPublicApiIndex(meta) {
       {
         path: "/api/v1/ccaa-spending.json",
         source: "IGAE",
-        description:
-          "Gasto funcional COFOG por CCAA (administración regional)",
+        description: "Gasto funcional COFOG por CCAA (administración regional)",
       },
       {
         path: "/api/v1/ccaa-foral-flows.json",
         source: "Gobierno de Navarra + Gobierno Vasco",
-        description:
-          "Flujos forales de Navarra y País Vasco (aportación/cupo)",
+        description: "Flujos forales de Navarra y País Vasco (aportación/cupo)",
       },
       {
         path: "/api/v1/ss-sustainability.json",
@@ -590,8 +599,7 @@ function displaySourceSummary(status, sourceResults) {
     const balanceAttr = d.sourceAttribution?.balances;
     const yearCount = d.years?.length || 0;
     const latestYear = d.latestYear;
-    const latestEntries =
-      d.byYear?.[String(latestYear)]?.entries?.length || 0;
+    const latestEntries = d.byYear?.[String(latestYear)]?.entries?.length || 0;
     const isLive = balanceAttr?.type === "xlsx";
     console.log(
       `Balanzas CCAA: ${isLive ? "✅" : "⚠️"} ${balanceAttr?.type?.toUpperCase() || "N/A"} (${yearCount} años, ${latestEntries} CCAA en ${latestYear})`,
@@ -605,8 +613,7 @@ function displaySourceSummary(status, sourceResults) {
     const spendingAttr = d.sourceAttribution?.spending;
     const yearCount = d.years?.length || 0;
     const latestYear = d.latestYear;
-    const latestEntries =
-      d.byYear?.[String(latestYear)]?.entries?.length || 0;
+    const latestEntries = d.byYear?.[String(latestYear)]?.entries?.length || 0;
     const isLive = spendingAttr?.type === "xlsx";
     console.log(
       `Gasto CCAA: ${isLive ? "✅" : "⚠️"} ${spendingAttr?.type?.toUpperCase() || "N/A"} (${yearCount} años, ${latestEntries} CCAA en ${latestYear})`,
@@ -619,8 +626,7 @@ function displaySourceSummary(status, sourceResults) {
     const d = sourceResults.ccaaForalFlows.value;
     const foralAttr = d.sourceAttribution?.foral;
     const latestYear = d.latestYear;
-    const latestEntries =
-      d.byYear?.[String(latestYear)]?.entries?.length || 0;
+    const latestEntries = d.byYear?.[String(latestYear)]?.entries?.length || 0;
     const isLive = foralAttr?.type === "api";
     console.log(
       `Flujos forales: ${isLive ? "✅" : "⚠️"} ${foralAttr?.type?.toUpperCase() || "N/A"} (${latestEntries} CCAA en ${latestYear})`,
@@ -636,15 +642,9 @@ function displaySourceSummary(status, sourceResults) {
 // ---------------------------------------------------------------------------
 
 async function main() {
-  console.log(
-    "╔═══════════════════════════════════════════════════════╗",
-  );
-  console.log(
-    "║  Descargador de Datos - Dashboard Fiscal España      ║",
-  );
-  console.log(
-    "╚═══════════════════════════════════════════════════════╝",
-  );
+  console.log("╔═══════════════════════════════════════════════════════╗");
+  console.log("║  Descargador de Datos - Dashboard Fiscal España      ║");
+  console.log("╚═══════════════════════════════════════════════════════╝");
   console.log();
   console.log(`Inicio: ${new Date().toLocaleString("es-ES")}`);
 
@@ -736,9 +736,7 @@ async function main() {
     sources: Object.fromEntries(
       SOURCE_REGISTRY.map((source) => {
         const isFulfilled = fulfilled[source.name];
-        const result = isFulfilled
-          ? sourceResults[source.name].value
-          : null;
+        const result = isFulfilled ? sourceResults[source.name].value : null;
         const base = {
           success: status[source.name],
           fallbackDetected: fallbackKeys[source.name].length > 0,
@@ -764,9 +762,7 @@ async function main() {
   const seoData = {
     meta,
     debt: status.debt ? resolvedValues.debt : existingData.debt,
-    pensions: status.pensions
-      ? resolvedValues.pensions
-      : existingData.pensions,
+    pensions: status.pensions ? resolvedValues.pensions : existingData.pensions,
     budget: status.budget ? resolvedValues.budget : existingData.budget,
     revenue: status.revenue ? resolvedValues.revenue : null,
   };
@@ -780,17 +776,11 @@ async function main() {
   writeTextFile("public/feed.xml", buildRssFeed(meta));
   console.log("✅ public/seo-snapshot.html");
   console.log("✅ public/sitemap.xml");
-  console.log(
-    `✅ ${Object.keys(sectionPages).length} páginas SSG de sección`,
-  );
+  console.log(`✅ ${Object.keys(sectionPages).length} páginas SSG de sección`);
   console.log("✅ public/feed.xml");
 
   // Compare old vs new data
-  if (
-    existingData.debt ||
-    existingData.demographics ||
-    existingData.pensions
-  ) {
+  if (existingData.debt || existingData.demographics || existingData.pensions) {
     displayDataComparison(existingData, {
       debt: status.debt ? sourceResults.debt.value : null,
       demographics: status.demographics
@@ -804,23 +794,15 @@ async function main() {
   // Display freshness warnings
   displayFreshnessWarnings({
     debt: status.debt ? sourceResults.debt.value : null,
-    demographics: status.demographics
-      ? sourceResults.demographics.value
-      : null,
+    demographics: status.demographics ? sourceResults.demographics.value : null,
     pensions: status.pensions ? sourceResults.pensions.value : null,
     budget: status.budget ? sourceResults.budget.value : null,
   });
 
   // Summary
-  console.log(
-    "\n╔═══════════════════════════════════════════════════════╗",
-  );
-  console.log(
-    "║  Resumen                                              ║",
-  );
-  console.log(
-    "╚═══════════════════════════════════════════════════════╝",
-  );
+  console.log("\n╔═══════════════════════════════════════════════════════╗");
+  console.log("║  Resumen                                              ║");
+  console.log("╚═══════════════════════════════════════════════════════╝");
   console.log();
 
   const successCount = Object.values(status).filter(Boolean).length;
@@ -847,9 +829,7 @@ async function main() {
 
   // B3: Éxito parcial. Definir fuentes críticas.
   const CRITICAL_SOURCES = ["debt", "demographics", "pensions", "budget"];
-  const failedCritical = CRITICAL_SOURCES.filter(
-    (source) => !status[source],
-  );
+  const failedCritical = CRITICAL_SOURCES.filter((source) => !status[source]);
 
   if (failedCritical.length === 0) {
     if (successCount === totalCount) {

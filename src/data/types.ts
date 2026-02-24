@@ -140,6 +140,14 @@ export interface CcaaDebtEntry {
   debtYoYChangePct?: number | null; // percentage
 }
 
+export interface CcaaDeficitData {
+  lastUpdated: string;
+  source: string;
+  note: string;
+  latestYear: number;
+  data: Record<string, number>; // code -> deficit in millions (negative means deficit, positive means surplus)
+}
+
 export interface CcaaDebtData {
   lastUpdated: string;
   quarter: string; // "2025-Q3"

@@ -130,6 +130,16 @@ sourceAttribution: { ssSustainability: DataSourceAttribution }
 - Cuando una fuente oficial falla, pueden aparecer valores de fallback con trazabilidad en `sourceAttribution`.
 - En pensiones, si falla todo el scraping de Seguridad Social, `meta.json` marcará `criticalFallback` y CI abrirá alerta automática.
 
+## Tipos de atribución de fuente (`sourceAttribution`)
+
+Los objetos `DataSourceAttribution` pueden presentar los siguientes tipos:
+
+- `"api"` — dato descargado de una API oficial (INE, Eurostat).
+- `"csv"` / `"xlsx"` — dato parseado de fichero CSV o Excel oficial (BdE, IGAE, SS).
+- `"fallback"` — dato de referencia hardcodeado que se activa cuando la fuente oficial no responde.
+- `"derived"` — calculado a partir de otros campos (e.g. déficit = gasto − ingresos).
+- `"cross-reference"` — dato enriquecido desde otro pipeline interno. En `pensions.json`, los campos `socialContributions`, `reserveFund` y `affiliates` usan este tipo: se obtienen del pipeline `ss-sustainability` (Eurostat `gov_10a_main` D61REC, serie RESERVE_FUND_HISTORY y ratio cotizantes/pensionista respectivamente) en lugar de estimaciones hardcodeadas.
+
 ## Ejemplos de uso
 
 ```bash

@@ -207,6 +207,27 @@ describe("CcaaDebtBlock", () => {
             topDivisionAmount: 42_900,
             topDivisionPct: 39.3,
           },
+          {
+            code: "CA17",
+            name: "C. Valenciana",
+            total: 30_500,
+            divisions: {
+              "01": 2_100,
+              "02": 0,
+              "03": 1_200,
+              "04": 2_400,
+              "05": 600,
+              "06": 700,
+              "07": 12_900,
+              "08": 800,
+              "09": 8_700,
+              "10": 1_100,
+            },
+            topDivisionCode: "07",
+            topDivisionName: "Salud",
+            topDivisionAmount: 12_900,
+            topDivisionPct: 42.3,
+          },
         ],
       },
     },
@@ -236,6 +257,16 @@ describe("CcaaDebtBlock", () => {
     },
   };
 
+  const mockCcaaDeficit = {
+    latestYear: 2023,
+    data: {
+      CA09: -3850,
+      CA17: -2200,
+      CA15: 150,
+      CA01: -1200,
+    },
+  };
+
   beforeEach(() => {
     (useData as any).mockReturnValue({
       ccaaDebt: mockCcaaDebt,
@@ -243,6 +274,7 @@ describe("CcaaDebtBlock", () => {
       ccaaFiscalBalance: mockCcaaFiscalBalance,
       ccaaForalFlows: mockCcaaForalFlows,
       ccaaSpending: mockCcaaSpending,
+      ccaaDeficit: mockCcaaDeficit,
     });
     window.history.replaceState({}, "", "/");
     tooltipPayload = {
@@ -281,8 +313,8 @@ describe("CcaaDebtBlock", () => {
     expect((screen.getByLabelText("Comunidad") as HTMLSelectElement).value).toBe("CA09");
     expect((screen.getByLabelText("Métrica") as HTMLSelectElement).value).toBe("debtAbsolute");
     expect(screen.getByText("Detalle: Cataluña")).toBeInTheDocument();
-    expect(screen.getByText(/Déficit CCAA \(proxy\)/)).toBeInTheDocument();
-    expect(screen.getByText(/Gasto CCAA \(proxy\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Déficit CCAA \(oficial\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Gasto CCAA \(oficial\)/)).toBeInTheDocument();
   });
 
   it("al cambiar a deuda absoluta reordena y sincroniza URL", () => {
@@ -306,8 +338,7 @@ describe("CcaaDebtBlock", () => {
     fireEvent.change(communitySelect, { target: { value: "CA17" } });
 
     expect(screen.getByText("Detalle: C. Valenciana")).toBeInTheDocument();
-    expect(screen.getByText(/Proxy por variación deuda/)).toBeInTheDocument();
-    expect(screen.getByText(/Gasto estimado/)).toBeInTheDocument();
+    expect(screen.getByText(/Gasto total/)).toBeInTheDocument();
     expect(screen.getByText(/Ingresos tributarios AEAT/)).toBeInTheDocument();
     expect(window.location.search).toContain("ccaa=CA17");
   });

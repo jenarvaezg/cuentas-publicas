@@ -505,22 +505,26 @@ export function enrichPensionWithSustainability(pensionData, sustainabilityData)
 
   // 1. Social contributions: Eurostat gov_10a_main D61REC (M€ → €)
   const socialContributionsMEur = yearData?.socialContributions
-  const socialContributions = socialContributionsMEur
+  const socialContributions = socialContributionsMEur != null
     ? socialContributionsMEur * 1_000_000
     : pensionData.current.socialContributions
 
   // 2. Reserve fund: latest entry from RESERVE_FUND_HISTORY (M€ → €)
   const reserveFundHistory = sustainabilityData.reserveFund
-  const latestReserveFund = reserveFundHistory?.[reserveFundHistory.length - 1]
-  const reserveFund = latestReserveFund
+  const latestReserveFund = reserveFundHistory?.length > 0
+    ? reserveFundHistory[reserveFundHistory.length - 1]
+    : null
+  const reserveFund = latestReserveFund?.balance != null
     ? latestReserveFund.balance * 1_000_000
     : pensionData.current.reserveFund
 
   // 3. Affiliates: derive from contributors-per-pensioner ratio × totalPensions
   const cppHistory = sustainabilityData.contributorsPerPensioner
-  const latestCpp = cppHistory?.[cppHistory.length - 1]
+  const latestCpp = cppHistory?.length > 0
+    ? cppHistory[cppHistory.length - 1]
+    : null
   const totalPensions = pensionData.current.totalPensions
-  const affiliates = latestCpp
+  const affiliates = latestCpp?.ratio != null
     ? Math.round(latestCpp.ratio * totalPensions)
     : pensionData.current.affiliates
 
@@ -540,7 +544,7 @@ export function enrichPensionWithSustainability(pensionData, sustainabilityData)
   // Update source attributions for enriched fields
   const enrichedAttribution = {
     ...pensionData.sourceAttribution,
-    socialContributions: socialContributionsMEur
+    socialContributions: socialContributionsMEur != null
       ? {
         source: `Eurostat gov_10a_main D61REC (${latestYear})`,
         type: "cross-reference",
@@ -580,7 +584,7 @@ export function enrichPensionWithSustainability(pensionData, sustainabilityData)
   }
 
   console.log("  📊 Enriquecimiento cross-reference:")
-  console.log(`    Cotizaciones sociales: ${(socialContributions / 1_000_000_000).toFixed(1)}B€ [${socialContributionsMEur ? "Eurostat " + latestYear : "fallback"}]`)
+  console.log(`    Cotizaciones sociales: ${(socialContributions / 1_000_000_000).toFixed(1)}B€ [${socialContributionsMEur != null ? "Eurostat " + latestYear : "fallback"}]`)
   console.log(`    Fondo de reserva:      ${(reserveFund / 1_000_000_000).toFixed(1)}B€ [${latestReserveFund ? latestReserveFund.year : "fallback"}]`)
   console.log(`    Afiliados:             ${affiliates.toLocaleString("es-ES")} [${latestCpp ? "ratio " + latestCpp.ratio : "fallback"}]`)
   console.log(`    Cotizantes/pensionista: ${contributorsPerPensioner.toFixed(2)}`)

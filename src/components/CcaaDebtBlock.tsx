@@ -44,7 +44,8 @@ function parseCcaaFromQuery(allowedCodes: Set<string>): CcaaSelection {
 }
 
 export function CcaaDebtBlock() {
-  const { ccaaDebt, taxRevenue, ccaaFiscalBalance, ccaaForalFlows, ccaaSpending } = useData();
+  const { ccaaDebt, taxRevenue, ccaaFiscalBalance, ccaaForalFlows, ccaaSpending, ccaaDeficit } =
+    useData();
   const { msg, lang } = useI18n();
   const copy =
     lang === "en"
@@ -60,7 +61,7 @@ export function CcaaDebtBlock() {
           ranking: "Ranking",
           ofLabel: "of",
           differenceVsNational: "Difference vs national total",
-          regionalDeficit: "Regional deficit (proxy)",
+          regionalDeficit: "Regional deficit (official)",
           regionalSpending: "Regional spending (proxy)",
           officialBalance: "Regional balance (official)",
           officialNetBalance: "Net balance",
@@ -95,8 +96,8 @@ export function CcaaDebtBlock() {
           deficitProxy: "Debt change proxy (12m)",
           spendingProxy: "Estimated spending",
           surplusProxy: "Estimated surplus",
-          proxyNote:
-            "Proxy based on 12m debt change (BdE) and AEAT tax revenue. Not equivalent to national accounts deficit.",
+          proxyNote: "Proxy based on tax revenue. Not equivalent to national accounts.",
+          deficitOfficialNote: "Official National Accounts (SEC 2010) closing balance (IGAE).",
           unavailableProxy: "Not available for this region/year.",
           taxRevenueRef: "AEAT tax revenue",
           foralTaxRevenueRef: "Foral tax revenue",
@@ -119,7 +120,7 @@ export function CcaaDebtBlock() {
           ranking: "Ranking",
           ofLabel: "de",
           differenceVsNational: "Diferencia vs total nacional",
-          regionalDeficit: "Déficit CCAA (proxy)",
+          regionalDeficit: "Déficit CCAA (oficial)",
           regionalSpending: "Gasto CCAA (proxy)",
           officialBalance: "Saldo CCAA (oficial)",
           officialNetBalance: "Saldo neto",
@@ -155,7 +156,9 @@ export function CcaaDebtBlock() {
           spendingProxy: "Gasto estimado",
           surplusProxy: "Superávit estimado",
           proxyNote:
-            "Proxy basado en variación de deuda 12m (BdE) e ingresos tributarios AEAT. No equivale al déficit de contabilidad nacional.",
+            "Proxy basado en ingresos tributarios AEAT. No equivale a gasto real contable.",
+          deficitOfficialNote:
+            "Saldo de cierre oficial Contabilidad Nacional (SEC 2010) publicado por IGAE.",
           unavailableProxy: "No disponible para esta comunidad/año.",
           taxRevenueRef: "Ingresos tributarios AEAT",
           foralTaxRevenueRef: "Recaudación Tributaria Foral",
@@ -234,7 +237,12 @@ export function CcaaDebtBlock() {
   const selectedForalFlow = selectedEntry ? foralByCode.get(selectedEntry.code) : undefined;
 
   const selectedDebtYoYChange = selectedEntry?.debtYoYChangeAbsolute ?? null;
-  const selectedDebtYoYChangePct = selectedEntry?.debtYoYChangePct ?? null;
+
+  const deficitYear = ccaaDeficit.latestYear;
+  const selectedDeficitEuros =
+    selectedEntry && ccaaDeficit.data[selectedEntry.code] != null
+      ? ccaaDeficit.data[selectedEntry.code] * 1_000_000
+      : null;
 
   const selectedTaxRevenueEuros =
     selectedIsForal && selectedForalFlow?.taxRevenue != null
@@ -243,10 +251,15 @@ export function CcaaDebtBlock() {
         ? selectedTaxRevenue.total * 1_000_000
         : null;
 
+  // We don't have exact real-time proxy spending that squares perfectly without complex aggregation.
+  // We keep the old proxy for spending until phase E is fully integrated using ccaaSpending,
+  // or use the proxy: Tax Revenue + Deficit (negative means debt)
   const selectedSpendingProxyEuros =
-    selectedDebtYoYChange != null && selectedTaxRevenueEuros != null
-      ? selectedTaxRevenueEuros + selectedDebtYoYChange
-      : null;
+    selectedDeficitEuros != null && selectedTaxRevenueEuros != null
+      ? selectedTaxRevenueEuros + Math.abs(selectedDeficitEuros)
+      : selectedDebtYoYChange != null && selectedTaxRevenueEuros != null
+        ? selectedTaxRevenueEuros + selectedDebtYoYChange
+        : null;
 
   const spendingYears = ccaaSpending?.years ?? [];
   const latestSpendingYear = ccaaSpending?.latestYear ?? spendingYears[spendingYears.length - 1];
@@ -456,7 +469,8 @@ export function CcaaDebtBlock() {
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {copy.officialSpendingTopDivision}: {selectedTopDivisionLabel} (
-                      {formatNumber(selectedOfficialSpending.topDivisionPct, 1)}%)
+                      {formatNumber(selectedOfficialSpending.topDivisionPct, 1)}
+                      %)
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {copy.officialBasedOnYear} {latestSpendingYear}
@@ -468,22 +482,19 @@ export function CcaaDebtBlock() {
               </div>
               <div className="rounded-md border bg-background p-3">
                 <p className="text-xs font-semibold">{copy.regionalDeficit}</p>
-                {selectedDebtYoYChange == null ? (
+                {selectedDeficitEuros == null ? (
                   <p className="text-xs text-muted-foreground mt-1">{copy.unavailableProxy}</p>
                 ) : (
                   <>
                     <p className="text-sm font-semibold mt-1">
-                      {selectedDebtYoYChange >= 0 ? copy.deficitProxy : copy.surplusProxy}:{" "}
-                      {selectedDebtYoYChange >= 0 ? "+" : "-"}
-                      {formatCompact(Math.abs(selectedDebtYoYChange))}
+                      {selectedDeficitEuros >= 0 ? "Superávit" : "Déficit"}:{" "}
+                      {selectedDeficitEuros >= 0 ? "+" : "-"}
+                      {formatCompact(Math.abs(selectedDeficitEuros))}
                     </p>
-                    {selectedDebtYoYChangePct != null && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {selectedDebtYoYChange >= 0 ? "+" : ""}
-                        {formatNumber(selectedDebtYoYChangePct, 1)}%
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground mt-1">{copy.proxyNote}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {copy.basedOnYear} {deficitYear}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{copy.deficitOfficialNote}</p>
                   </>
                 )}
               </div>

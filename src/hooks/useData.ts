@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import budgetJson from "@/data/budget.json";
 import ccaaDebtJson from "@/data/ccaa-debt.json";
+import ccaaDeficitJson from "@/data/ccaa-deficit.json";
 import ccaaFiscalBalanceJson from "@/data/ccaa-fiscal-balance.json";
 import ccaaForalFlowsJson from "@/data/ccaa-foral-flows.json";
 import ccaaSpendingJson from "@/data/ccaa-spending.json";
@@ -16,6 +17,7 @@ import taxRevenueJson from "@/data/tax-revenue.json";
 import type {
   BudgetData,
   CcaaDebtData,
+  CcaaDeficitData,
   CcaaFiscalBalanceData,
   CcaaForalFlowsData,
   CcaaSpendingData,
@@ -38,6 +40,7 @@ export function useData() {
     const budget = budgetJson as BudgetData;
     const eurostat = eurostatJson as EurostatData;
     const ccaaDebt = ccaaDebtJson as CcaaDebtData;
+    const ccaaDeficit = ccaaDeficitJson as CcaaDeficitData;
     const ccaaFiscalBalance = ccaaFiscalBalanceJson as CcaaFiscalBalanceData;
     const ccaaForalFlows = ccaaForalFlowsJson as CcaaForalFlowsData;
     const ccaaSpending = ccaaSpendingJson as CcaaSpendingData;
@@ -53,6 +56,7 @@ export function useData() {
       budget,
       eurostat,
       ccaaDebt,
+      ccaaDeficit,
       ccaaFiscalBalance,
       ccaaForalFlows,
       ccaaSpending,
