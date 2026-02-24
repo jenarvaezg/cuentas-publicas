@@ -1,6 +1,6 @@
 {
   "apiVersion": "v1",
-  "generatedAt": "2026-02-24T10:45:14.832Z",
+  "generatedAt": "2026-02-24T13:53:23.056Z",
   "basePath": "/api/v1",
   "endpoints": [
     {
@@ -59,6 +59,11 @@
       "description": "Flujos forales de Navarra y País Vasco (aportación/cupo)"
     },
     {
+      "path": "/api/v1/pensions-regional.json",
+      "source": "Seguridad Social (EST24)",
+      "description": "Gasto anual en pensiones desglosado por CCAA"
+    },
+    {
       "path": "/api/v1/ss-sustainability.json",
       "source": "Eurostat + Ageing Report",
       "description": "Sostenibilidad de la Seguridad Social: cotizaciones, gasto contributivo, Fondo de Reserva y proyecciones"
@@ -74,8 +79,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:51.007Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.274Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2025-11-30",
       "dataPoints": 373
     },
@@ -83,16 +88,16 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:51.148Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.443Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2025-12-31"
     },
     "pensions": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:52.313Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:52.619Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "criticalFallback": false,
       "criticalFallbackReason": null,
       "lastRealDataDate": "2026-01-01",
@@ -102,8 +107,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:51.300Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:52.160Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2024-12-31",
       "years": 30
     },
@@ -111,8 +116,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:51.305Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.398Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2024-12-31",
       "year": 2024
     },
@@ -120,8 +125,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:50.985Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.268Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2025-09-30",
       "quarter": "2025-Q3"
     },
@@ -129,8 +134,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:51.118Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.355Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024
     },
@@ -138,8 +143,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:57.063Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:53:05.612Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2025-12-31",
       "latestYear": 2025,
       "years": 31
@@ -148,8 +153,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:45:00.772Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:54.404Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2023-12-31",
       "latestYear": 2023,
       "years": 5
@@ -158,18 +163,18 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:45:14.823Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:53:22.821Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
-      "years": 13
+      "years": 12
     },
     "ccaaDeficit": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:59.443Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:54.406Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2023-12-31",
       "latestYear": 2023
     },
@@ -177,18 +182,28 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:51.304Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.459Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "communities": 2
+    },
+    "pensionsRegional": {
+      "success": true,
+      "fallbackDetected": false,
+      "fallbackKeys": [],
+      "lastUpdated": "2026-02-24T13:52:52.498Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
+      "lastRealDataDate": "2026-12-31",
+      "latestYear": 2026,
+      "communities": 17
     },
     "flowsSankey": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:50.922Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.107Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "nodes": 24,
@@ -198,8 +213,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-02-24T10:44:51.127Z",
-      "lastFetchAt": "2026-02-24T10:45:14.832Z",
+      "lastUpdated": "2026-02-24T13:52:50.376Z",
+      "lastFetchAt": "2026-02-24T13:53:23.056Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "years": 30

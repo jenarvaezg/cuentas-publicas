@@ -445,6 +445,28 @@ export interface SSSustainabilityData {
   sourceAttribution: Record<string, DataSourceAttribution>;
 }
 
+export interface PensionsRegionalEntry {
+  code: string;
+  name: string;
+  annualAmount: number;
+  monthlyAmount?: number;
+  pensionsCount?: number;
+}
+
+export interface PensionsRegionalYearData {
+  year: number;
+  date: string;
+  dateLabel: string;
+  entries: PensionsRegionalEntry[];
+}
+
+export interface PensionsRegionalData {
+  latestYear: number;
+  byYear: Record<string, PensionsRegionalYearData>;
+  source: string;
+  url: string;
+}
+
 // ── Metadata ────────────────────────────────────────────────────────
 
 export interface MetaSourceEntry {
@@ -481,6 +503,7 @@ export interface MetaData {
     ccaaFiscalBalance?: boolean;
     ccaaSpending?: boolean;
     ccaaForalFlows?: boolean;
+    pensionsRegional?: boolean;
     flowsSankey?: boolean;
     ssSustainability?: boolean;
   };

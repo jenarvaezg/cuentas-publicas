@@ -256,6 +256,7 @@ describe('data integrity', () => {
       'ccaa-fiscal-balance.json',
       'ccaa-spending.json',
       'ccaa-foral-flows.json',
+      'pensions-regional.json',
       'meta.json',
       'index.json'
     ]
@@ -279,6 +280,9 @@ describe('data integrity', () => {
       true,
     )
     expect(apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/ccaa-foral-flows.json')).toBe(
+      true,
+    )
+    expect(apiIndex.endpoints.some((endpoint) => endpoint.path === '/api/v1/pensions-regional.json')).toBe(
       true,
     )
   })

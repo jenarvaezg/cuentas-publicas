@@ -11,6 +11,7 @@ import eurostatJson from "@/data/eurostat.json";
 import flowsJson from "@/data/flows.json";
 import metaJson from "@/data/meta.json";
 import pensionsJson from "@/data/pensions.json";
+import pensionsRegionalJson from "@/data/pensions-regional.json";
 import revenueJson from "@/data/revenue.json";
 import ssSustainabilityJson from "@/data/ss-sustainability.json";
 import taxRevenueJson from "@/data/tax-revenue.json";
@@ -27,6 +28,7 @@ import type {
   FlowsData,
   MetaData,
   PensionData,
+  PensionsRegionalData,
   RevenueData,
   SSSustainabilityData,
   TaxRevenueData,
@@ -37,6 +39,7 @@ export function useData() {
     const debt = debtJson as DebtData;
     const demographics = demographicsJson as DemographicsData;
     const pensions = pensionsJson as PensionData;
+    const pensionsRegional = pensionsRegionalJson as PensionsRegionalData;
     const budget = budgetJson as BudgetData;
     const eurostat = eurostatJson as EurostatData;
     const ccaaDebt = ccaaDebtJson as CcaaDebtData;
@@ -93,6 +96,7 @@ export function useData() {
     return {
       debt,
       pensions,
+      pensionsRegional,
       demographics,
       budget,
       eurostat,

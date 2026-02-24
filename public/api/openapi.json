@@ -6,97 +6,169 @@
     "description": "API pública estática para métricas fiscales de España"
   },
   "servers": [
-    { "url": "https://cuentas-publicas.es" }
+    {
+      "url": "https://cuentas-publicas.es"
+    }
   ],
   "paths": {
     "/api/v1/index.json": {
       "get": {
         "summary": "Catálogo de endpoints v1",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/debt.json": {
       "get": {
         "summary": "Deuda pública PDE",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/pensions.json": {
       "get": {
         "summary": "Pensiones y seguridad social",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/demographics.json": {
       "get": {
         "summary": "Demografía, PIB e IPC",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/budget.json": {
       "get": {
         "summary": "Gasto COFOG",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/revenue.json": {
       "get": {
         "summary": "Ingresos y gastos públicos",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/eurostat.json": {
       "get": {
         "summary": "Comparativa UE",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/ccaa-debt.json": {
       "get": {
         "summary": "Deuda por CCAA",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/tax-revenue.json": {
       "get": {
         "summary": "Recaudación tributaria por impuesto y CCAA",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/ccaa-fiscal-balance.json": {
       "get": {
         "summary": "Impuestos cedidos vs transferencias por CCAA (régimen común)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/ccaa-spending.json": {
       "get": {
         "summary": "Gasto funcional COFOG por CCAA (administración regional)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/ccaa-foral-flows.json": {
       "get": {
         "summary": "Flujos forales de Navarra y País Vasco (aportación/cupo)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/pensions-regional.json": {
+      "get": {
+        "summary": "Gasto anual en pensiones desglosado por CCAA",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/flows.json": {
       "get": {
         "summary": "Red de flujos balanceada (nodos y enlaces Sankey)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/ss-sustainability.json": {
       "get": {
         "summary": "Sostenibilidad SS: cotizaciones, gasto contributivo, Fondo de Reserva y proyecciones",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/meta.json": {
       "get": {
         "summary": "Estado y frescura del pipeline",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     }
   }
