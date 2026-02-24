@@ -70,16 +70,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
     rel="stylesheet" />
 </head>
 
 <body>
   <noscript>
-    <div style="padding:2rem;text-align:center;font-family:system-ui">
-      <h1>Dashboard Fiscal de España</h1>
-      <p>Esta aplicación necesita JavaScript para funcionar.</p>
-      <p>Por favor, activa JavaScript en tu navegador.</p>
+    <div style="padding:2rem;max-width:900px;margin:0 auto;font-family:system-ui;color:#0f172a">
+      <h1>Cuentas Públicas de España en Tiempo Real</h1>
+      <p>Dashboard fiscal con datos oficiales del Banco de España, INE, Seguridad Social, IGAE y Eurostat.</p>
+      <h2>Indicadores principales</h2>
+      <ul>
+        <li><strong>Deuda pública</strong> — Dato mensual PDE del Banco de España (be11b.csv)</li>
+        <li><strong>Pensiones</strong> — Nómina mensual de pensiones contributivas (Seguridad Social)</li>
+        <li><strong>Gasto público funcional (COFOG)</strong> — Clasificación IGAE del gasto de las AAPP</li>
+        <li><strong>Ingresos y gastos</strong> — Serie anual Eurostat (General Government)</li>
+        <li><strong>Recaudación tributaria</strong> — Desglose mensual AEAT por IRPF, IVA, Sociedades</li>
+        <li><strong>Demografía</strong> — Población, EPA, PIB, salario medio e IPC del INE</li>
+        <li><strong>Deuda por CCAA</strong> — Protocolo de Déficit Excesivo por comunidad autónoma</li>
+        <li><strong>Comparativa UE</strong> — Indicadores de deuda, déficit y gasto vs media europea</li>
+      </ul>
+      <p>Activa JavaScript para ver la versión interactiva con contadores en tiempo real y gráficos.</p>
+      <p>Versión estática: <a href="/seo-snapshot.html">seo-snapshot.html</a></p>
     </div>
   </noscript>
   <script>try { var t = localStorage.getItem('cuentas-publicas-theme'); if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark') } catch (e) { }</script>

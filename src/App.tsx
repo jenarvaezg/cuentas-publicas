@@ -1,24 +1,10 @@
-import { useEffect, useMemo } from "react";
-import { BudgetBlock } from "@/components/BudgetBlock";
-import { CcaaDebtBlock } from "@/components/CcaaDebtBlock";
-import { ComparativaEUBlock } from "@/components/ComparativaEUBlock";
-import { DebtBlock } from "@/components/DebtBlock";
-import { DebtCostBlock } from "@/components/DebtCostBlock";
-import { DemographicsBlock } from "@/components/DemographicsBlock";
-import { EquivalenciasBlock } from "@/components/EquivalenciasBlock";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 import { FadeIn } from "@/components/FadeIn";
-import { FlowsSankeyBlock } from "@/components/FlowsSankeyBlock";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { MethodologySection } from "@/components/MethodologySection";
 import { OfflineStatus } from "@/components/OfflineStatus";
-import { PensionsBlock } from "@/components/PensionsBlock";
 import { RealtimeCounter } from "@/components/RealtimeCounter";
-import { RevenueBlock } from "@/components/RevenueBlock";
-import { RoadmapSection } from "@/components/RoadmapSection";
 import { SectionNav, type SectionNavGroup } from "@/components/SectionNav";
-import { SustainabilityBlock } from "@/components/SustainabilityBlock";
-import { TaxRevenueBlock } from "@/components/TaxRevenueBlock";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BDE_BE11B, CALCULO_DERIVADO, SS_NOMINA } from "@/data/sources";
 import { useData } from "@/hooks/useData";
@@ -26,6 +12,45 @@ import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatDate, formatNumber } from "@/utils/formatters";
 import { getSearchParam } from "@/utils/url-state";
+
+/* Lazy-loaded sections — each becomes its own chunk, fetched on first render */
+const namedLazy = <T extends Record<string, React.ComponentType>>(
+  factory: () => Promise<T>,
+  name: keyof T,
+) => lazy(() => factory().then((m) => ({ default: m[name] })));
+
+const BudgetBlock = namedLazy(() => import("@/components/BudgetBlock"), "BudgetBlock");
+const CcaaDebtBlock = namedLazy(() => import("@/components/CcaaDebtBlock"), "CcaaDebtBlock");
+const ComparativaEUBlock = namedLazy(
+  () => import("@/components/ComparativaEUBlock"),
+  "ComparativaEUBlock",
+);
+const DebtBlock = namedLazy(() => import("@/components/DebtBlock"), "DebtBlock");
+const DebtCostBlock = namedLazy(() => import("@/components/DebtCostBlock"), "DebtCostBlock");
+const DemographicsBlock = namedLazy(
+  () => import("@/components/DemographicsBlock"),
+  "DemographicsBlock",
+);
+const EquivalenciasBlock = namedLazy(
+  () => import("@/components/EquivalenciasBlock"),
+  "EquivalenciasBlock",
+);
+const FlowsSankeyBlock = namedLazy(
+  () => import("@/components/FlowsSankeyBlock"),
+  "FlowsSankeyBlock",
+);
+const MethodologySection = namedLazy(
+  () => import("@/components/MethodologySection"),
+  "MethodologySection",
+);
+const PensionsBlock = namedLazy(() => import("@/components/PensionsBlock"), "PensionsBlock");
+const RevenueBlock = namedLazy(() => import("@/components/RevenueBlock"), "RevenueBlock");
+const RoadmapSection = namedLazy(() => import("@/components/RoadmapSection"), "RoadmapSection");
+const SustainabilityBlock = namedLazy(
+  () => import("@/components/SustainabilityBlock"),
+  "SustainabilityBlock",
+);
+const TaxRevenueBlock = namedLazy(() => import("@/components/TaxRevenueBlock"), "TaxRevenueBlock");
 
 const SECTION_IDS = [
   "resumen",
@@ -62,6 +87,19 @@ function NarrativeBridge({ title, text }: { title?: string; text: string }) {
         {text}
       </p>
     </FadeIn>
+  );
+}
+
+function SectionSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4 p-6">
+      <div className="h-6 bg-muted rounded w-1/3" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="h-32 bg-muted rounded-xl" />
+        <div className="h-32 bg-muted rounded-xl" />
+        <div className="h-32 bg-muted rounded-xl" />
+      </div>
+    </div>
   );
 }
 
@@ -345,11 +383,13 @@ function App() {
               id="mapa-fiscal"
               className="scroll-mt-28 w-screen relative left-1/2 right-1/2 -mx-[50vw] bg-card/10 backdrop-blur-3xl border-y border-white/5 py-12 mt-8 shadow-2xl"
             >
-              <FadeIn delay={0.2}>
-                <div className="w-full max-w-[95vw] 2xl:max-w-[1600px] mx-auto px-4 lg:px-8">
-                  <FlowsSankeyBlock />
-                </div>
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.2}>
+                  <div className="w-full max-w-[95vw] 2xl:max-w-[1600px] mx-auto px-4 lg:px-8">
+                    <FlowsSankeyBlock />
+                  </div>
+                </FadeIn>
+              </Suspense>
             </section>
           </section>
 
@@ -371,14 +411,18 @@ function App() {
             />
 
             <section id="ingresos-gastos" className="scroll-mt-28">
-              <FadeIn delay={0.1}>
-                <RevenueBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.1}>
+                  <RevenueBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section id="recaudacion" className="scroll-mt-28">
-              <FadeIn delay={0.2}>
-                <TaxRevenueBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.2}>
+                  <TaxRevenueBlock />
+                </FadeIn>
+              </Suspense>
             </section>
           </section>
 
@@ -396,24 +440,32 @@ function App() {
             />
 
             <section id="demografia" className="scroll-mt-28">
-              <FadeIn delay={0.1}>
-                <DemographicsBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.1}>
+                  <DemographicsBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section id="pensiones" className="scroll-mt-28">
-              <FadeIn delay={0.2}>
-                <PensionsBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.2}>
+                  <PensionsBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section id="sostenibilidad-ss" className="scroll-mt-28">
-              <FadeIn delay={0.3}>
-                <SustainabilityBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.3}>
+                  <SustainabilityBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section id="gasto-cofog" className="scroll-mt-28">
-              <FadeIn delay={0.4}>
-                <BudgetBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.4}>
+                  <BudgetBlock />
+                </FadeIn>
+              </Suspense>
             </section>
           </section>
 
@@ -431,19 +483,25 @@ function App() {
             />
 
             <section id="deuda" className="scroll-mt-28">
-              <FadeIn delay={0.1}>
-                <DebtBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.1}>
+                  <DebtBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section id="coste-deuda" className="scroll-mt-28">
-              <FadeIn delay={0.2}>
-                <DebtCostBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.2}>
+                  <DebtCostBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section className="scroll-mt-28">
-              <FadeIn delay={0.3}>
-                <EquivalenciasBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.3}>
+                  <EquivalenciasBlock />
+                </FadeIn>
+              </Suspense>
             </section>
           </section>
 
@@ -451,20 +509,28 @@ function App() {
           <section className="space-y-6 pt-8">
             <ChapterDivider title={chapterCopy.c5.title} subtitle={chapterCopy.c5.subtitle} />
             <section id="ccaa" className="scroll-mt-28">
-              <FadeIn delay={0.1}>
-                <CcaaDebtBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.1}>
+                  <CcaaDebtBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section id="ue" className="scroll-mt-28">
-              <FadeIn delay={0.2}>
-                <ComparativaEUBlock />
-              </FadeIn>
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.2}>
+                  <ComparativaEUBlock />
+                </FadeIn>
+              </Suspense>
             </section>
             <section id="metodologia" className="scroll-mt-28 pt-8">
-              <MethodologySection />
+              <Suspense fallback={<SectionSkeleton />}>
+                <MethodologySection />
+              </Suspense>
             </section>
             <section className="scroll-mt-28">
-              <RoadmapSection />
+              <Suspense fallback={<SectionSkeleton />}>
+                <RoadmapSection />
+              </Suspense>
             </section>
           </section>
         </main>
