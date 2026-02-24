@@ -21,6 +21,7 @@ No requiere autenticación y está pensada para consumo de lectura (dashboards, 
 - `/api/v1/tax-revenue.json` — recaudación tributaria por impuesto y CCAA (AEAT)
 - `/api/v1/ccaa-fiscal-balance.json` — impuestos cedidos vs transferencias por CCAA (régimen común, Hacienda)
 - `/api/v1/ccaa-spending.json` — gasto funcional COFOG por CCAA (administración regional, IGAE)
+- `/api/v1/ccaa-deficit.json` — déficit/superávit (B.9) por CCAA (Contabilidad Nacional, IGAE)
 - `/api/v1/ccaa-foral-flows.json` — flujos forales de Navarra y País Vasco (aportación/cupo) y recaudación tributaria (`taxRevenue`)
 - `/api/v1/flows.json` — red de flujos balanceada (nodos y enlaces Sankey) consolidando ingresos y gastos
 - `/api/v1/ss-sustainability.json` — sostenibilidad SS: cotizaciones, gasto pensiones, Fondo de Reserva, cotizantes/pensionista y proyecciones
@@ -65,26 +66,42 @@ immigrationShare: {                    // derived from pyramid
 
 Contiene los nodos, los enlaces balanceados y el agregado macro para el diagrama de Sankey.
 
+```json
+{
+  nodes: [{ 
+    id: string, 
+    label: string, 
+    group: string,         // e.g., "income", "expense"
+    amount: number,        // absolute value
+    format: string         // "currency", "percentage", "none"
+  }],
+  links: [{ 
+    id: string, 
+    source: string, 
+    target: string, 
+    amount: number, 
+    label: string 
+  }],
+  macro: {
+    revenue: number,
+    expenditure: number,
+    deficit: number,
+    surplus: number
+  }
+}
 ```
-nodes: [{ 
-  id: string, 
-  label: string, 
-  group: string,         // e.g., "income", "expense"
-  amount: number,        // absolute value
-  format: string         // "currency", "percentage", "none"
-}],
-links: [{ 
-  id: string, 
-  source: string, 
-  target: string, 
-  amount: number, 
-  label: string 
-}],
-macro: {
-  revenue: number,
-  expenditure: number,
-  deficit: number,
-  surplus: number
+
+### ccaa-deficit.json — Schema
+
+Déficit o superávit oficial por Comunidad Autónoma según Contabilidad Nacional (B.9 SEC 2010).
+
+```json
+{
+  latestYear: number,
+  data: {
+    [ccaaCode]: number     // CA01...CA17 in MIO_EUR
+  },
+  sourceAttribution: { ccaaDeficit: DataSourceAttribution }
 }
 ```
 

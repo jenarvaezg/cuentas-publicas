@@ -30,7 +30,9 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 - ✅ Datos desglosados por CCAA (CSV be1309/be1310 del BdE) — ranking general
 - ✅ Selector de Comunidad Autónoma (incluye persistencia en URL)
 - ✅ Recaudación tributaria por impuesto y por CCAA (AEAT series + delegaciones)
-- 🟡 Deuda, déficit y gasto por comunidad (detalle de deuda listo + proxy déficit/gasto integrado con BdE+AEAT; pendiente fuente oficial CN regional)
+- [x] (Q1 2026) **Visión consolidada (Sankey)**: Diagrama de flujos cuadradando ingresos totales, déficit y gasto por categoría (motor de simulación para "qué pasaría si..."). -> **CONSTRUIDO (flows.json)**
+- [x] (Q1 2026) **Deuda, déficit y gasto por comunidad**: Ampliar el desglose a nivel de CCAA (datos Banco de España y Contabilidad Nacional Regional). -> **INTEGRADO OFICIALMENTE (ccaa-deficit.json, ccaa-spending.json, etc.)**
+- [ ] (Q2 2026) **Sostenibilidad del estado de bienestar**: Visualización didáctica del agujero de las pensiones y la curva demográfica frente a previsiones de cotización y Fondo de Reserva. -> **HAY DATOS BÁSICOS EN TABLA, FALTA VISUALIZACIÓN PROPIA / SECCIÓN DEDICADA**.
 - ✅ SEO pre-render + SSG multi-ruta: snapshot estático, sitemap y páginas por sección (`/secciones/*`, `/en/sections/*`)
 - ✅ Compartir: hash + URL state (`section`, `ccaa`, `ccaaMetric`) + export PNG por bloque
 - ✅ PWA offline hardening: runtime caching, fallback offline y registro SW con actualización

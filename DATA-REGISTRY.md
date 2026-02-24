@@ -6,7 +6,7 @@ Inventario técnico de todos los datos del dashboard: clasificación, fuentes, f
 
 ## Resumen Ejecutivo
 
-El dashboard utiliza 9 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT, Ministerio de Hacienda, Gobierno de Navarra y Gobierno Vasco) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 13 archivos JSON en `src/data/` (12 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
+El dashboard utiliza 9 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat, AEAT, Ministerio de Hacienda, Gobierno de Navarra y Gobierno Vasco) descargadas semanalmente (lunes 08:00 UTC) por GitHub Actions. Se generan 14 archivos JSON en `src/data/` (13 datasets + `meta.json`) y su espejo público en `public/api/v1/`, además de artefactos SEO/SSG (`sitemap.xml`, `seo-snapshot.html`, rutas por sección ES/EN) y feed RSS (`feed.xml`). La SPA sigue sin llamadas API en runtime para el contenido principal (build-time data import). Cada fuente tiene fallback hardcodeado para garantizar continuidad operativa.
 
 **Estado general**: De ~44 métricas mostradas, **~23 son automatizadas**, **~7 son semi-automatizadas** (frágiles), **~7 son hardcodeadas/manuales**, y **~9 son derivadas** por cálculo.
 
@@ -342,9 +342,24 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 
 ---
 
+## 13. IGAE — Capacidad / Necesidad de Financiación Regional (Déficit CCAA)
+
+**Script**: `scripts/sources/ccaa-deficit.mjs` | **Output**: `src/data/ccaa-deficit.json`
+
+| Dato | Clasificación | Método | Frecuencia | Fragilidad |
+|------|---------------|--------|------------|------------|
+| Déficit/Superávit (B.9) por CCAA | **AUTOMATIZADO** | XLS `COFOG_A_Detalle_CCAA_YYYY.xlsx`, fila `B.9. Capacidad (+) / Necesidad (-)` | Anual | MEDIA |
+
+**URL documento**:
+- `https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-A/COFOG_A_Detalle_CCAA_YYYY.xlsx`
+
+**Cobertura**: 17/17 CCAA en el corte SEC 2010.
+
+**Fallback**: Debido a los fuertes bloqueos anti-scraping en los servidores de la IGAE (que retornan ocasionalmente redirects HTML o bloquean los IPs de CI), el script cuenta con un robusto dataset de fallback local 2023 con trazabilidad en `sourceAttribution`.
+
 ---
 
-## 13. EUROSTAT + AGEING REPORT — Sostenibilidad SS
+## 14. EUROSTAT + AGEING REPORT — Sostenibilidad SS
 
 **Script**: `scripts/sources/ss-sustainability.mjs` | **Output**: `src/data/ss-sustainability.json`
 
@@ -366,7 +381,7 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 
 ---
 
-## 14. INFRAESTRUCTURA CI/CD
+## 15. INFRAESTRUCTURA CI/CD
 
 | Workflow | Trigger | Qué hace |
 |----------|---------|----------|
@@ -381,7 +396,7 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 
 ---
 
-## 15. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
+## 16. TABLA RESUMEN: CLASIFICACIÓN DE TODOS LOS DATOS
 
 ### AUTOMATIZADOS (se actualizan solos cada lunes)
 | Dato | Fuente | Frescura | Confiabilidad |
