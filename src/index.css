@@ -11,11 +11,12 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   font-family: "Manrope", "Segoe UI", sans-serif;
-  background-image: radial-gradient(
-    circle at top right,
-    hsl(var(--primary) / 0.08) 0%,
-    hsl(var(--background)) 44%
-  );
+  
+  /* Modern Fintech Gradient Background */
+  background-image: 
+    radial-gradient(ellipse at top left, hsl(var(--primary) / 0.08), transparent 40%),
+    radial-gradient(ellipse at bottom right, hsl(var(--chart-2) / 0.05), transparent 40%);
+  background-attachment: fixed;
 }
 
 h1,
@@ -42,13 +43,13 @@ h3 {
 @layer base {
   :root {
     --background: 210 20% 98%;
-    --foreground: 220 15% 15%;
+    --foreground: 220 20% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 220 20% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 220 20% 15%;
 
     --primary: 215 65% 35%;
     --primary-foreground: 0 0% 100%;
@@ -56,7 +57,7 @@ h3 {
     --secondary: 220 14% 94%;
     --secondary-foreground: 220 15% 15%;
 
-    --muted: 220 14% 94%;
+    --muted: 220 14% 96%;
     --muted-foreground: 220 8% 46%;
 
     --accent: 220 14% 94%;
@@ -75,43 +76,45 @@ h3 {
     --chart-4: 155 60% 38%;
     --chart-5: 265 55% 50%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem; /* slightly rounder */
   }
 
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 220 13% 91%;
+    /* Deeper, premium dark mode */
+    --background: 222 47% 5%;
+    --foreground: 210 20% 98%;
 
-    --card: 220 22% 11%;
-    --card-foreground: 220 13% 91%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 220 22% 11%;
-    --popover-foreground: 220 13% 91%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 215 70% 55%;
-    --primary-foreground: 220 25% 8%;
+    --primary: 215 80% 65%;
+    --primary-foreground: 222 47% 5%;
 
-    --secondary: 220 16% 18%;
-    --secondary-foreground: 220 13% 91%;
+    --secondary: 215 25% 15%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 220 16% 18%;
-    --muted-foreground: 220 10% 55%;
+    --muted: 215 25% 15%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 220 16% 18%;
-    --accent-foreground: 220 13% 91%;
+    --accent: 215 25% 15%;
+    --accent-foreground: 210 20% 98%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 220 13% 91%;
+    --destructive: 350 80% 60%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 220 16% 20%;
-    --input: 220 16% 20%;
-    --ring: 215 70% 55%;
+    --border: 215 25% 15%;
+    --input: 215 25% 15%;
+    --ring: 215 80% 65%;
 
-    --chart-1: 215 70% 55%;
-    --chart-2: 0 80% 60%;
+    /* More vibrant chart colors for dark mode */
+    --chart-1: 215 80% 65%;
+    --chart-2: 350 80% 60%;
     --chart-3: 42 90% 55%;
     --chart-4: 155 70% 45%;
-    --chart-5: 265 60% 60%;
+    --chart-5: 265 75% 65%;
   }
 }
 

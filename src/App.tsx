@@ -186,38 +186,50 @@ function App() {
         <SectionNav groups={sectionGroups} />
 
         <main className="max-w-5xl mx-auto px-4 py-6 lg:py-8 space-y-8">
-          <section id="resumen" className="scroll-mt-28">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-              <div className="p-7 border rounded-xl bg-card shadow-sm flex flex-col items-center gap-3 animate-slide-up hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <div className="text-sm font-semibold text-muted-foreground mb-1 uppercase tracking-[0.08em]">
+          <section id="resumen" className="scroll-mt-28 relative">
+            {/* Background Glows for the hero section */}
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none -z-10" />
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-chart-2/10 rounded-full blur-3xl pointer-events-none -z-10" />
+
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
+              {/* Debt Summary (Larger / col-span-3) */}
+              <div className="lg:col-span-3 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center gap-4 animate-slide-up hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
                   {msg.app.debtSummaryLabel}
                 </div>
                 <RealtimeCounter
                   baseValue={currentDebt}
                   perSecond={debtPerSecond}
                   suffix=" €"
-                  size="lg"
+                  size="xl"
                   label=""
+                  className="relative z-10 text-primary"
                 />
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-sm text-muted-foreground text-center relative z-10 mt-4 max-w-md">
                   {msg.app.debtSummaryNotePrefix}{" "}
                   <a
                     href={BDE_BE11B.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline hover:text-foreground"
+                    className="underline hover:text-foreground font-medium transition-colors"
                   >
                     BdE be11b.csv
                   </a>{" "}
-                  ({msg.app.debtSummaryNoteSuffix} {lastDebtDate})
+                  <br className="hidden sm:block" />
+                  <span className="opacity-70">
+                    ({msg.app.debtSummaryNoteSuffix} {lastDebtDate})
+                  </span>
                 </p>
               </div>
 
+              {/* Deficit Summary (col-span-2) */}
               <div
-                className="p-7 border rounded-xl bg-card shadow-sm flex flex-col items-center gap-3 animate-slide-up hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                className="lg:col-span-2 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between gap-4 animate-slide-up hover:shadow-chart-2/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group"
                 style={{ animationDelay: "0.05s" }}
               >
-                <div className="text-sm font-semibold text-muted-foreground mb-1 uppercase tracking-[0.08em]">
+                <div className="absolute inset-0 bg-gradient-to-br from-chart-2/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
                   {msg.app.deficitSummaryLabel}
                 </div>
                 <RealtimeCounter
@@ -227,37 +239,42 @@ function App() {
                   size="lg"
                   decimals={0}
                   label=""
+                  className="relative z-10 text-destructive"
                 />
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-sm text-muted-foreground text-center relative z-10">
                   {msg.app.deficitSummarySince}{" "}
-                  {formatCompact(pensions.current.contributoryDeficit)}
+                  <span className="font-semibold text-foreground">
+                    {formatCompact(pensions.current.contributoryDeficit)}
+                  </span>
                   {msg.app.perYear} ( {formatNumber(deficitPerSecond, 2)} €/s)
                 </p>
-                <div className="w-full border-t pt-3 flex flex-col items-center gap-1">
-                  <div className="flex gap-6 text-center">
+                <div className="w-full border-t border-border/50 pt-4 mt-2 flex flex-col items-center gap-1 relative z-10">
+                  <div className="grid grid-cols-2 gap-4 w-full text-center divide-x divide-border/50">
                     <div>
-                      <div className="text-sm font-semibold tabular-nums">
+                      <div className="text-base font-bold tabular-nums text-foreground">
                         {formatCompact(accumulatedDeficit)}
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-muted-foreground mt-1">
                         {msg.app.thisYear} {new Date().getFullYear()}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm font-semibold tabular-nums">
+                      <div className="text-base font-bold tabular-nums text-foreground">
                         {formatCompact(pensions.current.contributoryDeficit)}
                       </div>
-                      <div className="text-xs text-muted-foreground">{msg.app.annualDeficit}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {msg.app.annualDeficit}
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground/80 text-center">
+                <p className="text-[11px] text-muted-foreground/60 text-center relative z-10 mt-2">
                   UV-Eje, Fedea SSA, BdE —{" "}
                   <a
                     href={SS_NOMINA.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline hover:text-foreground"
+                    className="underline hover:text-foreground transition-colors"
                   >
                     {CALCULO_DERIVADO.name}
                   </a>{" "}

@@ -41,6 +41,7 @@ export function RealtimeCounter({
         className={cn(
           "w-full max-w-full text-center font-semibold tabular-nums leading-tight tracking-tight",
           sizeClasses[size],
+          (size === "lg" || size === "xl") && "font-black tracking-tighter",
         )}
         style={{ fontVariantNumeric: "tabular-nums" }}
         aria-hidden="true"
