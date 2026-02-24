@@ -64,7 +64,7 @@ const groupColors: Record<string, string> = {
 };
 
 export const FlowsSankeyBlock: React.FC = () => {
-  const { flows, taxRevenue, ccaaSpending } = useData();
+  const { flows, taxRevenue, ccaaSpending, ccaaForalFlows } = useData();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [excludedRegions, setExcludedRegions] = useState<string[]>([]);
   const { lang } = useI18n();
@@ -228,18 +228,42 @@ export const FlowsSankeyBlock: React.FC = () => {
       // Aggregate subtractions across all excluded regions
       for (const regionId of excludedRegions) {
         // 1. Subtract Incomes (Taxes Collected in Region)
-        const taxLatest = taxRevenue?.ccaa[taxRevenue.latestYear]?.entries.find(
-          (e) => e.code === regionId,
-        );
-        if (taxLatest) {
-          subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
-          subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
-          subtractFromNodeAndLink("IRNR", taxLatest.irnr, true);
-          directTaxesSubtracted += taxLatest.irpf + taxLatest.sociedades + taxLatest.irnr;
+        if (regionId === "CA15" || regionId === "CA16") {
+          const foralLatest = ccaaForalFlows?.byYear[ccaaForalFlows.latestYear]?.entries.find(
+            (e) => e.code === regionId,
+          );
+          if (foralLatest && taxRevenue?.national[taxRevenue.latestYear]) {
+            const nationalData = taxRevenue.national[taxRevenue.latestYear];
+            const irpfProp = nationalData.irpf / nationalData.total;
+            const ivaProp = nationalData.iva / nationalData.total;
+            const isProp = nationalData.sociedades / nationalData.total;
 
-          subtractFromNodeAndLink("IVA", taxLatest.iva, true);
-          subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
-          indirectTaxesSubtracted += taxLatest.iva + taxLatest.iiee;
+            const totalForalRevenue = foralLatest.taxRevenue ?? 0;
+            const foralIrpf = totalForalRevenue * irpfProp;
+            const foralIva = totalForalRevenue * ivaProp;
+            const foralIs = totalForalRevenue * isProp;
+
+            subtractFromNodeAndLink("IRPF", foralIrpf, true);
+            subtractFromNodeAndLink("IS", foralIs, true);
+            directTaxesSubtracted += foralIrpf + foralIs;
+
+            subtractFromNodeAndLink("IVA", foralIva, true);
+            indirectTaxesSubtracted += foralIva;
+          }
+        } else {
+          const taxLatest = taxRevenue?.ccaa[taxRevenue.latestYear]?.entries.find(
+            (e) => e.code === regionId,
+          );
+          if (taxLatest) {
+            subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
+            subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
+            subtractFromNodeAndLink("IRNR", taxLatest.irnr, true);
+            directTaxesSubtracted += taxLatest.irpf + taxLatest.sociedades + taxLatest.irnr;
+
+            subtractFromNodeAndLink("IVA", taxLatest.iva, true);
+            subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
+            indirectTaxesSubtracted += taxLatest.iva + taxLatest.iiee;
+          }
         }
 
         // 2. Subtract Expenses (General Spending executed by Regional Govt)
@@ -295,7 +319,7 @@ export const FlowsSankeyBlock: React.FC = () => {
     }
 
     return { activeNodes: currentNodes, activeLinks: currentLinks };
-  }, [flows, excludedRegions, taxRevenue, ccaaSpending]);
+  }, [flows, excludedRegions, taxRevenue, ccaaSpending, ccaaForalFlows]);
 
   const { filteredNodes, filteredLinks } = useMemo(() => {
     const { nodes, links } = getFilteredGraph(activeNodes, activeLinks, selectedNode);

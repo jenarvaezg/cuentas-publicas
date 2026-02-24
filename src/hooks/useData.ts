@@ -41,8 +41,49 @@ export function useData() {
     const eurostat = eurostatJson as EurostatData;
     const ccaaDebt = ccaaDebtJson as CcaaDebtData;
     const ccaaDeficit = ccaaDeficitJson as CcaaDeficitData;
-    const ccaaFiscalBalance = ccaaFiscalBalanceJson as CcaaFiscalBalanceData;
+    const rawCcaaFiscalBalance = ccaaFiscalBalanceJson as CcaaFiscalBalanceData;
     const ccaaForalFlows = ccaaForalFlowsJson as CcaaForalFlowsData;
+
+    // Inject synthetic Foral records into Fiscal Balances
+    const ccaaFiscalBalance: CcaaFiscalBalanceData = {
+      ...rawCcaaFiscalBalance,
+      byYear: { ...rawCcaaFiscalBalance.byYear },
+    };
+
+    for (const yearStr of Object.keys(ccaaFiscalBalance.byYear)) {
+      const foralYearData = ccaaForalFlows.byYear[yearStr];
+      if (!foralYearData) continue;
+
+      const newEntries = [...ccaaFiscalBalance.byYear[yearStr].entries];
+
+      for (const foralEntry of foralYearData.entries) {
+        const netContribution =
+          foralEntry.netFlowToState != null ? foralEntry.netFlowToState : foralEntry.paymentToState;
+
+        newEntries.push({
+          code: foralEntry.code,
+          name: foralEntry.name,
+          cededTaxes: 0,
+          transfers: 0,
+          netBalance: -netContribution,
+          transferToTaxRatio: null,
+          cededTaxesBreakdown: { irpf: 0, iva: 0, iiee: 0 },
+          transfersBreakdown: {
+            fondoGarantia: 0,
+            fondoSuficiencia: 0,
+            fondoCompetitividad: 0,
+            fondoCooperacion: 0,
+          },
+        });
+      }
+
+      newEntries.sort((a, b) => a.code.localeCompare(b.code));
+      ccaaFiscalBalance.byYear[yearStr] = {
+        ...ccaaFiscalBalance.byYear[yearStr],
+        entries: newEntries,
+      };
+    }
+
     const ccaaSpending = ccaaSpendingJson as CcaaSpendingData;
     const revenue = revenueJson as RevenueData;
     const taxRevenue = taxRevenueJson as TaxRevenueData;
