@@ -54,6 +54,8 @@ export function SustainabilityBlock() {
           chartReserveFund: "Reserve Fund Evolution",
           chartPensionGDP: "Contributory Spending % GDP — Spain vs EU + Projections",
           chartContributors: "Contributors per Pensioner",
+          executiveSnapshot: "Executive snapshot",
+          complementaryIndicators: "Supporting indicators",
           contributions: "Contributions",
           pensionSpending: "Contributory spending",
           balance: "Balance",
@@ -90,6 +92,8 @@ export function SustainabilityBlock() {
           chartReserveFund: "Evolucion del Fondo de Reserva",
           chartPensionGDP: "Gasto contributivo % PIB — España vs UE + Proyecciones",
           chartContributors: "Cotizantes por pensionista",
+          executiveSnapshot: "Lectura rápida",
+          complementaryIndicators: "Indicadores de soporte",
           contributions: "Cotizaciones",
           pensionSpending: "Gasto contributivo",
           balance: "Balance",
@@ -165,66 +169,47 @@ export function SustainabilityBlock() {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Row 1: 3 StatCards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <StatCard
-            label={copy.ssBalance}
-            value={formatCompact(latestData?.ssBalance ?? 0)}
-            tooltip={copy.ssBalanceTooltip}
-            delay={0.05}
-            sparklineData={balanceSparkline}
-            trend={{
-              value: latestData?.ssBalance ?? 0,
-              label: `${data.latestYear}`,
-            }}
-            sources={[eurostatSource]}
-          />
-          <StatCard
-            label={copy.pensionGDP}
-            value={formatPercent(latestData?.pensionToGDP ?? 0)}
-            tooltip={copy.pensionGDPTooltip}
-            delay={0.1}
-            sources={[
-              eurostatSource,
-              {
-                name: `${copy.vsEU}: ${formatPercent(data.pensionToGDP.eu27.byYear[latestYear] ?? 0)}`,
-              },
-            ]}
-          />
-          <StatCard
-            label={copy.reserveFund}
-            value={formatCompact((reserveFundLatest?.balance ?? 0) * 1e6)}
-            tooltip={copy.reserveFundTooltip}
-            delay={0.15}
-            sparklineData={reserveSparkline}
-            sources={[SS_FONDO_RESERVA]}
-          />
-        </div>
-
-        {/* Row 2: 3 StatCards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <StatCard
-            label={copy.contributorsRatio}
-            value={formatNumber(contributorsLatest?.ratio ?? 0, 2)}
-            tooltip={copy.contributorsRatioTooltip}
-            delay={0.2}
-            sparklineData={data.contributorsPerPensioner.map((c) => c.ratio)}
-            sources={[{ ...CALCULO_DERIVADO, note: "SS monthly reports" }]}
-          />
-          <StatCard
-            label={copy.projectedGDP2050}
-            value={formatPercent(spainProjection2050?.pensionToGDP ?? 0)}
-            tooltip={copy.projectedGDP2050Tooltip}
-            delay={0.25}
-            sources={[AGEING_REPORT]}
-          />
-          <StatCard
-            label={copy.cumulativeGap}
-            value={formatCompact(cumulativeBalance * 1e6)}
-            tooltip={copy.cumulativeGapTooltip}
-            delay={0.3}
-            sources={[eurostatSource]}
-          />
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {copy.executiveSnapshot} · {data.latestYear}
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <StatCard
+              label={copy.ssBalance}
+              value={formatCompact(latestData?.ssBalance ?? 0)}
+              tooltip={copy.ssBalanceTooltip}
+              delay={0.05}
+              className="lg:col-span-2"
+              sparklineData={balanceSparkline}
+              trend={{
+                value: latestData?.ssBalance ?? 0,
+                label: `${data.latestYear}`,
+              }}
+              sources={[eurostatSource]}
+            />
+            <div className="grid grid-cols-1 gap-4">
+              <StatCard
+                label={copy.pensionGDP}
+                value={formatPercent(latestData?.pensionToGDP ?? 0)}
+                tooltip={copy.pensionGDPTooltip}
+                delay={0.1}
+                sources={[
+                  eurostatSource,
+                  {
+                    name: `${copy.vsEU}: ${formatPercent(data.pensionToGDP.eu27.byYear[latestYear] ?? 0)}`,
+                  },
+                ]}
+              />
+              <StatCard
+                label={copy.contributorsRatio}
+                value={formatNumber(contributorsLatest?.ratio ?? 0, 2)}
+                tooltip={copy.contributorsRatioTooltip}
+                delay={0.15}
+                sparklineData={data.contributorsPerPensioner.map((c) => c.ratio)}
+                sources={[{ ...CALCULO_DERIVADO, note: "SS monthly reports" }]}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Chart 1: SS Revenue vs Expenditure */}
@@ -274,6 +259,36 @@ export function SustainabilityBlock() {
               />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold text-muted-foreground">
+            {copy.complementaryIndicators}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <StatCard
+              label={copy.reserveFund}
+              value={formatCompact((reserveFundLatest?.balance ?? 0) * 1e6)}
+              tooltip={copy.reserveFundTooltip}
+              delay={0.2}
+              sparklineData={reserveSparkline}
+              sources={[SS_FONDO_RESERVA]}
+            />
+            <StatCard
+              label={copy.projectedGDP2050}
+              value={formatPercent(spainProjection2050?.pensionToGDP ?? 0)}
+              tooltip={copy.projectedGDP2050Tooltip}
+              delay={0.25}
+              sources={[AGEING_REPORT]}
+            />
+            <StatCard
+              label={copy.cumulativeGap}
+              value={formatCompact(cumulativeBalance * 1e6)}
+              tooltip={copy.cumulativeGapTooltip}
+              delay={0.3}
+              sources={[eurostatSource]}
+            />
+          </div>
         </div>
 
         {/* Chart 2: Reserve Fund Evolution */}

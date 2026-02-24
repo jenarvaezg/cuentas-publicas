@@ -30,7 +30,7 @@ describe("StatCard", () => {
     expect(screen.getByTestId("sparkline")).toBeDefined();
   });
 
-  it("renders sources with and without urls", () => {
+  it("renders compact sources inline and full details in the popover", () => {
     const sources: SourceDetail[] = [
       { name: "Source 1", url: "https://example.com", note: "Note 1" },
       { name: "Source 2", date: "2024-01-01" },
@@ -39,9 +39,15 @@ describe("StatCard", () => {
 
     expect(screen.getByText("Source 1")).toBeDefined();
     expect(screen.getByRole("link").getAttribute("href")).toBe("https://example.com");
-    expect(screen.getByText("Source 2")).toBeDefined();
-    expect(screen.getByText(/2024-01-01/)).toBeDefined();
-    expect(screen.getByText(/Note 1/)).toBeDefined();
+    expect(screen.queryByText("Source 2")).toBeNull();
+    expect(screen.queryByText(/Note 1/)).toBeNull();
+    expect(screen.getByText(/\+1 más/i)).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: /más información/i }));
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("Source 2")).toBeDefined();
+    expect(within(dialog).getByText(/2024-01-01/)).toBeDefined();
+    expect(within(dialog).getAllByText(/Note 1/).length).toBeGreaterThan(0);
   });
 
   it("detects stale data correctly", () => {

@@ -53,6 +53,8 @@ export const StatCard = memo(function StatCard({
           howComputed: "How it's computed",
           whyMatters: "Why it matters",
           sourcesTitle: "Sources",
+          sourceInlineLabel: "Source",
+          sourceInlineMore: "more",
           close: "Close",
           noSources: "No linked source details for this metric.",
           fallbackWhatPrefix: "This metric tracks",
@@ -66,6 +68,8 @@ export const StatCard = memo(function StatCard({
           howComputed: "Cómo se calcula",
           whyMatters: "Por qué importa",
           sourcesTitle: "Fuentes",
+          sourceInlineLabel: "Fuente",
+          sourceInlineMore: "más",
           close: "Cerrar",
           noSources: "No hay detalle de fuentes vinculado para esta métrica.",
           fallbackWhatPrefix: "Este indicador muestra",
@@ -97,6 +101,9 @@ export const StatCard = memo(function StatCard({
 
   const staleDate = staleSource?.realDataDate || staleSource?.date;
   const staleYear = staleDate ? new Date(staleDate).getFullYear() : null;
+  const primarySource = sources?.[0];
+  const primarySourceDate = primarySource?.realDataDate || primarySource?.date;
+  const additionalSourcesCount = Math.max(0, (sources?.length ?? 0) - 1);
 
   const openInfo = useCallback(() => {
     if (!buttonRef.current) return;
@@ -189,34 +196,30 @@ export const StatCard = memo(function StatCard({
             )}
 
             {sources && sources.length > 0 && (
-              <div className="pt-2 border-t border-border/50 space-y-1">
-                {sources.map((src) => {
-                  const shownDate = src.realDataDate || src.date;
-                  return (
-                    <div
-                      key={src.name ?? src.note ?? src.url}
-                      className="text-xs leading-snug text-muted-foreground/85 text-center"
+              <div className="pt-2 border-t border-border/50">
+                <p className="text-xs leading-snug text-muted-foreground/85 text-center">
+                  <span className="font-medium">{copy.sourceInlineLabel}: </span>
+                  {primarySource?.url ? (
+                    <a
+                      href={primarySource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
                     >
-                      <span className="font-medium">
-                        {src.url ? (
-                          <a
-                            href={src.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
-                          >
-                            {src.name}
-                            <ExternalLink className="h-2 w-2" />
-                          </a>
-                        ) : (
-                          src.name
-                        )}
-                      </span>
-                      {shownDate && <span> ({shownDate})</span>}
-                      {src.note && <span> — {src.note}</span>}
-                    </div>
-                  );
-                })}
+                      {primarySource.name}
+                      <ExternalLink className="h-2 w-2" />
+                    </a>
+                  ) : (
+                    <span>{primarySource?.name}</span>
+                  )}
+                  {primarySourceDate && <span> ({primarySourceDate})</span>}
+                  {additionalSourcesCount > 0 && (
+                    <span>
+                      {" "}
+                      · +{additionalSourcesCount} {copy.sourceInlineMore}
+                    </span>
+                  )}
+                </p>
               </div>
             )}
           </div>

@@ -203,16 +203,15 @@ beforeEach(() => {
 });
 
 describe("TaxRevenueBlock", () => {
-  it("renders title and 7 StatCards", () => {
+  it("renders title and 6 StatCards in snapshot + effective-rate sections", () => {
     render(<TaxRevenueBlock />);
     expect(screen.getByText("Recaudación Tributaria")).toBeDefined();
 
     const cards = screen.getAllByTestId("stat-card");
-    expect(cards).toHaveLength(7);
+    expect(cards).toHaveLength(6);
 
     const labels = screen.getAllByTestId("stat-label").map((el) => el.textContent);
     expect(labels).toContain("Recaudación neta total");
-    expect(labels).toContain("Mayor impuesto");
     expect(labels).toContain("Variación interanual");
     expect(labels).toContain("Recaudación per cápita");
     expect(labels).toContain("Tipo efectivo IRPF (proxy)");

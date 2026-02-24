@@ -15,7 +15,7 @@ import { PensionsBlock } from "@/components/PensionsBlock";
 import { RealtimeCounter } from "@/components/RealtimeCounter";
 import { RevenueBlock } from "@/components/RevenueBlock";
 import { RoadmapSection } from "@/components/RoadmapSection";
-import { SectionNav, type SectionNavItem } from "@/components/SectionNav";
+import { SectionNav, type SectionNavGroup } from "@/components/SectionNav";
 import { SustainabilityBlock } from "@/components/SustainabilityBlock";
 import { TaxRevenueBlock } from "@/components/TaxRevenueBlock";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -42,29 +42,98 @@ const SECTION_IDS = [
   "metodologia",
 ] as const;
 
+function ChapterDivider({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div className="pt-3">
+      <p className="text-xs font-semibold tracking-[0.1em] uppercase text-muted-foreground">
+        {title}
+      </p>
+      <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+    </div>
+  );
+}
+
 function App() {
-  const { msg } = useI18n();
+  const { msg, lang } = useI18n();
 
   useDocumentMeta(msg.app.pageTitle, msg.app.pageDescription);
 
   const { debt, pensions } = useData();
-  const sectionItems = useMemo<SectionNavItem[]>(
+
+  const chapterCopy =
+    lang === "en"
+      ? {
+          fiscal: {
+            title: "Fiscal Position",
+            subtitle: "Debt, debt cost, revenue balance and tax collection.",
+            navLabel: "Fiscal",
+          },
+          welfare: {
+            title: "Spending & Welfare",
+            subtitle: "Pensions, social sustainability and spending composition.",
+            navLabel: "Welfare",
+          },
+          context: {
+            title: "Context & Territory",
+            subtitle: "EU comparison, regions, demographics and methodology.",
+            navLabel: "Context",
+          },
+          fiscalMap: "Fiscal map",
+        }
+      : {
+          fiscal: {
+            title: "Situación fiscal",
+            subtitle: "Deuda, coste de deuda, balance ingresos-gastos y recaudación.",
+            navLabel: "Situación fiscal",
+          },
+          welfare: {
+            title: "Gasto y estado social",
+            subtitle: "Pensiones, sostenibilidad social y composición del gasto.",
+            navLabel: "Estado social",
+          },
+          context: {
+            title: "Contexto y territorio",
+            subtitle: "Comparativa UE, CCAA, demografía y metodología.",
+            navLabel: "Contexto",
+          },
+          fiscalMap: "Mapa fiscal",
+        };
+
+  const sectionGroups = useMemo<SectionNavGroup[]>(
     () => [
-      { id: "resumen", label: msg.sections.resumen },
-      { id: "deuda", label: msg.sections.deuda },
-      { id: "coste-deuda", label: msg.sections.costeDeuda },
-      { id: "pensiones", label: msg.sections.pensiones },
-      { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
-      { id: "mapa-fiscal", label: "Mapa Fiscal" },
-      { id: "gasto-cofog", label: msg.sections.gastoCofog },
-      { id: "recaudacion", label: msg.sections.recaudacion },
-      { id: "ue", label: msg.sections.ue },
-      { id: "ccaa", label: msg.sections.ccaa },
-      { id: "demografia", label: msg.sections.demografia },
-      { id: "sostenibilidad-ss", label: msg.sections.sostenibilidadSS },
-      { id: "metodologia", label: msg.sections.metodologia },
+      {
+        id: "situacion-fiscal",
+        label: chapterCopy.fiscal.navLabel,
+        items: [
+          { id: "resumen", label: msg.sections.resumen },
+          { id: "deuda", label: msg.sections.deuda },
+          { id: "coste-deuda", label: msg.sections.costeDeuda },
+          { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
+          { id: "recaudacion", label: msg.sections.recaudacion },
+        ],
+      },
+      {
+        id: "gasto-y-servicios",
+        label: chapterCopy.welfare.navLabel,
+        items: [
+          { id: "pensiones", label: msg.sections.pensiones },
+          { id: "sostenibilidad-ss", label: msg.sections.sostenibilidadSS },
+          { id: "gasto-cofog", label: msg.sections.gastoCofog },
+          { id: "mapa-fiscal", label: chapterCopy.fiscalMap },
+        ],
+      },
+      {
+        id: "contexto-territorial",
+        label: chapterCopy.context.navLabel,
+        items: [
+          { id: "ue", label: msg.sections.ue },
+          { id: "ccaa", label: msg.sections.ccaa },
+          { id: "demografia", label: msg.sections.demografia },
+          { id: "metodologia", label: msg.sections.metodologia },
+        ],
+      },
     ],
-    [msg.sections],
+    [chapterCopy, msg.sections],
   );
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
@@ -114,9 +183,9 @@ function App() {
       <div className="min-h-screen bg-background">
         <OfflineStatus />
         <Header />
-        <SectionNav items={sectionItems} />
+        <SectionNav groups={sectionGroups} />
 
-        <main className="max-w-5xl mx-auto px-4 py-6 lg:py-8 space-y-6">
+        <main className="max-w-5xl mx-auto px-4 py-6 lg:py-8 space-y-8">
           <section id="resumen" className="scroll-mt-28">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
               <div className="p-7 border rounded-xl bg-card shadow-sm flex flex-col items-center gap-3 animate-slide-up hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -198,86 +267,60 @@ function App() {
             </div>
           </section>
 
-          <div className="space-y-6">
-            <section
-              id="deuda"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.1s" }}
-            >
+          <section className="space-y-6">
+            <ChapterDivider
+              title={chapterCopy.fiscal.title}
+              subtitle={chapterCopy.fiscal.subtitle}
+            />
+            <section id="deuda" className="scroll-mt-28 animate-slide-up">
               <DebtBlock />
             </section>
-            <section
-              id="coste-deuda"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.15s" }}
-            >
+            <section id="coste-deuda" className="scroll-mt-28 animate-slide-up">
               <DebtCostBlock />
             </section>
-            <section className="scroll-mt-28 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+            <section className="scroll-mt-28 animate-slide-up">
               <EquivalenciasBlock />
             </section>
-            <section
-              id="pensiones"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.25s" }}
-            >
-              <PensionsBlock />
-            </section>
-            <section
-              id="ingresos-gastos"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.3s" }}
-            >
+            <section id="ingresos-gastos" className="scroll-mt-28 animate-slide-up">
               <RevenueBlock />
             </section>
-            <section
-              id="mapa-fiscal"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.32s" }}
-            >
-              <FlowsSankeyBlock />
-            </section>
-            <section
-              id="gasto-cofog"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.35s" }}
-            >
-              <BudgetBlock />
-            </section>
-            <section
-              id="recaudacion"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.4s" }}
-            >
+            <section id="recaudacion" className="scroll-mt-28 animate-slide-up">
               <TaxRevenueBlock />
             </section>
-            <section
-              id="ue"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.45s" }}
-            >
+          </section>
+
+          <section className="space-y-6">
+            <ChapterDivider
+              title={chapterCopy.welfare.title}
+              subtitle={chapterCopy.welfare.subtitle}
+            />
+            <section id="pensiones" className="scroll-mt-28 animate-slide-up">
+              <PensionsBlock />
+            </section>
+            <section id="sostenibilidad-ss" className="scroll-mt-28 animate-slide-up">
+              <SustainabilityBlock />
+            </section>
+            <section id="gasto-cofog" className="scroll-mt-28 animate-slide-up">
+              <BudgetBlock />
+            </section>
+            <section id="mapa-fiscal" className="scroll-mt-28 animate-slide-up">
+              <FlowsSankeyBlock />
+            </section>
+          </section>
+
+          <section className="space-y-6">
+            <ChapterDivider
+              title={chapterCopy.context.title}
+              subtitle={chapterCopy.context.subtitle}
+            />
+            <section id="ue" className="scroll-mt-28 animate-slide-up">
               <ComparativaEUBlock />
             </section>
-            <section
-              id="ccaa"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.5s" }}
-            >
+            <section id="ccaa" className="scroll-mt-28 animate-slide-up">
               <CcaaDebtBlock />
             </section>
-            <section
-              id="demografia"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.55s" }}
-            >
+            <section id="demografia" className="scroll-mt-28 animate-slide-up">
               <DemographicsBlock />
-            </section>
-            <section
-              id="sostenibilidad-ss"
-              className="scroll-mt-28 animate-slide-up"
-              style={{ animationDelay: "0.6s" }}
-            >
-              <SustainabilityBlock />
             </section>
             <section id="metodologia" className="scroll-mt-28">
               <MethodologySection />
@@ -285,7 +328,7 @@ function App() {
             <section className="scroll-mt-28">
               <RoadmapSection />
             </section>
-          </div>
+          </section>
         </main>
 
         <Footer />

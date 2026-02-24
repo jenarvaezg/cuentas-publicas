@@ -197,7 +197,7 @@ export function TaxRevenueBlock() {
           balanceTransfers: "Transfers",
           balanceNoData: "Fiscal-balance data not available for this year.",
           balanceCoverageNote:
-            "Hacienda settlement data for common-regime regions. Navarra and País Vasco are excluded.",
+            "Hacienda settlement data for common-regime regions. Navarra and País Vasco balances are estimated based on their net foral contribution.",
           balanceFormulaNote:
             "Net balance = transfers (Guarantee + Sufficiency + Competitiveness + Cooperation Funds) - ceded taxes (IRPF + VAT + excise duties).",
           balancePositive: "Positive balance",
@@ -234,6 +234,7 @@ export function TaxRevenueBlock() {
           effectiveRateFormulaIrpf: "IRPF net revenue / total net tax revenue × 100",
           effectiveRateFormulaIva: "VAT net revenue / total net tax revenue × 100",
           effectiveRateFormulaSociedades: "Corporate tax net revenue / total net tax revenue × 100",
+          snapshotTitle: "Executive snapshot",
           effectiveRateProxyNote:
             "Fiscal proxy: it measures each tax weight within total net revenue, not the legal rate or taxable-base effective rate.",
           noEffectiveRatesData: "No enough years to build effective-rate series.",
@@ -264,7 +265,7 @@ export function TaxRevenueBlock() {
           balanceTransfers: "Transferencias",
           balanceNoData: "Datos de balanzas fiscales no disponibles para este año.",
           balanceCoverageNote:
-            "Liquidación de Hacienda para CCAA de régimen común. Navarra y País Vasco quedan fuera.",
+            "Liquidación de Hacienda para CCAA de régimen común. Saldo de Navarra y País Vasco estimado a partir de su aportación neta foral.",
           balanceFormulaNote:
             "Saldo neto = transferencias (Fondos de Garantía, Suficiencia, Competitividad y Cooperación) - impuestos cedidos (IRPF + IVA + IIEE).",
           balancePositive: "Saldo positivo",
@@ -301,6 +302,7 @@ export function TaxRevenueBlock() {
           effectiveRateFormulaIrpf: "IRPF neto / recaudación neta total × 100",
           effectiveRateFormulaIva: "IVA neto / recaudación neta total × 100",
           effectiveRateFormulaSociedades: "Sociedades neto / recaudación neta total × 100",
+          snapshotTitle: "Lectura rápida",
           effectiveRateProxyNote:
             "Proxy fiscal: mide el peso de cada impuesto dentro de la recaudación neta total, no el tipo legal ni el tipo efectivo sobre base imponible.",
           noEffectiveRatesData:
@@ -396,6 +398,11 @@ export function TaxRevenueBlock() {
         : max,
     );
   }, [yearData]);
+
+  const largestTaxAmount = useMemo<number>(() => {
+    if (!yearData || !largestTaxKey) return 0;
+    return ((yearData[largestTaxKey as keyof TaxRevenueYearNational] as number) ?? 0) * 1_000_000;
+  }, [yearData, largestTaxKey]);
 
   const yoyPercent = useMemo<number | null>(() => {
     if (!yearData || !prevYearData || !prevYearData.total) return null;
@@ -627,79 +634,51 @@ export function TaxRevenueBlock() {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Stat cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            label={copy.totalRevenue}
-            value={formatCompact(totalEuros)}
-            delay={0.05}
-            sources={[AEAT_SERIES]}
-          />
-          <StatCard
-            label={copy.largestTax}
-            value={largestTaxKey ? taxNames[largestTaxKey] : "—"}
-            delay={0.1}
-            sources={[
-              largestTaxKey
-                ? {
-                    name: formatCompact(
-                      ((yearData?.[largestTaxKey as keyof TaxRevenueYearNational] as number) ?? 0) *
-                        1_000_000,
-                    ),
-                  }
-                : AEAT_SERIES,
-            ]}
-          />
-          <StatCard
-            label={copy.yearOverYear}
-            value={
-              yoyPercent !== null
-                ? `${yoyPercent >= 0 ? "+" : ""}${formatNumber(yoyPercent, 1)}%`
-                : "—"
-            }
-            delay={0.15}
-            className={
-              yoyPercent !== null
-                ? yoyPercent >= 0
-                  ? "border-emerald-500/30"
-                  : "border-rose-500/30"
-                : undefined
-            }
-            sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeYoY }]}
-          />
-          <StatCard
-            label={copy.perCapita}
-            value={perCapita > 0 ? `${formatNumber(perCapita, 0)} €` : "—"}
-            delay={0.2}
-            sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePerCapita }, AEAT_SERIES]}
-          />
-          <StatCard
-            label={copy.effectiveRateIrpf}
-            value={
-              selectedEffectiveRates ? `${formatNumber(selectedEffectiveRates.irpf, 1)}%` : "—"
-            }
-            delay={0.25}
-            sources={[{ ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIrpf }, AEAT_SERIES]}
-          />
-          <StatCard
-            label={copy.effectiveRateIva}
-            value={selectedEffectiveRates ? `${formatNumber(selectedEffectiveRates.iva, 1)}%` : "—"}
-            delay={0.3}
-            sources={[{ ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIva }, AEAT_SERIES]}
-          />
-          <StatCard
-            label={copy.effectiveRateSociedades}
-            value={
-              selectedEffectiveRates
-                ? `${formatNumber(selectedEffectiveRates.sociedades, 1)}%`
-                : "—"
-            }
-            delay={0.35}
-            sources={[
-              { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaSociedades },
-              AEAT_SERIES,
-            ]}
-          />
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {copy.snapshotTitle} · {selectedYear}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              label={copy.totalRevenue}
+              value={formatCompact(totalEuros)}
+              delay={0.05}
+              className="md:col-span-2 lg:col-span-2"
+              sources={[AEAT_SERIES]}
+            />
+            <StatCard
+              label={copy.yearOverYear}
+              value={
+                yoyPercent !== null
+                  ? `${yoyPercent >= 0 ? "+" : ""}${formatNumber(yoyPercent, 1)}%`
+                  : "—"
+              }
+              delay={0.1}
+              className={
+                yoyPercent !== null
+                  ? yoyPercent >= 0
+                    ? "border-emerald-500/30"
+                    : "border-rose-500/30"
+                  : undefined
+              }
+              sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeYoY }]}
+            />
+            <StatCard
+              label={copy.perCapita}
+              value={perCapita > 0 ? `${formatNumber(perCapita, 0)} €` : "—"}
+              delay={0.15}
+              sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePerCapita }, AEAT_SERIES]}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground/80">
+            {copy.largestTax}:{" "}
+            <span className="font-medium text-foreground">
+              {largestTaxKey ? taxNames[largestTaxKey] : "—"}
+            </span>
+            {largestTaxKey && largestTaxAmount > 0 && (
+              <span> · {formatCompact(largestTaxAmount)}</span>
+            )}
+          </p>
         </div>
 
         {/* Nacional tab */}
@@ -712,6 +691,45 @@ export function TaxRevenueBlock() {
               <p className="text-xs text-muted-foreground/80 text-center mb-3">
                 {copy.effectiveRatesSubtitle}
               </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <StatCard
+                  label={copy.effectiveRateIrpf}
+                  value={
+                    selectedEffectiveRates
+                      ? `${formatNumber(selectedEffectiveRates.irpf, 1)}%`
+                      : "—"
+                  }
+                  delay={0.2}
+                  sources={[
+                    { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIrpf },
+                    AEAT_SERIES,
+                  ]}
+                />
+                <StatCard
+                  label={copy.effectiveRateIva}
+                  value={
+                    selectedEffectiveRates ? `${formatNumber(selectedEffectiveRates.iva, 1)}%` : "—"
+                  }
+                  delay={0.25}
+                  sources={[
+                    { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIva },
+                    AEAT_SERIES,
+                  ]}
+                />
+                <StatCard
+                  label={copy.effectiveRateSociedades}
+                  value={
+                    selectedEffectiveRates
+                      ? `${formatNumber(selectedEffectiveRates.sociedades, 1)}%`
+                      : "—"
+                  }
+                  delay={0.3}
+                  sources={[
+                    { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaSociedades },
+                    AEAT_SERIES,
+                  ]}
+                />
+              </div>
               {effectiveRatesSeries.length > 1 ? (
                 <>
                   <ResponsiveContainer width="100%" height={240}>

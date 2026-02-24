@@ -14,15 +14,21 @@ vi.mock("@/i18n/I18nProvider", () => ({
 }));
 
 describe("SectionNav", () => {
-  const items = [
-    { id: "resumen", label: "Resumen" },
-    { id: "ccaa", label: "CCAA" },
+  const groups = [
+    {
+      id: "fiscal",
+      label: "Fiscal",
+      items: [
+        { id: "resumen", label: "Resumen" },
+        { id: "ccaa", label: "CCAA" },
+      ],
+    },
   ];
 
   it("limpia section/hash cuando la sección activa es resumen", () => {
     window.history.replaceState({}, "", "/?section=resumen#resumen");
 
-    render(<SectionNav items={items} />);
+    render(<SectionNav groups={groups} />);
 
     expect(window.location.search).toBe("");
     expect(window.location.hash).toBe("");
@@ -31,7 +37,7 @@ describe("SectionNav", () => {
   it("persiste sección no-resumen y limpia al volver a resumen", async () => {
     window.history.replaceState({}, "", "/");
 
-    render(<SectionNav items={items} />);
+    render(<SectionNav groups={groups} />);
 
     fireEvent.click(screen.getByRole("link", { name: "CCAA" }));
     expect(window.location.search).toContain("section=ccaa");
