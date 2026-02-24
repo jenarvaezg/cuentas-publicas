@@ -1,6 +1,7 @@
-import { ArrowDown, ArrowUp, ExternalLink, Info, X } from "lucide-react";
-import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { ArrowDown, ArrowUp, ExternalLink, Info } from "lucide-react";
+import { memo, useId, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
 import { SparklineChart } from "./SparklineChart";
@@ -35,13 +36,6 @@ export const StatCard = memo(function StatCard({
   delay = 0,
 }: StatCardProps) {
   const { msg, lang } = useI18n();
-  const [isInfoOpen, setIsInfoOpen] = useState(false);
-  const [popoverPos, setPopoverPos] = useState<{
-    top: number;
-    left: number;
-  } | null>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
   const infoDialogId = useId();
   const hasInfo = Boolean(tooltip) || Boolean(sources?.length);
 
@@ -105,42 +99,6 @@ export const StatCard = memo(function StatCard({
   const primarySourceDate = primarySource?.realDataDate || primarySource?.date;
   const additionalSourcesCount = Math.max(0, (sources?.length ?? 0) - 1);
 
-  const openInfo = useCallback(() => {
-    if (!buttonRef.current) return;
-    const rect = buttonRef.current.getBoundingClientRect();
-    const popoverWidth = 384;
-    const popoverMaxHeight = 400;
-    const margin = 8;
-
-    let left = rect.left;
-    let top = rect.bottom + margin;
-
-    // Prevent popover from bleeding off the right side of the screen
-    if (left + popoverWidth > window.innerWidth - margin) {
-      left = Math.max(margin, window.innerWidth - popoverWidth - margin);
-    }
-
-    // Constrain horizontally
-    left = Math.max(margin, Math.min(left, window.innerWidth - popoverWidth - margin));
-
-    // If no room below, show above
-    if (top + popoverMaxHeight > window.innerHeight - margin) {
-      top = Math.max(margin, rect.top - popoverMaxHeight - margin);
-    }
-
-    setPopoverPos({ top, left });
-    setIsInfoOpen(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isInfoOpen || typeof window === "undefined") return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsInfoOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isInfoOpen]);
-
   return (
     <>
       <Card
@@ -155,18 +113,99 @@ export const StatCard = memo(function StatCard({
             <div className="flex items-center justify-center gap-1.5 mb-1">
               <div className="text-sm font-medium text-muted-foreground">{label}</div>
               {hasInfo && (
-                <button
-                  ref={buttonRef}
-                  type="button"
-                  aria-haspopup="dialog"
-                  aria-expanded={isInfoOpen}
-                  aria-controls={infoDialogId}
-                  onClick={openInfo}
-                  className="text-muted-foreground/50 hover:text-foreground transition-colors"
-                >
-                  <Info className="h-3.5 w-3.5" />
-                  <span className="sr-only">{msg.common.moreInformation}</span>
-                </button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-haspopup="dialog"
+                      aria-controls={infoDialogId}
+                      className="text-muted-foreground/50 hover:text-foreground transition-colors"
+                    >
+                      <Info className="h-3.5 w-3.5" />
+                      <span className="sr-only">{msg.common.moreInformation}</span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    id={infoDialogId}
+                    side="bottom"
+                    align="center"
+                    sideOffset={8}
+                    className="z-50 w-96 max-w-[calc(100vw-1rem)] max-h-[400px] overflow-y-auto rounded-2xl border border-white/5 bg-card/80 backdrop-blur-2xl p-5 shadow-2xl"
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">
+                          {copy.summaryTitle}
+                        </p>
+                        <h3 id={`${infoDialogId}-title`} className="text-base font-semibold mt-1">
+                          {label}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-4 text-sm">
+                      <section>
+                        <h4 className="font-semibold">{copy.whatIs}</h4>
+                        <p className="mt-1 text-muted-foreground">{whatIsText}</p>
+                      </section>
+
+                      <section>
+                        <h4 className="font-semibold">{copy.howComputed}</h4>
+                        <p className="mt-1 text-muted-foreground">{computedText}</p>
+                      </section>
+
+                      <section>
+                        <h4 className="font-semibold">{copy.whyMatters}</h4>
+                        <p className="mt-1 text-muted-foreground">{copy.fallbackRelevance}</p>
+                      </section>
+
+                      <section>
+                        <h4 className="font-semibold">{copy.sourcesTitle}</h4>
+                        {sources && sources.length > 0 ? (
+                          <ul className="mt-2 space-y-2">
+                            {sources.map((src) => {
+                              const shownDate = src.realDataDate || src.date;
+                              return (
+                                <li
+                                  key={`dialog-${src.name}-${src.url}-${src.note}`}
+                                  className="text-sm"
+                                >
+                                  <span className="font-medium">
+                                    {src.url ? (
+                                      <a
+                                        href={src.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
+                                      >
+                                        {src.name}
+                                        <ExternalLink className="h-3 w-3" />
+                                      </a>
+                                    ) : (
+                                      <span>{src.name}</span>
+                                    )}
+                                  </span>
+                                  {shownDate && (
+                                    <span className="text-muted-foreground ml-1">
+                                      ({shownDate})
+                                    </span>
+                                  )}
+                                  {src.note && (
+                                    <p className="text-xs text-muted-foreground/80 mt-0.5 border-l-2 border-border/50 pl-2">
+                                      {src.note}
+                                    </p>
+                                  )}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        ) : (
+                          <p className="mt-1 text-muted-foreground">{copy.noSources}</p>
+                        )}
+                      </section>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               )}
             </div>
             <div className="text-3xl font-bold flex flex-col items-center gap-1 break-words overflow-hidden max-w-full">
@@ -230,100 +269,6 @@ export const StatCard = memo(function StatCard({
           </div>
         </CardContent>
       </Card>
-
-      {hasInfo && isInfoOpen && popoverPos && (
-        <>
-          <button
-            type="button"
-            onClick={() => setIsInfoOpen(false)}
-            className="fixed inset-0 z-40 bg-transparent border-0 p-0 cursor-default"
-            aria-label={copy.close}
-          />
-          <div
-            ref={popoverRef}
-            id={infoDialogId}
-            role="dialog"
-            aria-modal="false"
-            aria-labelledby={`${infoDialogId}-title`}
-            className="fixed z-50 w-96 max-w-[calc(100vw-1rem)] max-h-[400px] overflow-y-auto rounded-2xl border border-white/5 bg-card/80 backdrop-blur-2xl p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-            style={{ top: popoverPos.top, left: popoverPos.left }}
-          >
-            <div className="flex items-start justify-between gap-3 mb-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">
-                  {copy.summaryTitle}
-                </p>
-                <h3 id={`${infoDialogId}-title`} className="text-base font-semibold mt-1">
-                  {label}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsInfoOpen(false)}
-                className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                aria-label={copy.close}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="mt-4 space-y-4 text-sm">
-              <section>
-                <h4 className="font-semibold">{copy.whatIs}</h4>
-                <p className="mt-1 text-muted-foreground">{whatIsText}</p>
-              </section>
-
-              <section>
-                <h4 className="font-semibold">{copy.howComputed}</h4>
-                <p className="mt-1 text-muted-foreground">{computedText}</p>
-              </section>
-
-              <section>
-                <h4 className="font-semibold">{copy.whyMatters}</h4>
-                <p className="mt-1 text-muted-foreground">{copy.fallbackRelevance}</p>
-              </section>
-
-              <section>
-                <h4 className="font-semibold">{copy.sourcesTitle}</h4>
-                {sources && sources.length > 0 ? (
-                  <ul className="mt-2 space-y-2">
-                    {sources.map((src) => {
-                      const shownDate = src.realDataDate || src.date;
-                      return (
-                        <li key={`dialog-${src.name}-${src.url}-${src.note}`} className="text-sm">
-                          <span className="font-medium">
-                            {src.url ? (
-                              <a
-                                href={src.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
-                              >
-                                {src.name}
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
-                            ) : (
-                              src.name
-                            )}
-                          </span>
-                          {shownDate && (
-                            <span className="text-muted-foreground"> ({shownDate})</span>
-                          )}
-                          {src.note && (
-                            <p className="text-xs text-muted-foreground mt-0.5">{src.note}</p>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <p className="mt-1 text-muted-foreground">{copy.noSources}</p>
-                )}
-              </section>
-            </div>
-          </div>
-        </>
-      )}
     </>
   );
 });
