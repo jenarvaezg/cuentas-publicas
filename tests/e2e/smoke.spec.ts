@@ -86,6 +86,7 @@ test.describe("Smoke", () => {
   }) => {
     await page.goto("/");
 
+    await page.getByRole("button", { name: "Estado social" }).click();
     await page.getByRole("link", { name: "Gasto COFOG" }).click();
     await expect(page).toHaveURL(/section=gasto-cofog/);
 
@@ -135,6 +136,7 @@ test.describe("Smoke", () => {
     await expect(debtSourceLink).toHaveAttribute("href", /be11b\.csv/);
     await expect(debtSourceLink).toHaveAttribute("target", "_blank");
 
+    await page.getByRole("button", { name: "Contexto" }).click();
     await page.getByRole("link", { name: "CCAA" }).click();
     await expect(page).toHaveURL(/section=ccaa/);
 
@@ -154,7 +156,7 @@ test.describe("Smoke", () => {
   }) => {
     await page.goto("/?section=ccaa&ccaa=CA09&ccaaMetric=debtAbsolute");
 
-    await expect(page).not.toHaveURL(/section=/);
+    await expect(page).toHaveURL(/section=ccaa/);
     await expect(page).toHaveURL(/ccaa=CA09/);
     await expect(page).toHaveURL(/ccaaMetric=debtAbsolute/);
 
