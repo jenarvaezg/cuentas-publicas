@@ -415,7 +415,7 @@ export interface ImmigrationShareData {
 
 export interface SSSustainabilityYearData {
   socialContributions: number; // M€
-  pensionExpenditure: number; // M€
+  pensionExpenditure: number; // M€ (gasto contributivo en efectivo)
   ssBalance: number; // M€ (contributions - pension expenditure)
   pensionToGDP: number; // %
 }

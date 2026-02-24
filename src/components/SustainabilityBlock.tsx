@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AGEING_REPORT,
   CALCULO_DERIVADO,
-  EUROSTAT_GOV_EXP,
+  EUROSTAT_GOV_MAIN,
   fromAttribution,
   SS_FONDO_RESERVA,
 } from "@/data/sources";
@@ -34,10 +34,10 @@ export function SustainabilityBlock() {
       ? {
           ssBalance: "SS System Balance",
           ssBalanceTooltip:
-            "Difference between total social contributions and old-age pension spending. A narrowing surplus signals growing pressure on the system.",
-          pensionGDP: "Pension Spending / GDP",
+            "Difference between social contributions and contributory cash benefits. Negative values indicate a structural contributory deficit.",
+          pensionGDP: "Contributory Spending / GDP",
           pensionGDPTooltip:
-            "Share of GDP devoted to old-age pensions. Spain is approaching the EU average.",
+            "Share of GDP devoted to contributory social benefits. Higher values imply stronger pressure on payroll-funded spending.",
           reserveFund: "Reserve Fund",
           reserveFundTooltip:
             "The SS reserve fund peaked at \u20AC66.8B in 2011, was nearly depleted by 2019, and is now being rebuilt.",
@@ -50,12 +50,12 @@ export function SustainabilityBlock() {
           cumulativeGap: "Cumulative Balance Gap",
           cumulativeGapTooltip:
             "Sum of annual system balances since the first year of available data. Shows accumulated surplus/deficit over time.",
-          chartRevenueVsExp: "Social Contributions vs Pension Spending",
+          chartRevenueVsExp: "Social Contributions vs Contributory Spending",
           chartReserveFund: "Reserve Fund Evolution",
-          chartPensionGDP: "Pension Spending % GDP — Spain vs EU + Projections",
+          chartPensionGDP: "Contributory Spending % GDP — Spain vs EU + Projections",
           chartContributors: "Contributors per Pensioner",
           contributions: "Contributions",
-          pensionSpending: "Pension spending",
+          pensionSpending: "Contributory spending",
           balance: "Balance",
           spain: "Spain",
           eu27: "EU-27",
@@ -70,10 +70,10 @@ export function SustainabilityBlock() {
       : {
           ssBalance: "Balance del sistema SS",
           ssBalanceTooltip:
-            "Diferencia entre cotizaciones sociales totales y gasto en pensiones de vejez. Un superavit decreciente indica presion creciente.",
-          pensionGDP: "Gasto pensiones / PIB",
+            "Diferencia entre cotizaciones sociales y prestaciones contributivas en efectivo. Un valor negativo indica deficit estructural.",
+          pensionGDP: "Gasto contributivo / PIB",
           pensionGDPTooltip:
-            "Porcentaje del PIB destinado a pensiones de vejez. España se acerca a la media europea.",
+            "Porcentaje del PIB destinado a prestaciones contributivas. Valores altos reflejan mayor presion sobre un sistema financiado por cotizaciones.",
           reserveFund: "Fondo de Reserva",
           reserveFundTooltip:
             "El fondo de reserva de la SS alcanzo 66.815 M\u20AC en 2011, se agoto casi por completo en 2019 y ahora se esta reponiendo.",
@@ -86,12 +86,12 @@ export function SustainabilityBlock() {
           cumulativeGap: "Brecha acumulada del sistema",
           cumulativeGapTooltip:
             "Suma de balances anuales del sistema desde el primer año de datos. Muestra el superavit/deficit acumulado.",
-          chartRevenueVsExp: "Cotizaciones sociales vs gasto en pensiones",
+          chartRevenueVsExp: "Cotizaciones sociales vs gasto contributivo",
           chartReserveFund: "Evolucion del Fondo de Reserva",
-          chartPensionGDP: "Gasto en pensiones % PIB — España vs UE + Proyecciones",
+          chartPensionGDP: "Gasto contributivo % PIB — España vs UE + Proyecciones",
           chartContributors: "Cotizantes por pensionista",
           contributions: "Cotizaciones",
-          pensionSpending: "Gasto pensiones",
+          pensionSpending: "Gasto contributivo",
           balance: "Balance",
           spain: "España",
           eu27: "UE-27",
@@ -126,7 +126,7 @@ export function SustainabilityBlock() {
   // Source attribution
   const eurostatSource = data.sourceAttribution?.ssSustainability
     ? fromAttribution(data.sourceAttribution.ssSustainability)
-    : EUROSTAT_GOV_EXP;
+    : EUROSTAT_GOV_MAIN;
 
   // ─── Chart 1: Revenue vs Expenditure ───
   const revenueVsExpData = data.years.map((year) => {

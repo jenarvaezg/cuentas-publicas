@@ -365,16 +365,15 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 
 | Dato | Clasificación | Método | Frecuencia | Fragilidad |
 |------|---------------|--------|------------|------------|
-| Gasto en pensiones (M EUR) | **AUTOMATIZADO** | Eurostat `gov_10a_exp` (COFOG GF1002, S1314, MIO_EUR) | Anual | MEDIA — API JSON-stat |
-| Gasto en pensiones % PIB (ES+EU27) | **AUTOMATIZADO** | Eurostat `gov_10a_exp` (PC_GDP, S13) | Anual | MEDIA — API JSON-stat |
-| Cotizaciones sociales (M EUR) | **AUTOMATIZADO** | Eurostat `gov_10a_main` (D61REC, MIO_EUR) | Anual | MEDIA — API JSON-stat |
-| Balance SS (cotiz - gasto) | **DERIVADO** | Diferencia cotizaciones - pensiones por año | Anual | BAJA |
+| Gasto contributivo en efectivo (M EUR) | **AUTOMATIZADO** | Eurostat `gov_10a_main` (`D62PAY`, `S1314`, `MIO_EUR`) | Anual | MEDIA — API JSON-stat |
+| Gasto contributivo % PIB (ES+EU27) | **AUTOMATIZADO** | Eurostat `gov_10a_main` (`D62PAY`, `S1314`, `PC_GDP`) | Anual | MEDIA — API JSON-stat |
+| Cotizaciones sociales (M EUR) | **AUTOMATIZADO** | Eurostat `gov_10a_main` (`D61REC`, `S1314`, `MIO_EUR`) | Anual | MEDIA — API JSON-stat |
+| Balance SS (cotiz - gasto) | **DERIVADO** | Diferencia cotizaciones - gasto contributivo por año | Anual | BAJA |
 | Fondo de Reserva SS | **HARDCODEADO** | 26 puntos (2000-2025) de Ministerio de Inclusión | Anual | MEDIA — actualizar manualmente |
 | Cotizantes/pensionista | **HARDCODEADO** | 20 puntos (2006-2025) de estadísticas SS | Anual | MEDIA — actualizar manualmente |
 | Proyecciones pensiones/PIB 2070 | **HARDCODEADO** | 6 puntos ES + 6 EU27 del Ageing Report 2024 | Cada 3 años | BAJA — próximo: 2027 |
 
 **URLs** (Eurostat API estables):
-- `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_exp?...`
 - `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_main?...`
 
 **Fallback**: Dataset de referencia completo (2020-2023) + todos los datos hardcodeados (Fondo de Reserva, cotizantes/pensionista, proyecciones). Si las 3 series Eurostat fallan, se usa fallback íntegro.

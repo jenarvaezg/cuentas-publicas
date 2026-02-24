@@ -89,7 +89,7 @@
     },
     "/api/v1/ss-sustainability.json": {
       "get": {
-        "summary": "Sostenibilidad SS: cotizaciones, gasto pensiones, Fondo de Reserva y proyecciones",
+        "summary": "Sostenibilidad SS: cotizaciones, gasto contributivo, Fondo de Reserva y proyecciones",
         "responses": { "200": { "description": "OK" } }
       }
     },

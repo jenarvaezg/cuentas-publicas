@@ -8,29 +8,27 @@ const EUROSTAT_BASE =
 
 const EUROSTAT_INDICATORS = {
   pensionExpenditure: {
-    dataset: "gov_10a_exp",
+    dataset: "gov_10a_main",
     params: {
       freq: "A",
       unit: "MIO_EUR",
-      sector: "S13",
-      cofog99: "GF1002",
-      na_item: "TE",
+      sector: "S1314",
+      na_item: "D62PAY",
     },
     geos: ["ES"],
-    label: "Gasto en pensiones (vejez)",
+    label: "Prestaciones contributivas en efectivo",
     unit: "M€",
   },
   pensionToGDP: {
-    dataset: "gov_10a_exp",
+    dataset: "gov_10a_main",
     params: {
       freq: "A",
       unit: "PC_GDP",
-      sector: "S13",
-      cofog99: "GF1002",
-      na_item: "TE",
+      sector: "S1314",
+      na_item: "D62PAY",
     },
     geos: ["ES", "EU27_2020"],
-    label: "Gasto pensiones / PIB",
+    label: "Prestaciones contributivas / PIB",
     unit: "% PIB",
   },
   socialContributions: {
@@ -38,7 +36,7 @@ const EUROSTAT_INDICATORS = {
     params: {
       freq: "A",
       unit: "MIO_EUR",
-      sector: "S13",
+      sector: "S1314",
       na_item: "D61REC",
     },
     geos: ["ES"],
@@ -131,37 +129,37 @@ const FALLBACK_DATA = {
   latestYear: 2023,
   byYear: {
     2020: {
-      socialContributions: 163076,
-      pensionExpenditure: 137361,
-      ssBalance: 25715,
-      pensionToGDP: 12.3,
+      socialContributions: 151773,
+      pensionExpenditure: 201375,
+      ssBalance: -49602,
+      pensionToGDP: 17.8,
     },
     2021: {
-      socialContributions: 174684,
-      pensionExpenditure: 143102,
-      ssBalance: 31582,
-      pensionToGDP: 11.8,
+      socialContributions: 161306,
+      pensionExpenditure: 199557,
+      ssBalance: -38251,
+      pensionToGDP: 16.2,
     },
     2022: {
-      socialContributions: 189513,
-      pensionExpenditure: 153287,
-      ssBalance: 36226,
-      pensionToGDP: 11.6,
+      socialContributions: 169656,
+      pensionExpenditure: 199290,
+      ssBalance: -29634,
+      pensionToGDP: 14.5,
     },
     2023: {
-      socialContributions: 204000,
-      pensionExpenditure: 167000,
-      ssBalance: 37000,
-      pensionToGDP: 12.4,
+      socialContributions: 186417,
+      pensionExpenditure: 219180,
+      ssBalance: -32763,
+      pensionToGDP: 14.6,
     },
   },
   pensionToGDP: {
     spain: {
-      byYear: { 2020: 12.3, 2021: 11.8, 2022: 11.6, 2023: 12.4 },
+      byYear: { 2020: 17.8, 2021: 16.2, 2022: 14.5, 2023: 14.6 },
       years: [2020, 2021, 2022, 2023],
     },
     eu27: {
-      byYear: { 2020: 12.6, 2021: 11.9, 2022: 11.4, 2023: 11.5 },
+      byYear: { 2020: 13.7, 2021: 12.6, 2022: 11.9, 2023: 11.9 },
       years: [2020, 2021, 2022, 2023],
     },
   },
@@ -352,13 +350,16 @@ export async function downloadSSSustainability() {
       return buildFallbackData();
     }
 
-    // Build byYear structure with overlapping years
+    // Build byYear structure using only complete years across all core series
     const allYearsSet = new Set();
     if (pensionExp) {
       for (const y of pensionExp.years) allYearsSet.add(y);
     }
     if (socialContrib) {
       for (const y of socialContrib.years) allYearsSet.add(y);
+    }
+    if (pensionGDP_ES) {
+      for (const y of pensionGDP_ES.years) allYearsSet.add(y);
     }
 
     const years = [...allYearsSet].sort((a, b) => a - b);
@@ -369,21 +370,27 @@ export async function downloadSSSustainability() {
       const y = String(year);
       const sc = socialContrib?.byYear[y];
       const pe = pensionExp?.byYear[y];
+      const p2g = pensionGDP_ES?.byYear[y];
 
-      // Include year only if we have at least one of the two main series
-      if (sc === undefined && pe === undefined) continue;
+      // Avoid false zeros: include only years with all core indicators available
+      if (sc === undefined || pe === undefined || p2g === undefined) continue;
 
       byYear[y] = {
-        socialContributions: sc ?? 0,
-        pensionExpenditure: pe ?? 0,
-        ssBalance: (sc ?? 0) - (pe ?? 0),
-        pensionToGDP: pensionGDP_ES?.byYear[y] ?? 0,
+        socialContributions: sc,
+        pensionExpenditure: pe,
+        ssBalance: sc - pe,
+        pensionToGDP: p2g,
       };
     }
 
     const validYears = Object.keys(byYear)
       .map(Number)
       .sort((a, b) => a - b);
+
+    if (validYears.length === 0) {
+      console.warn("⚠️  Sin años completos entre cotizaciones, gasto y %PIB; usando fallback");
+      return buildFallbackData();
+    }
 
     const data = {
       lastUpdated: new Date().toISOString(),
@@ -401,9 +408,9 @@ export async function downloadSSSustainability() {
         ssSustainability: {
           source: "Eurostat",
           type: usedApi ? "api" : "fallback",
-          url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/",
+          url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
           date: `${validYears[validYears.length - 1] || latestYear}-12-31`,
-          note: `Gasto en pensiones, cotizaciones sociales y ratio pensiones/PIB (${validYears.length} años)`,
+          note: `Cotizaciones D61REC, prestaciones D62PAY y ratio sobre PIB (subsector S1314, ${validYears.length} años)`,
         },
       },
     };
@@ -442,7 +449,7 @@ function buildFallbackData() {
       ssSustainability: {
         source: "Eurostat (referencia)",
         type: "fallback",
-        url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/",
+        url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
         date: `${FALLBACK_DATA.latestYear}-12-31`,
         note: `Valores de referencia ${FALLBACK_DATA.latestYear}`,
       },

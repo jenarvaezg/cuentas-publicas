@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-24T10:44:51.127Z",
+  "lastUpdated": "2026-02-24T11:28:31.716Z",
   "latestYear": 2024,
   "years": [
     1995,
@@ -35,218 +35,219 @@
   ],
   "byYear": {
     "1995": {
-      "socialContributions": 57354,
-      "pensionExpenditure": 31048,
-      "ssBalance": 26306,
-      "pensionToGDP": 6.6
+      "socialContributions": 51116,
+      "pensionExpenditure": 54711,
+      "ssBalance": -3595,
+      "pensionToGDP": 11.6
     },
     "1996": {
-      "socialContributions": 60691,
-      "pensionExpenditure": 34007,
-      "ssBalance": 26684,
-      "pensionToGDP": 6.7
+      "socialContributions": 54275,
+      "pensionExpenditure": 58439,
+      "ssBalance": -4164,
+      "pensionToGDP": 11.5
     },
     "1997": {
-      "socialContributions": 63301,
-      "pensionExpenditure": 34385,
-      "ssBalance": 28916,
-      "pensionToGDP": 6.6
+      "socialContributions": 56630,
+      "pensionExpenditure": 58371,
+      "ssBalance": -1741,
+      "pensionToGDP": 11.2
     },
     "1998": {
-      "socialContributions": 67605,
-      "pensionExpenditure": 35876,
-      "ssBalance": 31729,
-      "pensionToGDP": 6.5
+      "socialContributions": 60720,
+      "pensionExpenditure": 59630,
+      "ssBalance": 1090,
+      "pensionToGDP": 10.8
     },
     "1999": {
-      "socialContributions": 73986,
-      "pensionExpenditure": 38332,
-      "ssBalance": 35654,
-      "pensionToGDP": 6.4
-    },
-    "2000": {
-      "socialContributions": 80509,
-      "pensionExpenditure": 40602,
-      "ssBalance": 39907,
-      "pensionToGDP": 6.3
-    },
-    "2001": {
-      "socialContributions": 88138,
-      "pensionExpenditure": 42627,
-      "ssBalance": 45511,
-      "pensionToGDP": 6.1
-    },
-    "2002": {
-      "socialContributions": 94039,
-      "pensionExpenditure": 46159,
-      "ssBalance": 47880,
-      "pensionToGDP": 6.2
-    },
-    "2003": {
-      "socialContributions": 101025,
-      "pensionExpenditure": 49248,
-      "ssBalance": 51777,
-      "pensionToGDP": 6.1
-    },
-    "2004": {
-      "socialContributions": 108469,
-      "pensionExpenditure": 51879,
-      "ssBalance": 56590,
-      "pensionToGDP": 6
-    },
-    "2005": {
-      "socialContributions": 116666,
-      "pensionExpenditure": 56076,
-      "ssBalance": 60590,
-      "pensionToGDP": 6
-    },
-    "2006": {
-      "socialContributions": 126296,
-      "pensionExpenditure": 61243,
-      "ssBalance": 65053,
-      "pensionToGDP": 6.1
-    },
-    "2007": {
-      "socialContributions": 135643,
-      "pensionExpenditure": 65710,
-      "ssBalance": 69933,
-      "pensionToGDP": 6.1
-    },
-    "2008": {
-      "socialContributions": 140997,
-      "pensionExpenditure": 70164,
-      "ssBalance": 70833,
-      "pensionToGDP": 6.3
-    },
-    "2009": {
-      "socialContributions": 138190,
-      "pensionExpenditure": 75516,
-      "ssBalance": 62674,
-      "pensionToGDP": 7
-    },
-    "2010": {
-      "socialContributions": 136975,
-      "pensionExpenditure": 80022,
-      "ssBalance": 56953,
-      "pensionToGDP": 7.4
-    },
-    "2011": {
-      "socialContributions": 135458,
-      "pensionExpenditure": 83897,
-      "ssBalance": 51561,
-      "pensionToGDP": 7.9
-    },
-    "2012": {
-      "socialContributions": 129823,
-      "pensionExpenditure": 87831,
-      "ssBalance": 41992,
-      "pensionToGDP": 8.5
-    },
-    "2013": {
-      "socialContributions": 126856,
-      "pensionExpenditure": 92135,
-      "ssBalance": 34721,
-      "pensionToGDP": 9
-    },
-    "2014": {
-      "socialContributions": 128966,
-      "pensionExpenditure": 95350,
-      "ssBalance": 33616,
-      "pensionToGDP": 9.2
-    },
-    "2015": {
-      "socialContributions": 131508,
-      "pensionExpenditure": 98901,
-      "ssBalance": 32607,
-      "pensionToGDP": 9.1
-    },
-    "2016": {
-      "socialContributions": 135573,
-      "pensionExpenditure": 102579,
-      "ssBalance": 32994,
-      "pensionToGDP": 9.1
-    },
-    "2017": {
-      "socialContributions": 142430,
-      "pensionExpenditure": 106655,
-      "ssBalance": 35775,
-      "pensionToGDP": 9.1
-    },
-    "2018": {
-      "socialContributions": 149450,
-      "pensionExpenditure": 112641,
-      "ssBalance": 36809,
-      "pensionToGDP": 9.3
-    },
-    "2019": {
-      "socialContributions": 160656,
-      "pensionExpenditure": 118714,
-      "ssBalance": 41942,
-      "pensionToGDP": 9.5
-    },
-    "2020": {
-      "socialContributions": 162174,
-      "pensionExpenditure": 122744,
-      "ssBalance": 39430,
-      "pensionToGDP": 10.9
-    },
-    "2021": {
-      "socialContributions": 171687,
-      "pensionExpenditure": 129584,
-      "ssBalance": 42103,
+      "socialContributions": 66764,
+      "pensionExpenditure": 62569,
+      "ssBalance": 4195,
       "pensionToGDP": 10.5
     },
-    "2022": {
-      "socialContributions": 180086,
-      "pensionExpenditure": 137505,
-      "ssBalance": 42581,
-      "pensionToGDP": 10
+    "2000": {
+      "socialContributions": 72912,
+      "pensionExpenditure": 66851,
+      "ssBalance": 6061,
+      "pensionToGDP": 10.3
     },
-    "2023": {
-      "socialContributions": 197003,
-      "pensionExpenditure": 153153,
-      "ssBalance": 43850,
+    "2001": {
+      "socialContributions": 80150,
+      "pensionExpenditure": 71188,
+      "ssBalance": 8962,
       "pensionToGDP": 10.2
     },
+    "2002": {
+      "socialContributions": 85621,
+      "pensionExpenditure": 76845,
+      "ssBalance": 8776,
+      "pensionToGDP": 10.2
+    },
+    "2003": {
+      "socialContributions": 92184,
+      "pensionExpenditure": 81404,
+      "ssBalance": 10780,
+      "pensionToGDP": 10.1
+    },
+    "2004": {
+      "socialContributions": 99151,
+      "pensionExpenditure": 87547,
+      "ssBalance": 11604,
+      "pensionToGDP": 10.2
+    },
+    "2005": {
+      "socialContributions": 106914,
+      "pensionExpenditure": 93670,
+      "ssBalance": 13244,
+      "pensionToGDP": 10.1
+    },
+    "2006": {
+      "socialContributions": 115984,
+      "pensionExpenditure": 100259,
+      "ssBalance": 15725,
+      "pensionToGDP": 10
+    },
+    "2007": {
+      "socialContributions": 124851,
+      "pensionExpenditure": 108405,
+      "ssBalance": 16446,
+      "pensionToGDP": 10.1
+    },
+    "2008": {
+      "socialContributions": 129593,
+      "pensionExpenditure": 119738,
+      "ssBalance": 9855,
+      "pensionToGDP": 10.8
+    },
+    "2009": {
+      "socialContributions": 126230,
+      "pensionExpenditure": 136059,
+      "ssBalance": -9829,
+      "pensionToGDP": 12.7
+    },
+    "2010": {
+      "socialContributions": 124944,
+      "pensionExpenditure": 142521,
+      "ssBalance": -17577,
+      "pensionToGDP": 13.2
+    },
+    "2011": {
+      "socialContributions": 123606,
+      "pensionExpenditure": 144055,
+      "ssBalance": -20449,
+      "pensionToGDP": 13.5
+    },
+    "2012": {
+      "socialContributions": 118376,
+      "pensionExpenditure": 149008,
+      "ssBalance": -30632,
+      "pensionToGDP": 14.4
+    },
+    "2013": {
+      "socialContributions": 116080,
+      "pensionExpenditure": 151467,
+      "ssBalance": -35387,
+      "pensionToGDP": 14.8
+    },
+    "2014": {
+      "socialContributions": 118108,
+      "pensionExpenditure": 150887,
+      "ssBalance": -32779,
+      "pensionToGDP": 14.5
+    },
+    "2015": {
+      "socialContributions": 120524,
+      "pensionExpenditure": 149899,
+      "ssBalance": -29375,
+      "pensionToGDP": 13.8
+    },
+    "2016": {
+      "socialContributions": 124774,
+      "pensionExpenditure": 151994,
+      "ssBalance": -27220,
+      "pensionToGDP": 13.5
+    },
+    "2017": {
+      "socialContributions": 131838,
+      "pensionExpenditure": 154931,
+      "ssBalance": -23093,
+      "pensionToGDP": 13.2
+    },
+    "2018": {
+      "socialContributions": 138862,
+      "pensionExpenditure": 161859,
+      "ssBalance": -22997,
+      "pensionToGDP": 13.4
+    },
+    "2019": {
+      "socialContributions": 150057,
+      "pensionExpenditure": 171716,
+      "ssBalance": -21659,
+      "pensionToGDP": 13.7
+    },
+    "2020": {
+      "socialContributions": 151773,
+      "pensionExpenditure": 201375,
+      "ssBalance": -49602,
+      "pensionToGDP": 17.8
+    },
+    "2021": {
+      "socialContributions": 161306,
+      "pensionExpenditure": 199557,
+      "ssBalance": -38251,
+      "pensionToGDP": 16.2
+    },
+    "2022": {
+      "socialContributions": 169656,
+      "pensionExpenditure": 199290,
+      "ssBalance": -29634,
+      "pensionToGDP": 14.5
+    },
+    "2023": {
+      "socialContributions": 186417,
+      "pensionExpenditure": 219180,
+      "ssBalance": -32763,
+      "pensionToGDP": 14.6
+    },
     "2024": {
-      "socialContributions": 210337,
-      "pensionExpenditure": 0,
-      "ssBalance": 210337,
-      "pensionToGDP": 0
+      "socialContributions": 199698,
+      "pensionExpenditure": 234430,
+      "ssBalance": -34732,
+      "pensionToGDP": 14.7
     }
   },
   "pensionToGDP": {
     "spain": {
       "byYear": {
-        "1995": 6.6,
-        "1996": 6.7,
-        "1997": 6.6,
-        "1998": 6.5,
-        "1999": 6.4,
-        "2000": 6.3,
-        "2001": 6.1,
-        "2002": 6.2,
-        "2003": 6.1,
-        "2004": 6,
-        "2005": 6,
-        "2006": 6.1,
-        "2007": 6.1,
-        "2008": 6.3,
-        "2009": 7,
-        "2010": 7.4,
-        "2011": 7.9,
-        "2012": 8.5,
-        "2013": 9,
-        "2014": 9.2,
-        "2015": 9.1,
-        "2016": 9.1,
-        "2017": 9.1,
-        "2018": 9.3,
-        "2019": 9.5,
-        "2020": 10.9,
-        "2021": 10.5,
-        "2022": 10,
-        "2023": 10.2
+        "1995": 11.6,
+        "1996": 11.5,
+        "1997": 11.2,
+        "1998": 10.8,
+        "1999": 10.5,
+        "2000": 10.3,
+        "2001": 10.2,
+        "2002": 10.2,
+        "2003": 10.1,
+        "2004": 10.2,
+        "2005": 10.1,
+        "2006": 10,
+        "2007": 10.1,
+        "2008": 10.8,
+        "2009": 12.7,
+        "2010": 13.2,
+        "2011": 13.5,
+        "2012": 14.4,
+        "2013": 14.8,
+        "2014": 14.5,
+        "2015": 13.8,
+        "2016": 13.5,
+        "2017": 13.2,
+        "2018": 13.4,
+        "2019": 13.7,
+        "2020": 17.8,
+        "2021": 16.2,
+        "2022": 14.5,
+        "2023": 14.6,
+        "2024": 14.7
       },
       "years": [
         1995,
@@ -277,36 +278,50 @@
         2020,
         2021,
         2022,
-        2023
+        2023,
+        2024
       ]
     },
     "eu27": {
       "byYear": {
-        "2001": 9.1,
-        "2002": 9.1,
-        "2003": 9.4,
-        "2004": 9.4,
-        "2005": 9.4,
-        "2006": 9.3,
-        "2007": 9.2,
-        "2008": 9.5,
-        "2009": 10.2,
-        "2010": 10.3,
-        "2011": 10.2,
-        "2012": 10.5,
-        "2013": 10.6,
-        "2014": 10.6,
-        "2015": 10.5,
-        "2016": 10.5,
-        "2017": 10.4,
-        "2018": 10.4,
-        "2019": 10.4,
-        "2020": 11.3,
-        "2021": 10.7,
-        "2022": 10.3,
-        "2023": 10.4
+        "1995": 11.9,
+        "1996": 12.3,
+        "1997": 12.3,
+        "1998": 12,
+        "1999": 12,
+        "2000": 11.7,
+        "2001": 11.7,
+        "2002": 11.9,
+        "2003": 12,
+        "2004": 11.9,
+        "2005": 11.7,
+        "2006": 11.4,
+        "2007": 11.1,
+        "2008": 11.3,
+        "2009": 12.5,
+        "2010": 12.4,
+        "2011": 12.2,
+        "2012": 12.5,
+        "2013": 12.7,
+        "2014": 12.6,
+        "2015": 12.3,
+        "2016": 12.2,
+        "2017": 12,
+        "2018": 11.9,
+        "2019": 12,
+        "2020": 13.7,
+        "2021": 12.6,
+        "2022": 11.9,
+        "2023": 11.9,
+        "2024": 12.2
       },
       "years": [
+        1995,
+        1996,
+        1997,
+        1998,
+        1999,
+        2000,
         2001,
         2002,
         2003,
@@ -329,7 +344,8 @@
         2020,
         2021,
         2022,
-        2023
+        2023,
+        2024
       ]
     }
   },
@@ -581,9 +597,9 @@
     "ssSustainability": {
       "source": "Eurostat",
       "type": "api",
-      "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/",
+      "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
       "date": "2024-12-31",
-      "note": "Gasto en pensiones, cotizaciones sociales y ratio pensiones/PIB (30 años)"
+      "note": "Cotizaciones D61REC, prestaciones D62PAY y ratio sobre PIB (subsector S1314, 30 años)"
     }
   }
 }

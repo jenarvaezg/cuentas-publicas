@@ -107,7 +107,7 @@ Déficit o superávit oficial por Comunidad Autónoma según Contabilidad Nacion
 
 ### ss-sustainability.json — Schema
 
-Sostenibilidad del sistema de Seguridad Social: serie histórica de cotizaciones vs gasto en pensiones, Fondo de Reserva, ratio cotizantes/pensionista y proyecciones del Ageing Report.
+Sostenibilidad del sistema de Seguridad Social: serie histórica de cotizaciones vs gasto contributivo (D62PAY), Fondo de Reserva, ratio cotizantes/pensionista y proyecciones del Ageing Report.
 
 ```
 latestYear: number,
@@ -115,7 +115,7 @@ years: number[],
 byYear: {
   [year]: {
     socialContributions: number,   // M EUR
-    pensionExpenditure: number,    // M EUR
+    pensionExpenditure: number,    // M EUR (gasto contributivo en efectivo)
     ssBalance: number,             // cotizaciones - gasto
     pensionToGDP: number,          // % PIB
   }

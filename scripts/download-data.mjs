@@ -449,7 +449,7 @@ function buildPublicApiIndex(meta) {
         path: "/api/v1/ss-sustainability.json",
         source: "Eurostat + Ageing Report",
         description:
-          "Sostenibilidad de la Seguridad Social: cotizaciones, gasto pensiones, Fondo de Reserva y proyecciones",
+          "Sostenibilidad de la Seguridad Social: cotizaciones, gasto contributivo, Fondo de Reserva y proyecciones",
       },
       {
         path: "/api/v1/meta.json",

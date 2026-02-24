@@ -99,23 +99,23 @@ describe('ss-sustainability source script', () => {
       const unit = parsed.searchParams.get('unit')
       const naItem = parsed.searchParams.get('na_item')
 
-      // Pension expenditure MIO_EUR
-      if (unit === 'MIO_EUR' && naItem === 'TE') {
+      // Contributory spending MIO_EUR
+      if (unit === 'MIO_EUR' && naItem === 'D62PAY') {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve(createTimeSeriesJsonStat({
-            2020: 137000, 2021: 143000, 2022: 153000, 2023: 167000
+            2020: 201000, 2021: 200000, 2022: 199000, 2023: 219000
           })),
         })
       }
 
-      // Pension expenditure %GDP
-      if (unit === 'PC_GDP') {
+      // Contributory spending %GDP
+      if (unit === 'PC_GDP' && naItem === 'D62PAY') {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve(createGDPComparisonJsonStat(
-            { 2020: 12.3, 2021: 11.8, 2022: 11.6, 2023: 12.4 },
-            { 2020: 12.6, 2021: 11.9, 2022: 11.4, 2023: 11.5 }
+            { 2020: 17.8, 2021: 16.2, 2022: 14.5, 2023: 14.6 },
+            { 2020: 13.7, 2021: 12.6, 2022: 11.9, 2023: 11.9 }
           )),
         })
       }
@@ -125,7 +125,7 @@ describe('ss-sustainability source script', () => {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve(createTimeSeriesJsonStat({
-            2020: 163000, 2021: 175000, 2022: 190000, 2023: 204000
+            2020: 152000, 2021: 161000, 2022: 170000, 2023: 186000
           })),
         })
       }
@@ -138,12 +138,56 @@ describe('ss-sustainability source script', () => {
     expect(result.sourceAttribution.ssSustainability.type).toBe('api')
     expect(result.latestYear).toBe(2023)
     expect(result.years).toEqual([2020, 2021, 2022, 2023])
-    expect(result.byYear['2023'].socialContributions).toBe(204000)
-    expect(result.byYear['2023'].pensionExpenditure).toBe(167000)
-    expect(result.byYear['2023'].ssBalance).toBe(37000)
-    expect(result.byYear['2023'].pensionToGDP).toBe(12.4)
-    expect(result.pensionToGDP.spain.byYear['2023']).toBe(12.4)
-    expect(result.pensionToGDP.eu27.byYear['2023']).toBe(11.5)
+    expect(result.byYear['2023'].socialContributions).toBe(186000)
+    expect(result.byYear['2023'].pensionExpenditure).toBe(219000)
+    expect(result.byYear['2023'].ssBalance).toBe(-33000)
+    expect(result.byYear['2023'].pensionToGDP).toBe(14.6)
+    expect(result.pensionToGDP.spain.byYear['2023']).toBe(14.6)
+    expect(result.pensionToGDP.eu27.byYear['2023']).toBe(11.9)
+  })
+
+  it('excluye años incompletos para evitar ceros artificiales', async () => {
+    fetchUtils.fetchWithRetry.mockImplementation((url) => {
+      const parsed = new URL(url)
+      const unit = parsed.searchParams.get('unit')
+      const naItem = parsed.searchParams.get('na_item')
+
+      if (unit === 'MIO_EUR' && naItem === 'D62PAY') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(createTimeSeriesJsonStat({
+            2022: 199000, 2023: 219000
+          })),
+        })
+      }
+
+      if (unit === 'PC_GDP' && naItem === 'D62PAY') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(createGDPComparisonJsonStat(
+            { 2022: 14.5, 2023: 14.6 },
+            { 2022: 11.9, 2023: 11.9 }
+          )),
+        })
+      }
+
+      if (naItem === 'D61REC') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(createTimeSeriesJsonStat({
+            2022: 170000, 2023: 186000, 2024: 200000
+          })),
+        })
+      }
+
+      return Promise.reject(new Error('URL no esperada'))
+    })
+
+    const result = await downloadSSSustainability()
+
+    expect(result.years).toEqual([2022, 2023])
+    expect(result.latestYear).toBe(2023)
+    expect(result.byYear['2024']).toBeUndefined()
   })
 
   it('siempre incluye hardcoded reserveFund y contributorsPerPensioner', async () => {
