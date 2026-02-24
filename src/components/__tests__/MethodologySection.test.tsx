@@ -6,7 +6,11 @@ import { MethodologySection } from "../MethodologySection";
 
 describe("MethodologySection", () => {
   it("starts collapsed and expands on click", () => {
-    render(<MethodologySection />);
+    render(
+      <I18nProvider>
+        <MethodologySection />
+      </I18nProvider>,
+    );
 
     // Check initial state
     expect(screen.queryByText(/Proyecto educativo/i)).toBeNull();

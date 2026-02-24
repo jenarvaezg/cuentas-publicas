@@ -395,9 +395,9 @@ export const FlowsSankeyBlock: React.FC = () => {
             nodeBorderWidth={1}
             nodeBorderColor={{ from: "color", modifiers: [["darker", 0.5]] }}
             nodeBorderRadius={3}
-            linkOpacity={0.25}
+            linkOpacity={0.45}
             nodeHoverOpacity={0.9}
-            linkHoverOthersOpacity={0.05}
+            linkHoverOthersOpacity={0.1}
             linkContract={3}
             enableLinkGradient={true}
             labelPosition="outside"
