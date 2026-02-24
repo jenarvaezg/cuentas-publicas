@@ -301,8 +301,8 @@ const REFERENCE_DATA = {
   totalPensions: 10_452_674,            // Jan 2026 Excel
   averagePensionRetirement: 1_563.56,   // Jan 2026 Excel
   affiliates: 21_300_000,              // Estimated
-  socialContributions: 180_000_000_000, // PGE estimate
-  reserveFund: 2_100_000_000,          // Estimated
+  socialContributions: 210_000_000_000, // Eurostat 2024 (~210,337 M€)
+  reserveFund: 7_500_000_000,          // 2025 estimate (7,500 M€)
   // Accumulated contributory deficit (pension expense − social contributions) since 2011
   // Sources: UV-Eje quarterly reports, WTW, Instituto Santalucía, Fedea SSA series
   // Methodology: sum of annual deficits 2011-2025 (~290B€ narrow) + Clases Pasivas gap
@@ -486,6 +486,111 @@ export function buildPensionResult(liveData, fallbackReason = null) {
   console.log(`   Déficit contributivo: ${(contributoryDeficit / 1_000_000_000).toFixed(2)}B€`)
 
   return result
+}
+
+/**
+ * Enrich pension data with values from ss-sustainability pipeline.
+ * Replaces 3 hardcoded fallbacks (socialContributions, reserveFund, affiliates)
+ * with real data from Eurostat / reference series.
+ *
+ * @param {Object} pensionData - Output from buildPensionResult()
+ * @param {Object} sustainabilityData - Output from downloadSSSustainability()
+ * @returns {Object} New pension object with enriched values (immutable)
+ */
+export function enrichPensionWithSustainability(pensionData, sustainabilityData) {
+  if (!pensionData || !sustainabilityData) return pensionData
+
+  const latestYear = String(sustainabilityData.latestYear)
+  const yearData = sustainabilityData.byYear?.[latestYear]
+
+  // 1. Social contributions: Eurostat gov_10a_main D61REC (M€ → €)
+  const socialContributionsMEur = yearData?.socialContributions
+  const socialContributions = socialContributionsMEur
+    ? socialContributionsMEur * 1_000_000
+    : pensionData.current.socialContributions
+
+  // 2. Reserve fund: latest entry from RESERVE_FUND_HISTORY (M€ → €)
+  const reserveFundHistory = sustainabilityData.reserveFund
+  const latestReserveFund = reserveFundHistory?.[reserveFundHistory.length - 1]
+  const reserveFund = latestReserveFund
+    ? latestReserveFund.balance * 1_000_000
+    : pensionData.current.reserveFund
+
+  // 3. Affiliates: derive from contributors-per-pensioner ratio × totalPensions
+  const cppHistory = sustainabilityData.contributorsPerPensioner
+  const latestCpp = cppHistory?.[cppHistory.length - 1]
+  const totalPensions = pensionData.current.totalPensions
+  const affiliates = latestCpp
+    ? Math.round(latestCpp.ratio * totalPensions)
+    : pensionData.current.affiliates
+
+  // Recalculate derived values
+  const contributorsPerPensioner = affiliates / totalPensions
+  const contributoryDeficit = pensionData.current.annualExpense - socialContributions
+
+  const enrichedCurrent = {
+    ...pensionData.current,
+    socialContributions,
+    reserveFund,
+    affiliates,
+    contributorsPerPensioner,
+    contributoryDeficit,
+  }
+
+  // Update source attributions for enriched fields
+  const enrichedAttribution = {
+    ...pensionData.sourceAttribution,
+    socialContributions: socialContributionsMEur
+      ? {
+        source: `Eurostat gov_10a_main D61REC (${latestYear})`,
+        type: "cross-reference",
+        url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+        date: `${latestYear}-12-31`,
+        note: `Cotizaciones sociales ${latestYear}: ${socialContributionsMEur.toLocaleString("es-ES")} M€ (Eurostat)`,
+      }
+      : pensionData.sourceAttribution.socialContributions,
+    reserveFund: latestReserveFund
+      ? {
+        source: `Fondo de Reserva SS (${latestReserveFund.year})`,
+        type: "cross-reference",
+        url: "https://www.seg-social.es",
+        date: `${latestReserveFund.year}-12-31`,
+        note: `Fondo de reserva ${latestReserveFund.year}: ${latestReserveFund.balance.toLocaleString("es-ES")} M€`,
+      }
+      : pensionData.sourceAttribution.reserveFund,
+    affiliates: latestCpp
+      ? {
+        source: `Derivado ratio cotizantes/pensionista (${latestCpp.year})`,
+        type: "cross-reference",
+        note: `Ratio ${latestCpp.ratio} × ${totalPensions.toLocaleString("es-ES")} pensiones`,
+      }
+      : pensionData.sourceAttribution.affiliates,
+    contributorsPerPensioner: latestCpp
+      ? {
+        source: `SS — ratio cotizantes/pensionista (${latestCpp.year})`,
+        type: "cross-reference",
+        note: `Ratio ${latestCpp.ratio} (${latestCpp.year})`,
+      }
+      : pensionData.sourceAttribution.contributorsPerPensioner,
+    contributoryDeficit: {
+      source: "Cálculo derivado (cross-reference)",
+      type: "derived",
+      note: "Gasto anual - cotizaciones sociales (Eurostat)",
+    },
+  }
+
+  console.log("  📊 Enriquecimiento cross-reference:")
+  console.log(`    Cotizaciones sociales: ${(socialContributions / 1_000_000_000).toFixed(1)}B€ [${socialContributionsMEur ? "Eurostat " + latestYear : "fallback"}]`)
+  console.log(`    Fondo de reserva:      ${(reserveFund / 1_000_000_000).toFixed(1)}B€ [${latestReserveFund ? latestReserveFund.year : "fallback"}]`)
+  console.log(`    Afiliados:             ${affiliates.toLocaleString("es-ES")} [${latestCpp ? "ratio " + latestCpp.ratio : "fallback"}]`)
+  console.log(`    Cotizantes/pensionista: ${contributorsPerPensioner.toFixed(2)}`)
+  console.log(`    Déficit contributivo:  ${(contributoryDeficit / 1_000_000_000).toFixed(1)}B€`)
+
+  return {
+    ...pensionData,
+    current: enrichedCurrent,
+    sourceAttribution: enrichedAttribution,
+  }
 }
 
 /**

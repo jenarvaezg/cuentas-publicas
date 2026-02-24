@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-23T21:30:14.984Z",
+  "lastUpdated": "2026-02-24T08:51:12.232Z",
   "pipeline": {
     "liveDataUsed": true,
     "criticalFallback": false,
@@ -12,13 +12,13 @@
     "annualExpense": 222735996196,
     "totalPensions": 10452674,
     "averagePensionRetirement": 1563.56,
-    "affiliates": 21300000,
+    "affiliates": 22995883,
     "pensioners": 10452674,
-    "contributorsPerPensioner": 2.037756080405837,
+    "contributorsPerPensioner": 2.20000001913386,
     "expensePerSecond": 7058.077806804065,
-    "socialContributions": 180000000000,
-    "contributoryDeficit": 42735996196,
-    "reserveFund": 2100000000,
+    "socialContributions": 210337000000,
+    "contributoryDeficit": 12398996196,
+    "reserveFund": 7500000000,
     "cumulativeDeficit": {
       "base": 300000000000,
       "baseDate": "2026-01-01"
@@ -132,30 +132,33 @@
       "note": "Datos Excel Seg. Social enero 2026"
     },
     "affiliates": {
-      "source": "Estimación afiliados SS",
-      "type": "fallback",
-      "note": "Afiliados estimados feb 2026"
+      "source": "Derivado ratio cotizantes/pensionista (2025)",
+      "type": "cross-reference",
+      "note": "Ratio 2.2 × 10.452.674 pensiones"
     },
     "contributorsPerPensioner": {
-      "source": "Cálculo derivado",
-      "type": "derived",
-      "note": "Afiliados / pensionistas"
+      "source": "SS — ratio cotizantes/pensionista (2025)",
+      "type": "cross-reference",
+      "note": "Ratio 2.2 (2025)"
     },
     "socialContributions": {
-      "source": "PGE — Cotizaciones sociales",
-      "type": "fallback",
-      "url": "https://www.sepg.pap.hacienda.gob.es/sitios/sepg/es-ES/Presupuestos/PGE/Paginas/PGE2025.aspx",
-      "note": "Cotizaciones estimadas 2025"
+      "source": "Eurostat gov_10a_main D61REC (2024)",
+      "type": "cross-reference",
+      "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+      "date": "2024-12-31",
+      "note": "Cotizaciones sociales 2024: 210.337 M€ (Eurostat)"
     },
     "contributoryDeficit": {
-      "source": "Cálculo derivado",
+      "source": "Cálculo derivado (cross-reference)",
       "type": "derived",
-      "note": "Gasto anual - cotizaciones sociales"
+      "note": "Gasto anual - cotizaciones sociales (Eurostat)"
     },
     "reserveFund": {
-      "source": "Estimación Fondo de Reserva",
-      "type": "fallback",
-      "note": "Fondo de reserva estimado feb 2026"
+      "source": "Fondo de Reserva SS (2025)",
+      "type": "cross-reference",
+      "url": "https://www.seg-social.es",
+      "date": "2025-12-31",
+      "note": "Fondo de reserva 2025: 7500 M€"
     }
   }
 }

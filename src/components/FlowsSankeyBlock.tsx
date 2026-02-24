@@ -412,7 +412,15 @@ export const FlowsSankeyBlock: React.FC = () => {
                 setSelectedNode((prev) => (prev === data.id ? null : data.id.toString()));
               }
             }}
-            valueFormat={(value: number) => formatCompact(value) + " €"}
+            valueFormat={(value: number) => formatCompact(value)}
+            nodeTooltip={(node: any) => (
+              <div className="bg-popover text-popover-foreground px-3 py-2 rounded-md border shadow-md text-sm">
+                <span className="font-semibold">
+                  {copy.nodeLabels[node.node.id] || node.node.id.toString()}
+                </span>
+                : {formatCompact(node.node.value)} €
+              </div>
+            )}
             theme={{
               tooltip: {
                 container: {

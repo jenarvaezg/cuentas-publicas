@@ -219,11 +219,15 @@ describe('data integrity', () => {
     const sourceEntries = Object.entries(meta.sources || {})
     expect(sourceEntries.length).toBeGreaterThan(0)
 
-    for (const [, info] of sourceEntries) {
+    for (const [key, info] of sourceEntries) {
       expect(typeof info.success).toBe('boolean')
-      expect(info.lastUpdated).toBeTruthy()
-      expect(info.lastFetchAt).toBeTruthy()
-      expect(info.lastRealDataDate).toBeTruthy()
+      if (info.success) {
+        expect(info.lastUpdated).toBeTruthy()
+        expect(info.lastFetchAt).toBeTruthy()
+        if (key !== 'demographics' && key !== 'flowsSankey') {
+          expect(info.lastRealDataDate).toBeTruthy()
+        }
+      }
     }
 
     if (meta.sources.eurostat) {

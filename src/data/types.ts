@@ -1,6 +1,6 @@
 export interface DataSourceAttribution {
   source: string;
-  type: "api" | "csv" | "xlsx" | "fallback" | "derived";
+  type: "api" | "csv" | "xlsx" | "fallback" | "derived" | "cross-reference";
   url?: string;
   date?: string;
   note?: string;
@@ -439,6 +439,25 @@ export interface SSSustainabilityData {
 
 // ── Metadata ────────────────────────────────────────────────────────
 
+export interface MetaSourceEntry {
+  success: boolean;
+  fallbackDetected?: boolean;
+  fallbackKeys?: string[];
+  lastUpdated: string | null;
+  lastFetchAt?: string | null;
+  lastRealDataDate?: string | null;
+  dataPoints?: number;
+  criticalFallback?: boolean;
+  criticalFallbackReason?: string | null;
+  years?: number;
+  year?: number;
+  quarter?: string;
+  latestYear?: number;
+  communities?: number;
+  nodes?: number;
+  links?: number;
+}
+
 export interface MetaData {
   lastDownload: string;
   duration: number;
@@ -455,94 +474,7 @@ export interface MetaData {
     ccaaSpending?: boolean;
     ccaaForalFlows?: boolean;
     flowsSankey?: boolean;
+    ssSustainability?: boolean;
   };
-  sources: {
-    debt: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      dataPoints: number;
-    };
-    demographics: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-    };
-    pensions: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      criticalFallback?: boolean;
-      criticalFallbackReason?: string | null;
-      lastRealDataDate?: string;
-      dataPoints: number;
-    };
-    budget: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      years: number;
-    };
-    eurostat?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      year: number;
-    };
-    ccaaDebt?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      quarter: string;
-    };
-    revenue?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      latestYear: number;
-    };
-    taxRevenue?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      latestYear: number;
-      years: number;
-    };
-    ccaaFiscalBalance?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      latestYear: number;
-      years: number;
-    };
-    ccaaSpending?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      latestYear: number;
-      years: number;
-    };
-    ccaaForalFlows?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-      lastRealDataDate?: string;
-      latestYear: number;
-      communities: number;
-    };
-    flowsSankey?: {
-      success: boolean;
-      lastUpdated: string;
-      lastFetchAt?: string;
-    };
-  };
+  sources: Record<string, MetaSourceEntry>;
 }

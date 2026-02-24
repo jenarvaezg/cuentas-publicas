@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'fs'
 import { dirname } from 'path'
 import { downloadDebtData, downloadCcaaDebtData } from './sources/bde.mjs'
 import { downloadDemographics } from './sources/ine.mjs'
-import { downloadPensionData } from './sources/seguridad-social.mjs'
+import { downloadPensionData, enrichPensionWithSustainability } from './sources/seguridad-social.mjs'
 import { downloadBudgetData } from './sources/igae.mjs'
 import { downloadEurostatData, downloadRevenueData } from './sources/eurostat.mjs'
 import { downloadTaxRevenueData } from './sources/aeat.mjs'
@@ -298,6 +298,13 @@ async function main() {
     .filter(([, keys]) => keys.length > 0)
     .map(([sourceName]) => sourceName)
 
+  // Cross-reference: enrich pension data with ss-sustainability
+  let finalPensionsData = fulfilled.pensions ? pensionsResult.value : null
+  if (finalPensionsData && fulfilled.ssSustainability) {
+    finalPensionsData = enrichPensionWithSustainability(finalPensionsData, ssSustainabilityResult.value)
+    console.log('🔗 Pensiones enriquecidas con datos de Sostenibilidad SS')
+  }
+
   // Write individual data files
   console.log('\n=== Escribiendo archivos JSON ===')
 
@@ -316,7 +323,7 @@ async function main() {
   }
 
   if (status.pensions) {
-    writeMirroredDataFile('pensions.json', pensionsResult.value)
+    writeMirroredDataFile('pensions.json', finalPensionsData || pensionsResult.value)
     console.log('✅ pensions.json')
   } else {
     console.error('❌ pensions.json - Error:', getSourceFailureReason(pensionsResult, fallbackKeys.pensions))
@@ -603,7 +610,7 @@ async function main() {
   console.log('✅ public/api/v1/index.json')
 
   const resolvedDebt = status.debt ? debtResult.value : existingData.debt
-  const resolvedPensions = status.pensions ? pensionsResult.value : existingData.pensions
+  const resolvedPensions = status.pensions ? (finalPensionsData || pensionsResult.value) : existingData.pensions
   const resolvedBudget = status.budget ? budgetResult.value : existingData.budget
   const resolvedRevenue = status.revenue ? revenueResult.value : null
   const resolvedTaxRevenue = status.taxRevenue ? taxRevenueResult.value : null
