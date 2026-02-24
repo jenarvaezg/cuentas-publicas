@@ -21,16 +21,28 @@ export function EquivalenciasBlock() {
     lang === "en"
       ? {
           monthsLabel: "Debt per person in minimum-wage months",
+          monthsLabelTooltip:
+            "If each person had to repay their share of the national debt using the monthly minimum wage, this is how many months it would take.",
           monthsUnit: "months",
           monthsNoteSuffix: "€/month",
           salaryLabel: "Debt per person in annual salaries",
+          salaryLabelTooltip:
+            "How many full years of the average Spanish salary each person would need to pay off their share of the public debt.",
           yearsUnit: "years",
           salaryNoteSuffix: "€/year",
           spendingLabel: "Debt equals public spending for...",
+          spendingLabelTooltip:
+            "The total national debt is so large that it equals this many years of everything the government spends.",
           pensionsLabel: "Debt equals pension spending for...",
+          pensionsLabelTooltip:
+            "If all pension payments stopped and were used to pay off debt, this is how many years it would take to clear it.",
           interestLabel: "Interest equals public spending for...",
+          interestLabelTooltip:
+            "The annual interest bill alone is equivalent to this many days of all government spending — money that buys nothing new.",
           daysUnit: "days",
           dailySpendingLabel: "Daily public spending",
+          dailySpendingLabelTooltip:
+            "How much money all levels of government combined spend every single day on average throughout the year.",
           perCapitaLabel: "Debt per capita",
           debtTotalLabel: "Total debt",
           spendingLabelShort: "Public spending",
@@ -41,16 +53,28 @@ export function EquivalenciasBlock() {
         }
       : {
           monthsLabel: "Deuda por persona en meses de SMI",
+          monthsLabelTooltip:
+            "Si cada habitante tuviera que pagar su parte de la deuda pública con el salario mínimo mensual, necesitaría tantos meses como indica este número.",
           monthsUnit: "meses",
           monthsNoteSuffix: "€/mes",
           salaryLabel: "Deuda por persona en salarios anuales",
+          salaryLabelTooltip:
+            "Cuántos años de salario medio haría falta para que cada español pagara la parte de la deuda que le corresponde.",
           yearsUnit: "años",
           salaryNoteSuffix: "€/año",
           spendingLabel: "Deuda = gasto publico de...",
+          spendingLabelTooltip:
+            "La deuda total es tan grande que equivale a tantos años como indica este número de todo el gasto público combinado.",
           pensionsLabel: "Deuda = pensiones de...",
+          pensionsLabelTooltip:
+            "Si se destinara todo el gasto en pensiones a pagar la deuda en vez de a los pensionistas, tardaríamos este tiempo en saldarla.",
           interestLabel: "Intereses = gasto publico de...",
+          interestLabelTooltip:
+            "Solo los intereses de la deuda de un año equivalen a tantos días de todo el gasto público: dinero que no sirve para pagar servicios.",
           daysUnit: "dias",
           dailySpendingLabel: "Gasto publico diario",
+          dailySpendingLabelTooltip:
+            "Cuánto dinero gastan en total todas las administraciones públicas cada día de media a lo largo del año.",
           perCapitaLabel: "Deuda per capita",
           debtTotalLabel: "Deuda total",
           spendingLabelShort: "gasto AAPP",
@@ -119,6 +143,7 @@ export function EquivalenciasBlock() {
           <StatCard
             label={copy.monthsLabel}
             value={`${formatNumber(monthsOfSMI, 1)} ${copy.monthsUnit}`}
+            tooltip={copy.monthsLabelTooltip}
             delay={0.05}
             sources={[
               {
@@ -132,6 +157,7 @@ export function EquivalenciasBlock() {
           <StatCard
             label={copy.salaryLabel}
             value={`${formatNumber(yearsOfSalary, 1)} ${copy.yearsUnit}`}
+            tooltip={copy.salaryLabelTooltip}
             delay={0.1}
             sources={[
               {
@@ -145,6 +171,7 @@ export function EquivalenciasBlock() {
           <StatCard
             label={copy.spendingLabel}
             value={`${formatNumber(yearsOfSpending, 1)} ${copy.yearsUnit}`}
+            tooltip={copy.spendingLabelTooltip}
             delay={0.15}
             sources={[
               {
@@ -158,6 +185,7 @@ export function EquivalenciasBlock() {
           <StatCard
             label={copy.pensionsLabel}
             value={`${formatNumber(yearsOfPensions, 1)} ${copy.yearsUnit}`}
+            tooltip={copy.pensionsLabelTooltip}
             delay={0.2}
             sources={[
               {
@@ -170,6 +198,7 @@ export function EquivalenciasBlock() {
           <StatCard
             label={copy.interestLabel}
             value={`${formatNumber(daysOfInterest, 0)} ${copy.daysUnit}`}
+            tooltip={copy.interestLabelTooltip}
             delay={0.25}
             sources={[
               {
@@ -183,6 +212,7 @@ export function EquivalenciasBlock() {
           <StatCard
             label={copy.dailySpendingLabel}
             value={formatCompact(dailySpending)}
+            tooltip={copy.dailySpendingLabelTooltip}
             delay={0.3}
             sources={[
               {

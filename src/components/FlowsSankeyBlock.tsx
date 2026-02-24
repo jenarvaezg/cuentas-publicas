@@ -64,7 +64,8 @@ const groupColors: Record<string, string> = {
 };
 
 export const FlowsSankeyBlock: React.FC = () => {
-  const { flows, taxRevenue, ccaaSpending, ccaaForalFlows } = useData();
+  const { flows, taxRevenue, ccaaSpending, ccaaForalFlows, pensionsRegional, demographics } =
+    useData();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [excludedRegions, setExcludedRegions] = useState<string[]>([]);
   const { lang } = useI18n();
@@ -276,6 +277,33 @@ export const FlowsSankeyBlock: React.FC = () => {
             totalExpenseSubtracted += amount;
           }
         }
+        // 3. Subtract State-Level Expenses (Pensions and Unemployment proxy)
+        const regionPensions = pensionsRegional?.byYear[
+          String(pensionsRegional.latestYear)
+        ]?.entries.find((e) => e.code === regionId);
+        if (regionPensions) {
+          const regionPensionsMillions = regionPensions.annualAmount / 1_000_000;
+          subtractFromNodeAndLink("GASTO_PENSIONES", regionPensionsMillions, false);
+          totalExpenseSubtracted += regionPensionsMillions;
+        }
+
+        // 4. Proportional Unemployment (COFOG_10_RESTO)
+        // We use demographic population ratio to approximate the state unemployment cost
+        if (demographics) {
+          const ccaaDemo = (demographics as unknown as Record<string, unknown>).ccaa as
+            | Array<{ code: string; population: number }>
+            | undefined;
+          const regionDemo = ccaaDemo?.find((e) => e.code === regionId);
+          if (regionDemo && demographics.population > 0) {
+            const ratio = regionDemo.population / demographics.population;
+            // Original amount of COFOG_10_RESTO from the graph
+            const originalUnemployment =
+              flows.nodes.find((n) => n.id === "COFOG_10_RESTO")?.amount || 0;
+            const proportionalUnemployment = originalUnemployment * ratio;
+            subtractFromNodeAndLink("COFOG_10_RESTO", proportionalUnemployment, false);
+            totalExpenseSubtracted += proportionalUnemployment;
+          }
+        }
       }
 
       totalIncomeSubtracted = directTaxesSubtracted + indirectTaxesSubtracted;
@@ -319,7 +347,15 @@ export const FlowsSankeyBlock: React.FC = () => {
     }
 
     return { activeNodes: currentNodes, activeLinks: currentLinks };
-  }, [flows, excludedRegions, taxRevenue, ccaaSpending, ccaaForalFlows]);
+  }, [
+    flows,
+    excludedRegions,
+    taxRevenue,
+    ccaaSpending,
+    ccaaForalFlows,
+    pensionsRegional,
+    demographics,
+  ]);
 
   const { filteredNodes, filteredLinks } = useMemo(() => {
     const { nodes, links } = getFilteredGraph(activeNodes, activeLinks, selectedNode);

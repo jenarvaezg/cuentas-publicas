@@ -381,15 +381,15 @@ export function CcaaDebtBlock() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-[11px] text-muted-foreground">{copy.totalDebt}</p>
                 <p className="text-sm font-semibold">{formatCompact(selectedEntry.debtAbsolute)}</p>
               </div>
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-[11px] text-muted-foreground">{copy.debtToGdp}</p>
                 <p className="text-sm font-semibold">{formatNumber(selectedEntry.debtToGDP, 1)}%</p>
               </div>
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-[11px] text-muted-foreground">
                   {copy.ranking} ({copy.metricLabels[selectedMetric]})
                 </p>
@@ -399,14 +399,14 @@ export function CcaaDebtBlock() {
                     : msg.common.notAvailable}
                 </p>
               </div>
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-[11px] text-muted-foreground">{copy.differenceVsNational}</p>
                 <p className="text-sm font-semibold">{differenceLabel}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-xs font-semibold">{copy.officialBalance}</p>
                 {selectedBalance ? (
                   <>
@@ -459,7 +459,7 @@ export function CcaaDebtBlock() {
                   </>
                 )}
               </div>
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-xs font-semibold">{copy.officialSpending}</p>
                 {selectedOfficialSpending ? (
                   <>
@@ -480,7 +480,7 @@ export function CcaaDebtBlock() {
                   <p className="text-xs text-muted-foreground mt-1">{copy.officialUnavailable}</p>
                 )}
               </div>
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-xs font-semibold">{copy.regionalDeficit}</p>
                 {selectedDeficitEuros == null ? (
                   <p className="text-xs text-muted-foreground mt-1">{copy.unavailableProxy}</p>
@@ -498,7 +498,7 @@ export function CcaaDebtBlock() {
                   </>
                 )}
               </div>
-              <div className="rounded-md border bg-background p-3">
+              <div className="rounded-md border bg-background p-3 min-w-0">
                 <p className="text-xs font-semibold">{copy.regionalSpending}</p>
                 {selectedSpendingProxyEuros == null ? (
                   <p className="text-xs text-muted-foreground mt-1">{copy.unavailableProxy}</p>

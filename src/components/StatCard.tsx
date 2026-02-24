@@ -140,7 +140,7 @@ export const StatCard = memo(function StatCard({
     <>
       <Card
         className={cn(
-          "animate-slide-up hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
+          "min-w-0 animate-slide-up hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
           className,
         )}
         style={{ animationDelay: `${delay}s` }}
@@ -164,7 +164,7 @@ export const StatCard = memo(function StatCard({
                 </button>
               )}
             </div>
-            <div className="text-3xl font-bold flex flex-col items-center gap-1">
+            <div className="text-3xl font-bold flex flex-col items-center gap-1 break-words overflow-hidden max-w-full">
               {value}
               {staleYear && (
                 <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 uppercase tracking-tight">

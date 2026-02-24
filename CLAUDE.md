@@ -81,6 +81,7 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 - **README sync**: When changing architecture, data sources, tech stack, or commands, update `README.md` to match. README mirrors CLAUDE.md content in user-facing format.
 - **Data registry sync**: When adding, removing, or modifying a data source, metric, or hardcoded value in `scripts/sources/`, update `DATA-REGISTRY.md` and `API.md` to reflect the change in the same PR. These files are the single source of truth for what data we have, how it's obtained, and what endpoints are published.
 - **Roadmap sync**: When completing a feature listed in the roadmap/wishlist (`src/components/RoadmapSection.tsx`), move it from the wishlist to the completed items in the appropriate phase (both `es` and `en` copies). Always check the roadmap at the end of a feature implementation.
+- **StatCard tooltip quality**: Every `StatCard` MUST have a `tooltip` prop with a meaningful, plain-language explanation (both `es` and `en`). Tooltips must explain the metric as if talking to a non-expert friend — what it is, why it matters, or what it compares against. NEVER use a generic description like "Este indicador muestra {label}." or just repeat the label. Good example: "Lo que debe cada habitante de España si repartiéramos la deuda por igual entre toda la población." Bad example: "Este indicador muestra deuda per cápita."
 
 ## CI/CD
 

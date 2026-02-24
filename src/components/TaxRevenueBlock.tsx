@@ -175,9 +175,15 @@ export function TaxRevenueBlock() {
           nacional: "National",
           porCcaa: "By region",
           totalRevenue: "Total net revenue",
+          totalRevenueTooltip:
+            "All taxes collected by the Spanish tax authority (AEAT) after deducting refunds paid back to taxpayers.",
           largestTax: "Largest tax",
           yearOverYear: "Year-over-year",
+          yearOverYearTooltip:
+            "How much tax collection has grown or shrunk compared to the same period in the previous year, expressed as a percentage.",
           perCapita: "Revenue per capita",
+          perCapitaTooltip:
+            "Total tax collected divided by the number of residents — how much each person contributes on average.",
           taxType: "Tax type",
           allTaxes: "All taxes",
           backToOverview: "Back to overview",
@@ -229,8 +235,14 @@ export function TaxRevenueBlock() {
           effectiveRatesTitle: "Effective tax rates by tax (proxy)",
           effectiveRatesSubtitle: "Time series over total net tax revenue",
           effectiveRateIrpf: "IRPF effective rate (proxy)",
+          effectiveRateIrpfTooltip:
+            "What share of total tax revenue comes from personal income tax (IRPF). Not the legal rate, just IRPF's weight within the total.",
           effectiveRateIva: "VAT effective rate (proxy)",
+          effectiveRateIvaTooltip:
+            "What share of total tax revenue comes from VAT. Not the legal rate, just VAT's weight within the total.",
           effectiveRateSociedades: "Corporate tax effective rate (proxy)",
+          effectiveRateSociedadesTooltip:
+            "What share of total tax revenue comes from corporate income tax. Not the legal rate, just its weight within the total.",
           effectiveRateFormulaIrpf: "IRPF net revenue / total net tax revenue × 100",
           effectiveRateFormulaIva: "VAT net revenue / total net tax revenue × 100",
           effectiveRateFormulaSociedades: "Corporate tax net revenue / total net tax revenue × 100",
@@ -243,9 +255,15 @@ export function TaxRevenueBlock() {
           nacional: "Nacional",
           porCcaa: "Por CCAA",
           totalRevenue: "Recaudación neta total",
+          totalRevenueTooltip:
+            "Todo lo que recauda la AEAT en impuestos después de descontar las devoluciones que hace a los contribuyentes.",
           largestTax: "Mayor impuesto",
           yearOverYear: "Variación interanual",
+          yearOverYearTooltip:
+            "Cuánto ha crecido o caído la recaudación respecto al mismo periodo del año anterior, expresado en porcentaje.",
           perCapita: "Recaudación per cápita",
+          perCapitaTooltip:
+            "La recaudación total dividida entre el número de habitantes, es decir, cuánto aporta de media cada persona en impuestos.",
           taxType: "Impuesto",
           allTaxes: "Todos",
           backToOverview: "Volver al resumen",
@@ -297,8 +315,14 @@ export function TaxRevenueBlock() {
           effectiveRatesTitle: "Tipos efectivos por impuesto (proxy)",
           effectiveRatesSubtitle: "Serie temporal sobre recaudación neta total",
           effectiveRateIrpf: "Tipo efectivo IRPF (proxy)",
+          effectiveRateIrpfTooltip:
+            "Qué porcentaje de toda la recaudación procede del IRPF (impuesto sobre la renta de las personas físicas). No es el tipo legal, sino el peso del IRPF dentro del total.",
           effectiveRateIva: "Tipo efectivo IVA (proxy)",
+          effectiveRateIvaTooltip:
+            "Qué porcentaje de toda la recaudación procede del IVA. No es el tipo legal, sino el peso del IVA dentro del total.",
           effectiveRateSociedades: "Tipo efectivo Sociedades (proxy)",
+          effectiveRateSociedadesTooltip:
+            "Qué porcentaje de toda la recaudación procede del Impuesto de Sociedades (el que pagan las empresas). No es el tipo legal, sino su peso dentro del total.",
           effectiveRateFormulaIrpf: "IRPF neto / recaudación neta total × 100",
           effectiveRateFormulaIva: "IVA neto / recaudación neta total × 100",
           effectiveRateFormulaSociedades: "Sociedades neto / recaudación neta total × 100",
@@ -642,6 +666,7 @@ export function TaxRevenueBlock() {
             <StatCard
               label={copy.totalRevenue}
               value={formatCompact(totalEuros)}
+              tooltip={copy.totalRevenueTooltip}
               delay={0.05}
               className="md:col-span-2 lg:col-span-2"
               sources={[AEAT_SERIES]}
@@ -653,6 +678,7 @@ export function TaxRevenueBlock() {
                   ? `${yoyPercent >= 0 ? "+" : ""}${formatNumber(yoyPercent, 1)}%`
                   : "—"
               }
+              tooltip={copy.yearOverYearTooltip}
               delay={0.1}
               className={
                 yoyPercent !== null
@@ -666,6 +692,7 @@ export function TaxRevenueBlock() {
             <StatCard
               label={copy.perCapita}
               value={perCapita > 0 ? `${formatNumber(perCapita, 0)} €` : "—"}
+              tooltip={copy.perCapitaTooltip}
               delay={0.15}
               sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePerCapita }, AEAT_SERIES]}
             />
@@ -699,9 +726,13 @@ export function TaxRevenueBlock() {
                       ? `${formatNumber(selectedEffectiveRates.irpf, 1)}%`
                       : "—"
                   }
+                  tooltip={copy.effectiveRateIrpfTooltip}
                   delay={0.2}
                   sources={[
-                    { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIrpf },
+                    {
+                      ...CALCULO_DERIVADO,
+                      note: copy.effectiveRateFormulaIrpf,
+                    },
                     AEAT_SERIES,
                   ]}
                 />
@@ -710,6 +741,7 @@ export function TaxRevenueBlock() {
                   value={
                     selectedEffectiveRates ? `${formatNumber(selectedEffectiveRates.iva, 1)}%` : "—"
                   }
+                  tooltip={copy.effectiveRateIvaTooltip}
                   delay={0.25}
                   sources={[
                     { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIva },
@@ -723,9 +755,13 @@ export function TaxRevenueBlock() {
                       ? `${formatNumber(selectedEffectiveRates.sociedades, 1)}%`
                       : "—"
                   }
+                  tooltip={copy.effectiveRateSociedadesTooltip}
                   delay={0.3}
                   sources={[
-                    { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaSociedades },
+                    {
+                      ...CALCULO_DERIVADO,
+                      note: copy.effectiveRateFormulaSociedades,
+                    },
                     AEAT_SERIES,
                   ]}
                 />

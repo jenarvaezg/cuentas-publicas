@@ -17,14 +17,22 @@ export function DebtCostBlock() {
           realtimeLabel: "Interest paid since you opened this page",
           realtimeNote: "Based on estimated annual interest spending (~€39B, 2025 budget)",
           annualInterest: "Annual interest spending",
+          annualInterestTooltip:
+            "How much the government pays every year just for having borrowed money in the past — this money goes to creditors, not to public services.",
           averageCost: "Average debt cost",
+          averageCostTooltip:
+            "The average 'interest rate' Spain pays across all its outstanding debt. Lower means the government borrowed more cheaply.",
           averageCostNote: "Interest / total debt",
         }
       : {
           realtimeLabel: "Pagado en intereses desde que abriste la página",
           realtimeNote: "Basado en gasto anual estimado en intereses (~39.000 M€, PGE 2025)",
           annualInterest: "Gasto anual en intereses",
+          annualInterestTooltip:
+            "Lo que paga el Estado cada año solo por tener deuda acumulada del pasado. Este dinero va a los acreedores, no a servicios públicos.",
           averageCost: "Coste medio de la deuda",
+          averageCostTooltip:
+            "El 'tipo de interés medio' que paga España por toda su deuda. Cuanto más bajo, más barato le sale endeudarse.",
           averageCostNote: "Intereses / deuda total",
         };
 
@@ -66,12 +74,14 @@ export function DebtCostBlock() {
           <StatCard
             label={copy.annualInterest}
             value={formatCompact(debt.current.interestExpense)}
+            tooltip={copy.annualInterestTooltip}
             delay={0.05}
             sources={[interestSource]}
           />
           <StatCard
             label={copy.averageCost}
             value={formatPercent(averageCost)}
+            tooltip={copy.averageCostTooltip}
             delay={0.1}
             sources={[
               { ...CALCULO_DERIVADO, note: copy.averageCostNote },

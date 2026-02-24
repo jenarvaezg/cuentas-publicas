@@ -34,9 +34,17 @@ export function BudgetBlock() {
           eurosReal: "Real €",
           eurosCurrent: "Current €",
           totalSpending: "Total public spending",
+          totalSpendingTooltip:
+            "All the money spent by central government, regional governments, local councils, and Social Security combined in a given year.",
           spendingPerCapita: "Spending per capita",
+          spendingPerCapitaTooltip:
+            "How much public money is spent per person on average — total spending divided by the population.",
           spendingToGdp: "Spending / GDP",
+          spendingToGdpTooltip:
+            "What share of the entire national economy goes through government spending. GDP is the total value of everything Spain produces in a year.",
           largestItem: "Largest category",
+          largestItemTooltip:
+            "The single area where the government spends the most money, out of all the functional categories tracked.",
           ofTotal: "of total",
           viewAbsolute: "Absolute",
           viewWeight: "% weight",
@@ -52,9 +60,17 @@ export function BudgetBlock() {
           eurosReal: "€ reales",
           eurosCurrent: "€ corrientes",
           totalSpending: "Gasto publico total",
+          totalSpendingTooltip:
+            "Todo el dinero que gastan juntos el Estado, las Comunidades Autónomas, los Ayuntamientos y la Seguridad Social en un año.",
           spendingPerCapita: "Gasto per cápita",
+          spendingPerCapitaTooltip:
+            "Cuánto gasto público corresponde de media a cada persona: el gasto total dividido entre toda la población.",
           spendingToGdp: "Gasto / PIB",
+          spendingToGdpTooltip:
+            "Qué parte de toda la riqueza que genera España cada año acaba pasando por las manos del sector público.",
           largestItem: "Mayor partida",
+          largestItemTooltip:
+            "La función en la que más dinero gasta el Estado, de entre todas las categorías del clasificador COFOG.",
           ofTotal: "del total",
           viewAbsolute: "Absoluto",
           viewWeight: "% peso",
@@ -222,18 +238,21 @@ export function BudgetBlock() {
           <StatCard
             label={copy.totalSpending}
             value={formatCompact(totalEuros)}
+            tooltip={copy.totalSpendingTooltip}
             delay={0.05}
             sources={[igaeSource]}
           />
           <StatCard
             label={copy.spendingPerCapita}
             value={`${formatNumber(perCapita, 0)} €`}
+            tooltip={copy.spendingPerCapitaTooltip}
             delay={0.1}
             sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePopulation }, igaeSource]}
           />
           <StatCard
             label={copy.spendingToGdp}
             value={formatPercent(gdpRatio)}
+            tooltip={copy.spendingToGdpTooltip}
             delay={0.15}
             sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeGdp }, igaeSource]}
           />
@@ -241,6 +260,7 @@ export function BudgetBlock() {
             <StatCard
               label={copy.largestItem}
               value={`${largestCategory.name}`}
+              tooltip={copy.largestItemTooltip}
               delay={0.2}
               sources={[
                 {

@@ -180,7 +180,7 @@ function App() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background overflow-x-hidden">
         <OfflineStatus />
         <Header />
         <SectionNav groups={sectionGroups} />

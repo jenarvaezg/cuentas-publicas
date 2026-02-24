@@ -42,7 +42,8 @@ export const BreakdownTooltip = ({
     <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
       <p className="font-semibold text-foreground">{d.name}</p>
       <p className="text-muted-foreground">
-        {formatNumber(d.amount, 0)} {millions} ({formatNumber(d.percentage, 1)}%)
+        {formatNumber(d.amount, 0)} {millions} ({formatNumber(d.percentage, 1)}
+        %)
       </p>
     </div>
   );
@@ -111,10 +112,20 @@ export function RevenueBlock() {
           socialContributions: "Social contributions",
           otherRevenue: "Other revenue",
           totalRevenue: "Total revenue",
+          totalRevenueTooltip:
+            "All the money the government collects in a year: taxes, social contributions, fees, and any other income.",
           totalExpenditure: "Total expenditure",
+          totalExpenditureTooltip:
+            "Everything the government spends in a year across all public services, benefits, salaries, and debt interest.",
           surplus: "Surplus",
+          surplusTooltip:
+            "The government collected more than it spent this year — the leftover is called a surplus.",
           deficit: "Deficit",
+          deficitTooltip:
+            "The government spent more than it collected this year — the shortfall is called a deficit and adds to the debt.",
           taxBurden: "Tax burden",
+          taxBurdenTooltip:
+            "What percentage of the country's total wealth (GDP) is taken by the government through taxes and contributions.",
           compositionTitle: "Revenue composition",
           historicalTitle: "Historical revenue vs expenditure",
           revenueLegend: "Revenue",
@@ -130,10 +141,20 @@ export function RevenueBlock() {
           socialContributions: "Cotizaciones sociales",
           otherRevenue: "Otros ingresos",
           totalRevenue: "Ingresos totales",
+          totalRevenueTooltip:
+            "Todo el dinero que recauda el Estado en un año: impuestos, cotizaciones sociales, tasas y otros ingresos.",
           totalExpenditure: "Gastos totales",
+          totalExpenditureTooltip:
+            "Todo lo que gasta el Estado en un año: servicios públicos, prestaciones, sueldos de funcionarios e intereses de la deuda.",
           surplus: "Superávit",
+          surplusTooltip:
+            "Este año el Estado ha ingresado más de lo que ha gastado. El sobrante se llama superávit.",
           deficit: "Déficit",
+          deficitTooltip:
+            "Este año el Estado ha gastado más de lo que ha ingresado. La diferencia se llama déficit y se suma a la deuda.",
           taxBurden: "Presión fiscal",
+          taxBurdenTooltip:
+            "Qué porcentaje de la riqueza total del país (PIB) acaba en manos del Estado en forma de impuestos y cotizaciones.",
           compositionTitle: "Composición de los ingresos",
           historicalTitle: "Evolución histórica ingresos vs gastos",
           revenueLegend: "Ingresos",
@@ -264,18 +285,21 @@ export function RevenueBlock() {
           <StatCard
             label={copy.totalRevenue}
             value={formatCompact(totalRevenueEuros)}
+            tooltip={copy.totalRevenueTooltip}
             delay={0.05}
             sources={[revenueSource]}
           />
           <StatCard
             label={copy.totalExpenditure}
             value={formatCompact(totalExpenditureEuros)}
+            tooltip={copy.totalExpenditureTooltip}
             delay={0.1}
             sources={[revenueSource]}
           />
           <StatCard
             label={balanceEuros >= 0 ? copy.surplus : copy.deficit}
             value={formatCompact(balanceEuros)}
+            tooltip={balanceEuros >= 0 ? copy.surplusTooltip : copy.deficitTooltip}
             delay={0.15}
             className={balanceEuros >= 0 ? "border-emerald-500/30" : "border-rose-500/30"}
             sources={[revenueSource]}
@@ -283,6 +307,7 @@ export function RevenueBlock() {
           <StatCard
             label={copy.taxBurden}
             value={formatPercent(presionFiscal)}
+            tooltip={copy.taxBurdenTooltip}
             delay={0.2}
             sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeNote }, revenueSource]}
           />

@@ -75,10 +75,45 @@ function SimpleTooltip({ active, payload, label, suffix = "" }: SimpleTooltipPro
 
 export function DemographicsBlock() {
   const { demographics } = useData();
-  const { msg } = useI18n();
+  const { msg, lang } = useI18n();
   const dm = msg.blocks.demographics;
 
   const { vitalStats, lifeExpectancy, pyramid, dependencyRatio, immigrationShare } = demographics;
+
+  const dmTooltips =
+    lang === "en"
+      ? {
+          population:
+            "The total number of people registered as residents in Spain, including Spanish nationals and foreign residents.",
+          birthRate: "How many babies are born for every 1,000 people in the population each year.",
+          fertilityRate:
+            "The average number of children a woman is expected to have over her lifetime. A rate of 2.1 is needed to keep the population stable without immigration.",
+          dependencyRatio:
+            "For every 100 working-age people, this many are aged 65 or over. A higher ratio means more pensioners relative to workers.",
+          lifeExpectancy:
+            "How many years a baby born today is expected to live on average, based on current mortality rates.",
+          naturalGrowth:
+            "The difference between births and deaths per 1,000 people. Negative means more people are dying than being born.",
+          deathRate: "How many people die for every 1,000 residents each year.",
+          immigrationShare:
+            "The percentage of people living in Spain who were born in another country.",
+        }
+      : {
+          population:
+            "El número total de personas registradas como residentes en España, incluyendo nacionales y extranjeros.",
+          birthRate: "Cuántos bebés nacen por cada 1.000 habitantes al año.",
+          fertilityRate:
+            "El número medio de hijos que tendría una mujer a lo largo de su vida. Se necesita un índice de 2,1 para que la población no disminuya sin inmigración.",
+          dependencyRatio:
+            "Por cada 100 personas en edad de trabajar, este número tiene 65 años o más. Cuanto más alto, más pensionistas hay en relación a los trabajadores.",
+          lifeExpectancy:
+            "Cuántos años se espera que viva de media un bebé nacido hoy, según las tasas de mortalidad actuales.",
+          naturalGrowth:
+            "La diferencia entre nacimientos y defunciones por cada 1.000 habitantes. Si es negativo, muere más gente de la que nace.",
+          deathRate: "Cuántas personas fallecen por cada 1.000 habitantes al año.",
+          immigrationShare:
+            "El porcentaje de personas que viven en España pero nacieron en otro país.",
+        };
 
   const [selectedYear, setSelectedYear] = useState<string>(() =>
     pyramid?.years?.length ? String(pyramid.years[pyramid.years.length - 1]) : "",
@@ -194,6 +229,7 @@ export function DemographicsBlock() {
           <StatCard
             label={dm.population}
             value={formatCompact(demographics.population)}
+            tooltip={dmTooltips.population}
             delay={0.05}
             sparklineData={undefined}
             sources={[populationSource]}
@@ -205,6 +241,7 @@ export function DemographicsBlock() {
                 ? `${formatNumber(latestBirthRate, 2)}\u2030`
                 : msg.common.notAvailable
             }
+            tooltip={dmTooltips.birthRate}
             delay={0.1}
             sparklineData={vitalStats?.birthRate ? sparkline(vitalStats.birthRate) : undefined}
             trend={
@@ -219,6 +256,7 @@ export function DemographicsBlock() {
                 ? `${formatNumber(latestFertility, 2)} ${dm.childrenPerWoman}`
                 : msg.common.notAvailable
             }
+            tooltip={dmTooltips.fertilityRate}
             delay={0.15}
             sparklineData={
               vitalStats?.fertilityRate ? sparkline(vitalStats.fertilityRate) : undefined
@@ -237,6 +275,7 @@ export function DemographicsBlock() {
                 ? formatPercent(dependencyRatio.oldAge * 100)
                 : msg.common.notAvailable
             }
+            tooltip={dmTooltips.dependencyRatio}
             delay={0.2}
             sources={[pyramidSource]}
           />
@@ -251,6 +290,7 @@ export function DemographicsBlock() {
                 ? `${formatNumber(latestLifeExpBoth, 1)} ${dm.years}`
                 : msg.common.notAvailable
             }
+            tooltip={dmTooltips.lifeExpectancy}
             delay={0.25}
             sparklineData={lifeExpectancy?.both ? sparkline(lifeExpectancy.both) : undefined}
             trend={lifeExpectancy?.both ? yoyTrend(lifeExpectancy.both, dm.years) : undefined}
@@ -263,6 +303,7 @@ export function DemographicsBlock() {
                 ? `${formatNumber(latestNaturalGrowth, 2)}\u2030`
                 : msg.common.notAvailable
             }
+            tooltip={dmTooltips.naturalGrowth}
             delay={0.3}
             sparklineData={
               vitalStats?.naturalGrowth ? sparkline(vitalStats.naturalGrowth) : undefined
@@ -281,6 +322,7 @@ export function DemographicsBlock() {
                 ? `${formatNumber(latestDeathRate, 2)}\u2030`
                 : msg.common.notAvailable
             }
+            tooltip={dmTooltips.deathRate}
             delay={0.35}
             sparklineData={vitalStats?.deathRate ? sparkline(vitalStats.deathRate) : undefined}
             trend={
@@ -295,6 +337,7 @@ export function DemographicsBlock() {
                 ? formatPercent(immigrationShare.total * 100)
                 : msg.common.notAvailable
             }
+            tooltip={dmTooltips.immigrationShare}
             delay={0.4}
             sparklineData={
               immigrationShare?.historical ? sparkline(immigrationShare.historical) : undefined
