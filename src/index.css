@@ -6,18 +6,52 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes aurora {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+
+  33% {
+    transform: translate(3%, -3%) scale(1.05);
+    opacity: 0.9;
+  }
+
+  66% {
+    transform: translate(-3%, 3%) scale(0.95);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+}
+
 body {
   @apply antialiased bg-background text-foreground;
   min-height: 100vh;
   line-height: 1.5;
   font-family: "Manrope", "Segoe UI", sans-serif;
   overflow-x: hidden;
+  position: relative;
+}
 
-  /* Modern Fintech Gradient Background */
+body::before {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: -1;
+  pointer-events: none;
   background-image:
-    radial-gradient(ellipse at top left, hsl(var(--primary) / 0.08), transparent 40%),
-    radial-gradient(ellipse at bottom right, hsl(var(--chart-2) / 0.05), transparent 40%);
+    radial-gradient(ellipse at 40% 40%, hsl(var(--primary) / 0.08), transparent 45%),
+    radial-gradient(ellipse at 60% 60%, hsl(var(--chart-2) / 0.06), transparent 45%),
+    radial-gradient(ellipse at 30% 70%, hsl(var(--chart-4) / 0.04), transparent 30%);
   background-attachment: fixed;
+  animation: aurora 25s ease-in-out infinite alternate;
 }
 
 h1,

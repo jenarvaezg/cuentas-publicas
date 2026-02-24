@@ -33,6 +33,7 @@ export const SparklineChart = memo(function SparklineChart({
           strokeWidth={2}
           fill={`url(#${gradientId})`}
           isAnimationActive={false}
+          style={{ filter: `drop-shadow(0 0 6px ${color})` }}
         />
       </AreaChart>
     </ResponsiveContainer>
