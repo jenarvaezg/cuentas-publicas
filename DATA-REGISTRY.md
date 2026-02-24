@@ -121,6 +121,29 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 
 ---
 
+## 3.1 SEGURIDAD SOCIAL — Pensiones por CCAA
+
+**Script**: `scripts/sources/pensions-regional.mjs` | **Output**: `src/data/pensions-regional.json`
+
+| Dato | Clasificación | Fuente real | Dato actual | Fragilidad |
+|------|---------------|-------------|-------------|------------|
+| Importe de pensión mensual/anual por CCAA | **AUTOMATIZADO** | Excel scrapeado `CA*.xlsx` de EST24 | Según año | ALTA — UUID URLs |
+| Número de pensiones por CCAA | **AUTOMATIZADO** | Mismo Excel SS | 10M+ | ALTA |
+
+**Proceso de scraping**:
+```
+1. GET https://www.seg-social.es/.../EST24  (HTML)
+2. Buscar enlace al archivo Excel `CA_...xlsx`
+3. Parsear pestaña secundaria de `CA_Total sistema` o índice 1
+4. Asociar a códigos ISO regionales estandarizados
+```
+
+**Robustez aplicada**:
+1. Normalización estricta de espacios en blanco y tildes para parsear correctamente las 17 autonomías de la hoja de cálculo.
+2. Fallback hardcodeado total para el año 2024.
+
+---
+
 ## 4. IGAE — Gasto Público COFOG
 
 **Script**: `scripts/sources/igae.mjs` | **Output**: `src/data/budget.json`

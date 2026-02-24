@@ -135,6 +135,32 @@ projections: {
 sourceAttribution: { ssSustainability: DataSourceAttribution }
 ```
 
+### pensions-regional.json — Schema
+
+Pensión media y total mensual y anual distribuida por Comunidades Autónomas, obtenida desde el informe "CA Total Sistema" (EST24).
+
+```
+latestYear: number,
+byYear: {
+  [year]: {
+    year: number,
+    date: string,
+    dateLabel: string,
+    entries: [
+      {
+        code: string,         // e.g. "CA01"
+        name: string,         // e.g. "ANDALUCÍA"
+        annualAmount: number, // EUR
+        monthlyAmount: number, // EUR
+        pensionsCount: number
+      }
+    ]
+  }
+},
+source: string,
+url: string
+```
+
 ## Contrato de versión
 
 - `v1` es estable para campos existentes.
