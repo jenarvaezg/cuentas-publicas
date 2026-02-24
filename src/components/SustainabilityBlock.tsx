@@ -488,29 +488,60 @@ function buildGDPChartData(
     p.eu27Historical = data.pensionToGDP.eu27.byYear[String(year)] ?? null;
   }
 
-  // Connect historical to projections: add the first projection year as historical too
-  const lastHistoricalYear = Math.max(
-    ...data.pensionToGDP.spain.years,
-    ...data.pensionToGDP.eu27.years,
-  );
+  // Compute offset: Ageing Report uses a different scope than Eurostat, so projections
+  // need rebasing to match the historical level at the overlapping base year.
+  const projBaseSpain = data.projections.spain[0];
+  const projBaseEU = data.projections.eu27[0];
 
-  // Projections Spain
+  const spainOffset = projBaseSpain
+    ? (data.pensionToGDP.spain.byYear[String(projBaseSpain.year)] ?? projBaseSpain.pensionToGDP) -
+      projBaseSpain.pensionToGDP
+    : 0;
+
+  const eu27Offset = projBaseEU
+    ? (data.pensionToGDP.eu27.byYear[String(projBaseEU.year)] ?? projBaseEU.pensionToGDP) -
+      projBaseEU.pensionToGDP
+    : 0;
+
+  // Last historical year — projections only shown after this point
+  const lastSpainYear = Math.max(...data.pensionToGDP.spain.years);
+  const lastEU27Year = Math.max(...data.pensionToGDP.eu27.years);
+
+  // Projections Spain (rebased, starting from last historical year)
   for (const proj of data.projections.spain) {
+    if (proj.year < lastSpainYear) continue;
     const p = ensurePoint(proj.year);
-    p.spainProjection = proj.pensionToGDP;
-    // Connect: if this is the earliest projection year and within historical range
-    if (proj.year <= lastHistoricalYear) {
-      p.spainHistorical = p.spainHistorical ?? data.pensionToGDP.spain.byYear[String(proj.year)];
+    const rebased = Math.round((proj.pensionToGDP + spainOffset) * 10) / 10;
+    p.spainProjection = rebased;
+    // Bridge: duplicate historical value at transition year so lines connect
+    if (proj.year === lastSpainYear) {
+      p.spainHistorical =
+        p.spainHistorical ?? data.pensionToGDP.spain.byYear[String(proj.year)] ?? rebased;
     }
   }
 
-  // Projections EU27
+  // Projections EU27 (rebased, starting from last historical year)
   for (const proj of data.projections.eu27) {
+    if (proj.year < lastEU27Year) continue;
     const p = ensurePoint(proj.year);
-    p.eu27Projection = proj.pensionToGDP;
-    if (proj.year <= lastHistoricalYear) {
-      p.eu27Historical = p.eu27Historical ?? data.pensionToGDP.eu27.byYear[String(proj.year)];
+    const rebased = Math.round((proj.pensionToGDP + eu27Offset) * 10) / 10;
+    p.eu27Projection = rebased;
+    if (proj.year === lastEU27Year) {
+      p.eu27Historical =
+        p.eu27Historical ?? data.pensionToGDP.eu27.byYear[String(proj.year)] ?? rebased;
     }
+  }
+
+  // Bridge point: ensure projections connect to last historical value
+  const lastSpainValue = data.pensionToGDP.spain.byYear[String(lastSpainYear)];
+  if (lastSpainValue != null) {
+    const p = ensurePoint(lastSpainYear);
+    p.spainProjection = p.spainProjection ?? lastSpainValue;
+  }
+  const lastEU27Value = data.pensionToGDP.eu27.byYear[String(lastEU27Year)];
+  if (lastEU27Value != null) {
+    const p = ensurePoint(lastEU27Year);
+    p.eu27Projection = p.eu27Projection ?? lastEU27Value;
   }
 
   return [...pointsByYear.values()].sort((a, b) => a.year - b.year);
