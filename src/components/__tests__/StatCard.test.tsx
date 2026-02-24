@@ -8,6 +8,20 @@ vi.mock("../SparklineChart", () => ({
   SparklineChart: () => <div data-testid="sparkline" />,
 }));
 
+// Mock CountUp to render synchronously using its own decimal/separator params
+vi.mock("react-countup", () => ({
+  default: ({ prefix, end, suffix, decimal, separator, decimals }: Record<string, unknown>) => {
+    const dec = (decimals as number) ?? 0;
+    const fixed = (end as number).toFixed(dec);
+    const [intPart, fracPart] = fixed.split(".");
+    const withSep = (separator as string)
+      ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, separator as string)
+      : intPart;
+    const formatted = `${prefix ?? ""}${withSep}${fracPart ? `${decimal ?? "."}${fracPart}` : ""}${suffix ?? ""}`;
+    return <span>{formatted}</span>;
+  },
+}));
+
 describe("StatCard", () => {
   it("renders basic info correctly", () => {
     render(<StatCard label="Test Label" value="1.000€" />);

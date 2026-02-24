@@ -6,6 +6,7 @@ import { DebtBlock } from "@/components/DebtBlock";
 import { DebtCostBlock } from "@/components/DebtCostBlock";
 import { DemographicsBlock } from "@/components/DemographicsBlock";
 import { EquivalenciasBlock } from "@/components/EquivalenciasBlock";
+import { FadeIn } from "@/components/FadeIn";
 import { FlowsSankeyBlock } from "@/components/FlowsSankeyBlock";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -53,6 +54,17 @@ function ChapterDivider({ title, subtitle }: { title: string; subtitle: string }
   );
 }
 
+function NarrativeBridge({ title, text }: { title?: string; text: string }) {
+  return (
+    <FadeIn delay={0.1} className="max-w-3xl mx-auto text-center py-6 px-4">
+      {title && <h3 className="text-lg font-medium text-foreground mb-3">{title}</h3>}
+      <p className="text-base text-muted-foreground leading-relaxed balance-text text-pretty">
+        {text}
+      </p>
+    </FadeIn>
+  );
+}
+
 function App() {
   const { msg, lang } = useI18n();
 
@@ -63,77 +75,110 @@ function App() {
   const chapterCopy =
     lang === "en"
       ? {
-          fiscal: {
-            title: "Fiscal Position",
-            subtitle: "Debt, debt cost, revenue balance and tax collection.",
-            navLabel: "Fiscal",
+          c1: {
+            title: "The Big Picture",
+            subtitle: "National real-time debt and interactive fiscal map.",
+            navLabel: "Overview",
           },
-          welfare: {
-            title: "Spending & Welfare",
-            subtitle: "Pensions, social sustainability and spending composition.",
+          c2: {
+            title: "Revenue Engine",
+            subtitle: "Public income and tax collection breakdown.",
+            navLabel: "Revenue",
+          },
+          c3: {
+            title: "Demographics & Welfare",
+            subtitle: "Population aging and the cost of the welfare state.",
             navLabel: "Welfare",
           },
-          context: {
-            title: "Context & Territory",
-            subtitle: "EU comparison, regions, demographics and methodology.",
-            navLabel: "Context",
+          c4: {
+            title: "The National Mortgage",
+            subtitle: "Public debt, interest costs, and what they equivalate to.",
+            navLabel: "Debt",
           },
-          fiscalMap: "Fiscal map",
+          c5: {
+            title: "The Territorial Game",
+            subtitle: "Regional debt, EU context, and methodology.",
+            navLabel: "Territory",
+          },
         }
       : {
-          fiscal: {
-            title: "Situación fiscal",
-            subtitle: "Deuda, coste de deuda, balance ingresos-gastos y recaudación.",
-            navLabel: "Situación fiscal",
+          c1: {
+            title: "El Gran Balance",
+            subtitle: "Deuda en tiempo real y el mapa fiscal interactivo.",
+            navLabel: "Resumen",
           },
-          welfare: {
-            title: "Gasto y estado social",
-            subtitle: "Pensiones, sostenibilidad social y composición del gasto.",
-            navLabel: "Estado social",
+          c2: {
+            title: "La Máquina de Recaudar",
+            subtitle: "Ingresos públicos y desglose de la recaudación tributaria.",
+            navLabel: "Ingresos",
           },
-          context: {
-            title: "Contexto y territorio",
-            subtitle: "Comparativa UE, CCAA, demografía y metodología.",
-            navLabel: "Contexto",
+          c3: {
+            title: "El Invierno Demográfico",
+            subtitle: "Envejecimiento poblacional y la factura del estado de bienestar.",
+            navLabel: "Estado Social",
           },
-          fiscalMap: "Mapa fiscal",
+          c4: {
+            title: "La Hipoteca Nacional",
+            subtitle: "La deuda pública, el coste de los intereses y sus equivalencias.",
+            navLabel: "La Deuda",
+          },
+          c5: {
+            title: "El Juego Territorial",
+            subtitle: "Brecha autonómica, comparativa europea y metodología.",
+            navLabel: "Territorio",
+          },
         };
 
   const sectionGroups = useMemo<SectionNavGroup[]>(
     () => [
       {
-        id: "situacion-fiscal",
-        label: chapterCopy.fiscal.navLabel,
+        id: "c1-balance",
+        label: chapterCopy.c1.navLabel,
         items: [
           { id: "resumen", label: msg.sections.resumen },
-          { id: "deuda", label: msg.sections.deuda },
-          { id: "coste-deuda", label: msg.sections.costeDeuda },
+          {
+            id: "mapa-fiscal",
+            label: lang === "en" ? "Fiscal Map" : "Mapa Fiscal",
+          },
+        ],
+      },
+      {
+        id: "c2-recaudacion",
+        label: chapterCopy.c2.navLabel,
+        items: [
           { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
           { id: "recaudacion", label: msg.sections.recaudacion },
         ],
       },
       {
-        id: "gasto-y-servicios",
-        label: chapterCopy.welfare.navLabel,
+        id: "c3-demografia",
+        label: chapterCopy.c3.navLabel,
         items: [
+          { id: "demografia", label: msg.sections.demografia },
           { id: "pensiones", label: msg.sections.pensiones },
           { id: "sostenibilidad-ss", label: msg.sections.sostenibilidadSS },
           { id: "gasto-cofog", label: msg.sections.gastoCofog },
-          { id: "mapa-fiscal", label: chapterCopy.fiscalMap },
         ],
       },
       {
-        id: "contexto-territorial",
-        label: chapterCopy.context.navLabel,
+        id: "c4-hipoteca",
+        label: chapterCopy.c4.navLabel,
         items: [
-          { id: "ue", label: msg.sections.ue },
+          { id: "deuda", label: msg.sections.deuda },
+          { id: "coste-deuda", label: msg.sections.costeDeuda },
+        ],
+      },
+      {
+        id: "c5-territorio",
+        label: chapterCopy.c5.navLabel,
+        items: [
           { id: "ccaa", label: msg.sections.ccaa },
-          { id: "demografia", label: msg.sections.demografia },
+          { id: "ue", label: msg.sections.ue },
           { id: "metodologia", label: msg.sections.metodologia },
         ],
       },
     ],
-    [chapterCopy, msg.sections],
+    [chapterCopy, msg.sections, lang],
   );
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
@@ -180,7 +225,7 @@ function App() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background overflow-x-hidden">
+      <div className="min-h-screen bg-background">
         <OfflineStatus />
         <Header />
         <SectionNav groups={sectionGroups} />
@@ -192,8 +237,10 @@ function App() {
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-chart-2/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
-              {/* Debt Summary (Larger / col-span-3) */}
-              <div className="lg:col-span-3 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center gap-4 animate-slide-up hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group">
+              <FadeIn
+                delay={0.1}
+                className="lg:col-span-3 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center gap-4 hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group"
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
                   {msg.app.debtSummaryLabel}
@@ -221,12 +268,12 @@ function App() {
                     ({msg.app.debtSummaryNoteSuffix} {lastDebtDate})
                   </span>
                 </p>
-              </div>
+              </FadeIn>
 
               {/* Deficit Summary (col-span-2) */}
-              <div
-                className="lg:col-span-2 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between gap-4 animate-slide-up hover:shadow-chart-2/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group"
-                style={{ animationDelay: "0.05s" }}
+              <FadeIn
+                delay={0.2}
+                className="lg:col-span-2 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between gap-4 hover:shadow-chart-2/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-chart-2/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
@@ -280,73 +327,134 @@ function App() {
                   </a>{" "}
                   ({pensionDate})
                 </p>
-              </div>
+              </FadeIn>
             </div>
           </section>
 
+          {/* CHAPTER 1: EL GRAN BALANCE */}
           <section className="space-y-6">
-            <ChapterDivider
-              title={chapterCopy.fiscal.title}
-              subtitle={chapterCopy.fiscal.subtitle}
-            />
-            <section id="deuda" className="scroll-mt-28 animate-slide-up">
-              <DebtBlock />
-            </section>
-            <section id="coste-deuda" className="scroll-mt-28 animate-slide-up">
-              <DebtCostBlock />
-            </section>
-            <section className="scroll-mt-28 animate-slide-up">
-              <EquivalenciasBlock />
-            </section>
-            <section id="ingresos-gastos" className="scroll-mt-28 animate-slide-up">
-              <RevenueBlock />
-            </section>
-            <section id="recaudacion" className="scroll-mt-28 animate-slide-up">
-              <TaxRevenueBlock />
+            <ChapterDivider title={chapterCopy.c1.title} subtitle={chapterCopy.c1.subtitle} />
+            {/* The wrapper that makes it edge-to-edge goes here for the Sankey */}
+            <section
+              id="mapa-fiscal"
+              className="scroll-mt-28 w-screen relative left-1/2 right-1/2 -mx-[50vw] bg-card/10 backdrop-blur-3xl border-y border-white/5 py-12 mt-8 shadow-2xl"
+            >
+              <FadeIn delay={0.2}>
+                <div className="w-full max-w-[95vw] 2xl:max-w-[1600px] mx-auto px-4 lg:px-8">
+                  <FlowsSankeyBlock />
+                </div>
+              </FadeIn>
             </section>
           </section>
 
-          <section className="space-y-6">
-            <ChapterDivider
-              title={chapterCopy.welfare.title}
-              subtitle={chapterCopy.welfare.subtitle}
+          {/* CHAPTER 2: LA MAQUINA DE RECAUDAR */}
+          <section className="space-y-6 pt-8">
+            <ChapterDivider title={chapterCopy.c2.title} subtitle={chapterCopy.c2.subtitle} />
+
+            <NarrativeBridge
+              title={
+                lang === "en"
+                  ? "The Eurostat vs Tax Agency gap"
+                  : "La brecha entre Eurostat y Hacienda"
+              }
+              text={
+                lang === "en"
+                  ? "To understand state revenue, we look at two sources: Eurostat's complete picture (General Government), which includes social contributions, and the Spanish Tax Agency's (AEAT) specific breakdown of direct and indirect taxes."
+                  : "Para entender los ingresos del Estado hay que mirar dos cajas: la fotografía completa de Eurostat (Administraciones Públicas), que incluye cotizaciones a la Seguridad Social; y el detalle estricto de la Agencia Tributaria (Hacienda), enfocado exclusivamente en los impuestos (IRPF, IVA...)."
+              }
             />
-            <section id="pensiones" className="scroll-mt-28 animate-slide-up">
-              <PensionsBlock />
+
+            <section id="ingresos-gastos" className="scroll-mt-28">
+              <FadeIn delay={0.1}>
+                <RevenueBlock />
+              </FadeIn>
             </section>
-            <section id="sostenibilidad-ss" className="scroll-mt-28 animate-slide-up">
-              <SustainabilityBlock />
-            </section>
-            <section id="gasto-cofog" className="scroll-mt-28 animate-slide-up">
-              <BudgetBlock />
+            <section id="recaudacion" className="scroll-mt-28">
+              <FadeIn delay={0.2}>
+                <TaxRevenueBlock />
+              </FadeIn>
             </section>
           </section>
 
-          {/* Immersive Edge-to-Edge Sankey Section */}
-          <section
-            id="mapa-fiscal"
-            className="scroll-mt-28 animate-slide-up w-screen relative left-1/2 right-1/2 -mx-[50vw] bg-card/10 backdrop-blur-3xl border-y border-white/5 py-16 mt-16 shadow-2xl"
-          >
-            <div className="w-full max-w-[95vw] 2xl:max-w-[1600px] mx-auto px-4 lg:px-8">
-              <FlowsSankeyBlock />
-            </div>
+          {/* CHAPTER 3: EL INVIERNO DEMOGRAFICO */}
+          <section className="space-y-6 pt-8">
+            <ChapterDivider title={chapterCopy.c3.title} subtitle={chapterCopy.c3.subtitle} />
+
+            <NarrativeBridge
+              title={lang === "en" ? "The Demographic Clock" : "El reloj demográfico"}
+              text={
+                lang === "en"
+                  ? "Spain's welfare system rests on a delicate population balance. As the demographic pyramid inverts and birth rates fall, the pressure on the pension system and Social Security inexorably rises."
+                  : "El sistema de bienestar español descansa sobre una frágil balanza poblacional. A medida que la pirámide demográfica se invierte y la natalidad cae, la presión sobre el sistema de pensiones y la Seguridad Social aumenta inexorablemente."
+              }
+            />
+
+            <section id="demografia" className="scroll-mt-28">
+              <FadeIn delay={0.1}>
+                <DemographicsBlock />
+              </FadeIn>
+            </section>
+            <section id="pensiones" className="scroll-mt-28">
+              <FadeIn delay={0.2}>
+                <PensionsBlock />
+              </FadeIn>
+            </section>
+            <section id="sostenibilidad-ss" className="scroll-mt-28">
+              <FadeIn delay={0.3}>
+                <SustainabilityBlock />
+              </FadeIn>
+            </section>
+            <section id="gasto-cofog" className="scroll-mt-28">
+              <FadeIn delay={0.4}>
+                <BudgetBlock />
+              </FadeIn>
+            </section>
           </section>
 
-          <section className="space-y-6">
-            <ChapterDivider
-              title={chapterCopy.context.title}
-              subtitle={chapterCopy.context.subtitle}
+          {/* CHAPTER 4: LA HIPOTECA NACIONAL */}
+          <section className="space-y-6 pt-8">
+            <ChapterDivider title={chapterCopy.c4.title} subtitle={chapterCopy.c4.subtitle} />
+
+            <NarrativeBridge
+              title={lang === "en" ? "The Cost of Indebtedness" : "El coste del endeudamiento"}
+              text={
+                lang === "en"
+                  ? "Years of accumulated deficits generate a massive liability. This debt is not free: it generates annual interest payments that rival the country's largest departmental budgets, diverting funds from public services."
+                  : "Déficit tras déficit, año tras año, se genera un pasivo colosal. Esta deuda no sale gratis: genera unos intereses anuales que rivalizan con los mayores ministerios del país, drenando recursos de los servicios públicos."
+              }
             />
-            <section id="ue" className="scroll-mt-28 animate-slide-up">
-              <ComparativaEUBlock />
+
+            <section id="deuda" className="scroll-mt-28">
+              <FadeIn delay={0.1}>
+                <DebtBlock />
+              </FadeIn>
             </section>
-            <section id="ccaa" className="scroll-mt-28 animate-slide-up">
-              <CcaaDebtBlock />
+            <section id="coste-deuda" className="scroll-mt-28">
+              <FadeIn delay={0.2}>
+                <DebtCostBlock />
+              </FadeIn>
             </section>
-            <section id="demografia" className="scroll-mt-28 animate-slide-up">
-              <DemographicsBlock />
+            <section className="scroll-mt-28">
+              <FadeIn delay={0.3}>
+                <EquivalenciasBlock />
+              </FadeIn>
             </section>
-            <section id="metodologia" className="scroll-mt-28">
+          </section>
+
+          {/* CHAPTER 5: EL JUEGO TERRITORIAL */}
+          <section className="space-y-6 pt-8">
+            <ChapterDivider title={chapterCopy.c5.title} subtitle={chapterCopy.c5.subtitle} />
+            <section id="ccaa" className="scroll-mt-28">
+              <FadeIn delay={0.1}>
+                <CcaaDebtBlock />
+              </FadeIn>
+            </section>
+            <section id="ue" className="scroll-mt-28">
+              <FadeIn delay={0.2}>
+                <ComparativaEUBlock />
+              </FadeIn>
+            </section>
+            <section id="metodologia" className="scroll-mt-28 pt-8">
               <MethodologySection />
             </section>
             <section className="scroll-mt-28">

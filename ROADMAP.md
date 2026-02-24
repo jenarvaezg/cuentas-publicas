@@ -1,6 +1,6 @@
 # Roadmap — Dashboard Fiscal de España
 
-Estado validado contra el código actual: **23 febrero 2026**.
+Estado validado contra el código actual: **24 febrero 2026**.
 
 Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 
@@ -33,7 +33,7 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 - [x] (Q1 2026) **Visión consolidada (Sankey)**: Diagrama de flujos cuadradando ingresos totales, déficit y gasto por categoría (motor de simulación para "qué pasaría si..."). -> **CONSTRUIDO (flows.json)**
 - [x] (Q1 2026) **Deuda, déficit y gasto por comunidad**: Ampliar el desglose a nivel de CCAA (datos Banco de España y Contabilidad Nacional Regional). -> **INTEGRADO OFICIALMENTE (ccaa-deficit.json, ccaa-spending.json, etc.)**
 - [x] (Q1 2026) **Resolución del Agujero Foral**: Inyección de aportaciones forales neta (Cupo/Aportación) para equiparar CA15 y CA16 en balanzas y simulación Sankey. -> **INTEGRADO EN FRONTEND**
-- [ ] (Q2 2026) **Sostenibilidad del estado de bienestar**: Visualización didáctica del agujero de las pensiones y la curva demográfica frente a previsiones de cotización y Fondo de Reserva. -> **HAY DATOS BÁSICOS EN TABLA, FALTA VISUALIZACIÓN PROPIA / SECCIÓN DEDICADA**.
+- [x] (Q1 2026) **Sostenibilidad del estado de bienestar**: Sección dedicada (`SustainabilityBlock`) con déficit contributivo histórico (2006+), % PIB, evolución Fondo de Reserva, ratio cotizantes/pensionista y proyecciones Ageing Report. -> **INTEGRADO EN FRONTEND**.
 - ✅ SEO pre-render + SSG multi-ruta: snapshot estático, sitemap y páginas por sección (`/secciones/*`, `/en/sections/*`)
 - ✅ Compartir: hash + URL state (`section`, `ccaa`, `ccaaMetric`) + export PNG por bloque
 - ✅ PWA offline hardening: runtime caching, fallback offline y registro SW con actualización

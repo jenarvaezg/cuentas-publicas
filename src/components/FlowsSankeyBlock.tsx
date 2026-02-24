@@ -26,7 +26,7 @@ const getFilteredGraph = (
     if (!connectedNodeIds.has(startNodeId)) connectedNodeIds.add(startNodeId);
 
     while (queue.length > 0) {
-      const current = queue.shift()!;
+      const current = queue.shift() as string;
       const relevantLinks = links.filter((l: SankeyLink) =>
         direction === "upstream" ? l.target === current : l.source === current,
       );
@@ -399,6 +399,7 @@ export const FlowsSankeyBlock: React.FC = () => {
               const isExcluded = excludedRegions.includes(opt.value);
               return (
                 <button
+                  type="button"
                   key={opt.value}
                   onClick={() => {
                     setExcludedRegions(
@@ -447,7 +448,10 @@ export const FlowsSankeyBlock: React.FC = () => {
             }}
             margin={{ top: 20, right: 180, bottom: 20, left: 180 }}
             align="justify"
-            colors={(node: any) => groupColors[node.group] || "hsl(var(--muted-foreground))"}
+            colors={
+              // biome-ignore lint/suspicious/noExplicitAny: nivo Sankey node type is not exported
+              (node: any) => groupColors[node.group] || "hsl(var(--muted-foreground))"
+            }
             nodeOpacity={1}
             nodeHoverOthersOpacity={0.1}
             nodeThickness={20}
@@ -473,6 +477,7 @@ export const FlowsSankeyBlock: React.FC = () => {
               }
             }}
             valueFormat={(value: number) => formatCompact(value)}
+            // biome-ignore lint/suspicious/noExplicitAny: nivo Sankey tooltip type is not exported
             nodeTooltip={(node: any) => (
               <div className="bg-popover/80 backdrop-blur-md text-popover-foreground px-3 py-2 rounded-xl border border-white/10 shadow-xl text-sm">
                 <span className="font-semibold">

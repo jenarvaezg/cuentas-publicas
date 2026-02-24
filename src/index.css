@@ -11,9 +11,10 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   font-family: "Manrope", "Segoe UI", sans-serif;
-  
+  overflow-x: hidden;
+
   /* Modern Fintech Gradient Background */
-  background-image: 
+  background-image:
     radial-gradient(ellipse at top left, hsl(var(--primary) / 0.08), transparent 40%),
     radial-gradient(ellipse at bottom right, hsl(var(--chart-2) / 0.05), transparent 40%);
   background-attachment: fixed;
@@ -22,7 +23,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 @keyframes fade-in {
@@ -30,6 +31,7 @@ h3 {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -76,7 +78,8 @@ h3 {
     --chart-4: 155 60% 38%;
     --chart-5: 265 55% 50%;
 
-    --radius: 0.75rem; /* slightly rounder */
+    --radius: 0.75rem;
+    /* slightly rounder */
   }
 
   .dark {

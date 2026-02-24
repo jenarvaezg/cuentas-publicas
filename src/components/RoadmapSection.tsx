@@ -21,7 +21,7 @@ interface RoadmapCopy {
 const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   es: {
     intro: "Este es el estado actual del proyecto y las funcionalidades que nos gustaría añadir.",
-    statusLine: "Estado validado: 21 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
+    statusLine: "Estado validado: 24 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
     phases: [
       {
         title: "Fase 1: Deuda + Pensiones (MVP) ✅",
@@ -59,6 +59,20 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "✅ Explicación detallada por métrica (panel clicable con qué es, cómo se calcula, por qué importa y fuentes; desktop + móvil)",
         ],
       },
+      {
+        title: "Fase 4: Demografía 🟡",
+        items: [
+          "✅ Indicadores demográficos: natalidad, mortalidad, fecundidad, crecimiento natural",
+          "✅ Esperanza de vida: series 30 años con desglose por sexo",
+          "✅ Pirámide de población: desglose por grupos de edad, sexo y origen migratorio",
+          "✅ Selector de año para evolución histórica de la pirámide",
+          "✅ Gráficos de tendencias históricas (demografía, esperanza de vida, inmigración)",
+          "✅ Ratios de dependencia (vejez, juventud, total)",
+          "⏳ Desglose provincial",
+          "⏳ Proyecciones demográficas (INE a 20-30 años)",
+          "⏳ Comparativas internacionales (natalidad, mortalidad, esperanza de vida, fecundidad)",
+        ],
+      },
     ],
     wishlists: [
       {
@@ -71,10 +85,8 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — Nuevas visualizaciones",
         items: [
-          "🟡 Sección de demografía: indicadores vitales, pirámide poblacional con inmigración, esperanza de vida (listo); desglose provincial y proyecciones pendientes (INE)",
           "✅ Sostenibilidad SS: serie histórica déficit contributivo (ingresos vs gastos desde 2006), déficit como % PIB, evolución Fondo de Reserva, cotizantes/pensionista y proyecciones Ageing Report",
           "Visión unificada ingresos vs gastos: fusionar Ingresos/Gastos (Eurostat), COFOG y Recaudación Tributaria en un panel global y por CCAA con máximo desglose por partidas",
-          "Proyecciones demográficas a 20-30 años",
           "Panorama de deuda pública + privada",
           "Simulador de ajuste fiscal",
           "Timeline de hitos (2008, COVID, reformas)",
@@ -97,7 +109,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   },
   en: {
     intro: "This is the current project status and the features we want to add next.",
-    statusLine: "Status validated: February 21, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
+    statusLine: "Status validated: February 24, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
     phases: [
       {
         title: "Phase 1: Debt + Pensions (MVP) ✅",
@@ -135,6 +147,20 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "✅ Detailed per-metric explanations (clickable panel with what it is, how it's computed, why it matters and sources; desktop + mobile)",
         ],
       },
+      {
+        title: "Phase 4: Demographics 🟡",
+        items: [
+          "✅ Vital indicators: birth rate, mortality, fertility, natural growth",
+          "✅ Life expectancy: 30-year series with gender breakdown",
+          "✅ Population pyramid: by age group, gender, and migratory origin",
+          "✅ Year selector for historical pyramid evolution",
+          "✅ Historical trend charts (demographics, life expectancy, immigration)",
+          "✅ Dependency ratios (old-age, youth, total)",
+          "⏳ Provincial breakdown",
+          "⏳ Demographic projections (INE 20-30 year forecast)",
+          "⏳ International comparisons (birth rate, mortality, life expectancy, fertility)",
+        ],
+      },
     ],
     wishlists: [
       {
@@ -147,10 +173,8 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
       {
         title: "Wishlist — New visualizations",
         items: [
-          "🟡 Demographics section: vital indicators, population pyramid with immigration, life expectancy (done); provincial breakdown and projections pending (INE)",
           "✅ Social Security sustainability: historical contributory deficit (revenue vs spending since 2006), deficit as % GDP, Reserve Fund evolution, contributors per pensioner and Ageing Report projections",
           "Unified revenue vs spending view: merge Revenue/Spending (Eurostat), COFOG and Tax Revenue into a single panel with national and regional breakdown by category",
-          "20-30 year demographic projections",
           "Public + private debt panorama",
           "Fiscal adjustment simulator",
           "Economic milestones timeline (2008, COVID, reforms)",
