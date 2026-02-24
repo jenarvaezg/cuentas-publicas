@@ -39,7 +39,7 @@ export const BreakdownTooltip = ({
   const d = payload[0].payload;
   const millions = millionSuffix ?? "M€";
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{d.name}</p>
       <p className="text-muted-foreground">
         {formatNumber(d.amount, 0)} {millions} ({formatNumber(d.percentage, 1)}
@@ -78,7 +78,7 @@ export const HistoricalTooltip = ({
   const deficitText = deficitLabel ?? "Déficit";
   const millions = millionSuffix ?? "M€";
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{label}</p>
       <p className="text-emerald-600">
         {revenueText}: {formatNumber(ingresos, 0)} {millions}
@@ -395,16 +395,16 @@ export function RevenueBlock() {
                 <Area
                   type="monotone"
                   dataKey="ingresos"
-                  stroke="hsl(155, 55%, 40%)"
-                  fill="hsl(155, 55%, 40%)"
+                  stroke="hsl(var(--chart-4))"
+                  fill="hsl(var(--chart-4))"
                   fillOpacity={0.15}
                   strokeWidth={2}
                 />
                 <Area
                   type="monotone"
                   dataKey="gastos"
-                  stroke="hsl(0, 65%, 50%)"
-                  fill="hsl(0, 65%, 50%)"
+                  stroke="hsl(var(--chart-2))"
+                  fill="hsl(var(--chart-2))"
                   fillOpacity={0.15}
                   strokeWidth={2}
                 />

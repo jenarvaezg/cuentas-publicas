@@ -244,16 +244,16 @@ export function SustainabilityBlock() {
               <Area
                 type="monotone"
                 dataKey="contributions"
-                stroke="#22c55e"
-                fill="#22c55e"
+                stroke="hsl(var(--chart-4))"
+                fill="hsl(var(--chart-4))"
                 fillOpacity={0.15}
                 strokeWidth={2}
               />
               <Area
                 type="monotone"
                 dataKey="expenditure"
-                stroke="#ef4444"
-                fill="#ef4444"
+                stroke="hsl(var(--chart-2))"
+                fill="hsl(var(--chart-2))"
                 fillOpacity={0.15}
                 strokeWidth={2}
               />
@@ -317,18 +317,18 @@ export function SustainabilityBlock() {
               />
               <ReferenceLine
                 y={66815}
-                stroke="#f59e0b"
+                stroke="hsl(var(--chart-3))"
                 strokeDasharray="4 4"
                 label={{
                   value: `${copy.peak}: 66.815 M\u20AC (2011)`,
                   position: "top",
-                  style: { fontSize: 10, fill: "#f59e0b" },
+                  style: { fontSize: 10, fill: "hsl(var(--chart-3))" },
                 }}
               />
               <Line
                 type="monotone"
                 dataKey="balance"
-                stroke="#3b82f6"
+                stroke="hsl(var(--chart-1))"
                 strokeWidth={2.5}
                 dot={{ r: 2 }}
                 activeDot={{ r: 4 }}
@@ -368,7 +368,7 @@ export function SustainabilityBlock() {
                 type="monotone"
                 dataKey="spainHistorical"
                 name={copy.spain}
-                stroke="#ef4444"
+                stroke="hsl(var(--chart-2))"
                 strokeWidth={2}
                 dot={false}
                 connectNulls
@@ -377,7 +377,7 @@ export function SustainabilityBlock() {
                 type="monotone"
                 dataKey="eu27Historical"
                 name={copy.eu27}
-                stroke="#3b82f6"
+                stroke="hsl(var(--chart-1))"
                 strokeWidth={2}
                 dot={false}
                 connectNulls
@@ -387,7 +387,7 @@ export function SustainabilityBlock() {
                 type="monotone"
                 dataKey="spainProjection"
                 name={copy.spainProjection}
-                stroke="#ef4444"
+                stroke="hsl(var(--chart-2))"
                 strokeWidth={2}
                 strokeDasharray="6 4"
                 dot={{ r: 3 }}
@@ -397,7 +397,7 @@ export function SustainabilityBlock() {
                 type="monotone"
                 dataKey="eu27Projection"
                 name={copy.eu27Projection}
-                stroke="#3b82f6"
+                stroke="hsl(var(--chart-1))"
                 strokeWidth={2}
                 strokeDasharray="6 4"
                 dot={{ r: 3 }}
@@ -428,18 +428,18 @@ export function SustainabilityBlock() {
               />
               <ReferenceLine
                 y={2.0}
-                stroke="#ef4444"
+                stroke="hsl(var(--chart-2))"
                 strokeDasharray="4 4"
                 label={{
                   value: copy.stressZone,
                   position: "right",
-                  style: { fontSize: 10, fill: "#ef4444" },
+                  style: { fontSize: 10, fill: "hsl(var(--chart-2))" },
                 }}
               />
               <Line
                 type="monotone"
                 dataKey="ratio"
-                stroke="#8b5cf6"
+                stroke="hsl(var(--chart-5))"
                 strokeWidth={2.5}
                 dot={{ r: 2 }}
                 activeDot={{ r: 4 }}

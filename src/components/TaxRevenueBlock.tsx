@@ -100,7 +100,7 @@ const NationalTooltip = ({
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{d.name}</p>
       <p className="text-muted-foreground">
         {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
@@ -121,7 +121,7 @@ const CcaaTooltip = ({
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{d.name}</p>
       <p className="text-muted-foreground">
         {metricLabel}: {formatNumber(d.value, 0)} M€
@@ -150,7 +150,7 @@ const EffectiveRateTooltip = ({
   const iva = payload.find((p) => p.dataKey === "iva")?.value ?? 0;
   const sociedades = payload.find((p) => p.dataKey === "sociedades")?.value ?? 0;
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{label}</p>
       <p className="text-muted-foreground">
         {irpfLabel}: {formatNumber(irpf, 1)}%

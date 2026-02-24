@@ -77,7 +77,7 @@ export const CustomTooltip = ({
 
   if (isChangeMode) {
     return (
-      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
         <p className="font-semibold text-foreground">{d.name}</p>
         <p className="text-muted-foreground">
           {selectedYear}: {formatNumber(d.amount, 0)} M€
@@ -101,7 +101,7 @@ export const CustomTooltip = ({
 
   if (isWeightMode) {
     return (
-      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
         <p className="font-semibold text-foreground">{d.name}</p>
         <p className="text-muted-foreground">
           {selectedYear}: {formatNumber(d.percentage, 1)}% ({formatNumber(d.amount, 0)} M€)
@@ -117,7 +117,7 @@ export const CustomTooltip = ({
   }
 
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{d.name}</p>
       <p className="text-muted-foreground">
         {selectedYear}: {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)

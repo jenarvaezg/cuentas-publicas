@@ -107,7 +107,7 @@ function PyramidTooltip({
   );
 
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm max-w-xs">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm max-w-xs">
       <p className="font-semibold text-foreground">{label}</p>
       {renderGroup(maleEntries, maleTotal, maleLabel, true)}
       {renderGroup(femaleEntries, femaleTotal, femaleLabel, false)}

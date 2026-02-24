@@ -320,9 +320,16 @@ function App() {
             <section id="gasto-cofog" className="scroll-mt-28 animate-slide-up">
               <BudgetBlock />
             </section>
-            <section id="mapa-fiscal" className="scroll-mt-28 animate-slide-up">
+          </section>
+
+          {/* Immersive Edge-to-Edge Sankey Section */}
+          <section
+            id="mapa-fiscal"
+            className="scroll-mt-28 animate-slide-up w-screen relative left-1/2 right-1/2 -mx-[50vw] bg-card/10 backdrop-blur-3xl border-y border-white/5 py-16 mt-16 shadow-2xl"
+          >
+            <div className="w-full max-w-[95vw] 2xl:max-w-[1600px] mx-auto px-4 lg:px-8">
               <FlowsSankeyBlock />
-            </section>
+            </div>
           </section>
 
           <section className="space-y-6">

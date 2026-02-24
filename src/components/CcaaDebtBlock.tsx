@@ -303,7 +303,7 @@ export function CcaaDebtBlock() {
         ? `${formatNumber(d.value, 1)}${copy.gdpSuffix.startsWith("%") ? copy.gdpSuffix : ` ${copy.gdpSuffix}`}`
         : `${formatCompact(d.value)}`;
     return (
-      <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
         <p className="font-semibold text-foreground">{d.name}</p>
         <p className="text-muted-foreground">{formatted}</p>
       </div>

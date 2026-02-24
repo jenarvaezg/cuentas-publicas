@@ -56,7 +56,7 @@ export const CustomTooltip = ({
   const normalizedUnit = unit || fallbackUnit;
 
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{d.country}</p>
       <p className="text-muted-foreground">
         {formatNumber(d.value, 1)}

@@ -61,7 +61,7 @@ interface SimpleTooltipProps {
 function SimpleTooltip({ active, payload, label, suffix = "" }: SimpleTooltipProps) {
   if (!active || !payload?.length || !label) return null;
   return (
-    <div className="bg-popover border rounded-lg px-3 py-2 shadow-md text-sm">
+    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
       <p className="font-semibold text-foreground">{label}</p>
       {payload.map((p) => (
         <p key={p.dataKey} style={{ color: p.color }}>
@@ -404,7 +404,7 @@ export function DemographicsBlock() {
                   type="monotone"
                   dataKey="birthRate"
                   name={dm.birthRate}
-                  stroke="#3b82f6"
+                  stroke="hsl(var(--chart-1))"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -412,7 +412,7 @@ export function DemographicsBlock() {
                   type="monotone"
                   dataKey="deathRate"
                   name={dm.deathRate}
-                  stroke="#f43f5e"
+                  stroke="hsl(var(--chart-2))"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -460,7 +460,7 @@ export function DemographicsBlock() {
                   type="monotone"
                   dataKey="both"
                   name={dm.lifeExpectancy}
-                  stroke="#3b82f6"
+                  stroke="hsl(var(--chart-1))"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -468,7 +468,7 @@ export function DemographicsBlock() {
                   type="monotone"
                   dataKey="male"
                   name={dm.pyramidMale}
-                  stroke="#14b8a6"
+                  stroke="hsl(var(--chart-4))"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -476,7 +476,7 @@ export function DemographicsBlock() {
                   type="monotone"
                   dataKey="female"
                   name={dm.pyramidFemale}
-                  stroke="#f43f5e"
+                  stroke="hsl(var(--chart-2))"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -509,8 +509,8 @@ export function DemographicsBlock() {
                   type="monotone"
                   dataKey="share"
                   name={dm.immigrationShare}
-                  stroke="#f59e0b"
-                  fill="#f59e0b"
+                  stroke="hsl(var(--chart-4))"
+                  fill="hsl(var(--chart-2))"
                   fillOpacity={0.2}
                   strokeWidth={2}
                 />

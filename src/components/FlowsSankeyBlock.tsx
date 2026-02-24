@@ -474,7 +474,7 @@ export const FlowsSankeyBlock: React.FC = () => {
             }}
             valueFormat={(value: number) => formatCompact(value)}
             nodeTooltip={(node: any) => (
-              <div className="bg-popover text-popover-foreground px-3 py-2 rounded-md border shadow-md text-sm">
+              <div className="bg-popover/80 backdrop-blur-md text-popover-foreground px-3 py-2 rounded-xl border border-white/10 shadow-xl text-sm">
                 <span className="font-semibold">
                   {copy.nodeLabels[node.node.id] || node.node.id.toString()}
                 </span>
@@ -484,12 +484,13 @@ export const FlowsSankeyBlock: React.FC = () => {
             theme={{
               tooltip: {
                 container: {
-                  background: "hsl(var(--popover))",
+                  background: "hsl(var(--popover) / 0.8)",
+                  backdropFilter: "blur(12px)",
                   color: "hsl(var(--popover-foreground))",
                   fontSize: "14px",
-                  borderRadius: "6px",
-                  border: "1px solid hsl(var(--border))",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+                  borderRadius: "12px",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
                 },
               },
               labels: {

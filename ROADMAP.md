@@ -50,7 +50,12 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
   - ✅ Gráficos de tendencias históricas (vital stats, life expectancy, inmigración)
   - ✅ Ratios de dependencia (old-age, youth, total) derivados de la pirámide
   - ⏳ Desglose provincial
-  - ⏳ Proyecciones demográficas (INE a 20-30 años)
+  - ⏳ Proyecciones demográficas (INE a 20-30 años, poner diferentes estimaciones historicas para demostrar como se suelen equivocar https://x.com/rdomenechv/status/2014716812143816827, https://x.com/ocdeenespanol/status/2014020615791898800)
+  - ⏳ Permitir comparar diferentes proyecciones entre paises
+  - ⏳ Permitir comparar natalidad entre paises
+  - ⏳ Permitir comparar mortalidad entre paises
+  - ⏳ Permitir comparar esperanza de vida entre paises
+  - ⏳ Permitir comparar fecundidad entre paises
   - ⏳ Datos de flujos migratorios (entradas/salidas)
 
 ---

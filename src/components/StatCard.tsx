@@ -240,10 +240,10 @@ export const StatCard = memo(function StatCard({
             role="dialog"
             aria-modal="false"
             aria-labelledby={`${infoDialogId}-title`}
-            className="fixed z-50 w-96 max-w-[calc(100vw-1rem)] max-h-[400px] overflow-y-auto rounded-xl border bg-card p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+            className="fixed z-50 w-96 max-w-[calc(100vw-1rem)] max-h-[400px] overflow-y-auto rounded-2xl border border-white/5 bg-card/80 backdrop-blur-2xl p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
             style={{ top: popoverPos.top, left: popoverPos.left }}
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-3 mb-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">
                   {copy.summaryTitle}
