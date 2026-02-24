@@ -1,94 +1,101 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cuentas Públicas de España en Tiempo Real</title>
-    <meta name="description" content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real. Datos del Banco de España, INE y Seguridad Social." />
-    <meta property="og:title" content="Cuentas Públicas de España en Tiempo Real" />
-    <meta property="og:description" content="Deuda pública, pensiones y gasto público de España. Datos oficiales del Banco de España, INE y Seguridad Social, actualizados en tiempo real." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://cuentas-publicas.es/" />
-    <meta property="og:image" content="https://cuentas-publicas.es/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:site_name" content="cuentas-publicas.es" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Cuentas Públicas de España en Tiempo Real" />
-    <meta name="twitter:description" content="Deuda pública, pensiones y gasto público de España. Datos oficiales actualizados en tiempo real." />
-    <meta name="twitter:image" content="https://cuentas-publicas.es/og-image.png" />
-    <meta name="theme-color" content="#1e3a5f" />
-    <meta name="robots" content="index,follow,max-image-preview:large" />
-    <link rel="canonical" href="https://cuentas-publicas.es/" />
-    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-    <link rel="alternate" type="application/rss+xml" title="Cuentas Públicas RSS" href="/feed.xml" />
-    <link rel="alternate" type="text/html" hreflang="es" href="https://cuentas-publicas.es/" />
-    <link rel="alternate" type="text/html" hreflang="en" href="https://cuentas-publicas.es/en/" />
-    <script>
-      (function () {
-        const path = window.location.pathname;
-        const isEnglishPath = path === "/en" || path.startsWith("/en/");
-        if (!isEnglishPath) return;
 
-        const englishTitle = "Spain Public Accounts in Real Time";
-        const englishDescription =
-          "Public debt, pensions and spending indicators for Spain with official up-to-date data.";
-        const normalizedPath = path.endsWith("/") ? path : `${path}/`;
-        const canonicalHref = `${window.location.origin}${normalizedPath}`;
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuentas Públicas de España en Tiempo Real</title>
+  <meta name="description"
+    content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real. Datos del Banco de España, INE y Seguridad Social." />
+  <meta property="og:title" content="Cuentas Públicas de España en Tiempo Real" />
+  <meta property="og:description"
+    content="Deuda pública, pensiones y gasto público de España. Datos oficiales del Banco de España, INE y Seguridad Social, actualizados en tiempo real." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cuentas-publicas.es/" />
+  <meta property="og:image" content="https://cuentas-publicas.es/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:site_name" content="cuentas-publicas.es" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cuentas Públicas de España en Tiempo Real" />
+  <meta name="twitter:description"
+    content="Deuda pública, pensiones y gasto público de España. Datos oficiales actualizados en tiempo real." />
+  <meta name="twitter:image" content="https://cuentas-publicas.es/og-image.png" />
+  <meta name="theme-color" content="#1e3a5f" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://cuentas-publicas.es/" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="alternate" type="application/rss+xml" title="Cuentas Públicas RSS" href="/feed.xml" />
+  <link rel="alternate" type="text/html" hreflang="es" href="https://cuentas-publicas.es/" />
+  <link rel="alternate" type="text/html" hreflang="en" href="https://cuentas-publicas.es/en/" />
+  <script>
+    (function () {
+      const path = window.location.pathname;
+      const isEnglishPath = path === "/en" || path.startsWith("/en/");
+      if (!isEnglishPath) return;
 
-        document.documentElement.lang = "en";
-        document.title = englishTitle;
+      const englishTitle = "Spain Public Accounts in Real Time";
+      const englishDescription =
+        "Public debt, pensions and spending indicators for Spain with official up-to-date data.";
+      const normalizedPath = path.endsWith("/") ? path : `${path}/`;
+      const canonicalHref = `${window.location.origin}${normalizedPath}`;
 
-        const updateAttribute = (selector, attribute, value) => {
-          const element = document.head.querySelector(selector);
-          if (element) {
-            element.setAttribute(attribute, value);
-          }
-        };
+      document.documentElement.lang = "en";
+      document.title = englishTitle;
 
-        updateAttribute('meta[name="description"]', "content", englishDescription);
-        updateAttribute('meta[property="og:title"]', "content", englishTitle);
-        updateAttribute('meta[property="og:description"]', "content", englishDescription);
-        updateAttribute('meta[property="og:locale"]', "content", "en_US");
-        updateAttribute('meta[property="og:url"]', "content", canonicalHref);
-        updateAttribute('meta[name="twitter:title"]', "content", englishTitle);
-        updateAttribute('meta[name="twitter:description"]', "content", englishDescription);
-        updateAttribute('link[rel="canonical"]', "href", canonicalHref);
-      })();
-    </script>
-    <link rel="alternate" type="text/html" href="https://cuentas-publicas.es/seo-snapshot.html" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <noscript>
-      <div style="padding:2rem;text-align:center;font-family:system-ui">
-        <h1>Dashboard Fiscal de España</h1>
-        <p>Esta aplicación necesita JavaScript para funcionar.</p>
-        <p>Por favor, activa JavaScript en tu navegador.</p>
-      </div>
-    </noscript>
-    <script>try{var t=localStorage.getItem('cuentas-publicas-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}</script>
-    <div id="root"></div>
-    <script>
-      (function() {
-        var redirect = sessionStorage.getItem('spa-redirect');
-        if (redirect) {
-          sessionStorage.removeItem('spa-redirect');
-          if (window.location.pathname === '/') {
-            window.history.replaceState(null, '', '/' + redirect);
-          }
+      const updateAttribute = (selector, attribute, value) => {
+        const element = document.head.querySelector(selector);
+        if (element) {
+          element.setAttribute(attribute, value);
         }
-      })();
-    </script>
-    <script type="application/ld+json">
+      };
+
+      updateAttribute('meta[name="description"]', "content", englishDescription);
+      updateAttribute('meta[property="og:title"]', "content", englishTitle);
+      updateAttribute('meta[property="og:description"]', "content", englishDescription);
+      updateAttribute('meta[property="og:locale"]', "content", "en_US");
+      updateAttribute('meta[property="og:url"]', "content", canonicalHref);
+      updateAttribute('meta[name="twitter:title"]', "content", englishTitle);
+      updateAttribute('meta[name="twitter:description"]', "content", englishDescription);
+      updateAttribute('link[rel="canonical"]', "href", canonicalHref);
+    })();
+  </script>
+  <link rel="alternate" type="text/html" href="https://cuentas-publicas.es/seo-snapshot.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+</head>
+
+<body>
+  <noscript>
+    <div style="padding:2rem;text-align:center;font-family:system-ui">
+      <h1>Dashboard Fiscal de España</h1>
+      <p>Esta aplicación necesita JavaScript para funcionar.</p>
+      <p>Por favor, activa JavaScript en tu navegador.</p>
+    </div>
+  </noscript>
+  <script>try { var t = localStorage.getItem('cuentas-publicas-theme'); if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme:dark)').matches)) document.documentElement.classList.add('dark') } catch (e) { }</script>
+  <div id="root"></div>
+  <script>
+    (function () {
+      var redirect = sessionStorage.getItem('spa-redirect');
+      if (redirect) {
+        sessionStorage.removeItem('spa-redirect');
+        if (window.location.pathname === '/') {
+          window.history.replaceState(null, '', '/' + redirect);
+        }
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
@@ -103,7 +110,7 @@
         }
       }
     </script>
-    <script type="application/ld+json">
+  <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Dataset",
@@ -128,6 +135,7 @@
         ]
       }
     </script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

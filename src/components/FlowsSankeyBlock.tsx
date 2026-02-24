@@ -84,14 +84,14 @@ export const FlowsSankeyBlock: React.FC = () => {
             "The flow consolidates data from the Tax Agency (AEAT), General Comptroller (IGAE), and Eurostat guaranteeing a strictly mathematically balanced graph. The ribbons' thickness is proportional to the millions of euros. Hover over a ribbon/node to see the exact amount.",
           nodeLabels: {
             // General
-            INGRESOS_TOTALES: "TOTAL INCOME",
-            IMPUESTOS_DIRECTOS: "DIRECT TAXES",
-            IMPUESTOS_INDIRECTOS: "INDIRECT TAXES",
-            COTIZACIONES: "SOCIAL CONTRIBUTIONS",
-            OTROS_INGRESOS: "OTHER INCOME",
-            CONSOLIDADO: "CONSOLIDATED BUDGET",
-            GASTOS_TOTALES: "TOTAL SPENDING",
-            DEFICIT: "DEFICIT (NEW DEBT)",
+            INGRESOS_TOTALES: "Total Income",
+            IMPUESTOS_DIRECTOS: "Direct Taxes",
+            IMPUESTOS_INDIRECTOS: "Indirect Taxes",
+            COTIZACIONES: "Social Contributions",
+            OTROS_INGRESOS: "Other Income",
+            CONSOLIDADO: "Consolidated Budget",
+            GASTOS_TOTALES: "Total Spending",
+            DEFICIT: "Deficit (New Debt)",
 
             // Taxes
             IRPF: "Personal Income Tax",
@@ -103,16 +103,16 @@ export const FlowsSankeyBlock: React.FC = () => {
             OTROS_TRIBUTOS: "Other Taxes",
 
             // COFOG
-            COFOG_01_RESTO: "1. Public Services",
-            COFOG_02: "2. Defence",
-            COFOG_03: "3. Public Order & Safety",
-            COFOG_04: "4. Economic Affairs",
-            COFOG_05: "5. Environment",
-            COFOG_06: "6. Housing & Utilities",
-            COFOG_07: "7. Health",
-            COFOG_08: "8. Culture & Religion",
-            COFOG_09: "9. Education",
-            COFOG_10_RESTO: "10. Social Protection",
+            COFOG_01_RESTO: "Public Services",
+            COFOG_02: "Defence",
+            COFOG_03: "Public Order & Safety",
+            COFOG_04: "Economic Affairs",
+            COFOG_05: "Environment",
+            COFOG_06: "Housing & Utilities",
+            COFOG_07: "Health",
+            COFOG_08: "Culture & Religion",
+            COFOG_09: "Education",
+            COFOG_10_RESTO: "Social Protection",
 
             // Others
             INTERESES_DEUDA: "Debt Interests",
@@ -132,14 +132,14 @@ export const FlowsSankeyBlock: React.FC = () => {
             "El flujo consolida los datos de AEAT, IGAE y Eurostat garantizando un balance matemático exacto. El ancho de las cintas es proporcional a los importes en millones de euros. Haz hover sobre una cinta para ver la cantidad exacta.",
           nodeLabels: {
             // General
-            INGRESOS_TOTALES: "INGRESOS TOTALES",
-            IMPUESTOS_DIRECTOS: "IMPUESTOS DIRECTOS",
-            IMPUESTOS_INDIRECTOS: "IMPUESTOS INDIRECTOS",
-            COTIZACIONES: "COTIZACIONES SOCIALES",
-            OTROS_INGRESOS: "OTROS INGRESOS",
-            CONSOLIDADO: "PRESUPUESTO CONSOLIDADO",
-            GASTOS_TOTALES: "GASTOS TOTALES",
-            DEFICIT: "DÉFICIT (NUEVA DEUDA)",
+            INGRESOS_TOTALES: "Ingresos Totales",
+            IMPUESTOS_DIRECTOS: "Impuestos Directos",
+            IMPUESTOS_INDIRECTOS: "Impuestos Indirectos",
+            COTIZACIONES: "Cotizaciones Sociales",
+            OTROS_INGRESOS: "Otros Ingresos",
+            CONSOLIDADO: "Presupuesto Consolidado",
+            GASTOS_TOTALES: "Gastos Totales",
+            DEFICIT: "Déficit (Nueva Deuda)",
 
             // Taxes
             IRPF: "IRPF",
@@ -151,16 +151,16 @@ export const FlowsSankeyBlock: React.FC = () => {
             OTROS_TRIBUTOS: "Otros Tributos",
 
             // COFOG
-            COFOG_01_RESTO: "1. Servicios Generales",
-            COFOG_02: "2. Defensa",
-            COFOG_03: "3. Orden Público",
-            COFOG_04: "4. Asuntos Económicos",
-            COFOG_05: "5. Medio Ambiente",
-            COFOG_06: "6. Vivienda y S. Comunitarios",
-            COFOG_07: "7. Sanidad",
-            COFOG_08: "8. Cultura y Religión",
-            COFOG_09: "9. Educación",
-            COFOG_10_RESTO: "10. Protección Social",
+            COFOG_01_RESTO: "Servicios Generales",
+            COFOG_02: "Defensa",
+            COFOG_03: "Orden Público",
+            COFOG_04: "Asuntos Económicos",
+            COFOG_05: "Medio Ambiente",
+            COFOG_06: "Vivienda y S. Comunitarios",
+            COFOG_07: "Sanidad",
+            COFOG_08: "Cultura y Religión",
+            COFOG_09: "Educación",
+            COFOG_10_RESTO: "Protección Social",
 
             // Others
             INTERESES_DEUDA: "Intereses Deuda",
