@@ -166,7 +166,15 @@ describe("enrichPensionWithSustainability", () => {
     expect(result.pipeline).toEqual(pension.pipeline);
     expect(result.current.monthlyPayroll).toBe(pension.current.monthlyPayroll);
     expect(result.current.totalPensions).toBe(pension.current.totalPensions);
-    expect(result.current.cumulativeDeficit).toEqual(pension.current.cumulativeDeficit);
+    // cumulativeDeficit is now computed from Eurostat byYear (2009+), not the pension fallback
+    // test sustainability data has byYear[2024].ssBalance = 43337 M€ → 43_337_000_000 €
+    expect(result.current.cumulativeDeficit).toEqual({
+      base: 43337 * 1_000_000,
+      baseDate: "2024-12-31",
+      source: "eurostat",
+      startYear: 2009,
+    });
+    expect(result.sourceAttribution.cumulativeDeficit.type).toBe("cross-reference");
     expect(result.sourceAttribution.monthlyPayroll.type).toBe("csv");
   });
 });

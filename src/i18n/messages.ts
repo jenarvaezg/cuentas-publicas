@@ -35,10 +35,13 @@ export const messages = {
       debtSummaryNotePrefix: "Extrapolación sobre",
       debtSummaryNoteSuffix: "último dato:",
       deficitSummaryLabel: "Déficit Contributivo Acumulado",
-      deficitSummarySince: "Desde 2011:",
+      deficitSummarySince: "Desde 2009:",
+      deficitSummaryTooltip:
+        "Suma de los déficits contributivos anuales del subsector S1314 (cotizaciones − prestaciones) desde 2009, calculada a partir de las series Eurostat gov_10a_main.",
       perYear: "/año",
       thisYear: "en",
       annualDeficit: "déficit anual",
+      counterDisclaimer: "Representación visual orientativa, no dato oficial en tiempo real",
     },
     common: {
       year: "Año",
@@ -70,7 +73,11 @@ export const messages = {
       boundaryReload: "Recargar página",
     },
     blocks: {
-      debt: { title: "Deuda Pública (PDE)" },
+      debt: {
+        title: "Deuda Pública (PDE)",
+        consolidationNote:
+          "La suma de los subsectores (Estado + CCAA + CCLL + SS) supera la deuda PDE total porque esta última consolida préstamos intergubernamentales (FLA, FFPP, préstamos a CCAA) que se compensan contablemente.",
+      },
       debtCost: { title: "Coste de la Deuda" },
       equivalences: {
         title: "Equivalencias",
@@ -119,6 +126,11 @@ export const messages = {
         title: "Roadmap y wishlist",
       },
     },
+    freshness: {
+      dataAsOf: "Datos actualizados:",
+      staleWarning: "Algunos datos pueden estar desactualizados",
+      allFresh: "Datos al día",
+    },
     footer: {
       educational:
         "Datos orientativos con fines educativos. Consulta la sección de metodología para más información sobre fuentes y cálculos.",
@@ -161,10 +173,13 @@ export const messages = {
       debtSummaryNotePrefix: "Extrapolation based on",
       debtSummaryNoteSuffix: "latest data:",
       deficitSummaryLabel: "Accumulated Contributory Deficit",
-      deficitSummarySince: "Since 2011:",
+      deficitSummarySince: "Since 2009:",
+      deficitSummaryTooltip:
+        "Sum of annual contributory deficits for subsector S1314 (contributions − benefits) since 2009, computed from Eurostat gov_10a_main series.",
       perYear: "/year",
       thisYear: "in",
       annualDeficit: "annual deficit",
+      counterDisclaimer: "Indicative visual representation, not official real-time data",
     },
     common: {
       year: "Year",
@@ -195,7 +210,11 @@ export const messages = {
       boundaryReload: "Reload page",
     },
     blocks: {
-      debt: { title: "Public Debt (EDP)" },
+      debt: {
+        title: "Public Debt (EDP)",
+        consolidationNote:
+          "The sum of subsectors (Central + Regions + Local + SS) exceeds total EDP debt because the official figure consolidates intergovernmental loans (FLA, FFPP, regional loans) that net out in accounting.",
+      },
       debtCost: { title: "Debt Cost" },
       equivalences: {
         title: "Equivalences",
@@ -243,6 +262,11 @@ export const messages = {
       roadmap: {
         title: "Roadmap and wishlist",
       },
+    },
+    freshness: {
+      dataAsOf: "Data updated:",
+      staleWarning: "Some data may be outdated",
+      allFresh: "All data up to date",
     },
     footer: {
       educational:

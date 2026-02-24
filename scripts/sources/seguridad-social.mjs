@@ -301,12 +301,11 @@ const REFERENCE_DATA = {
   totalPensions: 10_452_674,            // Jan 2026 Excel
   averagePensionRetirement: 1_563.56,   // Jan 2026 Excel
   affiliates: 21_300_000,              // Estimated
-  socialContributions: 210_000_000_000, // Eurostat 2024 (~210,337 M€)
+  socialContributions: 200_000_000_000, // Eurostat 2024 S1314 D61REC (~199,698 M EUR) — NOT S13 total
   reserveFund: 7_500_000_000,          // 2025 estimate (7,500 M€)
-  // Accumulated contributory deficit (pension expense − social contributions) since 2011
-  // Sources: UV-Eje quarterly reports, WTW, Instituto Santalucía, Fedea SSA series
-  // Methodology: sum of annual deficits 2011-2025 (~290B€ narrow) + Clases Pasivas gap
-  cumulativeDeficit: { base: 300_000_000_000, baseDate: '2026-01-01' }
+  // Cumulative deficit: computed in enrichPensionWithSustainability() from Eurostat annual balances
+  // Fallback null means the counter will show 0 until enrichment runs successfully
+  cumulativeDeficit: null
 }
 
 /**
@@ -532,6 +531,28 @@ export function enrichPensionWithSustainability(pensionData, sustainabilityData)
   const contributorsPerPensioner = affiliates / totalPensions
   const contributoryDeficit = pensionData.current.annualExpense - socialContributions
 
+  // 4. Cumulative deficit: sum ssBalance (M EUR → EUR) for years >= 2009 from Eurostat series
+  const START_YEAR = 2009
+  const byYear = sustainabilityData.byYear
+  let computedCumulativeDeficit = null
+  if (byYear && typeof byYear === 'object') {
+    const availableYears = Object.keys(byYear)
+      .map(Number)
+      .filter(y => y >= START_YEAR && byYear[String(y)]?.ssBalance != null)
+    if (availableYears.length > 0) {
+      const sumMEur = availableYears.reduce((acc, y) => acc + byYear[String(y)].ssBalance, 0)
+      const latestComputedYear = Math.max(...availableYears)
+      computedCumulativeDeficit = {
+        base: sumMEur * 1_000_000,
+        baseDate: `${latestComputedYear}-12-31`,
+        source: 'eurostat',
+        startYear: START_YEAR,
+      }
+      console.log(`    Déficit acumulado SS (${START_YEAR}-${latestComputedYear}): ${(sumMEur / 1000).toFixed(1)}B€ [${availableYears.length} años]`)
+    }
+  }
+  const cumulativeDeficit = computedCumulativeDeficit ?? pensionData.current.cumulativeDeficit
+
   const enrichedCurrent = {
     ...pensionData.current,
     socialContributions,
@@ -539,6 +560,7 @@ export function enrichPensionWithSustainability(pensionData, sustainabilityData)
     affiliates,
     contributorsPerPensioner,
     contributoryDeficit,
+    cumulativeDeficit,
   }
 
   // Update source attributions for enriched fields
@@ -581,6 +603,15 @@ export function enrichPensionWithSustainability(pensionData, sustainabilityData)
       type: "derived",
       note: "Gasto anual - cotizaciones sociales (Eurostat)",
     },
+    cumulativeDeficit: computedCumulativeDeficit
+      ? {
+        source: `Eurostat gov_10a_main S1314 (${START_YEAR}-${computedCumulativeDeficit.baseDate.slice(0, 4)})`,
+        type: "cross-reference",
+        url: "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+        date: computedCumulativeDeficit.baseDate,
+        note: `Suma déficits anuales S1314 desde ${START_YEAR}: ${(computedCumulativeDeficit.base / 1_000_000_000).toFixed(0)}B€`,
+      }
+      : pensionData.sourceAttribution?.cumulativeDeficit,
   }
 
   console.log("  📊 Enriquecimiento cross-reference:")

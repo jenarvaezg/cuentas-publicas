@@ -48,8 +48,7 @@ export function DebtBlock() {
           perCapitaNote: "Total debt / population",
           contributorNote: "Total debt / active population",
           gdpNote: "Total debt / nominal GDP",
-          subsectorFootnote:
-            "* The sum of subsectors may exceed total EDP debt because official figures consolidate intergovernmental loans (FLA, FFPP), which are netted out in accounting.",
+          consolidationGapLabel: "Consolidation gap",
         }
       : {
           realtimeLabel: "Deuda total en tiempo real",
@@ -80,8 +79,7 @@ export function DebtBlock() {
           perCapitaNote: "Deuda total / población",
           contributorNote: "Deuda total / población activa",
           gdpNote: "Deuda total / PIB nominal",
-          subsectorFootnote:
-            "* La suma de subsectores puede superar la deuda total PDE porque la cifra oficial consolida préstamos intergubernamentales (FLA, FFPP) que se compensan contablemente entre administraciones.",
+          consolidationGapLabel: "Diferencia consolidación PDE",
         };
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
@@ -216,7 +214,20 @@ export function DebtBlock() {
           />
         </div>
 
-        <p className="text-xs text-muted-foreground/80 italic px-2">{copy.subsectorFootnote}</p>
+        {(() => {
+          const { estado, ccaa, ccll, ss } = debt.current.debtBySubsector;
+          const subsectorSum = estado + ccaa + ccll + ss;
+          const gap = subsectorSum - debt.current.totalDebt;
+          if (gap <= 0) return null;
+          return (
+            <div className="border-l-4 border-blue-400/60 bg-blue-50/50 dark:bg-blue-950/20 rounded-r px-4 py-3 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{copy.consolidationGapLabel}: </span>
+              <span className="font-semibold text-foreground">+{formatCompact(gap)}</span>
+              {"  —  "}
+              {msg.blocks.debt.consolidationNote}
+            </div>
+          );
+        })()}
       </CardContent>
     </Card>
   );

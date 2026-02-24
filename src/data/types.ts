@@ -75,7 +75,9 @@ export interface PensionData {
     cumulativeDeficit?: {
       base: number;
       baseDate: string;
-    };
+      source?: string;
+      startYear?: number;
+    } | null;
   };
   historical: Array<{
     date: string;

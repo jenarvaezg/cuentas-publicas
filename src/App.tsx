@@ -268,6 +268,9 @@ function App() {
                     ({msg.app.debtSummaryNoteSuffix} {lastDebtDate})
                   </span>
                 </p>
+                <p className="text-[10px] text-muted-foreground/40 text-center relative z-10">
+                  {msg.app.counterDisclaimer}
+                </p>
               </FadeIn>
 
               {/* Deficit Summary (col-span-2) */}
@@ -316,7 +319,7 @@ function App() {
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground/60 text-center relative z-10 mt-2">
-                  UV-Eje, Fedea SSA, BdE —{" "}
+                  Eurostat gov_10a_main (S1314) —{" "}
                   <a
                     href={SS_NOMINA.url}
                     target="_blank"
@@ -326,6 +329,9 @@ function App() {
                     {CALCULO_DERIVADO.name}
                   </a>{" "}
                   ({pensionDate})
+                </p>
+                <p className="text-[10px] text-muted-foreground/40 text-center relative z-10">
+                  {msg.app.counterDisclaimer}
                 </p>
               </FadeIn>
             </div>

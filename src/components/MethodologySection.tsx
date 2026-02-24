@@ -40,6 +40,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "Se descarga CSV oficial del BdE y se parsea formato español (coma decimal, punto de miles, separador punto y coma).",
           "El contador en tiempo real usa regresión lineal sobre los últimos 24 meses y extrapola desde el último punto oficial.",
+          "La deuda PDE (Procedimiento de Déficit Excesivo) es una cifra consolidada: el Banco de España netea los préstamos que el Estado concede directamente a las CCAA y a la Seguridad Social, como el FLA (Fondo de Liquidez Autonómica) o el FFPP (Fondo de Financiación a Comunidades Autónomas). Por ello la suma de los cuatro subsectores (Estado, CCAA, CCLL, Seguridad Social) supera al total oficial: la diferencia representa exactamente esos préstamos intergubernamentales que se eliminan al consolidar.",
         ],
         bullets: [
           "Deuda total PDE",
@@ -198,8 +199,9 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
       {
         title: "Contadores en tiempo real",
         paragraphs: [
-          "Se renderizan con actualización periódica en cliente y números tabulares para estabilidad visual.",
-          "Deuda: extrapolación lineal desde dato oficial mensual. Pensiones: prorrateo de nómina anualizada por segundo.",
+          "Los contadores son representaciones visuales orientativas, no datos oficiales en tiempo real. Se renderizan con actualización periódica en cliente y números tabulares para estabilidad visual.",
+          "Deuda: extrapolación lineal (regresión sobre 24 meses de datos BdE). La pendiente puede diferir significativamente de la variación interanual real, especialmente ante emisiones o amortizaciones puntuales de deuda.",
+          "Pensiones: prorrateo de nómina mensual × 14 pagas, convertido a flujo por segundo. Esta simplificación puede diferir ~5% respecto a la cifra Eurostat, que incluye ajustes contables adicionales.",
         ],
       },
       {
@@ -212,6 +214,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "Se consultan tres series Eurostat del subsector S1314: prestaciones contributivas en efectivo (D62PAY) en millones de euros y como % del PIB (España y EU-27), y cotizaciones sociales (D61REC).",
           "El balance del sistema se calcula como cotizaciones menos gasto contributivo. Se complementa con datos de referencia del Fondo de Reserva, ratio cotizantes/pensionista y proyecciones del Ageing Report 2024.",
+          "El déficit contributivo acumulado se calcula sumando los balances anuales del subsector S1314 desde 2009 (primer año de déficit continuado, que incluye el impacto de la crisis financiera). El año 2009 se eligió como punto de partida porque marca el inicio de una racha ininterrumpida de déficits estructurales. Los datos proceden exclusivamente de las series Eurostat gov_10a_main; no se usan estimaciones externas.",
         ],
         bullets: [
           "Ingresos por cotizaciones vs gasto contributivo (serie anual)",
@@ -219,6 +222,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
           "Evolución del Fondo de Reserva de la Seguridad Social (2000-2025)",
           "Ratio cotizantes por pensionista (2006-2025)",
           "Proyecciones de gasto/PIB hasta 2070 (Ageing Report)",
+          "Déficit acumulado S1314: suma de balances anuales desde 2009 (Eurostat gov_10a_main)",
         ],
       },
     ],
@@ -247,6 +251,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "The pipeline downloads the official CSV and parses Spanish numeric formatting safely.",
           "Real-time debt is estimated with linear regression over the latest 24 monthly observations, then extrapolated from the last official point.",
+          "EDP (Excessive Deficit Procedure) debt is a consolidated figure: the Bank of Spain nets out loans that the central government grants directly to the regions and Social Security, such as the FLA (Regional Liquidity Fund) and FFPP (Regional Financing Fund). This is why the sum of the four subsectors (Central, Regions, Local, Social Security) exceeds the official total — the difference represents exactly those intergovernmental loans that are eliminated during consolidation.",
         ],
         bullets: [
           "Total EDP debt",
@@ -405,8 +410,9 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
       {
         title: "Real-time Counters",
         paragraphs: [
-          "Counters are rendered client-side with periodic updates and tabular numerals for stable display.",
-          "Debt uses regression extrapolation; pensions use annualized payroll converted to per-second flow.",
+          "Counters are indicative visual representations, not official real-time data. They are rendered client-side with periodic updates and tabular numerals for stable display.",
+          "Debt: linear extrapolation (regression over 24 months of BdE data). The slope may differ significantly from the actual year-over-year change, especially around one-off debt issuances or redemptions.",
+          "Pensions: monthly payroll × 14 payments, converted to per-second flow. This simplification may differ ~5% from the Eurostat figure, which includes additional accounting adjustments.",
         ],
       },
       {
@@ -419,6 +425,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         paragraphs: [
           "Three Eurostat series are queried for subsector S1314: contributory cash benefits (D62PAY) in million euros and as % of GDP (Spain and EU-27), and social contributions (D61REC).",
           "System balance is computed as contributions minus contributory spending. Reference data for the Reserve Fund, contributors-per-pensioner ratio and 2024 Ageing Report projections complement the Eurostat series.",
+          "The cumulative contributory deficit is computed by summing the annual S1314 balances since 2009 (the first year of sustained deficit, capturing the impact of the financial crisis). The year 2009 was chosen as the start because it marks the beginning of an uninterrupted run of structural deficits. Data come exclusively from Eurostat gov_10a_main series; no external estimates are used.",
         ],
         bullets: [
           "Contribution income vs contributory spending (annual series)",
@@ -426,6 +433,7 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
           "Social Security Reserve Fund evolution (2000-2025)",
           "Contributors per pensioner ratio (2006-2025)",
           "Spending/GDP projections to 2070 (Ageing Report)",
+          "Cumulative S1314 deficit: sum of annual balances since 2009 (Eurostat gov_10a_main)",
         ],
       },
     ],

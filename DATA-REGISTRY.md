@@ -96,7 +96,7 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 | N.° afiliados | **DERIVADO** | Ratio cotizantes/pensionista × totalPensiones (cross-reference ss-sustainability) | ~21.000.000 (derivado) | MEDIA |
 | Cotizaciones sociales | **AUTOMATIZADO** | Eurostat `gov_10a_main` D61REC (cross-reference pipeline ss-sustainability) | ~185.000 M€/año | MEDIA |
 | Déficit contributivo anual | **DERIVADO** | gasto anual - cotizaciones | 42.736 M€ | MEDIA |
-| Déficit acumulado (desde 2011) | **HARDCODEADO** | UV-Eje, Fedea SSA, BdE | 300.000 M€ (base ene 2026) | MUY ALTA |
+| Déficit acumulado (desde 2009) | **AUTOMATIZADO** | Suma de balances anuales Eurostat `gov_10a_main` S1314 desde 2009 (cross-reference ss-sustainability) | Variable (~340.000 M€) | BAJA |
 | Fondo de Reserva | **AUTOMATIZADO** | Serie RESERVE_FUND_HISTORY del pipeline ss-sustainability (Ministerio de Inclusión) | 7.500 M€ (2025) | MEDIA |
 | Gasto por segundo | **DERIVADO** | nómina × 14 / 365,25 / 86400 | 7.058 €/s | BAJA |
 | Serie histórica | **HARDCODEADA** | 11 puntos interpolados a mano + último punto live/fallback | 2020-2026 | MUY ALTA |
@@ -117,7 +117,7 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 4. **"Total sistema" como ancla**: Si cambian a "TOTAL SISTEMA" o "Total del Sistema", no encuentra la fila.
 5. **Clases Pasivas sin fuente**: No hay API ni archivo descargable. Se estima como ~11,6% de la nómina SS.
 6. **Serie histórica inventada**: Los 11 puntos base (2020-2025) son valores interpolados a mano, no descargados.
-7. **Déficit acumulado 300.000 M€**: Estimación conservadora basada en literatura. Requiere revisión manual periódica.
+7. **Déficit acumulado**: Ahora calculado automáticamente sumando balances anuales Eurostat S1314 desde 2009. Ya no requiere revisión manual.
 
 ---
 
@@ -467,7 +467,7 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 |------|-------------|-------------------|-------|
 | SMI | 1.221€/mes (2026) | Cada enero (BOE) | `ine.mjs` -> valor hardcodeado `smi: 1_221` |
 | Clases Pasivas | 1.659 M€/mes | Cuando haya datos | `seguridad-social.mjs` -> `REFERENCE_DATA` |
-| Déficit acumulado (base) | 300.000 M€ (ene 2026) | Anualmente | `seguridad-social.mjs` -> `REFERENCE_DATA` |
+| Déficit acumulado (base) | Calculado auto (Eurostat S1314 desde 2009) | No requiere actualización manual | `seguridad-social.mjs` -> `enrichPensionWithSustainability()` |
 | Gasto en intereses | 39.000 M€ (PGE 2025) | Con cada PGE | `bde.mjs` -> `REFERENCE_INTEREST_EXPENSE` |
 | Serie hist. pensiones | 11 puntos interpolados + 1 punto actual | Con cada descarga exitosa | `seguridad-social.mjs` |
 
