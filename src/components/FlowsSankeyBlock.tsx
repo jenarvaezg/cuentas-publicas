@@ -71,6 +71,7 @@ export const FlowsSankeyBlock: React.FC = () => {
     ccaaForalFlows,
     pensionsRegional,
     unemploymentRegional,
+    regionalAccounts,
     demographics,
   } = useData();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -204,6 +205,8 @@ export const FlowsSankeyBlock: React.FC = () => {
       let totalIncomeSubtracted = 0;
       let directTaxesSubtracted = 0;
       let indirectTaxesSubtracted = 0;
+      let cotizacionesSubtracted = 0;
+      let otrosIngresosSubtracted = 0;
       let totalExpenseSubtracted = 0;
 
       const subtractFromNodeAndLink = (
@@ -343,9 +346,42 @@ export const FlowsSankeyBlock: React.FC = () => {
             totalExpenseSubtracted += actualUnemployment;
           }
         }
+
+        // 5. Subtract Social Contributions (proportional to regional share)
+        // 6. Subtract Other Revenue (proportional to GDP share)
+        const acctYear = regionalAccounts?.byYear[String(regionalAccounts.latestYear)];
+        const regionAcct = acctYear?.entries.find((e) => e.code === regionId);
+        if (regionAcct && acctYear?.totals) {
+          if (acctYear.totals.socialContributions > 0) {
+            const cotizProportion =
+              regionAcct.socialContributions / acctYear.totals.socialContributions;
+            const originalCotiz = flows.nodes.find((n) => n.id === "COTIZACIONES")?.amount || 0;
+            const cotizToSubtract = originalCotiz * cotizProportion;
+            cotizacionesSubtracted += subtractFromNodeAndLink(
+              "COTIZACIONES",
+              cotizToSubtract,
+              true,
+            );
+          }
+
+          if (acctYear.totals.gdp > 0) {
+            const gdpProportion = regionAcct.gdp / acctYear.totals.gdp;
+            const originalOtros = flows.nodes.find((n) => n.id === "OTROS_INGRESOS")?.amount || 0;
+            const otrosToSubtract = originalOtros * gdpProportion;
+            otrosIngresosSubtracted += subtractFromNodeAndLink(
+              "OTROS_INGRESOS",
+              otrosToSubtract,
+              true,
+            );
+          }
+        }
       }
 
-      totalIncomeSubtracted = directTaxesSubtracted + indirectTaxesSubtracted;
+      totalIncomeSubtracted =
+        directTaxesSubtracted +
+        indirectTaxesSubtracted +
+        cotizacionesSubtracted +
+        otrosIngresosSubtracted;
 
       // Propagate aggregated income subtraction to intermediate aggregators
       if (directTaxesSubtracted > 0) {
@@ -414,6 +450,7 @@ export const FlowsSankeyBlock: React.FC = () => {
     ccaaForalFlows,
     pensionsRegional,
     unemploymentRegional,
+    regionalAccounts,
     demographics,
     copy,
   ]);

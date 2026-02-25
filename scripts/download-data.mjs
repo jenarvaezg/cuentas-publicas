@@ -17,6 +17,7 @@ import { downloadCcaaSpendingData } from "./sources/ccaa-spending.mjs";
 import { downloadCcaaForalFlowsData } from "./sources/ccaa-foral-flows.mjs";
 import downloadCcaaDeficitData from "./sources/ccaa-deficit.mjs";
 import { downloadRegionalPensionsData } from "./sources/pensions-regional.mjs";
+import { downloadRegionalAccountsData } from "./sources/regional-accounts.mjs";
 import { downloadFlowsSankeyData } from "./sources/flows-sankey.mjs";
 import { downloadSSSustainability } from "./sources/ss-sustainability.mjs";
 import {
@@ -121,6 +122,7 @@ const FALLBACK_GUARD_KEYS = {
   ccaaSpending: ["spending"],
   ccaaForalFlows: ["foral"],
   ccaaDeficit: ["igae-cn-regional"],
+  regionalAccounts: ["regionalAccounts"],
   pensionsRegional: ["byYear"],
   flowsSankey: ["sankey"],
   ssSustainability: ["ssSustainability"],
@@ -306,6 +308,19 @@ const SOURCE_REGISTRY = [
     }),
   },
   {
+    name: "regionalAccounts",
+    fileName: "regional-accounts.json",
+    download: downloadRegionalAccountsData,
+    metaExtractor: (r) => ({
+      lastRealDataDate: pickLatestDate([
+        r.latestYear,
+        ...getAttributionDates(r.sourceAttribution),
+      ]),
+      latestYear: r.latestYear || null,
+      communities: r.byYear?.[String(r.latestYear)]?.entries?.length || 0,
+    }),
+  },
+  {
     name: "pensionsRegional",
     fileName: "pensions-regional.json",
     download: downloadRegionalPensionsData,
@@ -459,6 +474,11 @@ function buildPublicApiIndex(meta) {
         path: "/api/v1/ccaa-foral-flows.json",
         source: "Gobierno de Navarra + Gobierno Vasco",
         description: "Flujos forales de Navarra y País Vasco (aportación/cupo)",
+      },
+      {
+        path: "/api/v1/regional-accounts.json",
+        source: "Eurostat",
+        description: "PIB regional y cotizaciones sociales por CCAA",
       },
       {
         path: "/api/v1/pensions-regional.json",

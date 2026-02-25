@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-24T13:52:50.107Z",
+  "lastUpdated": "2026-02-25T10:47:41.980Z",
   "latestYear": 2024,
   "nodes": [
     {
@@ -8,40 +8,35 @@
       "group": "core",
       "amount": 725001,
       "format": "currency",
-      "note": "Total de cuentas públicas",
-      "color": "hsl(var(--border))"
+      "note": "Total de cuentas públicas"
     },
     {
       "id": "DEFICIT",
-      "label": "Déficit / Deuda Nueva",
+      "label": "Déficit (Nueva Deuda)",
       "group": "income",
       "amount": 51267,
-      "format": "currency",
-      "color": "hsl(var(--destructive))"
+      "format": "currency"
     },
     {
       "id": "INGRESOS_TOTALES",
-      "label": "Ingresos No Financieros",
+      "label": "Ingresos Públicos",
       "group": "income_agg",
       "amount": 673734,
-      "format": "currency",
-      "color": "hsl(var(--primary))"
+      "format": "currency"
     },
     {
       "id": "COTIZACIONES",
       "label": "Cotizaciones Sociales",
       "group": "income_type",
       "amount": 210337,
-      "format": "currency",
-      "color": "hsl(var(--chart-2))"
+      "format": "currency"
     },
     {
       "id": "IMPUESTOS_DIRECTOS",
       "label": "Impuestos Directos",
       "group": "income_type",
       "amount": 198711,
-      "format": "currency",
-      "color": "hsl(var(--chart-3))"
+      "format": "currency"
     },
     {
       "id": "IRPF",
@@ -69,8 +64,7 @@
       "label": "Impuestos Indirectos",
       "group": "income_type",
       "amount": 176937,
-      "format": "currency",
-      "color": "hsl(var(--chart-4))"
+      "format": "currency"
     },
     {
       "id": "IVA",
@@ -91,16 +85,14 @@
       "label": "Otros Ingresos",
       "group": "income_type",
       "amount": 87749,
-      "format": "currency",
-      "color": "hsl(var(--chart-1))"
+      "format": "currency"
     },
     {
       "id": "GASTO_INTERESES",
-      "label": "Intereses de la Deuda",
+      "label": "Intereses Deuda Pública",
       "group": "expense_specific",
       "amount": 39644,
-      "format": "currency",
-      "color": "hsl(var(--destructive))"
+      "format": "currency"
     },
     {
       "id": "COFOG_01_RESTO",
@@ -167,11 +159,10 @@
     },
     {
       "id": "GASTO_PENSIONES",
-      "label": "Pensiones y Prestaciones",
+      "label": "Pensiones",
       "group": "expense_specific",
       "amount": 222736,
-      "format": "currency",
-      "color": "hsl(var(--chart-4))"
+      "format": "currency"
     },
     {
       "id": "COFOG_10_RESTO",

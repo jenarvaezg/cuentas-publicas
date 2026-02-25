@@ -1,0 +1,128 @@
+{
+  "lastUpdated": "2026-02-25T10:47:42.157Z",
+  "latestYear": 2024,
+  "years": [
+    2024
+  ],
+  "byYear": {
+    "2024": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "gdp": 212359,
+          "socialContributions": 30001
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "gdp": 49635,
+          "socialContributions": 6282
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "gdp": 30012,
+          "socialContributions": 3975
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "gdp": 44693,
+          "socialContributions": 5829
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "gdp": 58145,
+          "socialContributions": 8353
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "gdp": 17700,
+          "socialContributions": 2292
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "gdp": 73993,
+          "socialContributions": 9377
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "gdp": 55560,
+          "socialContributions": 7202
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "gdp": 302304,
+          "socialContributions": 40492
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "gdp": 148284,
+          "socialContributions": 20163
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "gdp": 26584,
+          "socialContributions": 3474
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "gdp": 81840,
+          "socialContributions": 10387
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "gdp": 316193,
+          "socialContributions": 41602
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "gdp": 42488,
+          "socialContributions": 5753
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "gdp": 26619,
+          "socialContributions": 3500
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "gdp": 91613,
+          "socialContributions": 11722
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "gdp": 11112,
+          "socialContributions": 1327
+        }
+      ],
+      "totals": {
+        "gdp": 1589134,
+        "socialContributions": 211731
+      }
+    }
+  },
+  "sourceAttribution": {
+    "regionalAccounts": {
+      "source": "Eurostat (nama_10r_2gdp + nama_10r_2hhinc)",
+      "type": "api",
+      "url": "https://ec.europa.eu/eurostat/databrowser/product/view/nama_10r_2gdp",
+      "date": "2024-12-31",
+      "note": "PIB regional y cotizaciones sociales por CCAA (17 comunidades, 2024)"
+    }
+  }
+}

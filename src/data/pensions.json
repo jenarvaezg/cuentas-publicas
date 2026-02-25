@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-24T13:52:52.619Z",
+  "lastUpdated": "2026-02-25T10:47:42.982Z",
   "pipeline": {
     "liveDataUsed": true,
     "criticalFallback": false,
@@ -20,8 +20,10 @@
     "contributoryDeficit": 23037996196,
     "reserveFund": 7500000000,
     "cumulativeDeficit": {
-      "base": 300000000000,
-      "baseDate": "2026-01-01"
+      "base": -455979000000,
+      "baseDate": "2024-12-31",
+      "source": "eurostat",
+      "startYear": 2009
     }
   },
   "historical": [
@@ -159,6 +161,13 @@
       "url": "https://www.seg-social.es",
       "date": "2025-12-31",
       "note": "Fondo de reserva 2025: 7500 M€"
+    },
+    "cumulativeDeficit": {
+      "source": "Eurostat gov_10a_main S1314 (2009-2024)",
+      "type": "cross-reference",
+      "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
+      "date": "2024-12-31",
+      "note": "Suma déficits anuales S1314 desde 2009: -456B€"
     }
   }
 }

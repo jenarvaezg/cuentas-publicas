@@ -489,6 +489,31 @@ export interface UnemploymentRegionalData {
   sourceAttribution: Record<string, DataSourceAttribution>;
 }
 
+// ── Regional Accounts (Eurostat NUTS2) ──────────────────────────────
+
+export interface RegionalAccountsEntry {
+  code: string; // "CA01"..."CA17"
+  name: string;
+  gdp: number; // M€
+  socialContributions: number; // M€
+}
+
+export interface RegionalAccountsYearData {
+  entries: RegionalAccountsEntry[];
+  totals: {
+    gdp: number;
+    socialContributions: number;
+  };
+}
+
+export interface RegionalAccountsData {
+  lastUpdated: string;
+  latestYear: number;
+  years: number[];
+  byYear: Record<string, RegionalAccountsYearData>;
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
 // ── Metadata ────────────────────────────────────────────────────────
 
 export interface MetaSourceEntry {

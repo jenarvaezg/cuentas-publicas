@@ -12,6 +12,7 @@ import flowsJson from "@/data/flows.json";
 import metaJson from "@/data/meta.json";
 import pensionsJson from "@/data/pensions.json";
 import pensionsRegionalJson from "@/data/pensions-regional.json";
+import regionalAccountsJson from "@/data/regional-accounts.json";
 import revenueJson from "@/data/revenue.json";
 import ssSustainabilityJson from "@/data/ss-sustainability.json";
 import taxRevenueJson from "@/data/tax-revenue.json";
@@ -29,6 +30,7 @@ import type {
   MetaData,
   PensionData,
   PensionsRegionalData,
+  RegionalAccountsData,
   RevenueData,
   SSSustainabilityData,
   TaxRevenueData,
@@ -90,6 +92,7 @@ export function useData() {
     }
 
     const ccaaSpending = ccaaSpendingJson as CcaaSpendingData;
+    const regionalAccounts = regionalAccountsJson as RegionalAccountsData;
     const revenue = revenueJson as RevenueData;
     const taxRevenue = taxRevenueJson as TaxRevenueData;
     const flows = flowsJson as FlowsData;
@@ -108,6 +111,7 @@ export function useData() {
       ccaaFiscalBalance,
       ccaaForalFlows,
       ccaaSpending,
+      regionalAccounts,
       revenue,
       taxRevenue,
       flows,

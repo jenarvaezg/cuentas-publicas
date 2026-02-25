@@ -131,6 +131,16 @@
         }
       }
     },
+    "/api/v1/regional-accounts.json": {
+      "get": {
+        "summary": "PIB regional y cotizaciones sociales por CCAA",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/pensions-regional.json": {
       "get": {
         "summary": "Gasto anual en pensiones desglosado por CCAA",
