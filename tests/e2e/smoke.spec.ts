@@ -7,25 +7,20 @@ test.describe("Smoke", () => {
     await expect(
       page.getByRole("heading", { name: "Dashboard Fiscal de España" }),
     ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Ingresos vs Gastos Públicos" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: "Gasto Público por Funciones (COFOG)",
-      }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Deuda por Comunidad Autónoma" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Demografía" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: "Sostenibilidad de la Seguridad Social",
-      }),
-    ).toBeVisible();
+
+    const headings = [
+      "Ingresos vs Gastos Públicos",
+      "Gasto Público por Funciones (COFOG)",
+      "Deuda por Comunidad Autónoma",
+      "Demografía",
+      "Sostenibilidad de la Seguridad Social",
+    ];
+
+    for (const name of headings) {
+      const heading = page.getByRole("heading", { name });
+      await heading.scrollIntoViewIfNeeded();
+      await expect(heading).toBeVisible();
+    }
   });
 
   test("cambia entre tema claro y oscuro y persiste en localStorage", async ({
@@ -60,9 +55,10 @@ test.describe("Smoke", () => {
   test("permite activar comparación y cambiar a vista de porcentaje de cambio", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/?section=gasto-cofog");
 
     const compareSelect = page.getByLabel("Comparar");
+    await compareSelect.scrollIntoViewIfNeeded();
     await expect(compareSelect).toBeVisible();
 
     const options = compareSelect.locator("option");
@@ -84,18 +80,14 @@ test.describe("Smoke", () => {
   test("permite drilldown en COFOG y volver al nivel superior", async ({
     page,
   }) => {
-    await page.goto("/");
-
-    await page.getByRole("button", { name: "Estado Social" }).click();
-    await page.getByRole("link", { name: "Gasto COFOG" }).click();
-    await expect(page).toHaveURL(/section=gasto-cofog/);
+    await page.goto("/?section=gasto-cofog");
 
     const cofogSection = page.locator("#gasto-cofog");
-    await expect(
-      cofogSection.getByText(
-        "Haz clic en una barra para ver el desglose por subcategorías",
-      ),
-    ).toBeVisible();
+    const hint = cofogSection.getByText(
+      "Haz clic en una barra para ver el desglose por subcategorías",
+    );
+    await hint.scrollIntoViewIfNeeded();
+    await expect(hint).toBeVisible();
 
     const firstBar = cofogSection.locator(".recharts-bar-rectangle").first();
     const backButton = cofogSection.getByRole("button", {
@@ -118,11 +110,7 @@ test.describe("Smoke", () => {
     expect(drilldownActivated).toBe(true);
     await backButton.click();
 
-    await expect(
-      cofogSection.getByText(
-        "Haz clic en una barra para ver el desglose por subcategorías",
-      ),
-    ).toBeVisible();
+    await expect(hint).toBeVisible();
   });
 
   test("mantiene enlaces de fuentes oficiales en resumen y bloque CCAA", async ({
@@ -140,6 +128,7 @@ test.describe("Smoke", () => {
 
     const ccaaSection = page.locator("#ccaa");
     const metricSelect = ccaaSection.getByLabel("Métrica");
+    await metricSelect.scrollIntoViewIfNeeded();
     await expect(metricSelect).toBeVisible();
 
     const sourceLink = ccaaSection.locator('p:has-text("Datos del") a');

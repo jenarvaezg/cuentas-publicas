@@ -195,6 +195,38 @@ describe('data integrity', () => {
     expect(Number.isFinite(madrid.topDivisionPct)).toBe(true)
   })
 
+  it('valida flujos Sankey multi-año (flows.json)', () => {
+    const flows = loadDataFile('flows.json')
+    expect(Number.isFinite(flows.latestYear)).toBe(true)
+    expect(Array.isArray(flows.years)).toBe(true)
+    expect(flows.years.length).toBeGreaterThanOrEqual(10)
+    expect(flows.years[0]).toBeGreaterThanOrEqual(2012)
+    expect(flows.years[flows.years.length - 1]).toBe(flows.latestYear)
+
+    // years array matches byYear keys
+    const byYearKeys = Object.keys(flows.byYear).map(Number).sort((a, b) => a - b)
+    expect(byYearKeys).toEqual(flows.years)
+
+    // Validate each year's graph
+    for (const year of flows.years) {
+      const yd = flows.byYear[String(year)]
+      expect(yd).toBeDefined()
+      expect(Array.isArray(yd.nodes)).toBe(true)
+      expect(Array.isArray(yd.links)).toBe(true)
+      expect(yd.nodes.length).toBeGreaterThan(5)
+      expect(yd.links.length).toBeGreaterThan(5)
+
+      // Mass balance: inputs to CONSOLIDADO == outputs from CONSOLIDADO
+      const totalIn = yd.links
+        .filter((l) => l.target === 'CONSOLIDADO')
+        .reduce((sum, l) => sum + l.amount, 0)
+      const totalOut = yd.links
+        .filter((l) => l.source === 'CONSOLIDADO')
+        .reduce((sum, l) => sum + l.amount, 0)
+      expect(totalIn).toBe(totalOut)
+    }
+  })
+
   it('valida flujos forales CCAA (Navarra y País Vasco)', () => {
     const foral = loadDataFile('ccaa-foral-flows.json')
     expect(Array.isArray(foral.years)).toBe(true)

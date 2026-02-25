@@ -43,11 +43,16 @@ export interface SankeyLink {
   note?: string;
 }
 
+export interface FlowsYearData {
+  nodes: SankeyNode[];
+  links: SankeyLink[];
+}
+
 export interface FlowsData {
   lastUpdated: string;
   latestYear: number;
-  nodes: SankeyNode[];
-  links: SankeyLink[];
+  years: number[];
+  byYear: Record<string, FlowsYearData>;
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 

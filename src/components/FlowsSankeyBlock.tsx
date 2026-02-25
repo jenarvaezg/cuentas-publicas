@@ -1,7 +1,7 @@
 import { ResponsiveSankey } from "@nivo/sankey";
 import { Info, ZoomOut } from "lucide-react";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SankeyLink, SankeyNode } from "@/data/types";
@@ -76,18 +76,31 @@ export const FlowsSankeyBlock: React.FC = () => {
   } = useData();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [excludedRegions, setExcludedRegions] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number>(flows?.latestYear ?? 2024);
   const { lang } = useI18n();
+
+  // What-If is only available for the latest year (regional datasets are single-year)
+  const whatIfAvailable = selectedYear === flows?.latestYear;
+
+  // Clear exclusions when What-If becomes unavailable
+  useEffect(() => {
+    if (!whatIfAvailable) {
+      setExcludedRegions([]);
+    }
+  }, [whatIfAvailable]);
 
   const copy = useMemo(() => {
     return lang === "en"
       ? {
           title: "Public Accounts Circulation",
-          description: `Aggregate flows of income, debt, and spending for ${flows?.latestYear}. Click any node to drill-down into its specific path.`,
+          description: `Aggregate flows of income, debt, and spending for ${selectedYear}. Click any node to drill-down into its specific path.`,
           allSpain: "Spain (Consolidated)",
           excludeRegionGroup: "Exclude regions from balance (What-If):",
           clearExclusions: "Clear Exclusions",
           withoutRegion: "Without",
           resetView: "Reset View",
+          yearLabel: "Year",
+          whatIfUnavailable: `Regional data only available for ${flows?.latestYear}. What-If simulation disabled.`,
           infoBox:
             "The flow consolidates data from the Tax Agency (AEAT), General Comptroller (IGAE), and Eurostat guaranteeing a strictly mathematically balanced graph. The ribbons' thickness is proportional to the millions of euros. Hover over a ribbon/node to see the exact amount.",
           nodeLabels: {
@@ -133,12 +146,14 @@ export const FlowsSankeyBlock: React.FC = () => {
         }
       : {
           title: "Circulación de las Cuentas Públicas",
-          description: `Flujos agregados de ingresos, deuda y gasto para el año ${flows?.latestYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`,
+          description: `Flujos agregados de ingresos, deuda y gasto para el año ${selectedYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`,
           allSpain: "España (Consolidado)",
           excludeRegionGroup: "Excluir regiones del balance (What-If):",
           clearExclusions: "Limpiar Exclusiones",
           withoutRegion: "Sin",
           resetView: "Restablecer Vista",
+          yearLabel: "Año",
+          whatIfUnavailable: `Datos regionales solo disponibles para ${flows?.latestYear}. Simulación What-If desactivada.`,
           infoBox:
             "El flujo consolida los datos de AEAT, IGAE y Eurostat garantizando un balance matemático exacto. El ancho de las cintas es proporcional a los importes en millones de euros. Haz hover sobre una cinta para ver la cantidad exacta.",
           nodeLabels: {
@@ -182,7 +197,13 @@ export const FlowsSankeyBlock: React.FC = () => {
             DESEMPLEO: "Desempleo",
           } as Record<string, string>,
         };
-  }, [lang, flows?.latestYear]);
+  }, [lang, selectedYear, flows?.latestYear]);
+
+  // Resolve the year's nodes/links from byYear
+  const yearData = useMemo(() => {
+    if (!flows?.byYear) return null;
+    return flows.byYear[String(selectedYear)] ?? null;
+  }, [flows, selectedYear]);
 
   const ccaaOptions = useMemo(() => {
     if (!ccaaSpending) return [];
@@ -194,14 +215,14 @@ export const FlowsSankeyBlock: React.FC = () => {
   }, [ccaaSpending]);
 
   const { activeNodes, activeLinks } = useMemo(() => {
-    if (!flows) return { activeNodes: [], activeLinks: [] };
+    if (!yearData) return { activeNodes: [], activeLinks: [] };
 
     // Deep clone to avoid mutating original data
-    const currentNodes = flows.nodes.map((n) => ({ ...n }));
-    const currentLinks = flows.links.map((l) => ({ ...l }));
+    const currentNodes = yearData.nodes.map((n) => ({ ...n }));
+    const currentLinks = yearData.links.map((l) => ({ ...l }));
 
     // --- MATH MODIFICATION: WHAT-IF SUBTRACTION (MULTI-REGION) ---
-    if (excludedRegions.length > 0) {
+    if (excludedRegions.length > 0 && whatIfAvailable) {
       let totalIncomeSubtracted = 0;
       let directTaxesSubtracted = 0;
       let indirectTaxesSubtracted = 0;
@@ -280,7 +301,7 @@ export const FlowsSankeyBlock: React.FC = () => {
       }
 
       const centralResiduals: Record<string, number> = {};
-      for (const node of flows.nodes) {
+      for (const node of yearData.nodes) {
         if (node.id === "GASTO_INTERESES") {
           centralResiduals[node.id] = node.amount;
         } else if (node.id === "GASTO_PENSIONES") {
@@ -288,7 +309,7 @@ export const FlowsSankeyBlock: React.FC = () => {
         } else if (node.id === "COFOG_10_RESTO") {
           centralResiduals[node.id] = Math.max(
             0,
-            node.amount - (cofogRegionalTotals["COFOG_10_RESTO"] || 0) - totalRegionalUnemployment,
+            node.amount - (cofogRegionalTotals.COFOG_10_RESTO || 0) - totalRegionalUnemployment,
           );
         } else if (node.id.startsWith("COFOG_")) {
           centralResiduals[node.id] = Math.max(
@@ -298,6 +319,11 @@ export const FlowsSankeyBlock: React.FC = () => {
         }
       }
 
+      // Resolve actual latest year for CCAA tax data (may lag behind national)
+      const taxCcaaYears = taxRevenue?.ccaa ? Object.keys(taxRevenue.ccaa).map(Number) : [];
+      const taxCcaaLatestYear = taxCcaaYears.length > 0 ? String(Math.max(...taxCcaaYears)) : null;
+      const taxNationalYear = taxCcaaLatestYear ?? String(taxRevenue?.latestYear ?? "");
+
       // Aggregate subtractions across all excluded regions
       for (const regionId of excludedRegions) {
         // 1. Subtract Incomes (Taxes Collected in Region)
@@ -305,8 +331,8 @@ export const FlowsSankeyBlock: React.FC = () => {
           const foralLatest = ccaaForalFlows?.byYear[ccaaForalFlows.latestYear]?.entries.find(
             (e) => e.code === regionId,
           );
-          if (foralLatest && taxRevenue?.national[taxRevenue.latestYear]) {
-            const nationalData = taxRevenue.national[taxRevenue.latestYear];
+          if (foralLatest && taxRevenue?.national[taxNationalYear]) {
+            const nationalData = taxRevenue.national[taxNationalYear];
             const irpfProp = nationalData.irpf / nationalData.total;
             const ivaProp = nationalData.iva / nationalData.total;
             const isProp = nationalData.sociedades / nationalData.total;
@@ -324,9 +350,9 @@ export const FlowsSankeyBlock: React.FC = () => {
             indirectTaxesSubtracted += actualForalIva;
           }
         } else {
-          const taxLatest = taxRevenue?.ccaa[taxRevenue.latestYear]?.entries.find(
-            (e) => e.code === regionId,
-          );
+          const taxLatest = taxCcaaLatestYear
+            ? taxRevenue?.ccaa[taxCcaaLatestYear]?.entries.find((e) => e.code === regionId)
+            : undefined;
           if (taxLatest) {
             const actualIrpf = subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
             const actualIs = subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
@@ -390,7 +416,7 @@ export const FlowsSankeyBlock: React.FC = () => {
             const ratio = regionDemo.population / demographics.population;
             // Original amount of COFOG_10_RESTO from the graph
             const originalUnemployment =
-              flows.nodes.find((n) => n.id === "COFOG_10_RESTO")?.amount || 0;
+              yearData.nodes.find((n) => n.id === "COFOG_10_RESTO")?.amount || 0;
             const proportionalUnemployment = originalUnemployment * ratio;
             const actualUnemployment = subtractFromNodeAndLink(
               "COFOG_10_RESTO",
@@ -409,7 +435,7 @@ export const FlowsSankeyBlock: React.FC = () => {
           if (acctYear.totals.socialContributions > 0) {
             const cotizProportion =
               regionAcct.socialContributions / acctYear.totals.socialContributions;
-            const originalCotiz = flows.nodes.find((n) => n.id === "COTIZACIONES")?.amount || 0;
+            const originalCotiz = yearData.nodes.find((n) => n.id === "COTIZACIONES")?.amount || 0;
             const cotizToSubtract = originalCotiz * cotizProportion;
             cotizacionesSubtracted += subtractFromNodeAndLink(
               "COTIZACIONES",
@@ -420,7 +446,8 @@ export const FlowsSankeyBlock: React.FC = () => {
 
           if (acctYear.totals.gdp > 0) {
             const gdpProportion = regionAcct.gdp / acctYear.totals.gdp;
-            const originalOtros = flows.nodes.find((n) => n.id === "OTROS_INGRESOS")?.amount || 0;
+            const originalOtros =
+              yearData.nodes.find((n) => n.id === "OTROS_INGRESOS")?.amount || 0;
             const otrosToSubtract = originalOtros * gdpProportion;
             otrosIngresosSubtracted += subtractFromNodeAndLink(
               "OTROS_INGRESOS",
@@ -510,8 +537,9 @@ export const FlowsSankeyBlock: React.FC = () => {
 
     return { activeNodes: currentNodes, activeLinks: currentLinks };
   }, [
-    flows,
+    yearData,
     excludedRegions,
+    whatIfAvailable,
     taxRevenue,
     ccaaSpending,
     ccaaForalFlows,
@@ -539,7 +567,34 @@ export const FlowsSankeyBlock: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-6">
+        {/* Year selector */}
+        <div className="mt-4">
+          <span className="text-sm font-medium text-muted-foreground mr-3">{copy.yearLabel}</span>
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
+            {(flows.years ?? []).map((year) => (
+              <button
+                type="button"
+                key={year}
+                onClick={() => {
+                  setSelectedYear(year);
+                  setSelectedNode(null);
+                }}
+                className={`
+                  px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 border
+                  ${
+                    year === selectedYear
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background border-border text-foreground hover:bg-muted"
+                  }
+                `}
+              >
+                {year}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
               {copy.excludeRegionGroup}
@@ -559,6 +614,10 @@ export const FlowsSankeyBlock: React.FC = () => {
             )}
           </div>
 
+          {!whatIfAvailable && (
+            <p className="text-xs text-muted-foreground/70 italic mb-2">{copy.whatIfUnavailable}</p>
+          )}
+
           <div className="flex flex-wrap gap-2 items-center">
             {ccaaOptions.map((opt) => {
               const isExcluded = excludedRegions.includes(opt.value);
@@ -566,6 +625,7 @@ export const FlowsSankeyBlock: React.FC = () => {
                 <button
                   type="button"
                   key={opt.value}
+                  disabled={!whatIfAvailable}
                   onClick={() => {
                     setExcludedRegions(
                       (prev) =>
@@ -578,9 +638,11 @@ export const FlowsSankeyBlock: React.FC = () => {
                   className={`
                     px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                     ${
-                      isExcluded
-                        ? "bg-destructive/10 border-destructive/20 text-destructive line-through decoration-destructive/50"
-                        : "bg-background border-border text-foreground hover:bg-muted"
+                      !whatIfAvailable
+                        ? "opacity-50 cursor-not-allowed"
+                        : isExcluded
+                          ? "bg-destructive/10 border-destructive/20 text-destructive line-through decoration-destructive/50"
+                          : "bg-background border-border text-foreground hover:bg-muted"
                     }
                   `}
                 >
