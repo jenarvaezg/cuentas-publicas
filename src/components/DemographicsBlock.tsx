@@ -2,9 +2,13 @@ import { useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -73,8 +77,16 @@ function SimpleTooltip({ active, payload, label, suffix = "" }: SimpleTooltipPro
   );
 }
 
+const DEMO_EU_INDICATORS = ["birthRate", "deathRate", "fertilityRate", "lifeExpectancy"] as const;
+
+type DemoEUIndicator = (typeof DEMO_EU_INDICATORS)[number];
+
+const COLOR_SPAIN = "hsl(215, 65%, 45%)";
+const COLOR_OTHER = "hsl(215, 30%, 65%)";
+const COLOR_EU27 = "hsl(215, 15%, 55%)";
+
 export function DemographicsBlock() {
-  const { demographics } = useData();
+  const { demographics, eurostat } = useData();
   const { msg, lang } = useI18n();
   const dm = msg.blocks.demographics;
 
@@ -118,6 +130,80 @@ export function DemographicsBlock() {
   const [selectedYear, setSelectedYear] = useState<string>(() =>
     pyramid?.years?.length ? String(pyramid.years[pyramid.years.length - 1]) : "",
   );
+
+  const [selectedEUIndicator, setSelectedEUIndicator] = useState<DemoEUIndicator>("birthRate");
+
+  const euCopy =
+    lang === "en"
+      ? {
+          title: "European Comparison",
+          indicatorLabels: {
+            birthRate: "Birth rate",
+            deathRate: "Death rate",
+            fertilityRate: "Fertility rate",
+            lifeExpectancy: "Life expectancy",
+          } as Record<DemoEUIndicator, string>,
+          units: {
+            birthRate: "\u2030",
+            deathRate: "\u2030",
+            fertilityRate: "children/woman",
+            lifeExpectancy: "years",
+          } as Record<DemoEUIndicator, string>,
+          countryNames: {
+            ES: "Spain",
+            DE: "Germany",
+            FR: "France",
+            IT: "Italy",
+            PT: "Portugal",
+            EL: "Greece",
+            NL: "Netherlands",
+            EU27_2020: "EU-27",
+          } as Record<string, string>,
+          eu27Avg: "EU-27 avg",
+        }
+      : {
+          title: "Comparativa europea",
+          indicatorLabels: {
+            birthRate: "Natalidad",
+            deathRate: "Mortalidad",
+            fertilityRate: "Fecundidad",
+            lifeExpectancy: "Esperanza de vida",
+          } as Record<DemoEUIndicator, string>,
+          units: {
+            birthRate: "\u2030",
+            deathRate: "\u2030",
+            fertilityRate: "hijos/mujer",
+            lifeExpectancy: "a\u00F1os",
+          } as Record<DemoEUIndicator, string>,
+          countryNames: {} as Record<string, string>,
+          eu27Avg: "Media UE-27",
+        };
+
+  const euChartData = useMemo(() => {
+    const indicatorData = eurostat.indicators[selectedEUIndicator];
+    if (!indicatorData) return [];
+
+    const entries = eurostat.countries
+      .filter((code: string) => indicatorData[code] !== undefined)
+      .map((code: string) => ({
+        country: euCopy.countryNames[code] ?? eurostat.countryNames[code] ?? code,
+        countryCode: code,
+        value: indicatorData[code],
+        isSpain: code === "ES",
+        isEU: code === "EU27_2020",
+      }));
+
+    // Higher is "better" for life expectancy, lower for death rate
+    if (selectedEUIndicator === "deathRate") {
+      entries.sort((a: { value: number }, b: { value: number }) => a.value - b.value);
+    } else {
+      entries.sort((a: { value: number }, b: { value: number }) => b.value - a.value);
+    }
+
+    return entries;
+  }, [eurostat, selectedEUIndicator, euCopy.countryNames]);
+
+  const eu27Value = eurostat.indicators[selectedEUIndicator]?.EU27_2020 ?? null;
 
   // Source helpers
   const populationSource = demographics.sourceAttribution?.population
@@ -516,6 +602,100 @@ export function DemographicsBlock() {
                 />
               </AreaChart>
             </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* EU Demographic Comparison */}
+        {euChartData.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-muted-foreground">{euCopy.title}</h3>
+              <select
+                value={selectedEUIndicator}
+                onChange={(e) => setSelectedEUIndicator(e.target.value as DemoEUIndicator)}
+                className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                {DEMO_EU_INDICATORS.map((key) => (
+                  <option key={key} value={key}>
+                    {euCopy.indicatorLabels[key]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={euChartData}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 5, bottom: 5 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                  horizontal={false}
+                />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 11 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  tickFormatter={(v: number) =>
+                    `${formatNumber(v, selectedEUIndicator === "fertilityRate" ? 1 : 0)}`
+                  }
+                />
+                <YAxis
+                  type="category"
+                  dataKey="country"
+                  tick={{ fontSize: 11 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  width={80}
+                />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null;
+                    const d = payload[0].payload as {
+                      country: string;
+                      value: number;
+                    };
+                    return (
+                      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
+                        <p className="font-semibold text-foreground">{d.country}</p>
+                        <p className="text-muted-foreground">
+                          {formatNumber(d.value, 1)} {euCopy.units[selectedEUIndicator]}
+                        </p>
+                      </div>
+                    );
+                  }}
+                />
+                {eu27Value != null && (
+                  <ReferenceLine
+                    x={eu27Value}
+                    stroke="hsl(var(--muted-foreground))"
+                    strokeDasharray="4 4"
+                    label={{
+                      value: `${euCopy.eu27Avg}: ${formatNumber(eu27Value, 1)}`,
+                      position: "top",
+                      style: {
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      },
+                    }}
+                  />
+                )}
+                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                  {euChartData.map(
+                    (entry: { countryCode: string; isSpain: boolean; isEU: boolean }) => (
+                      <Cell
+                        key={entry.countryCode}
+                        fill={entry.isSpain ? COLOR_SPAIN : entry.isEU ? COLOR_EU27 : COLOR_OTHER}
+                        opacity={entry.isSpain ? 1 : 0.8}
+                      />
+                    ),
+                  )}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-xs text-muted-foreground text-center mt-1">
+              Eurostat {eurostat.year}
+            </p>
           </div>
         )}
       </CardContent>

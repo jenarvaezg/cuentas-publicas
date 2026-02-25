@@ -32,6 +32,11 @@ export interface SankeyNode {
   amount: number;
   format: "currency" | "percentage" | "none" | string;
   note?: string;
+  whatIfAttribution?: {
+    originalAmount: number;
+    directSubtracted: number;
+    proportionalSubtracted: number;
+  };
 }
 
 export interface SankeyLink {

@@ -51,6 +51,30 @@ const INDICATORS = {
     params: { freq: 'A', sex: 'T', age: 'Y15-74', unit: 'PC_ACT' },
     label: 'Tasa de paro',
     unit: '%'
+  },
+  birthRate: {
+    dataset: 'demo_gind',
+    params: { indic_de: 'GBIRTHRT' },
+    label: 'Tasa de natalidad',
+    unit: '‰'
+  },
+  deathRate: {
+    dataset: 'demo_gind',
+    params: { indic_de: 'GDEATHRT' },
+    label: 'Tasa de mortalidad',
+    unit: '‰'
+  },
+  fertilityRate: {
+    dataset: 'demo_frate',
+    params: {},
+    label: 'Índice de fecundidad',
+    unit: 'hijos/mujer'
+  },
+  lifeExpectancy: {
+    dataset: 'demo_mlexpec',
+    params: { sex: 'T', age: 'Y_LT1' },
+    label: 'Esperanza de vida',
+    unit: 'años'
   }
 }
 
@@ -245,7 +269,11 @@ const FALLBACK_DATA = {
     deficit: { ES: -3.6, DE: -2.1, FR: -5.5, IT: -7.4, PT: -1.2, EL: -1.6, NL: -0.3, EU27_2020: -3.5 },
     expenditureToGDP: { ES: 46.5, DE: 49.0, FR: 57.3, IT: 56.2, PT: 44.3, EL: 50.6, NL: 43.5, EU27_2020: 49.3 },
     socialSpendingToGDP: { ES: 18.6, DE: 21.6, FR: 24.0, IT: 23.2, PT: 16.3, EL: 20.2, NL: 15.4, EU27_2020: 20.2 },
-    unemploymentRate: { ES: 12.1, DE: 3.0, FR: 7.3, IT: 7.6, PT: 6.5, EL: 11.1, NL: 3.6, EU27_2020: 6.0 }
+    unemploymentRate: { ES: 12.1, DE: 3.0, FR: 7.3, IT: 7.6, PT: 6.5, EL: 11.1, NL: 3.6, EU27_2020: 6.0 },
+    birthRate: { ES: 6.7, DE: 8.3, FR: 10.7, IT: 6.7, PT: 7.4, EL: 7.3, NL: 9.3, EU27_2020: 8.7 },
+    deathRate: { ES: 8.7, DE: 12.0, FR: 10.1, IT: 12.0, PT: 11.4, EL: 12.3, NL: 9.6, EU27_2020: 10.9 },
+    fertilityRate: { ES: 1.16, DE: 1.35, FR: 1.68, IT: 1.20, PT: 1.30, EL: 1.32, NL: 1.49, EU27_2020: 1.41 },
+    lifeExpectancy: { ES: 83.2, DE: 80.8, FR: 82.3, IT: 82.7, PT: 81.3, EL: 80.1, NL: 81.4, EU27_2020: 81.5 }
   }
 }
 

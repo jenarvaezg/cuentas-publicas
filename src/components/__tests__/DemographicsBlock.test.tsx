@@ -27,12 +27,16 @@ vi.mock("recharts", () => {
     ResponsiveContainer: Passthrough,
     LineChart: Passthrough,
     AreaChart: Passthrough,
+    BarChart: Passthrough,
     CartesianGrid: () => null,
     XAxis: () => null,
     YAxis: () => null,
     Tooltip: () => null,
     Line: () => <div data-testid="line" />,
     Area: () => <div data-testid="area" />,
+    Bar: () => <div data-testid="bar" />,
+    Cell: () => null,
+    ReferenceLine: () => null,
     Legend: () => null,
   };
 });
@@ -108,6 +112,7 @@ const baseDemographics = {
       },
     },
   },
+  lastUpdated: "2026-02-25T00:00:00.000Z",
   dependencyRatio: { oldAge: 0.3, youth: 0.22, total: 0.52 },
   immigrationShare: {
     total: 0.189,
@@ -119,9 +124,35 @@ const baseDemographics = {
   },
 };
 
+const baseEurostat = {
+  year: 2024,
+  countries: ["ES", "DE", "FR", "IT", "PT", "EL", "NL", "EU27_2020"],
+  countryNames: {
+    ES: "España",
+    DE: "Alemania",
+    FR: "Francia",
+    IT: "Italia",
+    PT: "Portugal",
+    EL: "Grecia",
+    NL: "Países Bajos",
+    EU27_2020: "UE-27",
+  },
+  indicators: {
+    birthRate: { ES: 6.5, DE: 8.1, FR: 9.7, IT: 6.3, EU27_2020: 7.9 },
+    deathRate: { ES: 8.9, DE: 12.1, FR: 9.4, IT: 11, EU27_2020: 10.7 },
+    fertilityRate: { ES: 1.1, DE: 1.4, FR: 1.6, IT: 1.2, EU27_2020: 1.4 },
+    lifeExpectancy: { ES: 84, DE: 81.5, FR: 83.1, IT: 84.1, EU27_2020: 81.7 },
+  },
+  indicatorMeta: {},
+  sourceAttribution: {},
+};
+
 describe("DemographicsBlock", () => {
   it("renders title and 8 stat cards", () => {
-    (useData as any).mockReturnValue({ demographics: baseDemographics });
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
     render(<DemographicsBlock />);
 
     expect(screen.getByText("Demografía")).toBeDefined();
@@ -130,14 +161,20 @@ describe("DemographicsBlock", () => {
   });
 
   it("shows population pyramid when pyramid data exists", () => {
-    (useData as any).mockReturnValue({ demographics: baseDemographics });
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
     render(<DemographicsBlock />);
 
     expect(screen.getByTestId("pyramid-chart")).toBeDefined();
   });
 
   it("renders vital trends line chart", () => {
-    (useData as any).mockReturnValue({ demographics: baseDemographics });
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
     render(<DemographicsBlock />);
 
     expect(screen.getByText("Natalidad vs mortalidad (30 años)")).toBeDefined();
@@ -145,14 +182,20 @@ describe("DemographicsBlock", () => {
   });
 
   it("renders life expectancy chart", () => {
-    (useData as any).mockReturnValue({ demographics: baseDemographics });
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
     render(<DemographicsBlock />);
 
     expect(screen.getByText("Esperanza de vida al nacer")).toBeDefined();
   });
 
   it("renders immigration trend chart", () => {
-    (useData as any).mockReturnValue({ demographics: baseDemographics });
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
     render(<DemographicsBlock />);
 
     expect(screen.getByText("Evolución % nacidos en el extranjero")).toBeDefined();
@@ -169,6 +212,7 @@ describe("DemographicsBlock", () => {
         dependencyRatio: undefined,
         immigrationShare: undefined,
       },
+      eurostat: baseEurostat,
     });
     render(<DemographicsBlock />);
 
@@ -187,6 +231,7 @@ describe("DemographicsBlock", () => {
         dependencyRatio: undefined,
         immigrationShare: undefined,
       },
+      eurostat: baseEurostat,
     });
     render(<DemographicsBlock />);
 

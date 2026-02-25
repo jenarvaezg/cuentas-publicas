@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-25T11:23:37.312Z",
+  "lastUpdated": "2026-02-25T17:58:29.141Z",
   "year": 2024,
   "countries": [
     "ES",
@@ -71,6 +71,46 @@
       "EL": 10.1,
       "NL": 3.7,
       "EU27_2020": 5.9
+    },
+    "birthRate": {
+      "ES": 6.5,
+      "DE": 8.1,
+      "FR": 9.7,
+      "IT": 6.3,
+      "PT": 7.9,
+      "EL": 6.6,
+      "NL": 9.2,
+      "EU27_2020": 7.9
+    },
+    "deathRate": {
+      "ES": 8.9,
+      "DE": 12.1,
+      "FR": 9.4,
+      "IT": 11,
+      "PT": 11.1,
+      "EL": 12.1,
+      "NL": 9.6,
+      "EU27_2020": 10.7
+    },
+    "fertilityRate": {
+      "ES": 1.1,
+      "DE": 1.4,
+      "FR": 1.6,
+      "IT": 1.2,
+      "PT": 1.4,
+      "EL": 1.2,
+      "NL": 1.4,
+      "EU27_2020": 1.4
+    },
+    "lifeExpectancy": {
+      "ES": 84,
+      "DE": 81.5,
+      "FR": 83.1,
+      "IT": 84.1,
+      "PT": 82.5,
+      "EL": 81.9,
+      "NL": 82,
+      "EU27_2020": 81.7
     }
   },
   "indicatorMeta": {
@@ -93,6 +133,22 @@
     "unemploymentRate": {
       "label": "Tasa de paro",
       "unit": "%"
+    },
+    "birthRate": {
+      "label": "Tasa de natalidad",
+      "unit": "‰"
+    },
+    "deathRate": {
+      "label": "Tasa de mortalidad",
+      "unit": "‰"
+    },
+    "fertilityRate": {
+      "label": "Índice de fecundidad",
+      "unit": "hijos/mujer"
+    },
+    "lifeExpectancy": {
+      "label": "Esperanza de vida",
+      "unit": "años"
     }
   },
   "sourceAttribution": {

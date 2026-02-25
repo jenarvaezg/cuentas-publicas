@@ -308,10 +308,17 @@ export const FlowsSankeyBlock: React.FC = () => {
       let otrosIngresosSubtracted = 0;
       let totalExpenseSubtracted = 0;
 
+      // Store original amounts before any subtraction for What-If attribution
+      const originalAmounts: Record<string, number> = {};
+      for (const node of currentNodes) {
+        originalAmounts[node.id] = node.amount;
+      }
+
       const subtractFromNodeAndLink = (
         nodeId: string,
         amountToSubtract: number,
         isInput: boolean,
+        isProportional = false,
       ): number => {
         if (amountToSubtract <= 0) return 0;
 
@@ -322,6 +329,21 @@ export const FlowsSankeyBlock: React.FC = () => {
         if (node) {
           actualSubtracted = Math.min(node.amount, amountToSubtract);
           node.amount = Math.max(0, node.amount - actualSubtracted);
+
+          if (actualSubtracted > 0) {
+            if (!node.whatIfAttribution) {
+              node.whatIfAttribution = {
+                originalAmount: originalAmounts[node.id] ?? node.amount + actualSubtracted,
+                directSubtracted: 0,
+                proportionalSubtracted: 0,
+              };
+            }
+            if (isProportional) {
+              node.whatIfAttribution.proportionalSubtracted += actualSubtracted;
+            } else {
+              node.whatIfAttribution.directSubtracted += actualSubtracted;
+            }
+          }
         }
 
         // Subtract from Link towards/from CONSOLIDADO
@@ -566,6 +588,7 @@ export const FlowsSankeyBlock: React.FC = () => {
               "COTIZACIONES",
               cotizToSubtract,
               true,
+              true,
             );
           }
 
@@ -578,6 +601,7 @@ export const FlowsSankeyBlock: React.FC = () => {
               "OTROS_INGRESOS",
               otrosToSubtract,
               true,
+              true,
             );
 
             // 7. Subtract central spending residuals (GDP-proportional)
@@ -589,6 +613,7 @@ export const FlowsSankeyBlock: React.FC = () => {
                   nodeId,
                   residual * gdpProportion,
                   false,
+                  true,
                 );
               }
             }
@@ -600,6 +625,7 @@ export const FlowsSankeyBlock: React.FC = () => {
                 const actualTaxResidual = subtractFromNodeAndLink(
                   nodeId,
                   residual * gdpProportion,
+                  true,
                   true,
                 );
                 if (type === "direct") {
@@ -908,14 +934,49 @@ export const FlowsSankeyBlock: React.FC = () => {
             }}
             valueFormat={(value: number) => formatCompact(value * 1_000_000)}
             // biome-ignore lint/suspicious/noExplicitAny: nivo Sankey tooltip type is not exported
-            nodeTooltip={(node: any) => (
-              <div className="bg-popover/80 backdrop-blur-md text-popover-foreground px-3 py-2 rounded-xl border border-white/10 shadow-xl text-sm">
-                <span className="font-semibold">
-                  {copy.nodeLabels[node.node.id] || node.node.id.toString()}
-                </span>
-                : {formatCompact(node.node.value * 1_000_000)}
-              </div>
-            )}
+            nodeTooltip={(node: any) => {
+              const nodeData = activeNodes.find((n: SankeyNode) => n.id === node.node.id);
+              const attr = nodeData?.whatIfAttribution;
+              const hasAttribution =
+                attr && (attr.directSubtracted > 0 || attr.proportionalSubtracted > 0);
+
+              return (
+                <div className="bg-popover/80 backdrop-blur-md text-popover-foreground px-3 py-2 rounded-xl border border-white/10 shadow-xl text-sm max-w-xs">
+                  <span className="font-semibold">
+                    {copy.nodeLabels[node.node.id] || node.node.id.toString()}
+                  </span>
+                  : {formatCompact(node.node.value * 1_000_000)}
+                  {hasAttribution && (
+                    <div className="mt-1.5 pt-1.5 border-t border-white/10 space-y-0.5 text-xs text-muted-foreground">
+                      <div className="flex justify-between gap-4">
+                        <span>{lang === "en" ? "Original" : "Original"}:</span>
+                        <span className="tabular-nums">
+                          {formatCompact(attr.originalAmount * 1_000_000)}
+                        </span>
+                      </div>
+                      {attr.directSubtracted > 0 && (
+                        <div className="flex justify-between gap-4">
+                          <span>{lang === "en" ? "Direct (regional)" : "Directo (regional)"}:</span>
+                          <span className="tabular-nums text-red-400">
+                            −{formatCompact(attr.directSubtracted * 1_000_000)}
+                          </span>
+                        </div>
+                      )}
+                      {attr.proportionalSubtracted > 0 && (
+                        <div className="flex justify-between gap-4">
+                          <span>
+                            {lang === "en" ? "Proportional (GDP)" : "Proporcional (PIB)"}:
+                          </span>
+                          <span className="tabular-nums text-orange-400">
+                            −{formatCompact(attr.proportionalSubtracted * 1_000_000)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            }}
             theme={{
               tooltip: {
                 container: {

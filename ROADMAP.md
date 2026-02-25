@@ -52,10 +52,7 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
   - ⏳ Desglose provincial
   - ⏳ Proyecciones demográficas (INE a 20-30 años, poner diferentes estimaciones historicas para demostrar como se suelen equivocar https://x.com/rdomenechv/status/2014716812143816827, https://x.com/ocdeenespanol/status/2014020615791898800)
   - ⏳ Permitir comparar diferentes proyecciones entre paises
-  - ⏳ Permitir comparar natalidad entre paises
-  - ⏳ Permitir comparar mortalidad entre paises
-  - ⏳ Permitir comparar esperanza de vida entre paises
-  - ⏳ Permitir comparar fecundidad entre paises
+  - ✅ Comparativas internacionales (natalidad, mortalidad, esperanza de vida, fecundidad) — gráfico de barras horizontales con 8 países EU + media UE-27, datos Eurostat
   - ⏳ Datos de flujos migratorios (entradas/salidas)
   - ⏳ Poblacion actual y diferentes estimados, teniendo en cuenta flujos migratorios y natalidad/mortalidad
 
@@ -122,7 +119,7 @@ Corrección del gap de ~80.000 M€ en la simulación What-If.
 ### Mejoras pendientes del Simulador Territorial
 
 - ⏳ **Proxies refinados por categoría de gasto:** En vez de usar PIB para todo, usar deuda/deuda total para intereses, población para defensa, y PIB para administración general. Mayor fidelidad económica.
-- ⏳ **Tooltip de transparencia:** Al pasar el ratón sobre un nodo restado, mostrar desglose "X M€ directos + Y M€ proporcional (proxy PIB)".
+- ✅ **Tooltip de transparencia:** Al pasar el ratón sobre un nodo restado, muestra desglose "X M€ directos + Y M€ proporcional (proxy PIB)" con `whatIfAttribution` en `SankeyNode`.
 - ⏳ **Inversiones Reales y Subvenciones (Fase 2 original):** Licitaciones PLACSP y subvenciones BDNS por CCAA.
 - ⏳ **Nóminas AGE (Fase 3 original):** Distribución de funcionarios del Estado por CCAA y rama.
 
