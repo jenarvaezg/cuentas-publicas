@@ -2,6 +2,7 @@ import { ResponsiveSankey } from "@nivo/sankey";
 import { Info, ZoomOut } from "lucide-react";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
+import { PersonalCalculator, type SpendingCategory } from "@/components/PersonalCalculator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SankeyLink, SankeyNode } from "@/data/types";
@@ -698,6 +699,20 @@ export const FlowsSankeyBlock: React.FC = () => {
     return { filteredNodes: nodes, filteredLinks: links };
   }, [activeNodes, activeLinks, selectedNode]);
 
+  // Spending distribution for personal calculator
+  const { spendingCategories, totalSpending } = useMemo(() => {
+    const spendLinks = activeLinks.filter((l) => l.source === "CONSOLIDADO");
+    const total = spendLinks.reduce((s, l) => s + l.amount, 0);
+    const categories: SpendingCategory[] = spendLinks
+      .filter((l) => l.amount > 0)
+      .map((l) => ({
+        id: l.target,
+        label: copy.nodeLabels[l.target] || l.target,
+        amount: l.amount,
+      }));
+    return { spendingCategories: categories, totalSpending: total };
+  }, [activeLinks, copy.nodeLabels]);
+
   if (!flows) return null;
 
   return (
@@ -838,6 +853,8 @@ export const FlowsSankeyBlock: React.FC = () => {
             )}
           </div>
         )}
+
+        <PersonalCalculator spendingCategories={spendingCategories} totalSpending={totalSpending} />
 
         {selectedNode && (
           <div className="mt-4 flex justify-end">
