@@ -247,6 +247,57 @@ export const FlowsSankeyBlock: React.FC = () => {
         return actualSubtracted;
       };
 
+      // Precompute central spending residuals (Sankey total − sum of all regional)
+      // These represent central govt spending not directly in any CCAA's budget
+      const cofogRegionalTotals: Record<string, number> = {};
+      const spendAllEntries = ccaaSpending?.byYear[ccaaSpending.latestYear]?.entries;
+      if (spendAllEntries) {
+        for (const entry of spendAllEntries) {
+          for (const [div, amt] of Object.entries(entry.divisions)) {
+            const nodeId =
+              div === "01" ? "COFOG_01_RESTO" : div === "10" ? "COFOG_10_RESTO" : `COFOG_${div}`;
+            cofogRegionalTotals[nodeId] = (cofogRegionalTotals[nodeId] || 0) + amt;
+          }
+        }
+      }
+
+      let totalRegionalPensions = 0;
+      const pensionAllEntries =
+        pensionsRegional?.byYear[String(pensionsRegional.latestYear)]?.entries;
+      if (pensionAllEntries) {
+        for (const e of pensionAllEntries) {
+          totalRegionalPensions += e.annualAmount / 1_000_000;
+        }
+      }
+
+      let totalRegionalUnemployment = 0;
+      const unemplAllEntries =
+        unemploymentRegional?.byYear[String(unemploymentRegional.latestYear)]?.entries;
+      if (unemplAllEntries) {
+        for (const e of unemplAllEntries) {
+          totalRegionalUnemployment += e.amount / 1_000_000;
+        }
+      }
+
+      const centralResiduals: Record<string, number> = {};
+      for (const node of flows.nodes) {
+        if (node.id === "GASTO_INTERESES") {
+          centralResiduals[node.id] = node.amount;
+        } else if (node.id === "GASTO_PENSIONES") {
+          centralResiduals[node.id] = Math.max(0, node.amount - totalRegionalPensions);
+        } else if (node.id === "COFOG_10_RESTO") {
+          centralResiduals[node.id] = Math.max(
+            0,
+            node.amount - (cofogRegionalTotals["COFOG_10_RESTO"] || 0) - totalRegionalUnemployment,
+          );
+        } else if (node.id.startsWith("COFOG_")) {
+          centralResiduals[node.id] = Math.max(
+            0,
+            node.amount - (cofogRegionalTotals[node.id] || 0),
+          );
+        }
+      }
+
       // Aggregate subtractions across all excluded regions
       for (const regionId of excludedRegions) {
         // 1. Subtract Incomes (Taxes Collected in Region)
@@ -293,8 +344,11 @@ export const FlowsSankeyBlock: React.FC = () => {
           (e) => e.code === regionId,
         );
         if (spendLatest) {
-          for (const [cofog, amount] of Object.entries(spendLatest.divisions)) {
-            const actualExpense = subtractFromNodeAndLink(`COFOG_${cofog}`, amount, false);
+          for (const [div, amount] of Object.entries(spendLatest.divisions)) {
+            // Divisions "01" and "10" map to _RESTO nodes (interest/pensions split out)
+            const cofogNodeId =
+              div === "01" ? "COFOG_01_RESTO" : div === "10" ? "COFOG_10_RESTO" : `COFOG_${div}`;
+            const actualExpense = subtractFromNodeAndLink(cofogNodeId, amount, false);
             totalExpenseSubtracted += actualExpense;
           }
         }
@@ -373,6 +427,19 @@ export const FlowsSankeyBlock: React.FC = () => {
               otrosToSubtract,
               true,
             );
+
+            // 7. Subtract central spending residuals (GDP-proportional)
+            // Central govt spending not in any CCAA's budget (defence, national
+            // police, central admin overhead, debt interest, etc.)
+            for (const [nodeId, residual] of Object.entries(centralResiduals)) {
+              if (residual > 0) {
+                totalExpenseSubtracted += subtractFromNodeAndLink(
+                  nodeId,
+                  residual * gdpProportion,
+                  false,
+                );
+              }
+            }
           }
         }
       }
