@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-25T18:26:55.428Z",
+  "lastUpdated": "2026-02-25T19:11:24.247Z",
   "latestYear": 2024,
   "years": [
     2012,
@@ -2754,14 +2754,14 @@
           "id": "GASTO_PENSIONES",
           "label": "Pensiones",
           "group": "expense_specific",
-          "amount": 122400,
+          "amount": 140400,
           "format": "currency"
         },
         {
           "id": "COFOG_10_RESTO",
           "label": "Resto Protección Social",
           "group": "expense_cofog",
-          "amount": 125045,
+          "amount": 107045,
           "format": "currency"
         }
       ],
@@ -2917,14 +2917,14 @@
           "id": "l_21",
           "source": "CONSOLIDADO",
           "target": "GASTO_PENSIONES",
-          "amount": 122400,
+          "amount": 140400,
           "label": ""
         },
         {
           "id": "l_22",
           "source": "CONSOLIDADO",
           "target": "COFOG_10_RESTO",
-          "amount": 125045,
+          "amount": 107045,
           "label": ""
         }
       ]
@@ -3090,14 +3090,14 @@
           "id": "GASTO_PENSIONES",
           "label": "Pensiones",
           "group": "expense_specific",
-          "amount": 130800,
+          "amount": 150000,
           "format": "currency"
         },
         {
           "id": "COFOG_10_RESTO",
           "label": "Resto Protección Social",
           "group": "expense_cofog",
-          "amount": 117871,
+          "amount": 98671,
           "format": "currency"
         }
       ],
@@ -3253,14 +3253,14 @@
           "id": "l_21",
           "source": "CONSOLIDADO",
           "target": "GASTO_PENSIONES",
-          "amount": 130800,
+          "amount": 150000,
           "label": ""
         },
         {
           "id": "l_22",
           "source": "CONSOLIDADO",
           "target": "COFOG_10_RESTO",
-          "amount": 117871,
+          "amount": 98671,
           "label": ""
         }
       ]
@@ -3426,14 +3426,14 @@
           "id": "GASTO_PENSIONES",
           "label": "Pensiones",
           "group": "expense_specific",
-          "amount": 140400,
+          "amount": 160800,
           "format": "currency"
         },
         {
           "id": "COFOG_10_RESTO",
           "label": "Resto Protección Social",
           "group": "expense_cofog",
-          "amount": 111711,
+          "amount": 91311,
           "format": "currency"
         }
       ],
@@ -3589,14 +3589,14 @@
           "id": "l_21",
           "source": "CONSOLIDADO",
           "target": "GASTO_PENSIONES",
-          "amount": 140400,
+          "amount": 160800,
           "label": ""
         },
         {
           "id": "l_22",
           "source": "CONSOLIDADO",
           "target": "COFOG_10_RESTO",
-          "amount": 111711,
+          "amount": 91311,
           "label": ""
         }
       ]
@@ -3762,14 +3762,14 @@
           "id": "GASTO_PENSIONES",
           "label": "Pensiones",
           "group": "expense_specific",
-          "amount": 151200,
+          "amount": 172800,
           "format": "currency"
         },
         {
           "id": "COFOG_10_RESTO",
           "label": "Resto Protección Social",
           "group": "expense_cofog",
-          "amount": 126127,
+          "amount": 104527,
           "format": "currency"
         }
       ],
@@ -3925,14 +3925,14 @@
           "id": "l_21",
           "source": "CONSOLIDADO",
           "target": "GASTO_PENSIONES",
-          "amount": 151200,
+          "amount": 172800,
           "label": ""
         },
         {
           "id": "l_22",
           "source": "CONSOLIDADO",
           "target": "COFOG_10_RESTO",
-          "amount": 126127,
+          "amount": 104527,
           "label": ""
         }
       ]
@@ -4098,14 +4098,14 @@
           "id": "GASTO_PENSIONES",
           "label": "Pensiones",
           "group": "expense_specific",
-          "amount": 222736,
+          "amount": 226446,
           "format": "currency"
         },
         {
           "id": "COFOG_10_RESTO",
           "label": "Resto Protección Social",
           "group": "expense_cofog",
-          "amount": 74796,
+          "amount": 71086,
           "format": "currency"
         }
       ],
@@ -4261,14 +4261,14 @@
           "id": "l_21",
           "source": "CONSOLIDADO",
           "target": "GASTO_PENSIONES",
-          "amount": 222736,
+          "amount": 226446,
           "label": ""
         },
         {
           "id": "l_22",
           "source": "CONSOLIDADO",
           "target": "COFOG_10_RESTO",
-          "amount": 74796,
+          "amount": 71086,
           "label": ""
         }
       ]
