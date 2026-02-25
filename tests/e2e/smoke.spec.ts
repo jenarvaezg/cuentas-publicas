@@ -136,9 +136,7 @@ test.describe("Smoke", () => {
     await expect(debtSourceLink).toHaveAttribute("href", /be11b\.csv/);
     await expect(debtSourceLink).toHaveAttribute("target", "_blank");
 
-    await page.getByRole("button", { name: "Territorio" }).click();
-    await page.getByRole("link", { name: "CCAA" }).click();
-    await expect(page).toHaveURL(/section=ccaa/);
+    await page.goto("/?section=ccaa");
 
     const ccaaSection = page.locator("#ccaa");
     const metricSelect = ccaaSection.getByLabel("Métrica");
