@@ -1,5 +1,6 @@
 import { execFileSync } from 'child_process'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
+import { normalizeText } from '../lib/text-utils.mjs'
 
 const NAVARRA_URL =
   'https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico'
@@ -19,15 +20,6 @@ const FALLBACK_2024 = {
     netFlowToState: null,
     taxRevenue: 18310,
   },
-}
-
-function normalizeText(value) {
-  return String(value ?? '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
 }
 
 function decodeHtmlEntities(value) {
@@ -142,9 +134,9 @@ function curlDownload(url) {
   )
 }
 
-async function fetchTextPreferFetchThenCurl(url) {
+async function fetchTextPreferFetchThenCurl(url, fetcher) {
   try {
-    const response = await fetchWithRetry(
+    const response = await fetcher(
       url,
       { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)' } },
       { maxRetries: 2, timeoutMs: 45000 },
@@ -225,15 +217,15 @@ function buildFallbackDataset() {
   }
 }
 
-export async function downloadCcaaForalFlowsData() {
+export async function downloadCcaaForalFlowsData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando flujos forales CCAA (Navarra y País Vasco) ===')
   console.log(`  Navarra: ${NAVARRA_URL}`)
   console.log(`  Euskadi:  ${EUSKADI_URL}`)
 
   try {
     const [navarraHtml, euskadiHtml] = await Promise.all([
-      fetchTextPreferFetchThenCurl(NAVARRA_URL),
-      fetchTextPreferFetchThenCurl(EUSKADI_URL),
+      fetchTextPreferFetchThenCurl(NAVARRA_URL, fetcher),
+      fetchTextPreferFetchThenCurl(EUSKADI_URL, fetcher),
     ])
 
     const navarra = parseNavarraForalFlow(navarraHtml)

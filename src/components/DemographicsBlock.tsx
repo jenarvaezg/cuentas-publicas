@@ -1,19 +1,4 @@
 import { useMemo, useState } from "react";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Line,
-  LineChart,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   fromAttribution,
@@ -26,6 +11,13 @@ import type { TimeSeriesPoint } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
+import {
+  type DemoEUIndicator,
+  EUDemographicComparison,
+} from "./demographics/EUDemographicComparison";
+import { ImmigrationChart } from "./demographics/ImmigrationChart";
+import { LifeExpectancyChart } from "./demographics/LifeExpectancyChart";
+import { VitalTrendsChart } from "./demographics/VitalTrendsChart";
 import { ExportBlockButton } from "./ExportBlockButton";
 import { PopulationPyramidChart } from "./PopulationPyramidChart";
 import { StatCard } from "./StatCard";
@@ -50,87 +42,15 @@ function yoyTrend(
   return { value: diff, label: `${sign}${formatNumber(diff, 2)} ${unit}` };
 }
 
-interface SimpleTooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    dataKey: string;
-    value: number;
-    color: string;
-    name: string;
-  }>;
-  label?: number;
-  suffix?: string;
-}
-
-function SimpleTooltip({ active, payload, label, suffix = "" }: SimpleTooltipProps) {
-  if (!active || !payload?.length || !label) return null;
-  return (
-    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-      <p className="font-semibold text-foreground">{label}</p>
-      {payload.map((p) => (
-        <p key={p.dataKey} style={{ color: p.color }}>
-          {p.name}: {formatNumber(p.value, 2)}
-          {suffix}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-const DEMO_EU_INDICATORS = ["birthRate", "deathRate", "fertilityRate", "lifeExpectancy"] as const;
-
-type DemoEUIndicator = (typeof DEMO_EU_INDICATORS)[number];
-
-const COLOR_SPAIN = "hsl(215, 65%, 45%)";
-const COLOR_OTHER = "hsl(215, 30%, 65%)";
-const COLOR_EU27 = "hsl(215, 15%, 55%)";
-
 export function DemographicsBlock() {
   const { demographics, eurostat } = useData();
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
   const dm = msg.blocks.demographics;
 
   const { vitalStats, lifeExpectancy, pyramid, dependencyRatio, immigrationShare, cpi } =
     demographics;
 
-  const dmTooltips =
-    lang === "en"
-      ? {
-          population:
-            "The total number of people registered as residents in Spain, including Spanish nationals and foreign residents.",
-          birthRate: "How many babies are born for every 1,000 people in the population each year.",
-          fertilityRate:
-            "The average number of children a woman is expected to have over her lifetime. A rate of 2.1 is needed to keep the population stable without immigration.",
-          dependencyRatio:
-            "For every 100 working-age people, this many are aged 65 or over. A higher ratio means more pensioners relative to workers.",
-          lifeExpectancy:
-            "How many years a baby born today is expected to live on average, based on current mortality rates.",
-          naturalGrowth:
-            "The difference between births and deaths per 1,000 people. Negative means more people are dying than being born.",
-          deathRate: "How many people die for every 1,000 residents each year.",
-          immigrationShare:
-            "The percentage of people living in Spain who were born in another country.",
-          inflationRate:
-            "How much more expensive things are compared to a year ago, measured by the Consumer Price Index (CPI). A rate of 2% means a basket of goods that cost €100 last year now costs €102.",
-        }
-      : {
-          population:
-            "El número total de personas registradas como residentes en España, incluyendo nacionales y extranjeros.",
-          birthRate: "Cuántos bebés nacen por cada 1.000 habitantes al año.",
-          fertilityRate:
-            "El número medio de hijos que tendría una mujer a lo largo de su vida. Se necesita un índice de 2,1 para que la población no disminuya sin inmigración.",
-          dependencyRatio:
-            "Por cada 100 personas en edad de trabajar, este número tiene 65 años o más. Cuanto más alto, más pensionistas hay en relación a los trabajadores.",
-          lifeExpectancy:
-            "Cuántos años se espera que viva de media un bebé nacido hoy, según las tasas de mortalidad actuales.",
-          naturalGrowth:
-            "La diferencia entre nacimientos y defunciones por cada 1.000 habitantes. Si es negativo, muere más gente de la que nace.",
-          deathRate: "Cuántas personas fallecen por cada 1.000 habitantes al año.",
-          immigrationShare:
-            "El porcentaje de personas que viven en España pero nacieron en otro país.",
-          inflationRate:
-            "Cuánto más caras están las cosas respecto al año anterior, medido por el Índice de Precios al Consumo (IPC). Una tasa del 2% significa que lo que costaba 100 € el año pasado ahora cuesta 102 €.",
-        };
+  const dmTooltips = dm.tooltips;
 
   const [selectedYear, setSelectedYear] = useState<string>(() =>
     pyramid?.years?.length ? String(pyramid.years[pyramid.years.length - 1]) : "",
@@ -138,51 +58,7 @@ export function DemographicsBlock() {
 
   const [selectedEUIndicator, setSelectedEUIndicator] = useState<DemoEUIndicator>("birthRate");
 
-  const euCopy =
-    lang === "en"
-      ? {
-          title: "European Comparison",
-          indicatorLabels: {
-            birthRate: "Birth rate",
-            deathRate: "Death rate",
-            fertilityRate: "Fertility rate",
-            lifeExpectancy: "Life expectancy",
-          } as Record<DemoEUIndicator, string>,
-          units: {
-            birthRate: "\u2030",
-            deathRate: "\u2030",
-            fertilityRate: "children/woman",
-            lifeExpectancy: "years",
-          } as Record<DemoEUIndicator, string>,
-          countryNames: {
-            ES: "Spain",
-            DE: "Germany",
-            FR: "France",
-            IT: "Italy",
-            PT: "Portugal",
-            EL: "Greece",
-            NL: "Netherlands",
-            EU27_2020: "EU-27",
-          } as Record<string, string>,
-          eu27Avg: "EU-27 avg",
-        }
-      : {
-          title: "Comparativa europea",
-          indicatorLabels: {
-            birthRate: "Natalidad",
-            deathRate: "Mortalidad",
-            fertilityRate: "Fecundidad",
-            lifeExpectancy: "Esperanza de vida",
-          } as Record<DemoEUIndicator, string>,
-          units: {
-            birthRate: "\u2030",
-            deathRate: "\u2030",
-            fertilityRate: "hijos/mujer",
-            lifeExpectancy: "a\u00F1os",
-          } as Record<DemoEUIndicator, string>,
-          countryNames: {} as Record<string, string>,
-          eu27Avg: "Media UE-27",
-        };
+  const euCopy = dm.euComparison;
 
   const euChartData = useMemo(() => {
     const indicatorData = eurostat.indicators[selectedEUIndicator];
@@ -198,7 +74,6 @@ export function DemographicsBlock() {
         isEU: code === "EU27_2020",
       }));
 
-    // Higher is "better" for life expectancy, lower for death rate
     if (selectedEUIndicator === "deathRate") {
       entries.sort((a: { value: number }, b: { value: number }) => a.value - b.value);
     } else {
@@ -511,248 +386,39 @@ export function DemographicsBlock() {
           </div>
         )}
 
-        {/* Vital stats trend chart */}
-        {vitalTrendsData.length > 1 && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
-              {dm.vitalTrendsTitle}
-            </h3>
-            <div className="flex items-center justify-center gap-5 mb-2 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-blue-500" />
-                {dm.birthRate}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-rose-500" />
-                {dm.deathRate}
-              </span>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={vitalTrendsData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="year"
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  tickFormatter={(v: number) => formatNumber(v, 1)}
-                />
-                <Tooltip content={<SimpleTooltip suffix={`\u2030`} />} />
-                <Line
-                  type="monotone"
-                  dataKey="birthRate"
-                  name={dm.birthRate}
-                  stroke="hsl(var(--chart-1))"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="deathRate"
-                  name={dm.deathRate}
-                  stroke="hsl(var(--chart-2))"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
+        <VitalTrendsChart
+          data={vitalTrendsData}
+          title={dm.vitalTrendsTitle}
+          birthRateLabel={dm.birthRate}
+          deathRateLabel={dm.deathRate}
+        />
 
-        {/* Life expectancy chart */}
-        {lifeExpData.length > 1 && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
-              {dm.lifeExpectancyTitle}
-            </h3>
-            <div className="flex items-center justify-center gap-5 mb-2 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-blue-500" />
-                {dm.lifeExpectancy}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-teal-500" />
-                {dm.pyramidMale}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm bg-rose-500" />
-                {dm.pyramidFemale}
-              </span>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={lifeExpData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="year"
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis
-                  domain={["dataMin - 2", "dataMax + 2"]}
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  tickFormatter={(v: number) => formatNumber(v, 1)}
-                />
-                <Tooltip content={<SimpleTooltip suffix={` ${dm.years}`} />} />
-                <Line
-                  type="monotone"
-                  dataKey="both"
-                  name={dm.lifeExpectancy}
-                  stroke="hsl(var(--chart-1))"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="male"
-                  name={dm.pyramidMale}
-                  stroke="hsl(var(--chart-4))"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="female"
-                  name={dm.pyramidFemale}
-                  stroke="hsl(var(--chart-2))"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
+        <LifeExpectancyChart
+          data={lifeExpData}
+          title={dm.lifeExpectancyTitle}
+          bothLabel={dm.lifeExpectancy}
+          maleLabel={dm.pyramidMale}
+          femaleLabel={dm.pyramidFemale}
+          yearsLabel={dm.years}
+        />
 
-        {/* Immigration trend chart */}
-        {immigrationData.length > 1 && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
-              {dm.immigrationTrendTitle}
-            </h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={immigrationData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="year"
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  tickFormatter={(v: number) => `${formatNumber(v, 1)}%`}
-                />
-                <Tooltip content={<SimpleTooltip suffix="%" />} />
-                <Area
-                  type="monotone"
-                  dataKey="share"
-                  name={dm.immigrationShare}
-                  stroke="hsl(var(--chart-4))"
-                  fill="hsl(var(--chart-2))"
-                  fillOpacity={0.2}
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        )}
+        <ImmigrationChart
+          data={immigrationData}
+          title={dm.immigrationTrendTitle}
+          shareLabel={dm.immigrationShare}
+        />
 
-        {/* EU Demographic Comparison */}
-        {euChartData.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-muted-foreground">{euCopy.title}</h3>
-              <select
-                value={selectedEUIndicator}
-                onChange={(e) => setSelectedEUIndicator(e.target.value as DemoEUIndicator)}
-                className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
-              >
-                {DEMO_EU_INDICATORS.map((key) => (
-                  <option key={key} value={key}>
-                    {euCopy.indicatorLabels[key]}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={euChartData}
-                layout="vertical"
-                margin={{ top: 5, right: 30, left: 5, bottom: 5 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="hsl(var(--border))"
-                  horizontal={false}
-                />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  tickFormatter={(v: number) =>
-                    `${formatNumber(v, selectedEUIndicator === "fertilityRate" ? 1 : 0)}`
-                  }
-                />
-                <YAxis
-                  type="category"
-                  dataKey="country"
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                  width={80}
-                />
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0].payload as {
-                      country: string;
-                      value: number;
-                    };
-                    return (
-                      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-                        <p className="font-semibold text-foreground">{d.country}</p>
-                        <p className="text-muted-foreground">
-                          {formatNumber(d.value, 1)} {euCopy.units[selectedEUIndicator]}
-                        </p>
-                      </div>
-                    );
-                  }}
-                />
-                {eu27Value != null && (
-                  <ReferenceLine
-                    x={eu27Value}
-                    stroke="hsl(var(--muted-foreground))"
-                    strokeDasharray="4 4"
-                    label={{
-                      value: `${euCopy.eu27Avg}: ${formatNumber(eu27Value, 1)}`,
-                      position: "top",
-                      style: {
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      },
-                    }}
-                  />
-                )}
-                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                  {euChartData.map(
-                    (entry: { countryCode: string; isSpain: boolean; isEU: boolean }) => (
-                      <Cell
-                        key={entry.countryCode}
-                        fill={entry.isSpain ? COLOR_SPAIN : entry.isEU ? COLOR_EU27 : COLOR_OTHER}
-                        opacity={entry.isSpain ? 1 : 0.8}
-                      />
-                    ),
-                  )}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <p className="text-xs text-muted-foreground text-center mt-1">
-              Eurostat {eurostat.year}
-            </p>
-          </div>
-        )}
+        <EUDemographicComparison
+          data={euChartData}
+          eu27Value={eu27Value}
+          selectedIndicator={selectedEUIndicator}
+          onIndicatorChange={setSelectedEUIndicator}
+          title={euCopy.title}
+          indicatorLabels={euCopy.indicatorLabels}
+          units={euCopy.units}
+          eu27Avg={euCopy.eu27Avg}
+          eurostatYear={eurostat.year}
+        />
       </CardContent>
     </Card>
   );

@@ -2,6 +2,11 @@ import XLSX from 'xlsx'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
 import fs from 'fs'
 import path from 'path'
+import {
+  normalizeExcelUrl,
+  collectExcelCandidates,
+  parseExcelMetadata,
+} from '../lib/ss-scraper.mjs'
 
 const SS_BASE = 'https://www.seg-social.es'
 const EST24_URL = `${SS_BASE}/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24`
@@ -42,16 +47,19 @@ const ALIASES = {
     'RIOJA (LA)': 'CA17'
 };
 
-function normalizeExcelUrl(pathOrUrl) {
-    const cleaned = String(pathOrUrl || '').replace(/&amp;/g, '&').trim()
-    if (!cleaned) return null
+function parseCAExcelMetadata(excelUrl) {
+    const filename = excelUrl.split('/').pop()?.split('?')[0] || 'CA_unknown.xlsx'
+    const dateMatch = filename.match(/CA(\d{4})(\d{2})/)
+    const excelDate = dateMatch
+        ? `${dateMatch[1]}-${dateMatch[2]}-01`
+        : new Date().toISOString().split('T')[0]
+    const monthLabel = dateMatch
+        ? `${MONTH_NAMES[parseInt(dateMatch[2]) - 1]} ${dateMatch[1]}`
+        : 'fecha desconocida'
 
-    try {
-        return new URL(cleaned, `${SS_BASE}/`).toString()
-    } catch {
-        if (cleaned.startsWith('http')) return cleaned
-        return `${SS_BASE}${cleaned}`
-    }
+    const year = dateMatch ? parseInt(dateMatch[1]) : new Date().getFullYear();
+
+    return { filename, excelDate, monthLabel, year }
 }
 
 function buildRecentCAFallbackUrls(months = 4) {
@@ -68,7 +76,7 @@ function buildRecentCAFallbackUrls(months = 4) {
     return fallback
 }
 
-function collectExcelCandidates(html) {
+function collectCAExcelCandidates(html) {
     const allXlsx = [...html.matchAll(/href=["']([^"']*\.xlsx[^"']*)["']/gi)]
     const caUrlsFromPage = allXlsx
         .map(match => normalizeExcelUrl(match[1]))
@@ -81,21 +89,6 @@ function collectExcelCandidates(html) {
     ].filter(Boolean)
 
     return [...new Set(candidateUrls)]
-}
-
-function parseExcelMetadata(excelUrl) {
-    const filename = excelUrl.split('/').pop()?.split('?')[0] || 'CA_unknown.xlsx'
-    const dateMatch = filename.match(/CA(\d{4})(\d{2})/)
-    const excelDate = dateMatch
-        ? `${dateMatch[1]}-${dateMatch[2]}-01`
-        : new Date().toISOString().split('T')[0]
-    const monthLabel = dateMatch
-        ? `${MONTH_NAMES[parseInt(dateMatch[2]) - 1]} ${dateMatch[1]}`
-        : 'fecha desconocida'
-
-    const year = dateMatch ? parseInt(dateMatch[1]) : new Date().getFullYear();
-
-    return { filename, excelDate, monthLabel, year }
 }
 
 function normalizeRegionName(name) {
@@ -120,7 +113,7 @@ function standardizeRegionCode(rawName) {
 }
 
 function parseCAExcelBuffer(buffer, excelUrl) {
-    const { excelDate, monthLabel, year } = parseExcelMetadata(excelUrl)
+    const { excelDate, monthLabel, year } = parseCAExcelMetadata(excelUrl)
     const wb = XLSX.read(Buffer.from(buffer), { type: 'buffer' })
     console.log(`    Hojas: ${wb.SheetNames.join(', ')}`)
 
@@ -210,7 +203,7 @@ function parseCAExcelBuffer(buffer, excelUrl) {
     }
 }
 
-export async function downloadRegionalPensionsData() {
+export async function downloadRegionalPensionsData(fetcher = fetchWithRetry) {
     console.log('\n=== Descargando pensiones por CCAA (Seguridad Social) ===')
     console.log()
     console.log('  Estrategia: scraping Excel territorial desde Seg. Social')
@@ -221,7 +214,7 @@ export async function downloadRegionalPensionsData() {
     let liveDataError = null
 
     try {
-        liveData = await fetchFromSSCAExcel()
+        liveData = await fetchFromSSCAExcel(fetcher)
     } catch (error) {
         liveDataError = error?.message || 'error desconocido'
         console.log(`  ❌ Error en scraping: ${error.message}`)
@@ -240,11 +233,11 @@ export async function downloadRegionalPensionsData() {
     }
 }
 
-async function fetchFromSSCAExcel() {
+async function fetchFromSSCAExcel(fetcher) {
     console.log('  1. Descargando página índice EST24...')
     console.log(`    URL: ${EST24_URL}`)
 
-    const pageResponse = await fetchWithRetry(EST24_URL, {
+    const pageResponse = await fetcher(EST24_URL, {
         headers: {
             'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)',
             'Accept': 'text/html'
@@ -255,7 +248,7 @@ async function fetchFromSSCAExcel() {
 
     console.log()
     console.log('  2. Buscando enlaces CA*.xlsx...')
-    const candidateExcelUrls = collectExcelCandidates(html)
+    const candidateExcelUrls = collectCAExcelCandidates(html)
     console.log(`    Candidatos CA*.xlsx: ${candidateExcelUrls.length}`)
 
     if (candidateExcelUrls.length === 0) {
@@ -268,11 +261,11 @@ async function fetchFromSSCAExcel() {
     let lastError = null
     for (let i = 0; i < Math.min(candidateExcelUrls.length, 5); i++) {
         const candidateUrl = candidateExcelUrls[i]
-        const { filename, monthLabel } = parseExcelMetadata(candidateUrl)
+        const { filename, monthLabel } = parseCAExcelMetadata(candidateUrl)
         console.log(`    [${i + 1}] Probando ${filename} (${monthLabel})`)
 
         try {
-            const xlsxResponse = await fetchWithRetry(candidateUrl, {
+            const xlsxResponse = await fetcher(candidateUrl, {
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)'
                 }

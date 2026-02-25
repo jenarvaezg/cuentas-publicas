@@ -1,5 +1,4 @@
-import type { SourceDetail } from "@/components/StatCard";
-import type { DataSourceAttribution } from "@/data/types";
+import type { DataSourceAttribution, SourceDetail } from "@/data/types";
 
 // Banco de España
 export const BDE_BE11B: SourceDetail = {
@@ -182,4 +181,12 @@ export function fromAttribution(attr: DataSourceAttribution): SourceDetail {
     date: attr.date,
     note: attr.note,
   };
+}
+
+/** Helper: resolve a source from an optional DataSourceAttribution or fall back to a static SourceDetail */
+export function resolveSource(
+  attr: DataSourceAttribution | undefined,
+  fallback: SourceDetail,
+): SourceDetail {
+  return attr ? fromAttribution(attr) : fallback;
 }

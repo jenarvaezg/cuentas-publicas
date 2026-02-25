@@ -1,3 +1,6 @@
+import { appChapterMessages } from "./messages/app-chapters";
+import { blockMessages } from "./messages/blocks";
+
 export type AppLanguage = "es" | "en";
 
 export const messages = {
@@ -77,61 +80,9 @@ export const messages = {
       populationLabel: "Población",
       singleCcaaIndicator: "Vista individual",
     },
-    blocks: {
-      debt: {
-        title: "Deuda Pública (PDE)",
-        consolidationNote:
-          "La suma de los subsectores (Estado + CCAA + CCLL + SS) supera la deuda PDE total porque esta última consolida préstamos intergubernamentales (FLA, FFPP, préstamos a CCAA) que se compensan contablemente.",
-      },
-      debtCost: { title: "Coste de la Deuda" },
-      equivalences: {
-        title: "Equivalencias",
-        subtitle: "Para entender las cifras: la deuda publica traducida a magnitudes cotidianas",
-      },
-      pensions: { title: "Pensiones y Seguridad Social" },
-      revenue: { title: "Ingresos vs Gastos Públicos" },
-      budget: { title: "Gasto Público por Funciones (COFOG)" },
-      eu: { title: "España en la Unión Europea" },
-      ccaa: { title: "Deuda por Comunidad Autónoma" },
-      taxRevenue: { title: "Recaudación Tributaria" },
-      demographics: {
-        title: "Demografía",
-        population: "Población total",
-        birthRate: "Tasa de natalidad",
-        fertilityRate: "Tasa de fecundidad",
-        dependencyRatio: "Ratio de dependencia",
-        lifeExpectancy: "Esperanza de vida",
-        naturalGrowth: "Crecimiento vegetativo",
-        deathRate: "Tasa de mortalidad",
-        immigrationShare: "% nacidos en el extranjero",
-        inflationRate: "Inflación anual (IPC)",
-        pyramidTitle: "Pirámide de población por origen",
-        vitalTrendsTitle: "Natalidad vs mortalidad (30 años)",
-        lifeExpectancyTitle: "Esperanza de vida al nacer",
-        immigrationTrendTitle: "Evolución % nacidos en el extranjero",
-        yearLabel: "Año",
-        perThousand: "por mil hab.",
-        childrenPerWoman: "hijos/mujer",
-        years: "años",
-        pyramidMale: "Hombres",
-        pyramidFemale: "Mujeres",
-        regionSpain: "Nacidos en España",
-        regionEU: "UE sin España",
-        regionRestEurope: "Resto de Europa",
-        regionAfrica: "África",
-        regionAmericas: "América",
-        regionAsiaOceania: "Asia + Oceanía",
-      },
-      sustainability: {
-        title: "Sostenibilidad de la Seguridad Social",
-      },
-      methodology: {
-        title: "Metodología y fuentes",
-      },
-      roadmap: {
-        title: "Roadmap y wishlist",
-      },
-    },
+    blocks: blockMessages.es,
+    chapters: appChapterMessages.es.chapters,
+    narrativeBridges: appChapterMessages.es.narrativeBridges,
     freshness: {
       dataAsOf: "Datos actualizados:",
       staleWarning: "Algunos datos pueden estar desactualizados",
@@ -220,61 +171,9 @@ export const messages = {
       populationLabel: "Population",
       singleCcaaIndicator: "Single region view",
     },
-    blocks: {
-      debt: {
-        title: "Public Debt (EDP)",
-        consolidationNote:
-          "The sum of subsectors (Central + Regions + Local + SS) exceeds total EDP debt because the official figure consolidates intergovernmental loans (FLA, FFPP, regional loans) that net out in accounting.",
-      },
-      debtCost: { title: "Debt Cost" },
-      equivalences: {
-        title: "Equivalences",
-        subtitle: "Debt translated into everyday magnitudes to make figures easier to grasp",
-      },
-      pensions: { title: "Pensions and Social Security" },
-      revenue: { title: "Public Revenue vs Expenditure" },
-      budget: { title: "Public Spending by Function (COFOG)" },
-      eu: { title: "Spain in the European Union" },
-      ccaa: { title: "Debt by Autonomous Community" },
-      taxRevenue: { title: "Tax Revenue" },
-      demographics: {
-        title: "Demographics",
-        population: "Total population",
-        birthRate: "Birth rate",
-        fertilityRate: "Fertility rate",
-        dependencyRatio: "Dependency ratio",
-        lifeExpectancy: "Life expectancy",
-        naturalGrowth: "Natural growth",
-        deathRate: "Death rate",
-        immigrationShare: "% foreign-born",
-        inflationRate: "Annual inflation (CPI)",
-        pyramidTitle: "Population pyramid by origin",
-        vitalTrendsTitle: "Birth rate vs death rate (30 years)",
-        lifeExpectancyTitle: "Life expectancy at birth",
-        immigrationTrendTitle: "Foreign-born population share over time",
-        yearLabel: "Year",
-        perThousand: "per 1,000 pop.",
-        childrenPerWoman: "children/woman",
-        years: "years",
-        pyramidMale: "Male",
-        pyramidFemale: "Female",
-        regionSpain: "Born in Spain",
-        regionEU: "EU excl. Spain",
-        regionRestEurope: "Rest of Europe",
-        regionAfrica: "Africa",
-        regionAmericas: "Americas",
-        regionAsiaOceania: "Asia + Oceania",
-      },
-      sustainability: {
-        title: "Social Security Sustainability",
-      },
-      methodology: {
-        title: "Methodology and sources",
-      },
-      roadmap: {
-        title: "Roadmap and wishlist",
-      },
-    },
+    blocks: blockMessages.en,
+    chapters: appChapterMessages.en.chapters,
+    narrativeBridges: appChapterMessages.en.narrativeBridges,
     freshness: {
       dataAsOf: "Data updated:",
       staleWarning: "Some data may be outdated",

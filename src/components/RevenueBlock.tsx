@@ -11,8 +11,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartTooltip } from "@/components/ChartTooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CALCULO_DERIVADO, EUROSTAT_GOV_MAIN, fromAttribution } from "@/data/sources";
+import { CALCULO_DERIVADO, EUROSTAT_GOV_MAIN, resolveSource } from "@/data/sources";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
@@ -35,17 +36,21 @@ export const BreakdownTooltip = ({
   payload?: Array<{ payload: BreakdownDatum }>;
   millionSuffix?: string;
 }) => {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
   const millions = millionSuffix ?? "M€";
   return (
-    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-      <p className="font-semibold text-foreground">{d.name}</p>
-      <p className="text-muted-foreground">
-        {formatNumber(d.amount, 0)} {millions} ({formatNumber(d.percentage, 1)}
-        %)
-      </p>
-    </div>
+    <ChartTooltip active={active} payload={payload}>
+      {(pl) => {
+        const d = pl[0].payload;
+        return (
+          <>
+            <p className="font-semibold text-foreground">{d.name}</p>
+            <p className="text-muted-foreground">
+              {formatNumber(d.amount, 0)} {millions} ({formatNumber(d.percentage, 1)}%)
+            </p>
+          </>
+        );
+      }}
+    </ChartTooltip>
   );
 };
 
@@ -102,68 +107,9 @@ const BREAKDOWN_COLORS = {
 
 export function RevenueBlock() {
   const { revenue, demographics } = useData();
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
 
-  const copy =
-    lang === "en"
-      ? {
-          taxesDirect: "Direct taxes (PIT, CIT)",
-          taxesIndirect: "Indirect taxes (VAT, excise)",
-          socialContributions: "Social contributions",
-          otherRevenue: "Other revenue",
-          totalRevenue: "Total revenue",
-          totalRevenueTooltip:
-            "All the money the government collects in a year: taxes, social contributions, fees, and any other income.",
-          totalExpenditure: "Total expenditure",
-          totalExpenditureTooltip:
-            "Everything the government spends in a year across all public services, benefits, salaries, and debt interest.",
-          surplus: "Surplus",
-          surplusTooltip:
-            "The government collected more than it spent this year — the leftover is called a surplus.",
-          deficit: "Deficit",
-          deficitTooltip:
-            "The government spent more than it collected this year — the shortfall is called a deficit and adds to the debt.",
-          taxBurden: "Tax burden",
-          taxBurdenTooltip:
-            "What percentage of the country's total wealth (GDP) is taken by the government through taxes and contributions.",
-          compositionTitle: "Revenue composition",
-          historicalTitle: "Historical revenue vs expenditure",
-          revenueLegend: "Revenue",
-          spendingLegend: "Spending",
-          adminScope: "General government (S.13)",
-          millionEuros: "Million euros",
-          yearLabel: "Year",
-          derivativeNote: "Total revenue / nominal GDP",
-        }
-      : {
-          taxesDirect: "Impuestos directos (IRPF, IS)",
-          taxesIndirect: "Impuestos indirectos (IVA, IIEE)",
-          socialContributions: "Cotizaciones sociales",
-          otherRevenue: "Otros ingresos",
-          totalRevenue: "Ingresos totales",
-          totalRevenueTooltip:
-            "Todo el dinero que recauda el Estado en un año: impuestos, cotizaciones sociales, tasas y otros ingresos.",
-          totalExpenditure: "Gastos totales",
-          totalExpenditureTooltip:
-            "Todo lo que gasta el Estado en un año: servicios públicos, prestaciones, sueldos de funcionarios e intereses de la deuda.",
-          surplus: "Superávit",
-          surplusTooltip:
-            "Este año el Estado ha ingresado más de lo que ha gastado. El sobrante se llama superávit.",
-          deficit: "Déficit",
-          deficitTooltip:
-            "Este año el Estado ha gastado más de lo que ha ingresado. La diferencia se llama déficit y se suma a la deuda.",
-          taxBurden: "Presión fiscal",
-          taxBurdenTooltip:
-            "Qué porcentaje de la riqueza total del país (PIB) acaba en manos del Estado en forma de impuestos y cotizaciones.",
-          compositionTitle: "Composición de los ingresos",
-          historicalTitle: "Evolución histórica ingresos vs gastos",
-          revenueLegend: "Ingresos",
-          spendingLegend: "Gastos",
-          adminScope: "Total Administraciones Públicas (S.13)",
-          millionEuros: "Millones de euros",
-          yearLabel: "Año",
-          derivativeNote: "Ingresos totales / PIB nominal",
-        };
+  const copy = msg.blocks.revenue;
 
   const breakdownLabels: Record<string, string> = {
     taxesDirect: copy.taxesDirect,
@@ -179,9 +125,7 @@ export function RevenueBlock() {
 
   const yearData = revenue.byYear[String(selectedYear)];
 
-  const revenueSource = revenue.sourceAttribution?.revenue
-    ? fromAttribution(revenue.sourceAttribution.revenue)
-    : EUROSTAT_GOV_MAIN;
+  const revenueSource = resolveSource(revenue.sourceAttribution?.revenue, EUROSTAT_GOV_MAIN);
 
   // Breakdown bar chart data
   const breakdownData = useMemo<BreakdownDatum[]>(() => {

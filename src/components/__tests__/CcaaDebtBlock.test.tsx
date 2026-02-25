@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { cloneElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -36,7 +35,10 @@ vi.mock("recharts", () => ({
   YAxis: ({ dataKey }: any) => <div data-testid="yaxis">{dataKey}</div>,
   Tooltip: ({ content }: any) =>
     tooltipPayload && content
-      ? cloneElement(content, { active: true, payload: [{ payload: tooltipPayload }] })
+      ? cloneElement(content, {
+          active: true,
+          payload: [{ payload: tooltipPayload }],
+        })
       : null,
   Cell: ({ fill }: any) => <span data-testid="ccaa-cell" data-fill={fill} />,
   ReferenceLine: () => <div data-testid="ref-line" />,

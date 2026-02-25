@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom/vitest";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { exportElementToPng } from "../export";
 

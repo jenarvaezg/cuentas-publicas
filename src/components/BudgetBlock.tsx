@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CALCULO_DERIVADO, fromAttribution, IGAE_COFOG } from "@/data/sources";
+import { CALCULO_DERIVADO, IGAE_COFOG, resolveSource } from "@/data/sources";
 import type { BudgetCategory } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useDeflator } from "@/hooks/useDeflator";
@@ -26,62 +26,9 @@ function deflateCategory(
 export function BudgetBlock() {
   const { budget, demographics } = useData();
   const { deflate, baseYear, available: cpiAvailable } = useDeflator();
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
 
-  const copy =
-    lang === "en"
-      ? {
-          eurosReal: "Real €",
-          eurosCurrent: "Current €",
-          totalSpending: "Total public spending",
-          totalSpendingTooltip:
-            "All the money spent by central government, regional governments, local councils, and Social Security combined in a given year.",
-          spendingPerCapita: "Spending per capita",
-          spendingPerCapitaTooltip:
-            "How much public money is spent per person on average — total spending divided by the population.",
-          spendingToGdp: "Spending / GDP",
-          spendingToGdpTooltip:
-            "What share of the entire national economy goes through government spending. GDP is the total value of everything Spain produces in a year.",
-          largestItem: "Largest category",
-          largestItemTooltip:
-            "The single area where the government spends the most money, out of all the functional categories tracked.",
-          ofTotal: "of total",
-          viewAbsolute: "Absolute",
-          viewWeight: "% weight",
-          viewChange: "% change",
-          derivativePopulation: "Total spending / population",
-          derivativeGdp: "Total spending / nominal GDP",
-          totalPublicAdmin: "General government",
-          cofogClassification: "COFOG functional classification",
-          dataInMillions: "Data in millions of",
-          yearLabel: "Year",
-        }
-      : {
-          eurosReal: "€ reales",
-          eurosCurrent: "€ corrientes",
-          totalSpending: "Gasto publico total",
-          totalSpendingTooltip:
-            "Todo el dinero que gastan juntos el Estado, las Comunidades Autónomas, los Ayuntamientos y la Seguridad Social en un año.",
-          spendingPerCapita: "Gasto per cápita",
-          spendingPerCapitaTooltip:
-            "Cuánto gasto público corresponde de media a cada persona: el gasto total dividido entre toda la población.",
-          spendingToGdp: "Gasto / PIB",
-          spendingToGdpTooltip:
-            "Qué parte de toda la riqueza que genera España cada año acaba pasando por las manos del sector público.",
-          largestItem: "Mayor partida",
-          largestItemTooltip:
-            "La función en la que más dinero gasta el Estado, de entre todas las categorías del clasificador COFOG.",
-          ofTotal: "del total",
-          viewAbsolute: "Absoluto",
-          viewWeight: "% peso",
-          viewChange: "% cambio",
-          derivativePopulation: "Gasto total / población",
-          derivativeGdp: "Gasto total / PIB nominal",
-          totalPublicAdmin: "Total Administraciones Públicas",
-          cofogClassification: "Clasificación funcional COFOG",
-          dataInMillions: "Datos en millones de",
-          yearLabel: "Año",
-        };
+  const copy = msg.blocks.budget;
 
   const years = budget.years;
   const latestYear = budget.latestYear;
@@ -137,9 +84,7 @@ export function BudgetBlock() {
   }, [displayCategories]);
 
   // Source attributions
-  const igaeSource = budget.sourceAttribution?.budget
-    ? fromAttribution(budget.sourceAttribution.budget)
-    : IGAE_COFOG;
+  const igaeSource = resolveSource(budget.sourceAttribution?.budget, IGAE_COFOG);
 
   const euroLabel = isDeflating && baseYear ? `euros de ${baseYear}` : "euros corrientes";
 

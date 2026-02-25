@@ -164,7 +164,7 @@ export interface CcaaDebtEntry {
 export interface CcaaDeficitData {
   lastUpdated: string;
   source: string;
-  note: string;
+  note?: string;
   latestYear: number;
   data: Record<string, number>; // code -> deficit in millions (negative means deficit, positive means surplus)
 }

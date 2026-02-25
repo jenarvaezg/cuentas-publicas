@@ -17,70 +17,9 @@ import { StatCard } from "./StatCard";
 
 export function DebtBlock() {
   const { debt, demographics } = useData();
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
 
-  const copy =
-    lang === "en"
-      ? {
-          realtimeLabel: "Real-time total debt",
-          extrapolationPrefix: "Linear extrapolation over monthly series",
-          lastOfficial: "latest official data:",
-          debtPerCapita: "Debt per capita",
-          debtPerCapitaTooltip:
-            "How much each resident would owe if total debt were evenly distributed across the population.",
-          debtPerContributor: "Debt per contributor",
-          debtPerContributorTooltip:
-            "Debt burden per person active in the labor force (EPA active population).",
-          ratioDebtGdp: "Debt-to-GDP ratio",
-          ratioDebtGdpTooltip:
-            "Debt sustainability indicator comparing debt with annual national output (GDP).",
-          debtState: "Central government debt",
-          debtStateTooltip: "Debt issued by the Treasury to finance the central administration.",
-          debtRegions: "Regional debt",
-          debtRegionsTooltip:
-            "Accumulated debt of Spain's Autonomous Communities, including central loans (e.g. FLA).",
-          debtLocalAndSs: "Local + Social Security debt",
-          debtLocalAndSsTooltip:
-            "Combined debt of local governments and Social Security institutions.",
-          yoyLabel: "Year-over-year change",
-          yoyTooltip: "Percentage change versus the same month in the previous year.",
-          yoyNote: "% change latest data vs same month previous year",
-          perCapitaNote: "Total debt / population",
-          contributorNote: "Total debt / active population",
-          gdpNote: "Total debt / nominal GDP",
-          consolidationGapLabel: "Consolidation gap",
-        }
-      : {
-          realtimeLabel: "Deuda total en tiempo real",
-          extrapolationPrefix: "Extrapolación lineal sobre serie mensual",
-          lastOfficial: "último dato:",
-          debtPerCapita: "Deuda per cápita",
-          debtPerCapitaTooltip:
-            "Lo que debe cada habitante de España si repartiéramos la deuda por igual entre toda la población.",
-          debtPerContributor: "Deuda por contribuyente",
-          debtPerContributorTooltip:
-            "Carga de deuda por cada persona en edad y disposición de trabajar (población activa según la EPA).",
-          ratioDebtGdp: "Ratio deuda/PIB",
-          ratioDebtGdpTooltip:
-            "Mide la sostenibilidad de la deuda comparándola con todo lo que produce el país en un año (PIB).",
-          debtState: "Deuda Estado",
-          debtStateTooltip:
-            "Deuda emitida directamente por el Tesoro Público para financiar la Administración Central.",
-          debtRegions: "Deuda CCAA",
-          debtRegionsTooltip:
-            "Deuda acumulada por las 17 Comunidades Autónomas, incluyendo préstamos del Estado (como el FLA).",
-          debtLocalAndSs: "Deuda CCLL + Seg. Social",
-          debtLocalAndSsTooltip:
-            "Suma de la deuda de Ayuntamientos, Diputaciones, Cabildos y la propia Seguridad Social.",
-          yoyLabel: "Variación interanual",
-          yoyTooltip:
-            "Comparación porcentual de la deuda actual frente al mismo mes del año anterior.",
-          yoyNote: "Variación % último dato vs mismo mes año anterior",
-          perCapitaNote: "Deuda total / población",
-          contributorNote: "Deuda total / población activa",
-          gdpNote: "Deuda total / PIB nominal",
-          consolidationGapLabel: "Diferencia consolidación PDE",
-        };
+  const copy = msg.blocks.debt;
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
   const perSecond = debt.regression.debtPerSecond;

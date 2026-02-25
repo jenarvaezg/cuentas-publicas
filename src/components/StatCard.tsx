@@ -3,18 +3,13 @@ import { memo, useId, useMemo } from "react";
 import CountUp from "react-countup";
 import { Card, CardContent } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { SourceDetail } from "@/data/types";
 import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
 import { SparklineChart } from "./SparklineChart";
 import { TiltCard } from "./TiltCard";
 
-export interface SourceDetail {
-  name: string;
-  url?: string;
-  date?: string;
-  realDataDate?: string;
-  note?: string;
-}
+export type { SourceDetail };
 
 interface StatCardProps {
   label: string;
@@ -37,42 +32,11 @@ export const StatCard = memo(function StatCard({
   className,
   delay = 0,
 }: StatCardProps) {
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
   const infoDialogId = useId();
   const hasInfo = Boolean(tooltip) || Boolean(sources?.length);
 
-  const copy =
-    lang === "en"
-      ? {
-          summaryTitle: "Metric details",
-          whatIs: "What it is",
-          howComputed: "How it's computed",
-          whyMatters: "Why it matters",
-          sourcesTitle: "Sources",
-          sourceInlineLabel: "Source",
-          sourceInlineMore: "more",
-          close: "Close",
-          noSources: "No linked source details for this metric.",
-          fallbackWhatPrefix: "This metric tracks",
-          fallbackComputed: "Direct value from official sources, without additional calculation.",
-          fallbackRelevance:
-            "It helps understand fiscal trends and compare this indicator over time with other public figures.",
-        }
-      : {
-          summaryTitle: "Detalle de la métrica",
-          whatIs: "Qué es",
-          howComputed: "Cómo se calcula",
-          whyMatters: "Por qué importa",
-          sourcesTitle: "Fuentes",
-          sourceInlineLabel: "Fuente",
-          sourceInlineMore: "más",
-          close: "Cerrar",
-          noSources: "No hay detalle de fuentes vinculado para esta métrica.",
-          fallbackWhatPrefix: "Este indicador muestra",
-          fallbackComputed: "Valor directo de fuentes oficiales, sin cálculo adicional.",
-          fallbackRelevance:
-            "Ayuda a entender la evolución fiscal y comparar este indicador en el tiempo con otras magnitudes públicas.",
-        };
+  const copy = msg.blocks.statCard;
 
   const whatIsText = tooltip ?? `${copy.fallbackWhatPrefix} ${label.toLowerCase()}.`;
 

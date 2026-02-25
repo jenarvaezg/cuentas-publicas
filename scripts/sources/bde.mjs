@@ -6,17 +6,18 @@ const BDE_API_BASE = 'https://app.bde.es/bierest/resources/srdatosapp'
 
 /**
  * Download debt data from Banco de España
+ * @param {Function} fetcher - Fetch function (default: fetchWithRetry)
  * @returns {Promise<Object>} Debt data object
  */
-export async function downloadDebtData() {
+export async function downloadDebtData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos de deuda (BdE) ===')
 
   try {
     // Fetch all sources in parallel
     const [be11bData, be1101Data, apiData] = await Promise.allSettled([
-      fetchBE11B(),
-      fetchBE1101(),
-      fetchBDEApi()
+      fetchBE11B(fetcher),
+      fetchBE1101(fetcher),
+      fetchBDEApi(fetcher)
     ])
 
     // Extract data from successful fetches
@@ -42,11 +43,11 @@ export async function downloadDebtData() {
  * Fetch BE11B CSV - Monthly debt advance
  * BdE CSVs are in transposed format with series as columns
  */
-async function fetchBE11B() {
+async function fetchBE11B(fetcher) {
   console.log('  Descargando be11b.csv (avance mensual)...')
   const url = `${BDE_CSV_BASE}/be11b.csv`
 
-  const response = await fetchWithRetry(url)
+  const response = await fetcher(url)
 
   const csvText = await response.text()
   const csvSizeKB = (csvText.length / 1024).toFixed(1)
@@ -96,11 +97,11 @@ async function fetchBE11B() {
 /**
  * Fetch BE1101 CSV - Quarterly debt + deficit
  */
-async function fetchBE1101() {
+async function fetchBE1101(fetcher) {
   console.log('  Descargando be1101.csv (trimestral)...')
   const url = `${BDE_CSV_BASE}/be1101.csv`
 
-  const response = await fetchWithRetry(url)
+  const response = await fetcher(url)
 
   const csvText = await response.text()
 
@@ -115,11 +116,11 @@ async function fetchBE1101() {
 /**
  * Fetch BdE REST API - Latest debt
  */
-async function fetchBDEApi() {
+async function fetchBDEApi(fetcher) {
   console.log('  Descargando API BdE (último valor)...')
   const url = `${BDE_API_BASE}/favoritas?idioma=es&series=DTNPDE2010_P00000_PS_APU`
 
-  const response = await fetchWithRetry(url)
+  const response = await fetcher(url)
 
   const data = await response.json()
   console.log(`    Respuesta API recibida`)
@@ -789,9 +790,10 @@ function buildFallbackCcaaDebtData() {
 
 /**
  * Download CCAA debt data from Banco de España (be1309 + be1310)
+ * @param {Function} fetcher - Fetch function (default: fetchWithRetry)
  * @returns {Promise<Object>} CCAA debt data object
  */
-export async function downloadCcaaDebtData() {
+export async function downloadCcaaDebtData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos de deuda CCAA (BdE) ===')
 
   try {
@@ -802,8 +804,8 @@ export async function downloadCcaaDebtData() {
     console.log('  Descargando be1310.csv (deuda % PIB regional)...')
 
     const [res1309, res1310] = await Promise.allSettled([
-      fetchWithRetry(url1309),
-      fetchWithRetry(url1310),
+      fetcher(url1309),
+      fetcher(url1310),
     ])
 
     if (res1309.status !== 'fulfilled') {

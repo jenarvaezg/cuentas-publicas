@@ -16,7 +16,7 @@ import {
   AGEING_REPORT,
   CALCULO_DERIVADO,
   EUROSTAT_GOV_MAIN,
-  fromAttribution,
+  resolveSource,
   SS_FONDO_RESERVA,
 } from "@/data/sources";
 import { useData } from "@/hooks/useData";
@@ -27,86 +27,9 @@ import { StatCard } from "./StatCard";
 
 export function SustainabilityBlock() {
   const { ssSustainability } = useData();
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
 
-  const copy =
-    lang === "en"
-      ? {
-          ssBalance: "SS System Balance",
-          ssBalanceTooltip:
-            "Difference between social contributions and contributory cash benefits. Negative values indicate a structural contributory deficit.",
-          pensionGDP: "Contributory Spending / GDP",
-          pensionGDPTooltip:
-            "Share of GDP devoted to contributory social benefits. Higher values imply stronger pressure on payroll-funded spending.",
-          reserveFund: "Reserve Fund",
-          reserveFundTooltip:
-            "The SS reserve fund peaked at \u20AC66.8B in 2011, was nearly depleted by 2019, and is now being rebuilt.",
-          contributorsRatio: "Contributors per Pensioner",
-          contributorsRatioTooltip:
-            "Active contributors per pension in payment. Below 2.0 is considered a stress zone for pay-as-you-go systems.",
-          projectedGDP2050: "Projected Pension/GDP 2050",
-          projectedGDP2050Tooltip:
-            "European Commission Ageing Report 2024 baseline projection for Spain in 2050.",
-          cumulativeGap: "Cumulative Contributory Deficit",
-          cumulativeGapTooltip:
-            "Running total of annual deficits (contributions minus benefits) since 1995. This number only grows because every year the system pays out more than it collects. It never shrinks — each year's deficit adds to the pile.",
-          chartRevenueVsExp: "Social Contributions vs Contributory Spending",
-          chartReserveFund: "Reserve Fund Evolution",
-          chartPensionGDP: "Contributory Spending % GDP — Spain vs EU + Projections",
-          chartContributors: "Contributors per Pensioner",
-          executiveSnapshot: "Executive snapshot",
-          complementaryIndicators: "Supporting indicators",
-          contributions: "Contributions",
-          pensionSpending: "Contributory spending",
-          balance: "Balance",
-          spain: "Spain",
-          eu27: "EU-27",
-          spainProjection: "Spain (projection)",
-          eu27Projection: "EU-27 (projection)",
-          mEur: "M\u20AC",
-          stressZone: "Stress zone",
-          peak: "Peak",
-          sourceAgeing: "Ageing Report 2024",
-          vsEU: "vs EU",
-        }
-      : {
-          ssBalance: "Balance del sistema SS",
-          ssBalanceTooltip:
-            "Diferencia entre cotizaciones sociales y prestaciones contributivas en efectivo. Un valor negativo indica deficit estructural.",
-          pensionGDP: "Gasto contributivo / PIB",
-          pensionGDPTooltip:
-            "Porcentaje del PIB destinado a prestaciones contributivas. Valores altos reflejan mayor presion sobre un sistema financiado por cotizaciones.",
-          reserveFund: "Fondo de Reserva",
-          reserveFundTooltip:
-            "El fondo de reserva de la SS alcanzo 66.815 M\u20AC en 2011, se agoto casi por completo en 2019 y ahora se esta reponiendo.",
-          contributorsRatio: "Cotizantes por pensionista",
-          contributorsRatioTooltip:
-            "Trabajadores en activo por pension en vigor. Por debajo de 2,0 se considera zona de estres para sistemas de reparto.",
-          projectedGDP2050: "Proyeccion pensiones/PIB 2050",
-          projectedGDP2050Tooltip:
-            "Proyeccion base del Ageing Report 2024 de la Comision Europea para España en 2050.",
-          cumulativeGap: "Déficit contributivo acumulado",
-          cumulativeGapTooltip:
-            "Suma de todos los déficits anuales (cotizaciones menos prestaciones) desde 1995. Esta cifra solo crece porque cada año el sistema paga más de lo que ingresa. Nunca se reduce — cada déficit anual se suma al anterior.",
-          chartRevenueVsExp: "Cotizaciones sociales vs gasto contributivo",
-          chartReserveFund: "Evolucion del Fondo de Reserva",
-          chartPensionGDP: "Gasto contributivo % PIB — España vs UE + Proyecciones",
-          chartContributors: "Cotizantes por pensionista",
-          executiveSnapshot: "Lectura rápida",
-          complementaryIndicators: "Indicadores de soporte",
-          contributions: "Cotizaciones",
-          pensionSpending: "Gasto contributivo",
-          balance: "Balance",
-          spain: "España",
-          eu27: "UE-27",
-          spainProjection: "España (proyeccion)",
-          eu27Projection: "UE-27 (proyeccion)",
-          mEur: "M\u20AC",
-          stressZone: "Zona de estres",
-          peak: "Maximo",
-          sourceAgeing: "Ageing Report 2024",
-          vsEU: "vs UE",
-        };
+  const copy = msg.blocks.sustainability;
 
   const data = ssSustainability;
   const latestYear = String(data.latestYear);
@@ -131,9 +54,7 @@ export function SustainabilityBlock() {
   const cumulativeBalance = cumulativeByYear[cumulativeByYear.length - 1] ?? 0;
 
   // Source attribution
-  const eurostatSource = data.sourceAttribution?.ssSustainability
-    ? fromAttribution(data.sourceAttribution.ssSustainability)
-    : EUROSTAT_GOV_MAIN;
+  const eurostatSource = resolveSource(data.sourceAttribution?.ssSustainability, EUROSTAT_GOV_MAIN);
 
   // ─── Chart 1: Revenue vs Expenditure ───
   const revenueVsExpData = data.years.map((year) => {

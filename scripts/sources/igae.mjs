@@ -1,5 +1,6 @@
 import XLSX from 'xlsx'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
+import { toNumber } from '../lib/text-utils.mjs'
 
 const IGAE_URL = 'https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/AAPP_A/COFOG_A_AAPP.xlsx'
 
@@ -127,7 +128,7 @@ const GRAND_TOTAL_COL = 81
  *
  * @returns {Promise<Object>} Budget data object
  */
-export async function downloadBudgetData() {
+export async function downloadBudgetData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos de presupuestos (IGAE COFOG) ===')
   console.log()
   console.log('  Fuente: IGAE — Clasificación funcional COFOG')
@@ -137,7 +138,7 @@ export async function downloadBudgetData() {
   let liveData = null
 
   try {
-    liveData = await fetchFromIGAE()
+    liveData = await fetchFromIGAE(fetcher)
   } catch (error) {
     console.log(`  ❌ Error descargando IGAE: ${error.message}`)
   }
@@ -158,11 +159,11 @@ export async function downloadBudgetData() {
 /**
  * Fetch and parse the IGAE COFOG Excel file
  */
-async function fetchFromIGAE() {
+async function fetchFromIGAE(fetcher) {
   // Step 1: Download Excel
   console.log('  1. Descargando Excel COFOG...')
 
-  const response = await fetchWithRetry(IGAE_URL, {
+  const response = await fetcher(IGAE_URL, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)',
     },
@@ -374,17 +375,6 @@ function parseGastoRow(gastoRow, headerRow, sheetName, colMapping) {
     total: grandTotal,
     categories,
   }
-}
-
-/**
- * Safely convert cell value to number (data is in millions of euros)
- */
-function toNumber(val) {
-  if (val === null || val === undefined || val === '') return 0
-  if (typeof val === 'number') return val
-  const cleaned = String(val).trim().replace(/\./g, '').replace(/,/g, '.')
-  const num = parseFloat(cleaned)
-  return isNaN(num) ? 0 : num
 }
 
 // ─────────────────────────────────────────────

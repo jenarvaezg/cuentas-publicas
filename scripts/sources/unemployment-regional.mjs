@@ -1,5 +1,6 @@
 import { fetchWithRetry } from "../lib/fetch-utils.mjs";
 import { parseJsonStat } from "./eurostat.mjs";
+import { NUTS2_TO_CCAA } from "../lib/ccaa-maps.mjs";
 
 const EUROSTAT_BASE =
   "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data";
@@ -26,29 +27,6 @@ const NUTS2_REGIONS = [
   "ES64",
   "ES70",
 ];
-
-/** Map Eurostat NUTS2 codes to internal CCAA codes */
-const NUTS2_TO_CCAA = {
-  ES11: { code: "CA12", name: "Galicia" },
-  ES12: { code: "CA03", name: "Asturias" },
-  ES13: { code: "CA06", name: "Cantabria" },
-  ES21: { code: "CA16", name: "País Vasco" },
-  ES22: { code: "CA15", name: "Navarra" },
-  ES23: { code: "CA17", name: "La Rioja" },
-  ES24: { code: "CA02", name: "Aragón" },
-  ES30: { code: "CA13", name: "Madrid" },
-  ES41: { code: "CA07", name: "Castilla y León" },
-  ES42: { code: "CA08", name: "Castilla-La Mancha" },
-  ES43: { code: "CA11", name: "Extremadura" },
-  ES51: { code: "CA09", name: "Cataluña" },
-  ES52: { code: "CA10", name: "C. Valenciana" },
-  ES53: { code: "CA04", name: "Illes Balears" },
-  ES61: { code: "CA01", name: "Andalucía" },
-  ES62: { code: "CA14", name: "Murcia" },
-  ES63: { code: "CA18", name: "Ceuta" },
-  ES64: { code: "CA19", name: "Melilla" },
-  ES70: { code: "CA05", name: "Canarias" },
-};
 
 /**
  * Fetch unemployed persons by NUTS2 from Eurostat (lfst_r_lfu3pers)

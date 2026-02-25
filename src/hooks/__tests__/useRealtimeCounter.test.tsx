@@ -73,7 +73,9 @@ describe("useRealtimeCounter 100% coverage", () => {
       if (rafCallback) rafCallback();
     });
 
-    expect(true).toBe(true); // Reaching here means no crash
+    // Verify the hook did not write to any DOM element (refs were null)
+    expect(screen.queryByTestId("display")).toBeNull();
+    expect(screen.queryByTestId("aria")).toBeNull();
   });
 
   it("updates aria only every 5s", async () => {

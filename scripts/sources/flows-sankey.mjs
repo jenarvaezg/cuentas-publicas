@@ -268,7 +268,7 @@ function resolvePensionPayroll(pensionsData, year, latestYear) {
  * Generates a unified Sankey DAG for every year where both revenue and budget data exist.
  * Reads from previously generated JSONs to ensure a perfect mass balance per year.
  */
-export async function downloadFlowsSankeyData() {
+export async function downloadFlowsSankeyData(readFile = fs.readFile) {
   console.log(
     "Generando dataset consolidado de Flujos Fiscales (Sankey)...",
   );
@@ -276,15 +276,15 @@ export async function downloadFlowsSankeyData() {
   try {
     // 1. Read all required datasets
     const revenueData = JSON.parse(
-      await fs.readFile(REVENUE_FILE, "utf-8"),
+      await readFile(REVENUE_FILE, "utf-8"),
     );
     const taxRevenueData = JSON.parse(
-      await fs.readFile(TAX_REVENUE_FILE, "utf-8"),
+      await readFile(TAX_REVENUE_FILE, "utf-8"),
     );
     const pensionsData = JSON.parse(
-      await fs.readFile(PENSIONS_FILE, "utf-8"),
+      await readFile(PENSIONS_FILE, "utf-8"),
     );
-    const budgetData = JSON.parse(await fs.readFile(BUDGET_FILE, "utf-8"));
+    const budgetData = JSON.parse(await readFile(BUDGET_FILE, "utf-8"));
 
     // 2. Determine the latest year and all available years
     const latestRevenueYear = revenueData.latestYear;

@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartTooltip } from "@/components/ChartTooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fromAttribution } from "@/data/sources";
 import type { EurostatData } from "@/data/types";
@@ -51,88 +52,35 @@ export const CustomTooltip = ({
   unit?: string;
   fallbackUnit?: string;
 }) => {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
   const normalizedUnit = unit || fallbackUnit;
-
   return (
-    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-      <p className="font-semibold text-foreground">{d.country}</p>
-      <p className="text-muted-foreground">
-        {formatNumber(d.value, 1)}
-        {normalizedUnit ? ` ${normalizedUnit}` : "%"}
-      </p>
-    </div>
+    <ChartTooltip active={active} payload={payload}>
+      {(pl) => {
+        const d = pl[0].payload;
+        return (
+          <>
+            <p className="font-semibold text-foreground">{d.country}</p>
+            <p className="text-muted-foreground">
+              {formatNumber(d.value, 1)}
+              {normalizedUnit ? ` ${normalizedUnit}` : "%"}
+            </p>
+          </>
+        );
+      }}
+    </ChartTooltip>
   );
 };
 
 export function ComparativaEUBlock() {
   const { eurostat } = useData();
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
   const [selectedIndicator, setSelectedIndicator] = useState<IndicatorKey>("debtToGDP");
 
-  const copy =
-    lang === "en"
-      ? {
-          spain: "Spain",
-          otherCountries: "Other countries",
-          eu27Average: "EU-27 average",
-          yearLabel: "Year",
-          dataFrom: "Data from",
-          indicatorLabels: {
-            debtToGDP: "Debt-to-GDP",
-            deficit: "Deficit/surplus",
-            expenditureToGDP: "Public spending/GDP",
-            socialSpendingToGDP: "Social spending/GDP",
-            unemploymentRate: "Unemployment rate",
-          } as Record<IndicatorKey, string>,
-          unitByIndicator: {
-            debtToGDP: "% of GDP",
-            deficit: "% of GDP",
-            expenditureToGDP: "% of GDP",
-            socialSpendingToGDP: "% of GDP",
-            unemploymentRate: "%",
-          } as Record<IndicatorKey, string>,
-          countryNames: {
-            ES: "Spain",
-            DE: "Germany",
-            FR: "France",
-            IT: "Italy",
-            PT: "Portugal",
-            EL: "Greece",
-            NL: "Netherlands",
-            EU27_2020: "EU-27",
-          } as Record<string, string>,
-        }
-      : {
-          spain: "España",
-          otherCountries: "Otros países",
-          eu27Average: "Media UE-27",
-          yearLabel: "Año",
-          dataFrom: "Datos de",
-          indicatorLabels: {
-            debtToGDP: "Deuda/PIB",
-            deficit: "Déficit/superávit",
-            expenditureToGDP: "Gasto público/PIB",
-            socialSpendingToGDP: "Gasto social/PIB",
-            unemploymentRate: "Tasa de paro",
-          } as Record<IndicatorKey, string>,
-          unitByIndicator: {
-            debtToGDP: "% del PIB",
-            deficit: "% del PIB",
-            expenditureToGDP: "% del PIB",
-            socialSpendingToGDP: "% del PIB",
-            unemploymentRate: "%",
-          } as Record<IndicatorKey, string>,
-          countryNames: {} as Record<string, string>,
-        };
+  const copy = msg.blocks.eu;
 
   const indicatorData = eurostat.indicators[selectedIndicator] ?? {};
   const meta = eurostat.indicatorMeta?.[selectedIndicator];
-  const selectedUnit =
-    lang === "en"
-      ? copy.unitByIndicator[selectedIndicator]
-      : (meta?.unit ?? copy.unitByIndicator[selectedIndicator]);
+  const selectedUnit = meta?.unit ?? copy.unitByIndicator[selectedIndicator];
 
   // Build chart data sorted by value (descending for most, ascending for deficit)
   const data = useMemo<ChartDatum[]>(() => {

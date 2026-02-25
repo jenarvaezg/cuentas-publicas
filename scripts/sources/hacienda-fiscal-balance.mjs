@@ -1,33 +1,10 @@
 import XLSX from 'xlsx'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
+import { normalizeText, toNumber } from '../lib/text-utils.mjs'
+import { CCAA_NAME_MAP } from '../lib/ccaa-maps.mjs'
 
 const HACIENDA_INDEX_URL =
   'https://www.hacienda.gob.es/es-ES/CDI/Paginas/SistemasFinanciacionDeuda/InformacionCCAAs/Informes%20financiacion%20comunidades%20autonomas2.aspx'
-
-const CCAA_NAME_MAP = {
-  andalucia: { code: 'CA01', name: 'Andalucía' },
-  aragon: { code: 'CA02', name: 'Aragón' },
-  'principado de asturias': { code: 'CA03', name: 'Asturias' },
-  asturias: { code: 'CA03', name: 'Asturias' },
-  'illes balears': { code: 'CA04', name: 'Illes Balears' },
-  baleares: { code: 'CA04', name: 'Illes Balears' },
-  canarias: { code: 'CA05', name: 'Canarias' },
-  cantabria: { code: 'CA06', name: 'Cantabria' },
-  'castilla y leon': { code: 'CA07', name: 'Castilla y León' },
-  'castilla-la mancha': { code: 'CA08', name: 'Castilla-La Mancha' },
-  'castilla la mancha': { code: 'CA08', name: 'Castilla-La Mancha' },
-  cataluna: { code: 'CA09', name: 'Cataluña' },
-  'comunidad valenciana': { code: 'CA10', name: 'C. Valenciana' },
-  'c. valenciana': { code: 'CA10', name: 'C. Valenciana' },
-  'comunitat valenciana': { code: 'CA10', name: 'C. Valenciana' },
-  extremadura: { code: 'CA11', name: 'Extremadura' },
-  galicia: { code: 'CA12', name: 'Galicia' },
-  madrid: { code: 'CA13', name: 'Madrid' },
-  'comunidad de madrid': { code: 'CA13', name: 'Madrid' },
-  'region de murcia': { code: 'CA14', name: 'Murcia' },
-  murcia: { code: 'CA14', name: 'Murcia' },
-  'la rioja': { code: 'CA17', name: 'La Rioja' },
-}
 
 const FALLBACK_2023_ENTRIES = [
   {
@@ -267,23 +244,6 @@ const REQUIRED_COLUMNS = [
   'fondoCooperacion',
 ]
 
-function normalizeText(value) {
-  return String(value ?? '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-function toNumber(value) {
-  if (value === null || value === undefined || value === '') return 0
-  if (typeof value === 'number' && Number.isFinite(value)) return value
-  const normalized = String(value).replace(/\./g, '').replace(/,/g, '.').trim()
-  const parsed = Number.parseFloat(normalized)
-  return Number.isFinite(parsed) ? parsed : 0
-}
-
 function thousandEurosToMillions(value) {
   return Number((toNumber(value) / 1000).toFixed(3))
 }
@@ -471,8 +431,8 @@ function parseYearWorkbook(year, workbook) {
   return { entries, totals: computeYearTotals(entries) }
 }
 
-async function downloadWorkbook(year, url) {
-  const response = await fetchWithRetry(
+async function downloadWorkbook(year, url, fetcher) {
+  const response = await fetcher(
     url,
     { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)' } },
     { maxRetries: 2, timeoutMs: 60000 },
@@ -513,12 +473,12 @@ function buildFallbackDataset() {
   }
 }
 
-export async function downloadCcaaFiscalBalanceData() {
+export async function downloadCcaaFiscalBalanceData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando balanzas fiscales CCAA (Hacienda) ===')
   console.log(`  Índice: ${HACIENDA_INDEX_URL}`)
 
   try {
-    const indexResponse = await fetchWithRetry(
+    const indexResponse = await fetcher(
       HACIENDA_INDEX_URL,
       { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)' } },
       { maxRetries: 2, timeoutMs: 45000 },
@@ -538,7 +498,7 @@ export async function downloadCcaaFiscalBalanceData() {
 
     for (const { year, url } of yearLinks) {
       try {
-        const workbook = await downloadWorkbook(year, url)
+        const workbook = await downloadWorkbook(year, url, fetcher)
         byYear[String(year)] = parseYearWorkbook(year, workbook)
         console.log(
           `    ${year}: ${byYear[String(year)].entries.length} CCAA procesadas`,

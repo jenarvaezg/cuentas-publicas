@@ -585,11 +585,11 @@ function parseDelegacionesSheet(ws) {
 // Fetch helpers
 // ─────────────────────────────────────────────
 
-async function fetchNationalData() {
+async function fetchNationalData(fetcher) {
   console.log('  1. Descargando series nacionales (AEAT)...')
   console.log(`    URL: ${AEAT_SERIES_URL}`)
 
-  const response = await fetchWithRetry(
+  const response = await fetcher(
     AEAT_SERIES_URL,
     { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)' } },
   )
@@ -612,11 +612,11 @@ async function fetchNationalData() {
   return result
 }
 
-async function fetchCcaaData() {
+async function fetchCcaaData(fetcher) {
   console.log('  3. Descargando datos por delegaciones (CCAA)...')
   console.log(`    URL: ${AEAT_DELEGACIONES_URL}`)
 
-  const response = await fetchWithRetry(
+  const response = await fetcher(
     AEAT_DELEGACIONES_URL,
     { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)' } },
     { maxRetries: 2, timeoutMs: 60000 },
@@ -653,7 +653,7 @@ async function fetchCcaaData() {
  *
  * @returns {Promise<Object>} TaxRevenueData object
  */
-export async function downloadTaxRevenueData() {
+export async function downloadTaxRevenueData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos de recaudación tributaria (AEAT) ===')
   console.log()
   console.log('  Fuente: Agencia Estatal de Administración Tributaria (AEAT)')
@@ -665,7 +665,7 @@ export async function downloadTaxRevenueData() {
 
   // --- National data ---
   try {
-    const result = await fetchNationalData()
+    const result = await fetchNationalData(fetcher)
     national = result.national
     years = result.years
 
@@ -690,7 +690,7 @@ export async function downloadTaxRevenueData() {
 
   // --- CCAA data ---
   try {
-    const result = await fetchCcaaData()
+    const result = await fetchCcaaData(fetcher)
     ccaa = result.ccaa
     console.log()
   } catch (error) {

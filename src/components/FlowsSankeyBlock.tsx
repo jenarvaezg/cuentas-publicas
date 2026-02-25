@@ -1,5 +1,4 @@
-import { ResponsiveSankey } from "@nivo/sankey";
-import { Info, ZoomOut } from "lucide-react";
+import { Info } from "lucide-react";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { PersonalCalculator, type SpendingCategory } from "@/components/PersonalCalculator";
@@ -9,7 +8,7 @@ import type { SankeyLink, SankeyNode } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { buildCcaaGraph, CCAA_NAMES, CCAA_POPULATION } from "@/utils/buildCcaaGraph";
-import { formatCompact } from "@/utils/formatters";
+import { SankeyView } from "./flows/SankeyView";
 
 // Helper to filter graph to a specific selected node's forward/backward paths
 const getFilteredGraph = (
@@ -52,17 +51,6 @@ const getFilteredGraph = (
     nodes: nodes.filter((n: SankeyNode) => connectedNodeIds.has(n.id)),
     links: links.filter((l: SankeyLink) => connectedLinkIds.has(l.id)),
   };
-};
-
-// Colors mapping using React-friendly CSS variables
-const groupColors: Record<string, string> = {
-  core: "hsl(var(--muted-foreground))", // slate-500 equivalent
-  income: "hsl(var(--destructive))", // red-500
-  income_agg: "hsl(142.1 76.2% 36.3%)", // green-600
-  income_type: "hsl(142.1 76.2% 36.3%)", // green-600
-  tax_detail: "hsl(142.1 76.2% 36.3%)", // green-600
-  expense_cofog: "hsl(217.2 91.2% 59.8%)", // blue-500
-  expense_specific: "hsl(199.4 89% 47.6%)", // sky-500
 };
 
 export const FlowsSankeyBlock: React.FC = () => {
@@ -122,47 +110,54 @@ export const FlowsSankeyBlock: React.FC = () => {
         scope)
       : null;
 
+  const flowsCopy = msg.blocks.flows;
+
   const copy = useMemo(() => {
-    return lang === "en"
-      ? {
-          title:
-            scope !== "national" && selectedCcaaName
-              ? `${selectedCcaaName} — Fiscal Flows`
-              : "Public Accounts Circulation",
-          description:
-            scope !== "national" && selectedCcaaName
-              ? `Estimated fiscal flows attributed to ${selectedCcaaName} (${selectedYear}). Income: regional taxes (AEAT) + proportional SS + other. Spending: regional COFOG + pensions + unemployment + proportional central services. Click any node to drill-down.`
-              : `Aggregate flows of income, debt, and spending for ${selectedYear}. Click any node to drill-down into its specific path.`,
-          scopeLabel: "Scope",
-          allSpain: "Spain (Consolidated)",
-          excludeRegionGroup: "Exclude regions from balance (What-If):",
-          clearExclusions: "Clear Exclusions",
-          withoutRegion: "Without",
-          resetView: "Reset View",
-          yearLabel: "Year",
-          whatIfUnavailable: `Regional data only available for ${flows?.latestYear}. What-If simulation disabled.`,
-          infoBox:
-            "The flow consolidates data from Eurostat (total revenue/expenditure), IGAE (COFOG functional spending), AEAT (tax breakdown by type), and Social Security (pension payroll). IGAE categories are scaled to match Eurostat's total expenditure. Tax nodes use AEAT national proportions applied to Eurostat totals. Pensions and debt interest are extracted from their respective COFOG categories. The deficit equals expenditure minus revenue. The graph is strictly mathematically balanced: total inputs = total outputs.",
-          whatIfInfo:
-            "The What-If simulator estimates the fiscal balance excluding selected regions. Income side: uses AEAT regional delegations data for common-regime taxes and foral contribution flows for Navarra/País Vasco; centrally-managed tax portions (not attributed to any specific CCAA) are distributed by GDP share. Social contributions use regional Eurostat NUTS2 accounts; other revenue is proportional to regional GDP. Expense side: uses IGAE COFOG regional spending, Social Security regional pensions, and SEPE regional unemployment benefits. Central spending not in any CCAA budget (defence, national police, debt interest, central administration) is distributed by GDP share. Approximation: some regional datasets may reference slightly different periods, and GDP-proportional distribution of central items is a proxy, not an exact attribution.",
-          nodeLabels: {
-            // General
-            INGRESOS_TOTALES: scope !== "national" ? "Attributed Income" : "Total Income",
+    const isRegional = scope !== "national" && selectedCcaaName !== null;
+    const title =
+      lang === "en"
+        ? isRegional
+          ? `${selectedCcaaName} — Fiscal Flows`
+          : "Public Accounts Circulation"
+        : isRegional
+          ? `${selectedCcaaName} — Flujos Fiscales`
+          : "Circulación de las Cuentas Públicas";
+    const description =
+      lang === "en"
+        ? isRegional
+          ? `Estimated fiscal flows attributed to ${selectedCcaaName} (${selectedYear}). Income: regional taxes (AEAT) + proportional SS + other. Spending: regional COFOG + pensions + unemployment + proportional central services. Click any node to drill-down.`
+          : `Aggregate flows of income, debt, and spending for ${selectedYear}. Click any node to drill-down into its specific path.`
+        : isRegional
+          ? `Flujos fiscales estimados atribuidos a ${selectedCcaaName} (${selectedYear}). Ingresos: impuestos regionales (AEAT) + SS proporcional + otros. Gastos: COFOG regional + pensiones + desempleo + servicios centrales proporcionales. Haz clic en cualquier nodo para explorar.`
+          : `Flujos agregados de ingresos, deuda y gasto para el año ${selectedYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`;
+    const whatIfUnavailable =
+      lang === "en"
+        ? `Regional data only available for ${flows?.latestYear}. What-If simulation disabled.`
+        : `Datos regionales solo disponibles para ${flows?.latestYear}. Simulación What-If desactivada.`;
+    const infoBox =
+      lang === "en"
+        ? "The flow consolidates data from Eurostat (total revenue/expenditure), IGAE (COFOG functional spending), AEAT (tax breakdown by type), and Social Security (pension payroll). IGAE categories are scaled to match Eurostat's total expenditure. Tax nodes use AEAT national proportions applied to Eurostat totals. Pensions and debt interest are extracted from their respective COFOG categories. The deficit equals expenditure minus revenue. The graph is strictly mathematically balanced: total inputs = total outputs."
+        : "El flujo consolida datos de Eurostat (ingresos/gastos totales), IGAE (gasto funcional COFOG), AEAT (desglose tributario por figura) y Seguridad Social (nómina de pensiones). Las categorías IGAE se escalan para cuadrar con el gasto total de Eurostat. Los nodos de impuestos usan proporciones nacionales AEAT aplicadas a los totales Eurostat. Pensiones e intereses de deuda se extraen de sus categorías COFOG respectivas. El déficit es la diferencia entre gasto e ingresos. El grafo está estrictamente balanceado: total de entradas = total de salidas.";
+    const whatIfInfo =
+      lang === "en"
+        ? "The What-If simulator estimates the fiscal balance excluding selected regions. Income side: uses AEAT regional delegations data for common-regime taxes and foral contribution flows for Navarra/País Vasco; centrally-managed tax portions (not attributed to any specific CCAA) are distributed by GDP share. Social contributions use regional Eurostat NUTS2 accounts; other revenue is proportional to regional GDP. Expense side: uses IGAE COFOG regional spending, Social Security regional pensions, and SEPE regional unemployment benefits. Central spending not in any CCAA budget (defence, national police, debt interest, central administration) is distributed by GDP share. Approximation: some regional datasets may reference slightly different periods, and GDP-proportional distribution of central items is a proxy, not an exact attribution."
+        : "El simulador What-If estima el balance fiscal excluyendo las regiones seleccionadas. Ingresos: usa datos de delegaciones territoriales AEAT para impuestos de régimen común y flujos de contribución foral para Navarra/País Vasco; la parte de recaudación gestionada centralmente (no atribuida a ninguna CCAA concreta) se distribuye por cuota de PIB. Las cotizaciones sociales usan cuentas regionales Eurostat NUTS2; otros ingresos se reparten proporcionalmente al PIB regional. Gastos: usa gasto regional COFOG de IGAE, pensiones regionales de la Seguridad Social y prestaciones de desempleo regionales del SEPE. El gasto central no asignado a ninguna CCAA (defensa, policía nacional, intereses de deuda, administración central) se distribuye por cuota de PIB. Aproximación: algunos conjuntos de datos regionales pueden referirse a periodos ligeramente distintos, y la distribución por PIB de partidas centrales es una estimación, no una atribución exacta.";
+    const nodeLabels: Record<string, string> =
+      lang === "en"
+        ? {
+            INGRESOS_TOTALES: isRegional ? "Attributed Income" : "Total Income",
             IMPUESTOS_DIRECTOS: "Direct Taxes",
             IMPUESTOS_INDIRECTOS: "Indirect Taxes",
             COTIZACIONES: "Social Contributions",
             OTROS_INGRESOS: "Other Income",
-            CONSOLIDADO:
-              scope !== "national" && selectedCcaaName
-                ? `Fiscal Activity — ${selectedCcaaName}`
-                : "Consolidated Budget",
+            CONSOLIDADO: isRegional
+              ? `Fiscal Activity — ${selectedCcaaName}`
+              : "Consolidated Budget",
             GASTOS_TOTALES: "Total Spending",
             DEFICIT: "Deficit (New Debt)",
             SUPERAVIT: "Surplus (Financing Capacity)",
             TRANSFERENCIA_NETA: "Net Transfer (Receives)",
             CONTRIBUCION_NETA: "Net Contribution (Gives)",
-
-            // Taxes
             IRPF: "Personal Income Tax",
             IS: "Corporate Tax",
             IRNR: "Non-Resident Tax",
@@ -170,8 +165,6 @@ export const FlowsSankeyBlock: React.FC = () => {
             IIEE: "Special Taxes",
             IP_ISD_ITPAJD: "Wealth & Transfer",
             OTROS_TRIBUTOS: "Other Taxes",
-
-            // COFOG
             COFOG_01_RESTO: "Public Services",
             COFOG_02: "Defence",
             COFOG_03: "Public Order & Safety",
@@ -182,54 +175,26 @@ export const FlowsSankeyBlock: React.FC = () => {
             COFOG_08: "Culture & Religion",
             COFOG_09: "Education",
             COFOG_10_RESTO: "Social Protection",
-
-            // Others
             INTERESES_DEUDA: "Debt Interests",
             GASTO_INTERESES: "Debt Interests",
             PENSIONES: "Pensions",
             GASTO_PENSIONES: "Pensions",
             DESEMPLEO: "Unemployment",
-          } as Record<string, string>,
-        }
-      : {
-          title:
-            scope !== "national" && selectedCcaaName
-              ? `${selectedCcaaName} — Flujos Fiscales`
-              : "Circulación de las Cuentas Públicas",
-          description:
-            scope !== "national" && selectedCcaaName
-              ? `Flujos fiscales estimados atribuidos a ${selectedCcaaName} (${selectedYear}). Ingresos: impuestos regionales (AEAT) + SS proporcional + otros. Gastos: COFOG regional + pensiones + desempleo + servicios centrales proporcionales. Haz clic en cualquier nodo para explorar.`
-              : `Flujos agregados de ingresos, deuda y gasto para el año ${selectedYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`,
-          scopeLabel: "Ámbito",
-          allSpain: "España (Consolidado)",
-          excludeRegionGroup: "Excluir regiones del balance (What-If):",
-          clearExclusions: "Limpiar Exclusiones",
-          withoutRegion: "Sin",
-          resetView: "Restablecer Vista",
-          yearLabel: "Año",
-          whatIfUnavailable: `Datos regionales solo disponibles para ${flows?.latestYear}. Simulación What-If desactivada.`,
-          infoBox:
-            "El flujo consolida datos de Eurostat (ingresos/gastos totales), IGAE (gasto funcional COFOG), AEAT (desglose tributario por figura) y Seguridad Social (nómina de pensiones). Las categorías IGAE se escalan para cuadrar con el gasto total de Eurostat. Los nodos de impuestos usan proporciones nacionales AEAT aplicadas a los totales Eurostat. Pensiones e intereses de deuda se extraen de sus categorías COFOG respectivas. El déficit es la diferencia entre gasto e ingresos. El grafo está estrictamente balanceado: total de entradas = total de salidas.",
-          whatIfInfo:
-            "El simulador What-If estima el balance fiscal excluyendo las regiones seleccionadas. Ingresos: usa datos de delegaciones territoriales AEAT para impuestos de régimen común y flujos de contribución foral para Navarra/País Vasco; la parte de recaudación gestionada centralmente (no atribuida a ninguna CCAA concreta) se distribuye por cuota de PIB. Las cotizaciones sociales usan cuentas regionales Eurostat NUTS2; otros ingresos se reparten proporcionalmente al PIB regional. Gastos: usa gasto regional COFOG de IGAE, pensiones regionales de la Seguridad Social y prestaciones de desempleo regionales del SEPE. El gasto central no asignado a ninguna CCAA (defensa, policía nacional, intereses de deuda, administración central) se distribuye por cuota de PIB. Aproximación: algunos conjuntos de datos regionales pueden referirse a periodos ligeramente distintos, y la distribución por PIB de partidas centrales es una estimación, no una atribución exacta.",
-          nodeLabels: {
-            // General
-            INGRESOS_TOTALES: scope !== "national" ? "Ingresos Atribuidos" : "Ingresos Totales",
+          }
+        : {
+            INGRESOS_TOTALES: isRegional ? "Ingresos Atribuidos" : "Ingresos Totales",
             IMPUESTOS_DIRECTOS: "Impuestos Directos",
             IMPUESTOS_INDIRECTOS: "Impuestos Indirectos",
             COTIZACIONES: "Cotizaciones Sociales",
             OTROS_INGRESOS: "Otros Ingresos",
-            CONSOLIDADO:
-              scope !== "national" && selectedCcaaName
-                ? `Actividad Fiscal — ${selectedCcaaName}`
-                : "Presupuesto Consolidado",
+            CONSOLIDADO: isRegional
+              ? `Actividad Fiscal — ${selectedCcaaName}`
+              : "Presupuesto Consolidado",
             GASTOS_TOTALES: "Gastos Totales",
             DEFICIT: "Déficit (Nueva Deuda)",
             SUPERAVIT: "Superávit (Cap. Financiación)",
             TRANSFERENCIA_NETA: "Transferencia Neta (Recibe)",
             CONTRIBUCION_NETA: "Contribución Neta (Aporta)",
-
-            // Taxes
             IRPF: "IRPF",
             IS: "Imp. Sociedades",
             IRNR: "Imp. No Residentes",
@@ -237,8 +202,6 @@ export const FlowsSankeyBlock: React.FC = () => {
             IIEE: "Imp. Especiales",
             IP_ISD_ITPAJD: "Patrim. Suces. y Transm.",
             OTROS_TRIBUTOS: "Otros Tributos",
-
-            // COFOG
             COFOG_01_RESTO: "Servicios Generales",
             COFOG_02: "Defensa",
             COFOG_03: "Orden Público",
@@ -249,16 +212,28 @@ export const FlowsSankeyBlock: React.FC = () => {
             COFOG_08: "Cultura y Religión",
             COFOG_09: "Educación",
             COFOG_10_RESTO: "Protección Social",
-
-            // Others
             INTERESES_DEUDA: "Intereses Deuda",
             GASTO_INTERESES: "Intereses Deuda",
             PENSIONES: "Pensiones",
             GASTO_PENSIONES: "Pensiones",
             DESEMPLEO: "Desempleo",
-          } as Record<string, string>,
-        };
-  }, [lang, selectedYear, flows?.latestYear, scope, selectedCcaaName]);
+          };
+    return {
+      title,
+      description,
+      whatIfUnavailable,
+      infoBox,
+      whatIfInfo,
+      nodeLabels,
+      scopeLabel: flowsCopy.scopeLabel,
+      allSpain: flowsCopy.allSpain,
+      excludeRegionGroup: flowsCopy.excludeRegionGroup,
+      clearExclusions: flowsCopy.clearExclusions,
+      withoutRegion: flowsCopy.withoutRegion,
+      resetView: flowsCopy.resetView,
+      yearLabel: flowsCopy.yearLabel,
+    };
+  }, [lang, flowsCopy, selectedYear, flows?.latestYear, scope, selectedCcaaName]);
 
   // Resolve the year's nodes/links from byYear
   const yearData = useMemo(() => {
@@ -904,135 +879,21 @@ export const FlowsSankeyBlock: React.FC = () => {
         )}
 
         <PersonalCalculator spendingCategories={spendingCategories} totalSpending={totalSpending} />
-
-        {selectedNode && (
-          <div className="mt-4 flex justify-end">
-            <Button
-              variant="outline"
-              onClick={() => setSelectedNode(null)}
-              className="shrink-0 flex items-center gap-2"
-            >
-              <ZoomOut className="w-4 h-4" />
-              {copy.resetView}
-            </Button>
-          </div>
-        )}
       </CardHeader>
       <CardContent className="p-0">
-        <div className="h-[650px] w-full px-2 py-4 bg-background/50">
-          <ResponsiveSankey
-            data={{
-              nodes: filteredNodes,
-              links: filteredLinks.map((l) => ({ ...l, value: l.amount })),
-            }}
-            margin={{ top: 20, right: 180, bottom: 20, left: 180 }}
-            align="justify"
-            colors={
-              // biome-ignore lint/suspicious/noExplicitAny: nivo Sankey node type is not exported
-              (node: any) => groupColors[node.group] || "hsl(var(--muted-foreground))"
-            }
-            nodeOpacity={1}
-            nodeHoverOthersOpacity={0.1}
-            nodeThickness={20}
-            nodeSpacing={24}
-            nodeBorderWidth={1}
-            nodeBorderColor={{ from: "color", modifiers: [["darker", 0.5]] }}
-            nodeBorderRadius={3}
-            linkOpacity={0.45}
-            nodeHoverOpacity={0.9}
-            linkHoverOthersOpacity={0.1}
-            linkContract={3}
-            enableLinkGradient={true}
-            labelPosition="outside"
-            labelOrientation="horizontal"
-            labelPadding={16}
-            label={(node) => copy.nodeLabels[node.id] || node.id.toString()}
-            labelTextColor="hsl(var(--foreground))"
-            onClick={(data) => {
-              // Toggle node drill-down
-              if ("sourceLinks" in data) {
-                // It's a node
-                setSelectedNode((prev) => (prev === data.id ? null : data.id.toString()));
-              }
-            }}
-            valueFormat={(value: number) => formatCompact(value * 1_000_000)}
-            // biome-ignore lint/suspicious/noExplicitAny: nivo Sankey tooltip type is not exported
-            nodeTooltip={(node: any) => {
-              const nodeData = activeNodes.find((n: SankeyNode) => n.id === node.node.id);
-              const attr = nodeData?.whatIfAttribution;
-              const hasAttribution =
-                attr && (attr.directSubtracted > 0 || attr.proportionalSubtracted > 0);
-              const perCapitaText =
-                ccaaPopulation && node.node.value > 0 ? formatPerCapita(node.node.value) : "";
-
-              return (
-                <div className="bg-popover/80 backdrop-blur-md text-popover-foreground px-3 py-2 rounded-xl border border-white/10 shadow-xl text-sm max-w-xs">
-                  <span className="font-semibold">
-                    {copy.nodeLabels[node.node.id] || node.node.id.toString()}
-                  </span>
-                  : {formatCompact(node.node.value * 1_000_000)}
-                  {perCapitaText && (
-                    <div className="text-xs text-muted-foreground mt-0.5">{perCapitaText}</div>
-                  )}
-                  {hasAttribution && (
-                    <div className="mt-1.5 pt-1.5 border-t border-white/10 space-y-0.5 text-xs text-muted-foreground">
-                      <div className="flex justify-between gap-4">
-                        <span>{lang === "en" ? "Original" : "Original"}:</span>
-                        <span className="tabular-nums">
-                          {formatCompact(attr.originalAmount * 1_000_000)}
-                        </span>
-                      </div>
-                      {attr.directSubtracted > 0 && (
-                        <div className="flex justify-between gap-4">
-                          <span>{lang === "en" ? "Direct (regional)" : "Directo (regional)"}:</span>
-                          <span className="tabular-nums text-red-400">
-                            −{formatCompact(attr.directSubtracted * 1_000_000)}
-                          </span>
-                        </div>
-                      )}
-                      {attr.proportionalSubtracted > 0 && (
-                        <div className="flex justify-between gap-4">
-                          <span>
-                            {lang === "en" ? "Proportional (GDP)" : "Proporcional (PIB)"}:
-                          </span>
-                          <span className="tabular-nums text-orange-400">
-                            −{formatCompact(attr.proportionalSubtracted * 1_000_000)}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            }}
-            theme={{
-              tooltip: {
-                container: {
-                  background: "hsl(var(--popover) / 0.8)",
-                  backdropFilter: "blur(12px)",
-                  color: "hsl(var(--popover-foreground))",
-                  fontSize: "14px",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
-                },
-              },
-              labels: {
-                text: {
-                  fontSize: 12,
-                  fontWeight: 600,
-                  fontFamily: "Inter, sans-serif",
-                },
-              },
-            }}
-          />
-        </div>
-        {!selectedNode && (
-          <div className="bg-muted/20 p-4 border-t text-sm text-muted-foreground flex items-start gap-2">
-            <Info className="w-4 h-4 mt-0.5 shrink-0" />
-            <p>{copy.infoBox}</p>
-          </div>
-        )}
+        <SankeyView
+          filteredNodes={filteredNodes}
+          filteredLinks={filteredLinks}
+          activeNodes={activeNodes}
+          selectedNode={selectedNode}
+          nodeLabels={copy.nodeLabels}
+          ccaaPopulation={ccaaPopulation}
+          onNodeClick={(nodeId) => setSelectedNode((prev) => (prev === nodeId ? null : nodeId))}
+          onResetView={() => setSelectedNode(null)}
+          resetViewLabel={copy.resetView}
+          infoBox={copy.infoBox}
+          formatPerCapita={formatPerCapita}
+        />
       </CardContent>
     </Card>
   );

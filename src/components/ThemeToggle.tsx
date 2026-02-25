@@ -14,7 +14,7 @@ function getInitialTheme(): "light" | "dark" {
 }
 
 export default function ThemeToggle() {
-  const { lang } = useI18n();
+  const { msg } = useI18n();
   const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
 
   useEffect(() => {
@@ -29,13 +29,9 @@ export default function ThemeToggle() {
       className="h-8 w-8"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       aria-label={
-        lang === "en"
-          ? theme === "dark"
-            ? "Switch to light mode"
-            : "Switch to dark mode"
-          : theme === "dark"
-            ? "Cambiar a modo claro"
-            : "Cambiar a modo oscuro"
+        theme === "dark"
+          ? msg.blocks.themeToggle.switchToLight
+          : msg.blocks.themeToggle.switchToDark
       }
     >
       {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

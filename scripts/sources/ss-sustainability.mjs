@@ -239,7 +239,7 @@ function parseTimeSeriesDecimal(data, country) {
  * @param {object} config - Indicator config
  * @returns {Promise<{raw: object}>}
  */
-async function fetchIndicator(key, config) {
+async function fetchIndicator(key, config, fetcher) {
   const { dataset, params, geos } = config;
 
   const url = new URL(`${EUROSTAT_BASE}/${dataset}`);
@@ -253,7 +253,7 @@ async function fetchIndicator(key, config) {
 
   console.log(`  Descargando ${key} (${dataset})...`);
 
-  const response = await fetchWithRetry(
+  const response = await fetcher(
     url.toString(),
     {},
     { maxRetries: 1, timeoutMs: 20000 },
@@ -267,7 +267,7 @@ async function fetchIndicator(key, config) {
  * Download Social Security sustainability data
  * @returns {Promise<Object>} SS sustainability data object
  */
-export async function downloadSSSustainability() {
+export async function downloadSSSustainability(fetcher = fetchWithRetry) {
   console.log(
     "\n=== Descargando datos de Sostenibilidad SS (Eurostat + referencia) ===",
   );
@@ -276,7 +276,7 @@ export async function downloadSSSustainability() {
     const indicatorEntries = Object.entries(EUROSTAT_INDICATORS);
 
     const results = await Promise.allSettled(
-      indicatorEntries.map(([key, config]) => fetchIndicator(key, config)),
+      indicatorEntries.map(([key, config]) => fetchIndicator(key, config, fetcher)),
     );
 
     const [pensionExpResult, pensionGDPResult, socialContribResult] = results;

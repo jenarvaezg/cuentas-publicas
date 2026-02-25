@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AEAT_DELEGACIONES,
@@ -20,6 +20,14 @@ import { formatCompact, formatNumber } from "@/utils/formatters";
 import { getSearchParam, updateSearchParams } from "@/utils/url-state";
 import { ExportBlockButton } from "./ExportBlockButton";
 import { StatCard } from "./StatCard";
+import {
+  type BalanceMetricKey,
+  type CcaaBarDatum,
+  type CcaaModeKey,
+  CcaaTaxTab,
+  type TaxTypeKey,
+} from "./tax-revenue/CcaaTaxTab";
+import { type NationalBarDatum, NationalTaxChart } from "./tax-revenue/NationalTaxChart";
 
 const TAX_COLORS: Record<string, string> = {
   irpf: "hsl(215, 65%, 45%)",
@@ -30,30 +38,8 @@ const TAX_COLORS: Record<string, string> = {
   resto: "hsl(45, 70%, 50%)",
 };
 
-const COLOR_TOP = "hsl(215, 65%, 45%)";
-const COLOR_OTHER = "hsl(215, 30%, 65%)";
-const COLOR_BALANCE_POSITIVE = "hsl(150, 58%, 40%)";
-const COLOR_BALANCE_NEGATIVE = "hsl(0, 67%, 50%)";
-
 type TabKey = "nacional" | "ccaa";
-type TaxTypeKey = "total" | "irpf" | "iva" | "sociedades" | "iiee" | "irnr";
-type CcaaModeKey = "aeat" | "balance";
-type BalanceMetricKey = "netBalance" | "cededTaxes" | "transfers";
 type DrilldownKey = "iiee" | "resto" | null;
-
-interface NationalBarDatum {
-  name: string;
-  key: string;
-  amount: number;
-  percentage: number;
-}
-
-interface CcaaBarDatum {
-  name: string;
-  code: string;
-  value: number;
-  isTop3: boolean;
-}
 
 interface EffectiveRateDatum {
   year: number;
@@ -89,46 +75,6 @@ function parseCcaaBalanceMetricFromQuery(): BalanceMetricKey {
   const param = getSearchParam("taxCcaaMetric") as BalanceMetricKey | null;
   return param && allowed.includes(param) ? param : "netBalance";
 }
-
-const NationalTooltip = ({
-  active,
-  payload,
-}: {
-  active?: boolean;
-  payload?: Array<{ payload: NationalBarDatum }>;
-}) => {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
-  return (
-    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-      <p className="font-semibold text-foreground">{d.name}</p>
-      <p className="text-muted-foreground">
-        {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
-      </p>
-    </div>
-  );
-};
-
-const CcaaTooltip = ({
-  active,
-  payload,
-  metricLabel,
-}: {
-  active?: boolean;
-  payload?: Array<{ payload: CcaaBarDatum }>;
-  metricLabel: string;
-}) => {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
-  return (
-    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-      <p className="font-semibold text-foreground">{d.name}</p>
-      <p className="text-muted-foreground">
-        {metricLabel}: {formatNumber(d.value, 0)} M€
-      </p>
-    </div>
-  );
-};
 
 const EffectiveRateTooltip = ({
   active,
@@ -169,169 +115,7 @@ export function TaxRevenueBlock() {
   const { taxRevenue, demographics, ccaaFiscalBalance } = useData();
   const { msg, lang } = useI18n();
 
-  const copy =
-    lang === "en"
-      ? {
-          nacional: "National",
-          porCcaa: "By region",
-          totalRevenue: "Total net revenue",
-          totalRevenueTooltip:
-            "All taxes collected by the Spanish tax authority (AEAT) after deducting refunds paid back to taxpayers.",
-          largestTax: "Largest tax",
-          yearOverYear: "Year-over-year",
-          yearOverYearTooltip:
-            "How much tax collection has grown or shrunk compared to the same period in the previous year, expressed as a percentage.",
-          perCapita: "Revenue per capita",
-          perCapitaTooltip:
-            "Total tax collected divided by the number of residents — how much each person contributes on average.",
-          taxType: "Tax type",
-          allTaxes: "All taxes",
-          backToOverview: "Back to overview",
-          top3: "Top 3",
-          restRegions: "Rest of regions",
-          foralNote:
-            "Navarra and País Vasco have their own tax collection system (foral regime). Amounts shown reflect only the central government share.",
-          dataInMillions: "Data in millions of euros",
-          netRevenue: "Net revenue (after refunds)",
-          ccaaNoData: "CCAA data not available for this year.",
-          ccaaMode: "CCAA data",
-          ccaaModeAeat: "AEAT revenue",
-          ccaaModeBalance: "Fiscal balances",
-          balanceMetric: "Balance metric",
-          balanceNet: "Net balance",
-          balanceCeded: "Ceded taxes",
-          balanceTransfers: "Transfers",
-          balanceNoData: "Fiscal-balance data not available for this year.",
-          balanceCoverageNote:
-            "Hacienda settlement data for common-regime regions. Navarra and País Vasco balances are estimated based on their net foral contribution.",
-          balanceFormulaNote:
-            "Net balance = transfers (Guarantee + Sufficiency + Competitiveness + Cooperation Funds) - ceded taxes (IRPF + VAT + excise duties).",
-          balancePositive: "Positive balance",
-          balanceNegative: "Negative balance",
-          irpf: "Personal Income Tax (IRPF)",
-          iva: "Value Added Tax (VAT)",
-          sociedades: "Corporate Tax",
-          irnr: "Non-resident Tax (IRNR)",
-          iiee: "Excise Duties",
-          resto: "Other Taxes",
-          alcohol: "Alcohol",
-          cerveza: "Beer",
-          productosIntermedios: "Intermediate products",
-          hidrocarburos: "Hydrocarbons",
-          tabaco: "Tobacco",
-          electricidad: "Electricity",
-          envasesPlastico: "Plastic packaging",
-          carbon: "Coal",
-          mediosTransporte: "Vehicle registration",
-          medioambientales: "Environmental taxes",
-          traficoExterior: "External trade",
-          primasSeguros: "Insurance premiums",
-          transaccionesFinancieras: "Financial transactions",
-          serviciosDigitales: "Digital services",
-          juego: "Gambling",
-          tasas: "Fees and duties",
-          derivativePerCapita: "Total tax revenue / population",
-          derivativeYoY: "((current year - previous year) / previous year) × 100",
-          effectiveRatesTitle: "Effective tax rates by tax (proxy)",
-          effectiveRatesSubtitle: "Time series over total net tax revenue",
-          effectiveRateIrpf: "IRPF effective rate (proxy)",
-          effectiveRateIrpfTooltip:
-            "What share of total tax revenue comes from personal income tax (IRPF). Not the legal rate, just IRPF's weight within the total.",
-          effectiveRateIva: "VAT effective rate (proxy)",
-          effectiveRateIvaTooltip:
-            "What share of total tax revenue comes from VAT. Not the legal rate, just VAT's weight within the total.",
-          effectiveRateSociedades: "Corporate tax effective rate (proxy)",
-          effectiveRateSociedadesTooltip:
-            "What share of total tax revenue comes from corporate income tax. Not the legal rate, just its weight within the total.",
-          effectiveRateFormulaIrpf: "IRPF net revenue / total net tax revenue × 100",
-          effectiveRateFormulaIva: "VAT net revenue / total net tax revenue × 100",
-          effectiveRateFormulaSociedades: "Corporate tax net revenue / total net tax revenue × 100",
-          snapshotTitle: "Executive snapshot",
-          effectiveRateProxyNote:
-            "Fiscal proxy: it measures each tax weight within total net revenue, not the legal rate or taxable-base effective rate.",
-          noEffectiveRatesData: "No enough years to build effective-rate series.",
-        }
-      : {
-          nacional: "Nacional",
-          porCcaa: "Por CCAA",
-          totalRevenue: "Recaudación neta total",
-          totalRevenueTooltip:
-            "Todo lo que recauda la AEAT en impuestos después de descontar las devoluciones que hace a los contribuyentes.",
-          largestTax: "Mayor impuesto",
-          yearOverYear: "Variación interanual",
-          yearOverYearTooltip:
-            "Cuánto ha crecido o caído la recaudación respecto al mismo periodo del año anterior, expresado en porcentaje.",
-          perCapita: "Recaudación per cápita",
-          perCapitaTooltip:
-            "La recaudación total dividida entre el número de habitantes, es decir, cuánto aporta de media cada persona en impuestos.",
-          taxType: "Impuesto",
-          allTaxes: "Todos",
-          backToOverview: "Volver al resumen",
-          top3: "Top 3",
-          restRegions: "Resto de CCAA",
-          foralNote:
-            "Navarra y País Vasco tienen sistema de recaudación propio (régimen foral). Las cifras mostradas reflejan solo la participación estatal.",
-          dataInMillions: "Datos en millones de euros",
-          netRevenue: "Ingresos netos (tras devoluciones)",
-          ccaaNoData: "Datos por CCAA no disponibles para este año.",
-          ccaaMode: "Datos CCAA",
-          ccaaModeAeat: "Recaudación AEAT",
-          ccaaModeBalance: "Balanzas fiscales",
-          balanceMetric: "Métrica de balanza",
-          balanceNet: "Saldo neto",
-          balanceCeded: "Impuestos cedidos",
-          balanceTransfers: "Transferencias",
-          balanceNoData: "Datos de balanzas fiscales no disponibles para este año.",
-          balanceCoverageNote:
-            "Liquidación de Hacienda para CCAA de régimen común. Saldo de Navarra y País Vasco estimado a partir de su aportación neta foral.",
-          balanceFormulaNote:
-            "Saldo neto = transferencias (Fondos de Garantía, Suficiencia, Competitividad y Cooperación) - impuestos cedidos (IRPF + IVA + IIEE).",
-          balancePositive: "Saldo positivo",
-          balanceNegative: "Saldo negativo",
-          irpf: "IRPF",
-          iva: "IVA",
-          sociedades: "Impuesto de Sociedades",
-          irnr: "IRNR",
-          iiee: "Impuestos Especiales",
-          resto: "Resto de impuestos",
-          alcohol: "Alcohol",
-          cerveza: "Cerveza",
-          productosIntermedios: "Productos intermedios",
-          hidrocarburos: "Hidrocarburos",
-          tabaco: "Tabaco",
-          electricidad: "Electricidad",
-          envasesPlastico: "Envases de plástico",
-          carbon: "Carbón",
-          mediosTransporte: "Matriculación",
-          medioambientales: "Medioambientales",
-          traficoExterior: "Tráfico exterior",
-          primasSeguros: "Primas de seguros",
-          transaccionesFinancieras: "Transacciones financieras",
-          serviciosDigitales: "Servicios digitales",
-          juego: "Juego",
-          tasas: "Tasas y otros",
-          derivativePerCapita: "Recaudación total / población",
-          derivativeYoY: "((año actual - año anterior) / año anterior) × 100",
-          effectiveRatesTitle: "Tipos efectivos por impuesto (proxy)",
-          effectiveRatesSubtitle: "Serie temporal sobre recaudación neta total",
-          effectiveRateIrpf: "Tipo efectivo IRPF (proxy)",
-          effectiveRateIrpfTooltip:
-            "Qué porcentaje de toda la recaudación procede del IRPF (impuesto sobre la renta de las personas físicas). No es el tipo legal, sino el peso del IRPF dentro del total.",
-          effectiveRateIva: "Tipo efectivo IVA (proxy)",
-          effectiveRateIvaTooltip:
-            "Qué porcentaje de toda la recaudación procede del IVA. No es el tipo legal, sino el peso del IVA dentro del total.",
-          effectiveRateSociedades: "Tipo efectivo Sociedades (proxy)",
-          effectiveRateSociedadesTooltip:
-            "Qué porcentaje de toda la recaudación procede del Impuesto de Sociedades (el que pagan las empresas). No es el tipo legal, sino su peso dentro del total.",
-          effectiveRateFormulaIrpf: "IRPF neto / recaudación neta total × 100",
-          effectiveRateFormulaIva: "IVA neto / recaudación neta total × 100",
-          effectiveRateFormulaSociedades: "Sociedades neto / recaudación neta total × 100",
-          snapshotTitle: "Lectura rápida",
-          effectiveRateProxyNote:
-            "Proxy fiscal: mide el peso de cada impuesto dentro de la recaudación neta total, no el tipo legal ni el tipo efectivo sobre base imponible.",
-          noEffectiveRatesData:
-            "No hay años suficientes para construir la serie de tipos efectivos.",
-        };
+  const copy = msg.blocks.taxRevenue;
 
   const taxNames = useMemo<Record<string, string>>(
     () => ({
@@ -835,235 +619,67 @@ export function TaxRevenueBlock() {
               )}
             </div>
 
-            {drilldown && (
-              <div className="mb-3">
-                <button
-                  type="button"
-                  onClick={() => setDrilldown(null)}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-                >
-                  ← {copy.backToOverview}
-                </button>
-              </div>
-            )}
-
-            {activeNationalData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={nationalChartHeight}>
-                <BarChart
-                  data={activeNationalData}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
-                >
-                  <XAxis
-                    type="number"
-                    tickFormatter={(v: number) => formatNumber(v, 0)}
-                    tick={{ fontSize: 11 }}
-                    stroke="hsl(var(--muted-foreground))"
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={190}
-                    tick={{ fontSize: 11 }}
-                    stroke="hsl(var(--muted-foreground))"
-                  />
-                  <Tooltip content={<NationalTooltip />} />
-                  <Bar
-                    dataKey="amount"
-                    radius={[0, 4, 4, 0]}
-                    cursor={!drilldown ? "pointer" : undefined}
-                    onClick={
-                      !drilldown
-                        ? (data: NationalBarDatum) => {
-                            if (data.key === "iiee" && iieeChartData.length > 0) {
-                              setDrilldown("iiee");
-                            } else if (data.key === "resto" && restoChartData.length > 0) {
-                              setDrilldown("resto");
-                            }
-                          }
-                        : undefined
-                    }
-                  >
-                    {activeNationalData.map((entry) => (
-                      <Cell key={entry.key} fill={TAX_COLORS[entry.key] ?? TAX_COLORS.resto} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-8">{copy.ccaaNoData}</p>
-            )}
-
-            {!drilldown && (
-              <p className="text-xs text-muted-foreground/70 text-center mt-1">
-                {lang === "en"
+            <NationalTaxChart
+              data={activeNationalData}
+              height={nationalChartHeight}
+              drilldown={drilldown}
+              iieeData={iieeChartData}
+              restoData={restoChartData}
+              onBarClick={(data) => {
+                if (data.key === "iiee" && iieeChartData.length > 0) {
+                  setDrilldown("iiee");
+                } else if (data.key === "resto" && restoChartData.length > 0) {
+                  setDrilldown("resto");
+                }
+              }}
+              onBackToOverview={() => setDrilldown(null)}
+              backToOverviewLabel={copy.backToOverview}
+              noDataLabel={copy.ccaaNoData}
+              clickHintLabel={
+                lang === "en"
                   ? "Click on Excise Duties or Other Taxes bars to see breakdown."
-                  : "Haz clic en Impuestos Especiales o Resto para ver el desglose."}
-              </p>
-            )}
+                  : "Haz clic en Impuestos Especiales o Resto para ver el desglose."
+              }
+              lang={lang}
+            />
           </div>
         )}
 
         {/* CCAA tab */}
         {activeTab === "ccaa" && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="flex items-center gap-1.5">
-                <label
-                  htmlFor="taxrevenue-ccaa-mode"
-                  className="text-xs text-muted-foreground whitespace-nowrap"
-                >
-                  {copy.ccaaMode}
-                </label>
-                <select
-                  id="taxrevenue-ccaa-mode"
-                  value={ccaaMode}
-                  onChange={(e) => setCcaaMode(e.target.value as CcaaModeKey)}
-                  className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
-                >
-                  <option value="aeat">{copy.ccaaModeAeat}</option>
-                  <option value="balance">{copy.ccaaModeBalance}</option>
-                </select>
-              </div>
-
-              {ccaaMode === "aeat" ? (
-                <div className="flex items-center gap-1.5">
-                  <label
-                    htmlFor="taxrevenue-type"
-                    className="text-xs text-muted-foreground whitespace-nowrap"
-                  >
-                    {copy.taxType}
-                  </label>
-                  <select
-                    id="taxrevenue-type"
-                    value={selectedTaxType}
-                    onChange={(e) => setSelectedTaxType(e.target.value as TaxTypeKey)}
-                    className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
-                  >
-                    <option value="total">{copy.allTaxes}</option>
-                    {(["irpf", "iva", "sociedades", "iiee", "irnr"] as TaxTypeKey[]).map((key) => (
-                      <option key={key} value={key}>
-                        {taxNames[key]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5">
-                  <label
-                    htmlFor="taxrevenue-balance-metric"
-                    className="text-xs text-muted-foreground whitespace-nowrap"
-                  >
-                    {copy.balanceMetric}
-                  </label>
-                  <select
-                    id="taxrevenue-balance-metric"
-                    value={selectedBalanceMetric}
-                    onChange={(e) => setSelectedBalanceMetric(e.target.value as BalanceMetricKey)}
-                    className="h-8 rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
-                  >
-                    <option value="netBalance">{copy.balanceNet}</option>
-                    <option value="cededTaxes">{copy.balanceCeded}</option>
-                    <option value="transfers">{copy.balanceTransfers}</option>
-                  </select>
-                </div>
-              )}
-            </div>
-
-            {ccaaChartData.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                {ccaaMode === "aeat" ? copy.ccaaNoData : copy.balanceNoData}
-              </p>
-            ) : (
-              <>
-                {/* Legend */}
-                {ccaaMode === "balance" && selectedBalanceMetric === "netBalance" ? (
-                  <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm"
-                        style={{ background: COLOR_BALANCE_POSITIVE }}
-                      />
-                      {copy.balancePositive}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm"
-                        style={{ background: COLOR_BALANCE_NEGATIVE }}
-                      />
-                      {copy.balanceNegative}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm"
-                        style={{ background: COLOR_TOP }}
-                      />
-                      {copy.top3}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm"
-                        style={{ background: COLOR_OTHER }}
-                      />
-                      {copy.restRegions}
-                    </span>
-                  </div>
-                )}
-
-                <ResponsiveContainer width="100%" height={ccaaChartHeight}>
-                  <BarChart
-                    data={ccaaChartData}
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
-                  >
-                    <XAxis
-                      type="number"
-                      domain={ccaaXDomain}
-                      tickFormatter={(v: number) => formatNumber(v, 0)}
-                      tick={{ fontSize: 11 }}
-                      stroke="hsl(var(--muted-foreground))"
-                    />
-                    <YAxis
-                      type="category"
-                      dataKey="name"
-                      width={130}
-                      tick={{ fontSize: 11 }}
-                      stroke="hsl(var(--muted-foreground))"
-                    />
-                    <Tooltip content={<CcaaTooltip metricLabel={ccaaMetricLabel} />} />
-                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                      {ccaaChartData.map((entry) => (
-                        <Cell
-                          key={entry.code}
-                          fill={
-                            ccaaMode === "balance" && selectedBalanceMetric === "netBalance"
-                              ? entry.value < 0
-                                ? COLOR_BALANCE_NEGATIVE
-                                : COLOR_BALANCE_POSITIVE
-                              : entry.isTop3
-                                ? COLOR_TOP
-                                : COLOR_OTHER
-                          }
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-
-                <p className="text-xs text-muted-foreground/80 text-center">
-                  {ccaaMode === "aeat" ? copy.foralNote : copy.balanceCoverageNote}
-                </p>
-                {ccaaMode === "balance" && (
-                  <p className="text-xs text-muted-foreground/70 text-center">
-                    {copy.balanceFormulaNote}
-                  </p>
-                )}
-              </>
-            )}
-          </div>
+          <CcaaTaxTab
+            data={ccaaChartData}
+            chartHeight={ccaaChartHeight}
+            xDomain={ccaaXDomain}
+            ccaaMode={ccaaMode}
+            selectedTaxType={selectedTaxType}
+            selectedBalanceMetric={selectedBalanceMetric}
+            metricLabel={ccaaMetricLabel}
+            taxNames={taxNames}
+            onCcaaModeChange={setCcaaMode}
+            onTaxTypeChange={setSelectedTaxType}
+            onBalanceMetricChange={setSelectedBalanceMetric}
+            copy={{
+              ccaaMode: copy.ccaaMode,
+              ccaaModeAeat: copy.ccaaModeAeat,
+              ccaaModeBalance: copy.ccaaModeBalance,
+              taxType: copy.taxType,
+              allTaxes: copy.allTaxes,
+              balanceMetric: copy.balanceMetric,
+              balanceNet: copy.balanceNet,
+              balanceCeded: copy.balanceCeded,
+              balanceTransfers: copy.balanceTransfers,
+              top3: copy.top3,
+              restRegions: copy.restRegions,
+              balancePositive: copy.balancePositive,
+              balanceNegative: copy.balanceNegative,
+              ccaaNoData: copy.ccaaNoData,
+              balanceNoData: copy.balanceNoData,
+              foralNote: copy.foralNote,
+              balanceCoverageNote: copy.balanceCoverageNote,
+              balanceFormulaNote: copy.balanceFormulaNote,
+            }}
+          />
         )}
 
         {/* Footer note */}

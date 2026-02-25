@@ -22,7 +22,7 @@ const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 export const PersonalCalculator: React.FC<Props> = ({ spendingCategories, totalSpending }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [grossSalary, setGrossSalary] = useState(35_000);
-  const { lang } = useI18n();
+  const { msg } = useI18n();
 
   const result = useMemo(() => calculatePersonalTax({ grossSalary }), [grossSalary]);
 
@@ -40,44 +40,7 @@ export const PersonalCalculator: React.FC<Props> = ({ spendingCategories, totalS
 
   const maxPersonal = distribution[0]?.personal ?? 1;
 
-  const copy =
-    lang === "en"
-      ? {
-          toggle: "How much do you pay?",
-          salary: "Annual gross salary",
-          irpf: "Income Tax (IRPF)",
-          irpfState: "State",
-          irpfCcaa: "Autonomous Community",
-          ss: "Social Security (worker)",
-          ssEmployer: "Social Security (employer)",
-          iva: "Estimated VAT",
-          net: "Net salary",
-          effectiveRate: "Effective IRPF rate",
-          totalTax: "Your total tax contribution",
-          totalWithEmployer: "Full labour cost to employer",
-          destination: "Where your taxes go",
-          destinationSub: "Proportional estimate based on public spending distribution",
-          approx: "Estimated",
-          brackets: "IRPF brackets",
-        }
-      : {
-          toggle: "¿Cuánto pagas tú?",
-          salary: "Salario bruto anual",
-          irpf: "IRPF",
-          irpfState: "Tramo estatal",
-          irpfCcaa: "Tramo autonómico",
-          ss: "Seguridad Social (trabajador)",
-          ssEmployer: "Seguridad Social (empresa)",
-          iva: "IVA estimado",
-          net: "Salario neto",
-          effectiveRate: "Tipo efectivo IRPF",
-          totalTax: "Tu contribución fiscal total",
-          totalWithEmployer: "Coste laboral total para la empresa",
-          destination: "Destino de tus impuestos",
-          destinationSub: "Estimación proporcional basada en la distribución del gasto público",
-          approx: "Estimado",
-          brackets: "Tramos IRPF",
-        };
+  const copy = msg.blocks.personalCalculator;
 
   return (
     <div className="mt-4">

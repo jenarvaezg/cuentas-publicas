@@ -12,6 +12,7 @@ import {
 import type { BudgetCategory } from "@/data/types";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatNumber } from "@/utils/formatters";
+import { ChartTooltip } from "./ChartTooltip";
 
 export type CompareMode = "absoluto" | "pesos" | "cambio";
 
@@ -71,66 +72,68 @@ export const CustomTooltip = ({
   selectedYear?: number;
   hasComparison?: boolean;
   comparisonYear?: number;
-}) => {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
-
-  if (isChangeMode) {
-    return (
-      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-        <p className="font-semibold text-foreground">{d.name}</p>
-        <p className="text-muted-foreground">
-          {selectedYear}: {formatNumber(d.amount, 0)} M€
-        </p>
-        {d.comparison !== undefined && (
+}) => (
+  <ChartTooltip active={active} payload={payload}>
+    {(pl) => {
+      const d = pl[0].payload;
+      if (isChangeMode) {
+        return (
+          <>
+            <p className="font-semibold text-foreground">{d.name}</p>
+            <p className="text-muted-foreground">
+              {selectedYear}: {formatNumber(d.amount, 0)} M€
+            </p>
+            {d.comparison !== undefined && (
+              <p className="text-muted-foreground">
+                {comparisonYear}: {formatNumber(d.comparison, 0)} M€
+              </p>
+            )}
+            {d.change !== undefined && (
+              <p
+                className={
+                  d.change >= 0 ? "text-emerald-600 font-medium" : "text-red-500 font-medium"
+                }
+              >
+                {d.change >= 0 ? "+" : ""}
+                {formatNumber(d.change, 1)}%
+              </p>
+            )}
+          </>
+        );
+      }
+      if (isWeightMode) {
+        return (
+          <>
+            <p className="font-semibold text-foreground">{d.name}</p>
+            <p className="text-muted-foreground">
+              {selectedYear}: {formatNumber(d.percentage, 1)}% ({formatNumber(d.amount, 0)} M€)
+            </p>
+            {hasComparison && d.comparisonPercentage !== undefined && (
+              <p className="text-muted-foreground">
+                {comparisonYear}: {formatNumber(d.comparisonPercentage, 1)}% (
+                {formatNumber(d.comparison ?? 0, 0)} M€)
+              </p>
+            )}
+          </>
+        );
+      }
+      return (
+        <>
+          <p className="font-semibold text-foreground">{d.name}</p>
           <p className="text-muted-foreground">
-            {comparisonYear}: {formatNumber(d.comparison, 0)} M€
+            {selectedYear}: {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
           </p>
-        )}
-        {d.change !== undefined && (
-          <p
-            className={d.change >= 0 ? "text-emerald-600 font-medium" : "text-red-500 font-medium"}
-          >
-            {d.change >= 0 ? "+" : ""}
-            {formatNumber(d.change, 1)}%
-          </p>
-        )}
-      </div>
-    );
-  }
-
-  if (isWeightMode) {
-    return (
-      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-        <p className="font-semibold text-foreground">{d.name}</p>
-        <p className="text-muted-foreground">
-          {selectedYear}: {formatNumber(d.percentage, 1)}% ({formatNumber(d.amount, 0)} M€)
-        </p>
-        {hasComparison && d.comparisonPercentage !== undefined && (
-          <p className="text-muted-foreground">
-            {comparisonYear}: {formatNumber(d.comparisonPercentage, 1)}% (
-            {formatNumber(d.comparison ?? 0, 0)} M€)
-          </p>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-      <p className="font-semibold text-foreground">{d.name}</p>
-      <p className="text-muted-foreground">
-        {selectedYear}: {formatNumber(d.amount, 0)} M€ ({formatNumber(d.percentage, 1)}%)
-      </p>
-      {hasComparison && d.comparison !== undefined && (
-        <p className="text-muted-foreground">
-          {comparisonYear}: {formatNumber(d.comparison, 0)} M€ (
-          {formatNumber(d.comparisonPercentage ?? 0, 1)}%)
-        </p>
-      )}
-    </div>
-  );
-};
+          {hasComparison && d.comparison !== undefined && (
+            <p className="text-muted-foreground">
+              {comparisonYear}: {formatNumber(d.comparison, 0)} M€ (
+              {formatNumber(d.comparisonPercentage ?? 0, 1)}%)
+            </p>
+          )}
+        </>
+      );
+    }}
+  </ChartTooltip>
+);
 
 function resolveItems(
   categories: BudgetCategory[],
@@ -153,21 +156,8 @@ export function BudgetChart({
   compareMode,
   euroLabel,
 }: BudgetChartProps) {
-  const { lang } = useI18n();
-  const copy =
-    lang === "en"
-      ? {
-          allFunctions: "All functions",
-          increase: "Increase",
-          decrease: "Decrease",
-          clickToDrilldown: "Click a bar to view subcategory breakdown",
-        }
-      : {
-          allFunctions: "Todas las funciones",
-          increase: "Aumento",
-          decrease: "Descenso",
-          clickToDrilldown: "Haz clic en una barra para ver el desglose por subcategorías",
-        };
+  const { msg } = useI18n();
+  const copy = msg.blocks.budgetChart;
 
   const data = useMemo<ChartDatum[]>(() => {
     const items = resolveItems(categories, drilldownCategory);

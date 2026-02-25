@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom/vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useData } from "@/hooks/useData";
@@ -7,15 +6,12 @@ import { TaxRevenueBlock } from "../TaxRevenueBlock";
 vi.mock("@/hooks/useData", () => ({ useData: vi.fn() }));
 vi.mock("@/utils/export", () => ({ exportElementToPng: vi.fn() }));
 
-vi.mock("@/i18n/I18nProvider", () => ({
-  useI18n: () => ({
-    lang: "es",
-    msg: {
-      blocks: { taxRevenue: { title: "Recaudación Tributaria" } },
-      common: { year: "Año" },
-    },
-  }),
-}));
+vi.mock("@/i18n/I18nProvider", async () => {
+  const { messages } = await vi.importActual<typeof import("@/i18n/messages")>("@/i18n/messages");
+  return {
+    useI18n: () => ({ lang: "es", msg: messages.es }),
+  };
+});
 
 vi.mock("../ExportBlockButton", () => ({
   ExportBlockButton: () => <button type="button">Exportar</button>,

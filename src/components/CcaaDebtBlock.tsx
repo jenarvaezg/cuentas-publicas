@@ -10,12 +10,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartTooltip } from "@/components/ChartTooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fromAttribution } from "@/data/sources";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber } from "@/utils/formatters";
 import { getSearchParam, updateSearchParams } from "@/utils/url-state";
+import { CcaaDetailPanel } from "./ccaa/CcaaDetailPanel";
 import { ExportBlockButton } from "./ExportBlockButton";
 
 type MetricKey = "debtToGDP" | "debtAbsolute";
@@ -47,128 +49,7 @@ export function CcaaDebtBlock() {
   const { ccaaDebt, taxRevenue, ccaaFiscalBalance, ccaaForalFlows, ccaaSpending, ccaaDeficit } =
     useData();
   const { msg, lang } = useI18n();
-  const copy =
-    lang === "en"
-      ? {
-          metricLabels: {
-            debtToGDP: "Debt/GDP (%)",
-            debtAbsolute: "Total debt (€)",
-          } as Record<MetricKey, string>,
-          gdpSuffix: "% of GDP",
-          detail: "Detail",
-          totalDebt: "Total debt",
-          debtToGdp: "Debt/GDP",
-          ranking: "Ranking",
-          ofLabel: "of",
-          differenceVsNational: "Difference vs national total",
-          regionalDeficit: "Regional deficit (official)",
-          regionalSpending: "Regional spending (proxy)",
-          officialBalance: "Regional balance (official)",
-          officialNetBalance: "Net balance",
-          officialCededTaxes: "Ceded taxes",
-          officialTransfers: "Transfers",
-          foralPaymentToState: "Payment to the State",
-          foralAdjustmentsWithState: "Adjustments with the State",
-          foralNetFlowToState: "Net flow",
-          foralBasedOnYear: "foral year",
-          officialBasedOnYear: "official year",
-          officialUnavailable: "Official balance not available for this region/year.",
-          officialUnavailableForalFlow:
-            "For this region, foral flow references are shown instead of common-regime balance.",
-          officialSpending: "Regional spending (official)",
-          officialSpendingTotal: "Total spending",
-          officialSpendingTopDivision: "Top function",
-          cofogDivisionLabels: {
-            "01": "General public services",
-            "02": "Defence",
-            "03": "Public order and safety",
-            "04": "Economic affairs",
-            "05": "Environmental protection",
-            "06": "Housing and community amenities",
-            "07": "Health",
-            "08": "Recreation, culture and religion",
-            "09": "Education",
-            "10": "Social protection",
-          } as Record<string, string>,
-          officialForalNote:
-            "Navarra and País Vasco are excluded from this dataset (common-regime settlement).",
-          officialFormulaNote: "Net balance = transfers - ceded taxes.",
-          deficitProxy: "Debt change proxy (12m)",
-          spendingProxy: "Estimated spending",
-          surplusProxy: "Estimated surplus",
-          proxyNote: "Proxy based on tax revenue. Not equivalent to national accounts.",
-          deficitOfficialNote: "Official National Accounts (SEC 2010) closing balance (IGAE).",
-          unavailableProxy: "Not available for this region/year.",
-          taxRevenueRef: "AEAT tax revenue",
-          foralTaxRevenueRef: "Foral tax revenue",
-          basedOnYear: "based on year",
-          top3: "Top 3",
-          restRegions: "Rest of regions",
-          nationalTotal: "National total",
-          dataFrom: "Data from",
-          totalLabel: "Total",
-        }
-      : {
-          metricLabels: {
-            debtToGDP: "Deuda/PIB (%)",
-            debtAbsolute: "Deuda total (€)",
-          } as Record<MetricKey, string>,
-          gdpSuffix: "% del PIB",
-          detail: "Detalle",
-          totalDebt: "Deuda total",
-          debtToGdp: "Deuda/PIB",
-          ranking: "Ranking",
-          ofLabel: "de",
-          differenceVsNational: "Diferencia vs total nacional",
-          regionalDeficit: "Déficit CCAA (oficial)",
-          regionalSpending: "Gasto CCAA (proxy)",
-          officialBalance: "Saldo CCAA (oficial)",
-          officialNetBalance: "Saldo neto",
-          officialCededTaxes: "Impuestos cedidos",
-          officialTransfers: "Transferencias",
-          foralPaymentToState: "Pago al Estado",
-          foralAdjustmentsWithState: "Ajustes con el Estado",
-          foralNetFlowToState: "Flujo neto",
-          foralBasedOnYear: "año foral",
-          officialBasedOnYear: "año oficial",
-          officialUnavailable: "Balanza oficial no disponible para esta comunidad/año.",
-          officialUnavailableForalFlow:
-            "Para esta comunidad se muestran referencias forales en lugar de la balanza de régimen común.",
-          officialSpending: "Gasto CCAA (oficial)",
-          officialSpendingTotal: "Gasto total",
-          officialSpendingTopDivision: "Función principal",
-          cofogDivisionLabels: {
-            "01": "Servicios públicos generales",
-            "02": "Defensa",
-            "03": "Orden público y seguridad",
-            "04": "Asuntos económicos",
-            "05": "Protección del medio ambiente",
-            "06": "Vivienda y servicios comunitarios",
-            "07": "Salud",
-            "08": "Ocio, cultura y religión",
-            "09": "Educación",
-            "10": "Protección social",
-          } as Record<string, string>,
-          officialForalNote:
-            "Navarra y País Vasco quedan fuera de este dataset (liquidación de régimen común).",
-          officialFormulaNote: "Saldo neto = transferencias - impuestos cedidos.",
-          deficitProxy: "Proxy por variación deuda (12m)",
-          spendingProxy: "Gasto estimado",
-          surplusProxy: "Superávit estimado",
-          proxyNote:
-            "Proxy basado en ingresos tributarios AEAT. No equivale a gasto real contable.",
-          deficitOfficialNote:
-            "Saldo de cierre oficial Contabilidad Nacional (SEC 2010) publicado por IGAE.",
-          unavailableProxy: "No disponible para esta comunidad/año.",
-          taxRevenueRef: "Ingresos tributarios AEAT",
-          foralTaxRevenueRef: "Recaudación Tributaria Foral",
-          basedOnYear: "base año",
-          top3: "Top 3",
-          restRegions: "Resto de CCAA",
-          nationalTotal: "Total nacional",
-          dataFrom: "Datos del",
-          totalLabel: "Total",
-        };
+  const copy = msg.blocks.ccaa;
   const ccaaCodes = useMemo(
     () => new Set(ccaaDebt.ccaa.map((entry) => entry.code)),
     [ccaaDebt.ccaa],
@@ -272,8 +153,9 @@ export function CcaaDebtBlock() {
     ? spendingByCode.get(selectedEntry.code)
     : undefined;
   const selectedTopDivisionLabel = selectedOfficialSpending
-    ? (copy.cofogDivisionLabels[selectedOfficialSpending.topDivisionCode] ??
-      selectedOfficialSpending.topDivisionName)
+    ? (copy.cofogDivisionLabels[
+        selectedOfficialSpending.topDivisionCode as keyof typeof copy.cofogDivisionLabels
+      ] ?? selectedOfficialSpending.topDivisionName)
     : null;
 
   useEffect(() => {
@@ -295,20 +177,23 @@ export function CcaaDebtBlock() {
   }: {
     active?: boolean;
     payload?: Array<{ payload: ChartDatum }>;
-  }) => {
-    if (!active || !payload?.length) return null;
-    const d = payload[0].payload;
-    const formatted =
-      selectedMetric === "debtToGDP"
-        ? `${formatNumber(d.value, 1)}${copy.gdpSuffix.startsWith("%") ? copy.gdpSuffix : ` ${copy.gdpSuffix}`}`
-        : `${formatCompact(d.value)}`;
-    return (
-      <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
-        <p className="font-semibold text-foreground">{d.name}</p>
-        <p className="text-muted-foreground">{formatted}</p>
-      </div>
-    );
-  };
+  }) => (
+    <ChartTooltip active={active} payload={payload}>
+      {(pl) => {
+        const d = pl[0].payload;
+        const formatted =
+          selectedMetric === "debtToGDP"
+            ? `${formatNumber(d.value, 1)}${copy.gdpSuffix.startsWith("%") ? copy.gdpSuffix : ` ${copy.gdpSuffix}`}`
+            : `${formatCompact(d.value)}`;
+        return (
+          <>
+            <p className="font-semibold text-foreground">{d.name}</p>
+            <p className="text-muted-foreground">{formatted}</p>
+          </>
+        );
+      }}
+    </ChartTooltip>
+  );
 
   const differenceLabel =
     selectedMetric === "debtToGDP"
@@ -372,152 +257,65 @@ export function CcaaDebtBlock() {
       </CardHeader>
       <CardContent className="space-y-4">
         {selectedEntry && (
-          <div className="rounded-lg border border-border/70 bg-muted/20 p-4 space-y-3">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold">
-                {copy.detail}: {selectedEntry.name}
-              </h3>
-              <span className="text-xs text-muted-foreground">{ccaaDebt.quarter}</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-[11px] text-muted-foreground">{copy.totalDebt}</p>
-                <p className="text-sm font-semibold">{formatCompact(selectedEntry.debtAbsolute)}</p>
-              </div>
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-[11px] text-muted-foreground">{copy.debtToGdp}</p>
-                <p className="text-sm font-semibold">{formatNumber(selectedEntry.debtToGDP, 1)}%</p>
-              </div>
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-[11px] text-muted-foreground">
-                  {copy.ranking} ({copy.metricLabels[selectedMetric]})
-                </p>
-                <p className="text-sm font-semibold">
-                  {selectedRank
-                    ? `${selectedRank} ${copy.ofLabel} ${data.length}`
-                    : msg.common.notAvailable}
-                </p>
-              </div>
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-[11px] text-muted-foreground">{copy.differenceVsNational}</p>
-                <p className="text-sm font-semibold">{differenceLabel}</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-xs font-semibold">{copy.officialBalance}</p>
-                {selectedBalance ? (
-                  <>
-                    <p className="text-sm font-semibold mt-1">
-                      {copy.officialNetBalance}: {selectedBalance.netBalance >= 0 ? "+" : ""}
-                      {formatNumber(selectedBalance.netBalance, 0)} M€
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.officialCededTaxes}: {formatNumber(selectedBalance.cededTaxes, 0)} M€
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.officialTransfers}: {formatNumber(selectedBalance.transfers, 0)} M€
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.officialBasedOnYear} {latestBalanceYear} · {copy.officialFormulaNote}
-                    </p>
-                  </>
-                ) : selectedForalFlow ? (
-                  <>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.officialUnavailableForalFlow}
-                    </p>
-                    <p className="text-sm font-semibold mt-1">
-                      {copy.foralPaymentToState}:{" "}
-                      {formatNumber(selectedForalFlow.paymentToState, 0)} M€
-                    </p>
-                    {selectedForalFlow.adjustmentsWithState != null && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {copy.foralAdjustmentsWithState}:{" "}
-                        {formatNumber(selectedForalFlow.adjustmentsWithState, 0)} M€
-                      </p>
-                    )}
-                    {selectedForalFlow.netFlowToState != null && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {copy.foralNetFlowToState}:{" "}
-                        {selectedForalFlow.netFlowToState >= 0 ? "+" : ""}
-                        {formatNumber(selectedForalFlow.netFlowToState, 0)} M€
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.foralBasedOnYear} {latestForalYear} · {copy.officialForalNote}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-xs text-muted-foreground mt-1">{copy.officialUnavailable}</p>
-                    {selectedIsForal && (
-                      <p className="text-xs text-muted-foreground mt-1">{copy.officialForalNote}</p>
-                    )}
-                  </>
-                )}
-              </div>
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-xs font-semibold">{copy.officialSpending}</p>
-                {selectedOfficialSpending ? (
-                  <>
-                    <p className="text-sm font-semibold mt-1">
-                      {copy.officialSpendingTotal}:{" "}
-                      {formatNumber(selectedOfficialSpending.total, 0)} M€
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.officialSpendingTopDivision}: {selectedTopDivisionLabel} (
-                      {formatNumber(selectedOfficialSpending.topDivisionPct, 1)}
-                      %)
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.officialBasedOnYear} {latestSpendingYear}
-                    </p>
-                  </>
-                ) : (
-                  <p className="text-xs text-muted-foreground mt-1">{copy.officialUnavailable}</p>
-                )}
-              </div>
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-xs font-semibold">{copy.regionalDeficit}</p>
-                {selectedDeficitEuros == null ? (
-                  <p className="text-xs text-muted-foreground mt-1">{copy.unavailableProxy}</p>
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold mt-1">
-                      {selectedDeficitEuros >= 0 ? "Superávit" : "Déficit"}:{" "}
-                      {selectedDeficitEuros >= 0 ? "+" : "-"}
-                      {formatCompact(Math.abs(selectedDeficitEuros))}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {copy.basedOnYear} {deficitYear}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">{copy.deficitOfficialNote}</p>
-                  </>
-                )}
-              </div>
-              <div className="rounded-md border bg-background p-3 min-w-0">
-                <p className="text-xs font-semibold">{copy.regionalSpending}</p>
-                {selectedSpendingProxyEuros == null ? (
-                  <p className="text-xs text-muted-foreground mt-1">{copy.unavailableProxy}</p>
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold mt-1">
-                      {copy.spendingProxy}: {formatCompact(selectedSpendingProxyEuros)}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {selectedIsForal ? copy.foralTaxRevenueRef : copy.taxRevenueRef}:{" "}
-                      {formatCompact(selectedTaxRevenueEuros ?? 0)} ({copy.basedOnYear}{" "}
-                      {selectedIsForal ? latestForalYear : taxRevenueYear})
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">{copy.proxyNote}</p>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+          <CcaaDetailPanel
+            selectedEntry={selectedEntry}
+            quarter={ccaaDebt.quarter}
+            selectedRank={selectedRank ?? undefined}
+            dataLength={data.length}
+            selectedMetric={selectedMetric}
+            nationalMetricValue={nationalMetricValue}
+            differenceLabel={differenceLabel}
+            selectedBalance={selectedBalance}
+            selectedForalFlow={selectedForalFlow}
+            selectedIsForal={selectedIsForal}
+            latestBalanceYear={latestBalanceYear}
+            latestForalYear={latestForalYear}
+            selectedOfficialSpending={selectedOfficialSpending}
+            latestSpendingYear={latestSpendingYear}
+            selectedTopDivisionLabel={selectedTopDivisionLabel}
+            selectedDeficitEuros={selectedDeficitEuros}
+            deficitYear={deficitYear}
+            selectedSpendingProxyEuros={selectedSpendingProxyEuros}
+            selectedTaxRevenueEuros={selectedTaxRevenueEuros}
+            selectedIsForal2={selectedIsForal}
+            latestForalYear2={latestForalYear}
+            taxRevenueYear={taxRevenueYear}
+            copy={{
+              detail: copy.detail,
+              totalDebt: copy.totalDebt,
+              debtToGdp: copy.debtToGdp,
+              ranking: copy.ranking,
+              ofLabel: copy.ofLabel,
+              metricLabels: copy.metricLabels,
+              differenceVsNational: copy.differenceVsNational,
+              officialBalance: copy.officialBalance,
+              officialNetBalance: copy.officialNetBalance,
+              officialCededTaxes: copy.officialCededTaxes,
+              officialTransfers: copy.officialTransfers,
+              officialBasedOnYear: copy.officialBasedOnYear,
+              officialFormulaNote: copy.officialFormulaNote,
+              officialUnavailableForalFlow: copy.officialUnavailableForalFlow,
+              foralPaymentToState: copy.foralPaymentToState,
+              foralAdjustmentsWithState: copy.foralAdjustmentsWithState,
+              foralNetFlowToState: copy.foralNetFlowToState,
+              foralBasedOnYear: copy.foralBasedOnYear,
+              officialForalNote: copy.officialForalNote,
+              officialUnavailable: copy.officialUnavailable,
+              officialSpending: copy.officialSpending,
+              officialSpendingTotal: copy.officialSpendingTotal,
+              officialSpendingTopDivision: copy.officialSpendingTopDivision,
+              regionalDeficit: copy.regionalDeficit,
+              deficitOfficialNote: copy.deficitOfficialNote,
+              unavailableProxy: copy.unavailableProxy,
+              basedOnYear: copy.basedOnYear,
+              regionalSpending: copy.regionalSpending,
+              spendingProxy: copy.spendingProxy,
+              foralTaxRevenueRef: copy.foralTaxRevenueRef,
+              taxRevenueRef: copy.taxRevenueRef,
+              proxyNote: copy.proxyNote,
+            }}
+            notAvailable={msg.common.notAvailable}
+          />
         )}
 
         {/* Legend */}

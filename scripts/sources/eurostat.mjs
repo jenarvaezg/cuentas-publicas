@@ -82,7 +82,7 @@ const INDICATORS = {
  * Download Eurostat comparative data for Spain vs EU
  * @returns {Promise<Object>} Eurostat data object
  */
-export async function downloadEurostatData() {
+export async function downloadEurostatData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos de Eurostat ===')
 
   try {
@@ -90,7 +90,7 @@ export async function downloadEurostatData() {
 
     // Fetch all indicators in parallel
     const results = await Promise.allSettled(
-      indicatorEntries.map(([key, config]) => fetchIndicator(key, config))
+      indicatorEntries.map(([key, config]) => fetchIndicator(key, config, fetcher))
     )
 
     const indicators = {}
@@ -156,7 +156,7 @@ export async function downloadEurostatData() {
  * @param {object} config - Indicator config with dataset and params
  * @returns {Promise<{values: object, year: number}>}
  */
-async function fetchIndicator(key, config) {
+async function fetchIndicator(key, config, fetcher) {
   const { dataset, params } = config
 
   // Build URL with query params
@@ -179,7 +179,7 @@ async function fetchIndicator(key, config) {
 
   console.log(`  Descargando ${key} (${dataset})...`)
 
-  const response = await fetchWithRetry(url.toString(), {}, { maxRetries: 1, timeoutMs: 20000 })
+  const response = await fetcher(url.toString(), {}, { maxRetries: 1, timeoutMs: 20000 })
   const data = await response.json()
 
   return parseJsonStat(data, COUNTRIES)
@@ -403,7 +403,7 @@ export function parseJsonStatTimeSeries(data, country) {
  * @param {object} config - Indicator config with dataset and params
  * @returns {Promise<{byYear: Record<string, number>, years: number[]}>}
  */
-async function fetchIndicatorTimeSeries(key, config) {
+async function fetchIndicatorTimeSeries(key, config, fetcher) {
   const { dataset, params } = config
 
   const url = new URL(`${EUROSTAT_BASE}/${dataset}`)
@@ -417,7 +417,7 @@ async function fetchIndicatorTimeSeries(key, config) {
 
   console.log(`  Descargando ${key} (${dataset}, serie temporal ES)...`)
 
-  const response = await fetchWithRetry(url.toString(), {}, { maxRetries: 1, timeoutMs: 20000 })
+  const response = await fetcher(url.toString(), {}, { maxRetries: 1, timeoutMs: 20000 })
   const data = await response.json()
 
   return parseJsonStatTimeSeries(data, 'ES')
@@ -427,14 +427,14 @@ async function fetchIndicatorTimeSeries(key, config) {
  * Download revenue vs expenditure data for Spain (time series 1995–present)
  * @returns {Promise<Object>} Revenue data object
  */
-export async function downloadRevenueData() {
+export async function downloadRevenueData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos de Ingresos/Gastos (Eurostat gov_10a_main) ===')
 
   try {
     const indicatorEntries = Object.entries(REVENUE_INDICATORS)
 
     const results = await Promise.allSettled(
-      indicatorEntries.map(([key, config]) => fetchIndicatorTimeSeries(key, config))
+      indicatorEntries.map(([key, config]) => fetchIndicatorTimeSeries(key, config, fetcher))
     )
 
     // Collect all years across all indicators
