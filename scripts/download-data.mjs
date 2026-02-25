@@ -18,6 +18,7 @@ import { downloadCcaaForalFlowsData } from "./sources/ccaa-foral-flows.mjs";
 import downloadCcaaDeficitData from "./sources/ccaa-deficit.mjs";
 import { downloadRegionalPensionsData } from "./sources/pensions-regional.mjs";
 import { downloadRegionalAccountsData } from "./sources/regional-accounts.mjs";
+import { downloadUnemploymentRegionalData } from "./sources/unemployment-regional.mjs";
 import { downloadFlowsSankeyData } from "./sources/flows-sankey.mjs";
 import { downloadSSSustainability } from "./sources/ss-sustainability.mjs";
 import {
@@ -123,6 +124,7 @@ const FALLBACK_GUARD_KEYS = {
   ccaaForalFlows: ["foral"],
   ccaaDeficit: ["igae-cn-regional"],
   regionalAccounts: ["regionalAccounts"],
+  unemploymentRegional: ["unemployment"],
   pensionsRegional: ["byYear"],
   flowsSankey: ["sankey"],
   ssSustainability: ["ssSustainability"],
@@ -334,6 +336,19 @@ const SOURCE_REGISTRY = [
     }),
   },
   {
+    name: "unemploymentRegional",
+    fileName: "unemployment-regional.json",
+    download: downloadUnemploymentRegionalData,
+    metaExtractor: (r) => ({
+      lastRealDataDate: pickLatestDate([
+        r.latestYear,
+        ...getAttributionDates(r.sourceAttribution),
+      ]),
+      latestYear: r.latestYear || null,
+      communities: r.byYear?.[String(r.latestYear)]?.entries?.length || 0,
+    }),
+  },
+  {
     name: "flowsSankey",
     fileName: "flows.json",
     download: downloadFlowsSankeyData,
@@ -484,6 +499,12 @@ function buildPublicApiIndex(meta) {
         path: "/api/v1/pensions-regional.json",
         source: "Seguridad Social (EST24)",
         description: "Gasto anual en pensiones desglosado por CCAA",
+      },
+      {
+        path: "/api/v1/unemployment-regional.json",
+        source: "Eurostat (lfst_r_lfu3pers + gov_10a_exp)",
+        description:
+          "Gasto en prestaciones por desempleo por CCAA (distribución proporcional)",
       },
       {
         path: "/api/v1/ss-sustainability.json",

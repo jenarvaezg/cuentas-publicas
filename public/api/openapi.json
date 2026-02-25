@@ -161,6 +161,16 @@
         }
       }
     },
+    "/api/v1/unemployment-regional.json": {
+      "get": {
+        "summary": "Gasto en prestaciones por desempleo por CCAA",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/ss-sustainability.json": {
       "get": {
         "summary": "Sostenibilidad SS: cotizaciones, gasto contributivo, Fondo de Reserva y proyecciones",
