@@ -33,10 +33,10 @@ export function PensionsBlock() {
           realtimeLabel: "Pension spending since you opened this page",
           basedOn: "based on monthly payroll",
           pensionSecondSuffix: "in pensions",
-          includesSources: "Includes contributory SS + civil service pensions",
+          includesSources: "Includes contributory SS + PNC (IMSERSO) + civil service pensions",
           monthlyPayroll: "Total monthly payroll",
           monthlyPayrollTooltip:
-            "Total amount paid each month to all pensioners (Social Security + civil service pensions).",
+            "Total amount paid each month to all pensioners (Social Security, civil service pensions, and IMSERSO non-contributory pensions).",
           contributoryDeficit: "Contributory deficit",
           contributoryDeficitTooltip:
             "Annual gap between social contributions collected and contributory pension spending.",
@@ -65,10 +65,10 @@ export function PensionsBlock() {
           realtimeLabel: "Gastado en pensiones desde que abriste la página",
           basedOn: "basado en nomina mensual",
           pensionSecondSuffix: "en pensiones",
-          includesSources: "Incluye SS contributivas + Clases Pasivas",
+          includesSources: "Incluye SS contributivas + Clases Pasivas + PNC (Imserso)",
           monthlyPayroll: "Nómina mensual total",
           monthlyPayrollTooltip:
-            "Suma de lo que el Estado paga cada mes a todos los pensionistas (incluye Seg. Social y Clases Pasivas).",
+            "Suma de lo que el Estado paga cada mes a todos los pensionistas (incluye Seg. Social, Clases Pasivas y Pensiones No Contributivas).",
           contributoryDeficit: "Déficit contributivo",
           contributoryDeficitTooltip:
             "Diferencia anual entre lo que se recauda por cotizaciones sociales y lo que cuestan las pensiones contributivas.",
@@ -140,6 +140,10 @@ export function PensionsBlock() {
     ? fromAttribution(pensions.sourceAttribution.socialContributions)
     : withDate(PGE_COTIZACIONES, "2025");
 
+  const pncSource = pensions.sourceAttribution?.monthlyPayrollPNC
+    ? fromAttribution(pensions.sourceAttribution.monthlyPayrollPNC)
+    : { name: "IMSERSO (PNC)", note: "Estimación Pensiones No Contributivas" };
+
   return (
     <Card>
       <CardHeader>
@@ -185,7 +189,7 @@ export function PensionsBlock() {
             tooltip={copy.monthlyPayrollTooltip}
             delay={0.05}
             sparklineData={sparklineData}
-            sources={[ssNomina, { name: copy.includesSources }]}
+            sources={[ssNomina, { name: copy.includesSources }, pncSource]}
           />
           <StatCard
             label={copy.contributoryDeficit}

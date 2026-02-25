@@ -72,6 +72,7 @@ export interface PensionData {
     monthlyPayroll: number;
     monthlyPayrollSS: number;
     monthlyPayrollClasesPasivas: number;
+    monthlyPayrollPNC: number;
     annualExpense: number;
     totalPensions: number;
     averagePensionRetirement: number;

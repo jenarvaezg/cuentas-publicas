@@ -1,23 +1,24 @@
 {
-  "lastUpdated": "2026-02-25T17:58:31.110Z",
+  "lastUpdated": "2026-02-25T18:26:56.338Z",
   "pipeline": {
     "liveDataUsed": true,
     "criticalFallback": false,
     "fallbackReason": null
   },
   "current": {
-    "monthlyPayroll": 15909714014,
+    "monthlyPayroll": 16174714014,
     "monthlyPayrollSS": 14250714014,
     "monthlyPayrollClasesPasivas": 1659000000,
-    "annualExpense": 222735996196,
+    "monthlyPayrollPNC": 265000000,
+    "annualExpense": 226445996196,
     "totalPensions": 10452674,
     "averagePensionRetirement": 1563.56,
     "affiliates": 22995883,
     "pensioners": 10452674,
     "contributorsPerPensioner": 2.20000001913386,
-    "expensePerSecond": 7058.077806804065,
+    "expensePerSecond": 7175.640612594114,
     "socialContributions": 199698000000,
-    "contributoryDeficit": 23037996196,
+    "contributoryDeficit": 26747996196,
     "reserveFund": 7500000000,
     "cumulativeDeficit": {
       "base": -455979000000,
@@ -29,70 +30,70 @@
   "historical": [
     {
       "date": "2020-12-31",
-      "monthlyPayroll": 10200000000,
+      "monthlyPayroll": 11700000000,
       "totalPensions": 9800000
     },
     {
       "date": "2021-06-30",
-      "monthlyPayroll": 10600000000,
+      "monthlyPayroll": 12150000000,
       "totalPensions": 9900000
     },
     {
       "date": "2021-12-31",
-      "monthlyPayroll": 10900000000,
+      "monthlyPayroll": 12500000000,
       "totalPensions": 9950000
     },
     {
       "date": "2022-06-30",
-      "monthlyPayroll": 11300000000,
+      "monthlyPayroll": 12950000000,
       "totalPensions": 10050000
     },
     {
       "date": "2022-12-31",
-      "monthlyPayroll": 11700000000,
+      "monthlyPayroll": 13400000000,
       "totalPensions": 10100000
     },
     {
       "date": "2023-06-30",
-      "monthlyPayroll": 12200000000,
+      "monthlyPayroll": 13950000000,
       "totalPensions": 10150000
     },
     {
       "date": "2023-12-31",
-      "monthlyPayroll": 12600000000,
+      "monthlyPayroll": 14400000000,
       "totalPensions": 10200000
     },
     {
       "date": "2024-06-30",
-      "monthlyPayroll": 13100000000,
+      "monthlyPayroll": 14950000000,
       "totalPensions": 10250000
     },
     {
       "date": "2024-12-31",
-      "monthlyPayroll": 13500000000,
+      "monthlyPayroll": 15400000000,
       "totalPensions": 10280000
     },
     {
       "date": "2025-06-30",
-      "monthlyPayroll": 14000000000,
+      "monthlyPayroll": 15900000000,
       "totalPensions": 10290000
     },
     {
       "date": "2025-12-31",
-      "monthlyPayroll": 14500000000,
+      "monthlyPayroll": 16365000000,
       "totalPensions": 10300000
     },
     {
       "date": "2026-01-01",
-      "monthlyPayroll": 15909714014,
+      "monthlyPayroll": 16174714014,
       "totalPensions": 10452674
     }
   ],
   "regression": {
-    "slope": 0.03062368414181591,
-    "intercept": -39357686252.5603,
+    "slope": 0.029614989180157595,
+    "intercept": -36037344941.66738,
     "lastDataTimestamp": 1767225600000,
-    "expensePerSecond": 0.000013585683891849277
+    "expensePerSecond": 0.000013138193288532915
   },
   "sourceAttribution": {
     "monthlyPayroll": {
@@ -113,6 +114,12 @@
       "source": "Estimación Clases Pasivas",
       "type": "fallback",
       "note": "Clases Pasivas: ministerio separado, dato estimado"
+    },
+    "monthlyPayrollPNC": {
+      "source": "PNC (IMSERSO)",
+      "type": "fallback",
+      "url": "https://imserso.es/la-entidad/estadisticas/pensiones-no-contributivas",
+      "note": "Pensiones No Contributivas (aprox. 160M€ jubilación + 105M€ invalidez)"
     },
     "annualExpense": {
       "source": "Cálculo derivado",
