@@ -318,35 +318,43 @@ describe("buildCcaaGraph", () => {
     it("result has nodes array", () => {
       const result = buildCcaaGraph(makeCommonInput("CA13"));
       expect(result).toHaveProperty("nodes");
-      expect(Array.isArray(result!.nodes)).toBe(true);
+      expect(Array.isArray(result?.nodes)).toBe(true);
     });
 
     it("result has links array", () => {
       const result = buildCcaaGraph(makeCommonInput("CA13"));
       expect(result).toHaveProperty("links");
-      expect(Array.isArray(result!.links)).toBe(true);
+      expect(Array.isArray(result?.links)).toBe(true);
     });
 
     it("has CONSOLIDADO node", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       const consNode = result.nodes.find((n) => n.id === "CONSOLIDADO");
       expect(consNode).toBeDefined();
     });
 
     it("has INGRESOS_TOTALES node", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       expect(result.nodes.find((n) => n.id === "INGRESOS_TOTALES")).toBeDefined();
     });
 
     it("all node amounts are finite numbers", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       for (const node of result.nodes) {
         expect(Number.isFinite(node.amount)).toBe(true);
       }
     });
 
     it("all link amounts are positive integers", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       for (const link of result.links) {
         expect(link.amount).toBeGreaterThan(0);
         expect(Number.isInteger(link.amount)).toBe(true);
@@ -354,7 +362,9 @@ describe("buildCcaaGraph", () => {
     });
 
     it("mass balance: total inputs to CONSOLIDADO equal total outputs", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       const totalIn = result.links
         .filter((l) => l.target === "CONSOLIDADO")
         .reduce((s, l) => s + l.amount, 0);
@@ -393,12 +403,16 @@ describe("buildCcaaGraph", () => {
     });
 
     it("has CONSOLIDADO node for CA15", () => {
-      const result = buildCcaaGraph(makeForalInput("CA15"))!;
+      const result = buildCcaaGraph(makeForalInput("CA15")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       expect(result.nodes.find((n) => n.id === "CONSOLIDADO")).toBeDefined();
     });
 
     it("mass balance holds for CA15 foral regime", () => {
-      const result = buildCcaaGraph(makeForalInput("CA15"))!;
+      const result = buildCcaaGraph(makeForalInput("CA15")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       const totalIn = result.links
         .filter((l) => l.target === "CONSOLIDADO")
         .reduce((s, l) => s + l.amount, 0);
@@ -409,7 +423,9 @@ describe("buildCcaaGraph", () => {
     });
 
     it("mass balance holds for CA16 foral regime", () => {
-      const result = buildCcaaGraph(makeForalInput("CA16"))!;
+      const result = buildCcaaGraph(makeForalInput("CA16")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       const totalIn = result.links
         .filter((l) => l.target === "CONSOLIDADO")
         .reduce((s, l) => s + l.amount, 0);
@@ -453,7 +469,7 @@ describe("buildCcaaGraph", () => {
           },
         },
       };
-      const result = buildCcaaGraph(input)!;
+      const result = buildCcaaGraph(input) as NonNullable<ReturnType<typeof buildCcaaGraph>>;
       // Either TRANSFERENCIA_NETA or CONTRIBUCION_NETA is added, or neither (near-zero balance)
       // With low income and standard spending a receiver is likely — just verify the graph is valid
       expect(result).not.toBeNull();
@@ -484,7 +500,7 @@ describe("buildCcaaGraph", () => {
           },
         },
       };
-      const result = buildCcaaGraph(input)!;
+      const result = buildCcaaGraph(input) as NonNullable<ReturnType<typeof buildCcaaGraph>>;
       expect(result).not.toBeNull();
       // Check mass balance regardless of direction
       const totalIn = result.links
@@ -530,7 +546,7 @@ describe("buildCcaaGraph", () => {
         unemploymentRegional: null,
         ccaaForalFlows: null,
       };
-      const result = buildCcaaGraph(input)!;
+      const result = buildCcaaGraph(input) as NonNullable<ReturnType<typeof buildCcaaGraph>>;
       expect(result).not.toBeNull();
       const totalIn = result.links
         .filter((l) => l.target === "CONSOLIDADO")
@@ -546,7 +562,9 @@ describe("buildCcaaGraph", () => {
 
   describe("graph structural invariants", () => {
     it("every link source and target reference an existing node id", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       const nodeIds = new Set(result.nodes.map((n) => n.id));
       for (const link of result.links) {
         expect(nodeIds.has(link.source), `source "${link.source}" not in nodes`).toBe(true);
@@ -555,14 +573,18 @@ describe("buildCcaaGraph", () => {
     });
 
     it("every link has a unique id", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       const ids = result.links.map((l) => l.id);
       const unique = new Set(ids);
       expect(unique.size).toBe(ids.length);
     });
 
     it("every node has required fields: id, label, group, amount, format", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
       for (const node of result.nodes) {
         expect(typeof node.id).toBe("string");
         expect(typeof node.label).toBe("string");
@@ -573,12 +595,15 @@ describe("buildCcaaGraph", () => {
     });
 
     it("CONSOLIDADO node amount equals sum of inbound link amounts", () => {
-      const result = buildCcaaGraph(makeCommonInput("CA13"))!;
-      const consNode = result.nodes.find((n) => n.id === "CONSOLIDADO")!;
+      const result = buildCcaaGraph(makeCommonInput("CA13")) as NonNullable<
+        ReturnType<typeof buildCcaaGraph>
+      >;
+      const consNode = result.nodes.find((n) => n.id === "CONSOLIDADO");
+      expect(consNode).toBeDefined();
       const totalIn = result.links
         .filter((l) => l.target === "CONSOLIDADO")
         .reduce((s, l) => s + l.amount, 0);
-      expect(consNode.amount).toBe(totalIn);
+      expect(consNode?.amount).toBe(totalIn);
     });
   });
 });

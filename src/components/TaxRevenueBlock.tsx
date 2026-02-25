@@ -635,11 +635,7 @@ export function TaxRevenueBlock() {
               onBackToOverview={() => setDrilldown(null)}
               backToOverviewLabel={copy.backToOverview}
               noDataLabel={copy.ccaaNoData}
-              clickHintLabel={
-                lang === "en"
-                  ? "Click on Excise Duties or Other Taxes bars to see breakdown."
-                  : "Haz clic en Impuestos Especiales o Resto para ver el desglose."
-              }
+              clickHintLabel={copy.clickHintLabel}
               lang={lang}
             />
           </div>

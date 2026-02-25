@@ -114,110 +114,59 @@ export const FlowsSankeyBlock: React.FC = () => {
 
   const copy = useMemo(() => {
     const isRegional = scope !== "national" && selectedCcaaName !== null;
-    const title =
-      lang === "en"
-        ? isRegional
-          ? `${selectedCcaaName} — Fiscal Flows`
-          : "Public Accounts Circulation"
-        : isRegional
-          ? `${selectedCcaaName} — Flujos Fiscales`
-          : "Circulación de las Cuentas Públicas";
-    const description =
-      lang === "en"
-        ? isRegional
-          ? `Estimated fiscal flows attributed to ${selectedCcaaName} (${selectedYear}). Income: regional taxes (AEAT) + proportional SS + other. Spending: regional COFOG + pensions + unemployment + proportional central services. Click any node to drill-down.`
-          : `Aggregate flows of income, debt, and spending for ${selectedYear}. Click any node to drill-down into its specific path.`
-        : isRegional
-          ? `Flujos fiscales estimados atribuidos a ${selectedCcaaName} (${selectedYear}). Ingresos: impuestos regionales (AEAT) + SS proporcional + otros. Gastos: COFOG regional + pensiones + desempleo + servicios centrales proporcionales. Haz clic en cualquier nodo para explorar.`
-          : `Flujos agregados de ingresos, deuda y gasto para el año ${selectedYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`;
-    const whatIfUnavailable =
-      lang === "en"
-        ? `Regional data only available for ${flows?.latestYear}. What-If simulation disabled.`
-        : `Datos regionales solo disponibles para ${flows?.latestYear}. Simulación What-If desactivada.`;
-    const infoBox =
-      lang === "en"
-        ? "The flow consolidates data from Eurostat (total revenue/expenditure), IGAE (COFOG functional spending), AEAT (tax breakdown by type), and Social Security (pension payroll). IGAE categories are scaled to match Eurostat's total expenditure. Tax nodes use AEAT national proportions applied to Eurostat totals. Pensions and debt interest are extracted from their respective COFOG categories. The deficit equals expenditure minus revenue. The graph is strictly mathematically balanced: total inputs = total outputs."
-        : "El flujo consolida datos de Eurostat (ingresos/gastos totales), IGAE (gasto funcional COFOG), AEAT (desglose tributario por figura) y Seguridad Social (nómina de pensiones). Las categorías IGAE se escalan para cuadrar con el gasto total de Eurostat. Los nodos de impuestos usan proporciones nacionales AEAT aplicadas a los totales Eurostat. Pensiones e intereses de deuda se extraen de sus categorías COFOG respectivas. El déficit es la diferencia entre gasto e ingresos. El grafo está estrictamente balanceado: total de entradas = total de salidas.";
-    const whatIfInfo =
-      lang === "en"
-        ? "The What-If simulator estimates the fiscal balance excluding selected regions. Income side: uses AEAT regional delegations data for common-regime taxes and foral contribution flows for Navarra/País Vasco; centrally-managed tax portions (not attributed to any specific CCAA) are distributed by GDP share. Social contributions use regional Eurostat NUTS2 accounts; other revenue is proportional to regional GDP. Expense side: uses IGAE COFOG regional spending, Social Security regional pensions, and SEPE regional unemployment benefits. Central spending not in any CCAA budget (defence, national police, debt interest, central administration) is distributed by GDP share. Approximation: some regional datasets may reference slightly different periods, and GDP-proportional distribution of central items is a proxy, not an exact attribution."
-        : "El simulador What-If estima el balance fiscal excluyendo las regiones seleccionadas. Ingresos: usa datos de delegaciones territoriales AEAT para impuestos de régimen común y flujos de contribución foral para Navarra/País Vasco; la parte de recaudación gestionada centralmente (no atribuida a ninguna CCAA concreta) se distribuye por cuota de PIB. Las cotizaciones sociales usan cuentas regionales Eurostat NUTS2; otros ingresos se reparten proporcionalmente al PIB regional. Gastos: usa gasto regional COFOG de IGAE, pensiones regionales de la Seguridad Social y prestaciones de desempleo regionales del SEPE. El gasto central no asignado a ninguna CCAA (defensa, policía nacional, intereses de deuda, administración central) se distribuye por cuota de PIB. Aproximación: algunos conjuntos de datos regionales pueden referirse a periodos ligeramente distintos, y la distribución por PIB de partidas centrales es una estimación, no una atribución exacta.";
-    const nodeLabels: Record<string, string> =
-      lang === "en"
-        ? {
-            INGRESOS_TOTALES: isRegional ? "Attributed Income" : "Total Income",
-            IMPUESTOS_DIRECTOS: "Direct Taxes",
-            IMPUESTOS_INDIRECTOS: "Indirect Taxes",
-            COTIZACIONES: "Social Contributions",
-            OTROS_INGRESOS: "Other Income",
-            CONSOLIDADO: isRegional
-              ? `Fiscal Activity — ${selectedCcaaName}`
-              : "Consolidated Budget",
-            GASTOS_TOTALES: "Total Spending",
-            DEFICIT: "Deficit (New Debt)",
-            SUPERAVIT: "Surplus (Financing Capacity)",
-            TRANSFERENCIA_NETA: "Net Transfer (Receives)",
-            CONTRIBUCION_NETA: "Net Contribution (Gives)",
-            IRPF: "Personal Income Tax",
-            IS: "Corporate Tax",
-            IRNR: "Non-Resident Tax",
-            IVA: "VAT",
-            IIEE: "Special Taxes",
-            IP_ISD_ITPAJD: "Wealth & Transfer",
-            OTROS_TRIBUTOS: "Other Taxes",
-            COFOG_01_RESTO: "Public Services",
-            COFOG_02: "Defence",
-            COFOG_03: "Public Order & Safety",
-            COFOG_04: "Economic Affairs",
-            COFOG_05: "Environment",
-            COFOG_06: "Housing & Utilities",
-            COFOG_07: "Health",
-            COFOG_08: "Culture & Religion",
-            COFOG_09: "Education",
-            COFOG_10_RESTO: "Social Protection",
-            INTERESES_DEUDA: "Debt Interests",
-            GASTO_INTERESES: "Debt Interests",
-            PENSIONES: "Pensions",
-            GASTO_PENSIONES: "Pensions",
-            DESEMPLEO: "Unemployment",
-          }
-        : {
-            INGRESOS_TOTALES: isRegional ? "Ingresos Atribuidos" : "Ingresos Totales",
-            IMPUESTOS_DIRECTOS: "Impuestos Directos",
-            IMPUESTOS_INDIRECTOS: "Impuestos Indirectos",
-            COTIZACIONES: "Cotizaciones Sociales",
-            OTROS_INGRESOS: "Otros Ingresos",
-            CONSOLIDADO: isRegional
-              ? `Actividad Fiscal — ${selectedCcaaName}`
-              : "Presupuesto Consolidado",
-            GASTOS_TOTALES: "Gastos Totales",
-            DEFICIT: "Déficit (Nueva Deuda)",
-            SUPERAVIT: "Superávit (Cap. Financiación)",
-            TRANSFERENCIA_NETA: "Transferencia Neta (Recibe)",
-            CONTRIBUCION_NETA: "Contribución Neta (Aporta)",
-            IRPF: "IRPF",
-            IS: "Imp. Sociedades",
-            IRNR: "Imp. No Residentes",
-            IVA: "IVA",
-            IIEE: "Imp. Especiales",
-            IP_ISD_ITPAJD: "Patrim. Suces. y Transm.",
-            OTROS_TRIBUTOS: "Otros Tributos",
-            COFOG_01_RESTO: "Servicios Generales",
-            COFOG_02: "Defensa",
-            COFOG_03: "Orden Público",
-            COFOG_04: "Asuntos Económicos",
-            COFOG_05: "Medio Ambiente",
-            COFOG_06: "Vivienda y S. Comunitarios",
-            COFOG_07: "Sanidad",
-            COFOG_08: "Cultura y Religión",
-            COFOG_09: "Educación",
-            COFOG_10_RESTO: "Protección Social",
-            INTERESES_DEUDA: "Intereses Deuda",
-            GASTO_INTERESES: "Intereses Deuda",
-            PENSIONES: "Pensiones",
-            GASTO_PENSIONES: "Pensiones",
-            DESEMPLEO: "Desempleo",
-          };
+    const title = isRegional
+      ? `${selectedCcaaName} — ${flowsCopy.titleRegional}`
+      : flowsCopy.titleNational;
+    const description = isRegional
+      ? flowsCopy.descriptionRegional
+          .replace("{ccaa}", selectedCcaaName ?? "")
+          .replace("{year}", String(selectedYear))
+      : flowsCopy.descriptionNational.replace("{year}", String(selectedYear));
+    const whatIfUnavailable = flowsCopy.whatIfUnavailable.replace(
+      "{year}",
+      String(flows?.latestYear),
+    );
+    const infoBox = flowsCopy.infoBox;
+    const whatIfInfo = flowsCopy.whatIfInfo;
+    const nodeLabels: Record<string, string> = {
+      INGRESOS_TOTALES: isRegional
+        ? flowsCopy.nodeLabelIngresosTotalesRegional
+        : flowsCopy.nodeLabelIngresosTotales,
+      IMPUESTOS_DIRECTOS: flowsCopy.nodeLabelImpuestosDirectos,
+      IMPUESTOS_INDIRECTOS: flowsCopy.nodeLabelImpuestosIndirectos,
+      COTIZACIONES: flowsCopy.nodeLabelCotizaciones,
+      OTROS_INGRESOS: flowsCopy.nodeLabelOtrosIngresos,
+      CONSOLIDADO: isRegional
+        ? flowsCopy.nodeLabelConsolidadoRegional.replace("{ccaa}", selectedCcaaName ?? "")
+        : flowsCopy.nodeLabelConsolidado,
+      GASTOS_TOTALES: flowsCopy.nodeLabelGastosTotales,
+      DEFICIT: flowsCopy.nodeLabelDeficit,
+      SUPERAVIT: flowsCopy.nodeLabelSuperavit,
+      TRANSFERENCIA_NETA: flowsCopy.nodeLabelTransferenciaNeta,
+      CONTRIBUCION_NETA: flowsCopy.nodeLabelContribucionNeta,
+      IRPF: flowsCopy.nodeLabelIRPF,
+      IS: flowsCopy.nodeLabelIS,
+      IRNR: flowsCopy.nodeLabelIRNR,
+      IVA: flowsCopy.nodeLabelIVA,
+      IIEE: flowsCopy.nodeLabelIIEE,
+      IP_ISD_ITPAJD: flowsCopy.nodeLabelIPISDITPAJD,
+      OTROS_TRIBUTOS: flowsCopy.nodeLabelOtrosTributos,
+      COFOG_01_RESTO: flowsCopy.nodeLabelCOFOG01Resto,
+      COFOG_02: flowsCopy.nodeLabelCOFOG02,
+      COFOG_03: flowsCopy.nodeLabelCOFOG03,
+      COFOG_04: flowsCopy.nodeLabelCOFOG04,
+      COFOG_05: flowsCopy.nodeLabelCOFOG05,
+      COFOG_06: flowsCopy.nodeLabelCOFOG06,
+      COFOG_07: flowsCopy.nodeLabelCOFOG07,
+      COFOG_08: flowsCopy.nodeLabelCOFOG08,
+      COFOG_09: flowsCopy.nodeLabelCOFOG09,
+      COFOG_10_RESTO: flowsCopy.nodeLabelCOFOG10Resto,
+      INTERESES_DEUDA: flowsCopy.nodeLabelInteresesDeuda,
+      GASTO_INTERESES: flowsCopy.nodeLabelGastoIntereses,
+      PENSIONES: flowsCopy.nodeLabelPensiones,
+      GASTO_PENSIONES: flowsCopy.nodeLabelGastoPensiones,
+      DESEMPLEO: flowsCopy.nodeLabelDesempleo,
+    };
     return {
       title,
       description,
@@ -233,7 +182,7 @@ export const FlowsSankeyBlock: React.FC = () => {
       resetView: flowsCopy.resetView,
       yearLabel: flowsCopy.yearLabel,
     };
-  }, [lang, flowsCopy, selectedYear, flows?.latestYear, scope, selectedCcaaName]);
+  }, [flowsCopy, selectedYear, flows?.latestYear, scope, selectedCcaaName]);
 
   // Resolve the year's nodes/links from byYear
   const yearData = useMemo(() => {
@@ -868,9 +817,7 @@ export const FlowsSankeyBlock: React.FC = () => {
               <details className="mt-3 text-xs text-muted-foreground">
                 <summary className="cursor-pointer hover:text-foreground inline-flex items-center gap-1">
                   <Info className="w-3 h-3" />
-                  {lang === "en"
-                    ? "What-If methodology & assumptions"
-                    : "Metodología y supuestos del What-If"}
+                  {flowsCopy.whatIfMethodology}
                 </summary>
                 <p className="mt-2 leading-relaxed bg-muted/30 rounded-md p-3">{copy.whatIfInfo}</p>
               </details>

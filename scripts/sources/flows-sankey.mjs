@@ -349,6 +349,30 @@ export async function downloadFlowsSankeyData(readFile = fs.readFile) {
     console.error(
       `  Error generando dataset de flujos Sankey: ${error.message}`,
     );
-    throw error;
+    console.warn("  Intentando usar flows.json existente como respaldo...");
+    try {
+      const fallbackRaw = await readFile(OUT_FILE, "utf-8");
+      const fallbackData = JSON.parse(fallbackRaw);
+      console.warn("  Usando datos de respaldo de flows.json existente.");
+      return fallbackData;
+    } catch (fallbackError) {
+      console.error(
+        `  No se pudo leer el fichero de respaldo flows.json: ${fallbackError.message}`,
+      );
+      return {
+        lastUpdated: new Date().toISOString(),
+        latestYear: 0,
+        years: [],
+        byYear: {},
+        success: false,
+        sourceAttribution: {
+          consolidated: {
+            source: "Datos de respaldo (fallo total del pipeline)",
+            type: "fallback",
+            note: "No se pudo generar ni leer el dataset de flujos Sankey.",
+          },
+        },
+      };
+    }
   }
 }
