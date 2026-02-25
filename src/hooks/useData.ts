@@ -32,7 +32,9 @@ import type {
   RevenueData,
   SSSustainabilityData,
   TaxRevenueData,
+  UnemploymentRegionalData,
 } from "@/data/types";
+import unemploymentRegionalJson from "@/data/unemployment-regional.json";
 
 export function useData() {
   return useMemo(() => {
@@ -92,6 +94,7 @@ export function useData() {
     const taxRevenue = taxRevenueJson as TaxRevenueData;
     const flows = flowsJson as FlowsData;
     const ssSustainability = ssSustainabilityJson as SSSustainabilityData;
+    const unemploymentRegional = unemploymentRegionalJson as UnemploymentRegionalData;
 
     return {
       debt,
@@ -109,6 +112,7 @@ export function useData() {
       taxRevenue,
       flows,
       ssSustainability,
+      unemploymentRegional,
       meta: metaJson as MetaData,
     };
   }, []);

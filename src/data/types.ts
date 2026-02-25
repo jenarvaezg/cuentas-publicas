@@ -469,6 +469,26 @@ export interface PensionsRegionalData {
   url: string;
 }
 
+// ── Unemployment (SEPE) ─────────────────────────────────────────────
+
+export interface UnemploymentRegionalEntry {
+  code: string;
+  name: string;
+  amount: number;
+}
+
+export interface UnemploymentRegionalYearData {
+  total: number;
+  entries: UnemploymentRegionalEntry[];
+}
+
+export interface UnemploymentRegionalData {
+  lastUpdated: string;
+  latestYear: number;
+  byYear: Record<string, UnemploymentRegionalYearData>;
+  sourceAttribution: Record<string, DataSourceAttribution>;
+}
+
 // ── Metadata ────────────────────────────────────────────────────────
 
 export interface MetaSourceEntry {
@@ -506,6 +526,7 @@ export interface MetaData {
     ccaaSpending?: boolean;
     ccaaForalFlows?: boolean;
     pensionsRegional?: boolean;
+    unemploymentRegional?: boolean;
     flowsSankey?: boolean;
     ssSustainability?: boolean;
   };

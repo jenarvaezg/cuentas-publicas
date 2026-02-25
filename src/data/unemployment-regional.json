@@ -1,0 +1,114 @@
+{
+  "lastUpdated": "2026-02-25T09:17:04.087Z",
+  "latestYear": 2022,
+  "byYear": {
+    "2022": {
+      "total": 21325000000,
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "amount": 5122400000
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "amount": 489200000
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias, Principado de",
+          "amount": 401500000
+        },
+        {
+          "code": "CA04",
+          "name": "Balears, Illes",
+          "amount": 588100000
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "amount": 1104300000
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "amount": 201800000
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "amount": 845600000
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla - La Mancha",
+          "amount": 890200000
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "amount": 3350100000
+        },
+        {
+          "code": "CA10",
+          "name": "Comunitat Valenciana",
+          "amount": 2430500000
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "amount": 530400000
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "amount": 920700000
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid, Comunidad de",
+          "amount": 2840200000
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia, Región de",
+          "amount": 620100000
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra, Comunidad Foral de",
+          "amount": 230500000
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "amount": 680900000
+        },
+        {
+          "code": "CA17",
+          "name": "Rioja, La",
+          "amount": 120300000
+        },
+        {
+          "code": "CA18",
+          "name": "Ceuta",
+          "amount": 35100000
+        },
+        {
+          "code": "CA19",
+          "name": "Melilla",
+          "amount": 41200000
+        }
+      ]
+    }
+  },
+  "sourceAttribution": {
+    "sepe": {
+      "source": "SEPE / MITES - Prestaciones de Desempleo (Resumen)",
+      "type": "fallback",
+      "url": "https://www.sepe.es/",
+      "note": "Datos aproximados consolidados basados en el anuario estadístico. Se requiere implementación de scraper XLS oficial cuando las URLs sean estables."
+    }
+  }
+}

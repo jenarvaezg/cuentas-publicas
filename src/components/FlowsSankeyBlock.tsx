@@ -64,8 +64,15 @@ const groupColors: Record<string, string> = {
 };
 
 export const FlowsSankeyBlock: React.FC = () => {
-  const { flows, taxRevenue, ccaaSpending, ccaaForalFlows, pensionsRegional, demographics } =
-    useData();
+  const {
+    flows,
+    taxRevenue,
+    ccaaSpending,
+    ccaaForalFlows,
+    pensionsRegional,
+    unemploymentRegional,
+    demographics,
+  } = useData();
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [excludedRegions, setExcludedRegions] = useState<string[]>([]);
   const { lang } = useI18n();
@@ -92,6 +99,7 @@ export const FlowsSankeyBlock: React.FC = () => {
             CONSOLIDADO: "Consolidated Budget",
             GASTOS_TOTALES: "Total Spending",
             DEFICIT: "Deficit (New Debt)",
+            SUPERAVIT: "Surplus (Financing Capacity)",
 
             // Taxes
             IRPF: "Personal Income Tax",
@@ -116,7 +124,9 @@ export const FlowsSankeyBlock: React.FC = () => {
 
             // Others
             INTERESES_DEUDA: "Debt Interests",
+            GASTO_INTERESES: "Debt Interests",
             PENSIONES: "Pensions",
+            GASTO_PENSIONES: "Pensions",
             DESEMPLEO: "Unemployment",
           } as Record<string, string>,
         }
@@ -140,6 +150,7 @@ export const FlowsSankeyBlock: React.FC = () => {
             CONSOLIDADO: "Presupuesto Consolidado",
             GASTOS_TOTALES: "Gastos Totales",
             DEFICIT: "Déficit (Nueva Deuda)",
+            SUPERAVIT: "Superávit (Cap. Financiación)",
 
             // Taxes
             IRPF: "IRPF",
@@ -164,7 +175,9 @@ export const FlowsSankeyBlock: React.FC = () => {
 
             // Others
             INTERESES_DEUDA: "Intereses Deuda",
+            GASTO_INTERESES: "Intereses Deuda",
             PENSIONES: "Pensiones",
+            GASTO_PENSIONES: "Pensiones",
             DESEMPLEO: "Desempleo",
           } as Record<string, string>,
         };
@@ -197,13 +210,16 @@ export const FlowsSankeyBlock: React.FC = () => {
         nodeId: string,
         amountToSubtract: number,
         isInput: boolean,
-      ) => {
-        if (amountToSubtract <= 0) return;
+      ): number => {
+        if (amountToSubtract <= 0) return 0;
+
+        let actualSubtracted = 0;
 
         // Subtract from Node
         const node = currentNodes.find((n) => n.id === nodeId);
         if (node) {
-          node.amount = Math.max(0, node.amount - amountToSubtract);
+          actualSubtracted = Math.min(node.amount, amountToSubtract);
+          node.amount = Math.max(0, node.amount - actualSubtracted);
         }
 
         // Subtract from Link towards/from CONSOLIDADO
@@ -222,8 +238,10 @@ export const FlowsSankeyBlock: React.FC = () => {
         }
 
         if (link) {
-          link.amount = Math.max(0, link.amount - amountToSubtract);
+          link.amount = Math.max(0, link.amount - actualSubtracted);
         }
+
+        return actualSubtracted;
       };
 
       // Aggregate subtractions across all excluded regions
@@ -244,26 +262,26 @@ export const FlowsSankeyBlock: React.FC = () => {
             const foralIva = totalForalRevenue * ivaProp;
             const foralIs = totalForalRevenue * isProp;
 
-            subtractFromNodeAndLink("IRPF", foralIrpf, true);
-            subtractFromNodeAndLink("IS", foralIs, true);
-            directTaxesSubtracted += foralIrpf + foralIs;
+            const actualForalIrpf = subtractFromNodeAndLink("IRPF", foralIrpf, true);
+            const actualForalIs = subtractFromNodeAndLink("IS", foralIs, true);
+            directTaxesSubtracted += actualForalIrpf + actualForalIs;
 
-            subtractFromNodeAndLink("IVA", foralIva, true);
-            indirectTaxesSubtracted += foralIva;
+            const actualForalIva = subtractFromNodeAndLink("IVA", foralIva, true);
+            indirectTaxesSubtracted += actualForalIva;
           }
         } else {
           const taxLatest = taxRevenue?.ccaa[taxRevenue.latestYear]?.entries.find(
             (e) => e.code === regionId,
           );
           if (taxLatest) {
-            subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
-            subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
-            subtractFromNodeAndLink("IRNR", taxLatest.irnr, true);
-            directTaxesSubtracted += taxLatest.irpf + taxLatest.sociedades + taxLatest.irnr;
+            const actualIrpf = subtractFromNodeAndLink("IRPF", taxLatest.irpf, true);
+            const actualIs = subtractFromNodeAndLink("IS", taxLatest.sociedades, true);
+            const actualIrnr = subtractFromNodeAndLink("IRNR", taxLatest.irnr, true);
+            directTaxesSubtracted += actualIrpf + actualIs + actualIrnr;
 
-            subtractFromNodeAndLink("IVA", taxLatest.iva, true);
-            subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
-            indirectTaxesSubtracted += taxLatest.iva + taxLatest.iiee;
+            const actualIva = subtractFromNodeAndLink("IVA", taxLatest.iva, true);
+            const actualIiee = subtractFromNodeAndLink("IIEE", taxLatest.iiee, true);
+            indirectTaxesSubtracted += actualIva + actualIiee;
           }
         }
 
@@ -273,8 +291,8 @@ export const FlowsSankeyBlock: React.FC = () => {
         );
         if (spendLatest) {
           for (const [cofog, amount] of Object.entries(spendLatest.divisions)) {
-            subtractFromNodeAndLink(`COFOG_${cofog}`, amount, false);
-            totalExpenseSubtracted += amount;
+            const actualExpense = subtractFromNodeAndLink(`COFOG_${cofog}`, amount, false);
+            totalExpenseSubtracted += actualExpense;
           }
         }
         // 3. Subtract State-Level Expenses (Pensions and Unemployment proxy)
@@ -283,13 +301,30 @@ export const FlowsSankeyBlock: React.FC = () => {
         ]?.entries.find((e) => e.code === regionId);
         if (regionPensions) {
           const regionPensionsMillions = regionPensions.annualAmount / 1_000_000;
-          subtractFromNodeAndLink("GASTO_PENSIONES", regionPensionsMillions, false);
-          totalExpenseSubtracted += regionPensionsMillions;
+          const actualPensions = subtractFromNodeAndLink(
+            "GASTO_PENSIONES",
+            regionPensionsMillions,
+            false,
+          );
+          totalExpenseSubtracted += actualPensions;
         }
 
-        // 4. Proportional Unemployment (COFOG_10_RESTO)
-        // We use demographic population ratio to approximate the state unemployment cost
-        if (demographics) {
+        // 4. Exact Regional Unemployment (COFOG_10_RESTO proxy replacement)
+        // Unemployment benefits are part of COFOG_10_RESTO in the Sankey
+        const regionUnemployment = unemploymentRegional?.byYear[
+          String(unemploymentRegional.latestYear)
+        ]?.entries.find((e) => e.code === regionId);
+
+        if (regionUnemployment) {
+          const regionUnemploymentMillions = regionUnemployment.amount / 1_000_000;
+          const actualUnemployment = subtractFromNodeAndLink(
+            "COFOG_10_RESTO",
+            regionUnemploymentMillions,
+            false,
+          );
+          totalExpenseSubtracted += actualUnemployment;
+        } else if (demographics) {
+          // Fallback to demographic proportion if data is missing for this region
           const ccaaDemo = (demographics as unknown as Record<string, unknown>).ccaa as
             | Array<{ code: string; population: number }>
             | undefined;
@@ -300,8 +335,12 @@ export const FlowsSankeyBlock: React.FC = () => {
             const originalUnemployment =
               flows.nodes.find((n) => n.id === "COFOG_10_RESTO")?.amount || 0;
             const proportionalUnemployment = originalUnemployment * ratio;
-            subtractFromNodeAndLink("COFOG_10_RESTO", proportionalUnemployment, false);
-            totalExpenseSubtracted += proportionalUnemployment;
+            const actualUnemployment = subtractFromNodeAndLink(
+              "COFOG_10_RESTO",
+              proportionalUnemployment,
+              false,
+            );
+            totalExpenseSubtracted += actualUnemployment;
           }
         }
       }
@@ -340,9 +379,29 @@ export const FlowsSankeyBlock: React.FC = () => {
 
       if (deficitNode && deficitLink) {
         const newDeficit = deficitNode.amount - netBalanceImpact;
-        // If it goes negative (surplus!), we floor to 0 for this demo
-        deficitNode.amount = Math.max(0, newDeficit);
-        deficitLink.amount = Math.max(0, newDeficit);
+        // If it goes negative (surplus!), we create a Surplus node to keep DAG balanced
+        if (newDeficit < 0) {
+          deficitNode.amount = 0;
+          deficitLink.amount = 0;
+
+          const surplusAmount = Math.abs(newDeficit);
+          currentNodes.push({
+            id: "SUPERAVIT",
+            label: copy.nodeLabels.SUPERAVIT,
+            group: "income",
+            amount: surplusAmount,
+          } as SankeyNode);
+
+          currentLinks.push({
+            id: "l_superavit_gen",
+            source: "CONSOLIDADO",
+            target: "SUPERAVIT",
+            amount: surplusAmount,
+          } as SankeyLink);
+        } else {
+          deficitNode.amount = newDeficit;
+          deficitLink.amount = newDeficit;
+        }
       }
     }
 
@@ -354,7 +413,9 @@ export const FlowsSankeyBlock: React.FC = () => {
     ccaaSpending,
     ccaaForalFlows,
     pensionsRegional,
+    unemploymentRegional,
     demographics,
+    copy,
   ]);
 
   const { filteredNodes, filteredLinks } = useMemo(() => {
