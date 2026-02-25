@@ -1,5 +1,7 @@
 import XLSX from 'xlsx'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
+import { normalizeText, toNumber } from '../lib/text-utils.mjs'
+import { CCAA_NAME_MAP } from '../lib/ccaa-maps.mjs'
 
 const IGAE_CCAA_BASE_URL =
   'https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/'
@@ -7,31 +9,6 @@ const IGAE_CCAA_DOC_BASE = `${IGAE_CCAA_BASE_URL}Documents/CCAA-A/COFOG_A_Detall
 const IGAE_CCAA_MIN_YEAR = 2000
 const IGAE_CCAA_MAX_INITIAL_MISSES = 6
 const IGAE_CCAA_MAX_TRAILING_MISSES = 4
-
-const CCAA_NAME_MAP = {
-  andalucia: { code: 'CA01', name: 'Andalucía' },
-  aragon: { code: 'CA02', name: 'Aragón' },
-  asturias: { code: 'CA03', name: 'Asturias' },
-  baleares: { code: 'CA04', name: 'Illes Balears' },
-  'illes balears': { code: 'CA04', name: 'Illes Balears' },
-  canarias: { code: 'CA05', name: 'Canarias' },
-  cantabria: { code: 'CA06', name: 'Cantabria' },
-  'castilla y leon': { code: 'CA07', name: 'Castilla y León' },
-  'castilla la mancha': { code: 'CA08', name: 'Castilla-La Mancha' },
-  'castilla - la mancha': { code: 'CA08', name: 'Castilla-La Mancha' },
-  cataluna: { code: 'CA09', name: 'Cataluña' },
-  'comunitat valenciana': { code: 'CA10', name: 'C. Valenciana' },
-  'comunidad valenciana': { code: 'CA10', name: 'C. Valenciana' },
-  extremadura: { code: 'CA11', name: 'Extremadura' },
-  galicia: { code: 'CA12', name: 'Galicia' },
-  madrid: { code: 'CA13', name: 'Madrid' },
-  murcia: { code: 'CA14', name: 'Murcia' },
-  'region de murcia': { code: 'CA14', name: 'Murcia' },
-  'comunidad foral de navarra': { code: 'CA15', name: 'Navarra' },
-  navarra: { code: 'CA15', name: 'Navarra' },
-  'pais vasco': { code: 'CA16', name: 'País Vasco' },
-  'la rioja': { code: 'CA17', name: 'La Rioja' },
-}
 
 const COFOG_DIVISION_NAMES = {
   '01': 'Servicios públicos generales',
@@ -67,23 +44,6 @@ const FALLBACK_2024_ENTRIES = [
     },
   },
 ]
-
-function normalizeText(value) {
-  return String(value ?? '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-function toNumber(value) {
-  if (value === null || value === undefined || value === '') return 0
-  if (typeof value === 'number' && Number.isFinite(value)) return value
-  const normalized = String(value).replace(/\./g, '').replace(/,/g, '.').trim()
-  const parsed = Number.parseFloat(normalized)
-  return Number.isFinite(parsed) ? parsed : 0
-}
 
 function getTopDivision(divisions) {
   let topCode = '01'
@@ -287,8 +247,8 @@ export function parseYearWorkbook(year, workbook) {
   }
 }
 
-async function downloadWorkbook(year, url) {
-  const response = await fetchWithRetry(
+async function downloadWorkbook(year, url, fetcher) {
+  const response = await fetcher(
     url,
     { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)' } },
     { maxRetries: 2, timeoutMs: 60000 },
@@ -302,7 +262,7 @@ function buildYearUrl(year) {
   return `${IGAE_CCAA_DOC_BASE}${year}.xlsx`
 }
 
-async function downloadAvailableYears() {
+async function downloadAvailableYears(fetcher) {
   const byYear = {}
   const currentYear = new Date().getUTCFullYear()
   let hits = 0
@@ -311,7 +271,7 @@ async function downloadAvailableYears() {
   for (let year = currentYear; year >= IGAE_CCAA_MIN_YEAR; year--) {
     const url = buildYearUrl(year)
     try {
-      const workbook = await downloadWorkbook(year, url)
+      const workbook = await downloadWorkbook(year, url, fetcher)
       byYear[String(year)] = parseYearWorkbook(year, workbook)
       console.log(`    ${year}: ${byYear[String(year)].entries.length} CCAA procesadas`)
       hits += 1
@@ -320,7 +280,7 @@ async function downloadAvailableYears() {
       misses += 1
 
       if (hits === 0 && year >= currentYear - 2) {
-        console.warn(`    ⚠️ ${year}: ${error.message}`)
+        console.log(`    ℹ️ ${year}: no encontrado (${error.message.split('\\n')[0]})`)
       }
 
       if (hits === 0 && misses >= IGAE_CCAA_MAX_INITIAL_MISSES) break
@@ -365,12 +325,12 @@ function buildFallbackDataset() {
   }
 }
 
-export async function downloadCcaaSpendingData() {
+export async function downloadCcaaSpendingData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando gasto CCAA (IGAE COFOG detalle) ===')
   console.log(`  Patrón URL: ${IGAE_CCAA_DOC_BASE}{YYYY}.xlsx`)
 
   try {
-    const byYear = await downloadAvailableYears()
+    const byYear = await downloadAvailableYears(fetcher)
 
     const years = Object.keys(byYear)
       .map((value) => Number.parseInt(value, 10))
@@ -400,8 +360,8 @@ export async function downloadCcaaSpendingData() {
       },
     }
   } catch (error) {
-    console.warn(`  ⚠️ Error en descarga de gasto CCAA: ${error.message}`)
-    console.warn('  ⚠️ Usando fallback local 2024')
+    console.log(`  ℹ️ Error en descarga de gasto CCAA: ${error.message}`)
+    console.log('  ℹ️ Usando fallback local 2024')
     return buildFallbackDataset()
   }
 }

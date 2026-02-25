@@ -537,7 +537,7 @@ function displaySourceSummary(status, sourceResults) {
       ? (latestDebt / 1_000_000_000).toFixed(0)
       : "N/A";
     const debtDate = debtAttr?.date || "N/A";
-    const isLive = debtAttr?.type === "csv";
+    const isLive = debtAttr && debtAttr.type !== "fallback";
     console.log(
       `Deuda (BdE): ${isLive ? "✅" : "⚠️"} ${debtAttr?.type?.toUpperCase() || "N/A"} (${latestDebtBillions}B€, ${debtDate})`,
     );
@@ -550,7 +550,7 @@ function displaySourceSummary(status, sourceResults) {
     const popAttr = d.sourceAttribution?.population;
     const population = d.population;
     const popDate = popAttr?.date || "N/A";
-    const isLive = popAttr?.type === "api";
+    const isLive = popAttr && popAttr.type !== "fallback";
     console.log(
       `Población: ${isLive ? "✅" : "⚠️"} ${popAttr?.type?.toUpperCase() || "N/A"} (${(population / 1_000_000).toFixed(1)}M, ${popDate})`,
     );
@@ -558,7 +558,7 @@ function displaySourceSummary(status, sourceResults) {
     const activeAttr = d.sourceAttribution?.activePopulation;
     const activePop = d.activePopulation;
     const activeDate = activeAttr?.date || "N/A";
-    const isActiveLive = activeAttr?.type === "api";
+    const isActiveLive = activeAttr && activeAttr.type !== "fallback";
     console.log(
       `Población activa: ${isActiveLive ? "✅" : "⚠️"} ${activeAttr?.type?.toUpperCase() || "N/A"} (${(activePop / 1_000_000).toFixed(1)}M, ${activeDate})`,
     );
@@ -566,7 +566,7 @@ function displaySourceSummary(status, sourceResults) {
     const gdpAttr = d.sourceAttribution?.gdp;
     const gdp = d.gdp;
     const gdpDate = gdpAttr?.date || "N/A";
-    const isGdpLive = gdpAttr?.type === "api";
+    const isGdpLive = gdpAttr && gdpAttr.type !== "fallback";
     console.log(
       `PIB: ${isGdpLive ? "✅" : "⚠️"} ${gdpAttr?.type?.toUpperCase() || "N/A"} (${(gdp / 1_000_000_000_000).toFixed(2)}T€, ${gdpDate})`,
     );
@@ -574,7 +574,7 @@ function displaySourceSummary(status, sourceResults) {
     const salaryAttr = d.sourceAttribution?.averageSalary;
     const salary = d.averageSalary;
     const salaryDate = salaryAttr?.date || "N/A";
-    const isSalaryLive = salaryAttr?.type === "api";
+    const isSalaryLive = salaryAttr && salaryAttr.type !== "fallback";
     console.log(
       `Salario medio: ${isSalaryLive ? "✅" : "⚠️"} ${salaryAttr?.type?.toUpperCase() || "N/A"} (${salary.toLocaleString("es-ES")}€, ${salaryDate})`,
     );
@@ -586,7 +586,7 @@ function displaySourceSummary(status, sourceResults) {
     const d = sourceResults.pensions.value;
     const pensionAttr = d.sourceAttribution?.monthlyPayroll;
     const monthlyPayroll = d.current?.monthlyPayroll;
-    const isLive = pensionAttr?.type === "api";
+    const isLive = pensionAttr && pensionAttr.type !== "fallback";
     console.log(
       `Pensiones: ${isLive ? "✅" : "⚠️"} ${pensionAttr?.type?.toUpperCase() || "N/A"} (${(monthlyPayroll / 1_000_000_000).toFixed(2)}B€/mes)`,
     );
@@ -599,7 +599,7 @@ function displaySourceSummary(status, sourceResults) {
     const budgetAttr = d.sourceAttribution?.budget;
     const latestYear = d.latestYear;
     const latestTotal = d.byYear?.[String(latestYear)]?.total;
-    const isLive = budgetAttr?.type === "csv";
+    const isLive = budgetAttr && budgetAttr.type !== "fallback";
     console.log(
       `Presupuestos: ${isLive ? "✅" : "⚠️"} ${budgetAttr?.type?.toUpperCase() || "N/A"} (${latestTotal?.toLocaleString("es-ES") || "N/A"} M€, ${latestYear})`,
     );
@@ -611,7 +611,7 @@ function displaySourceSummary(status, sourceResults) {
     const d = sourceResults.eurostat.value;
     const eurostatAttr = d.sourceAttribution?.eurostat;
     const indicatorCount = Object.keys(d.indicators || {}).length;
-    const isLive = eurostatAttr?.type === "api";
+    const isLive = eurostatAttr && eurostatAttr.type !== "fallback";
     console.log(
       `Eurostat: ${isLive ? "✅" : "⚠️"} ${eurostatAttr?.type?.toUpperCase() || "N/A"} (${indicatorCount} indicadores, año ${d.year})`,
     );
@@ -623,7 +623,7 @@ function displaySourceSummary(status, sourceResults) {
     const d = sourceResults.ccaaDebt.value;
     const ccaaAttr = d.sourceAttribution?.be1310;
     const ccaaCount = d.ccaa?.length || 0;
-    const isLive = ccaaAttr?.type === "csv";
+    const isLive = ccaaAttr && ccaaAttr.type !== "fallback";
     console.log(
       `Deuda CCAA: ${isLive ? "✅" : "⚠️"} ${ccaaAttr?.type?.toUpperCase() || "N/A"} (${ccaaCount} comunidades, ${d.quarter})`,
     );
@@ -635,7 +635,7 @@ function displaySourceSummary(status, sourceResults) {
     const d = sourceResults.revenue.value;
     const revenueAttr = d.sourceAttribution?.revenue;
     const yearCount = d.years?.length || 0;
-    const isLive = revenueAttr?.type === "api";
+    const isLive = revenueAttr && revenueAttr.type !== "fallback";
     console.log(
       `Revenue: ${isLive ? "✅" : "⚠️"} ${revenueAttr?.type?.toUpperCase() || "N/A"} (${yearCount} años, último ${d.latestYear})`,
     );
@@ -647,7 +647,7 @@ function displaySourceSummary(status, sourceResults) {
     const d = sourceResults.taxRevenue.value;
     const taxRevAttr = d.sourceAttribution?.series;
     const yearCount = d.years?.length || 0;
-    const isLive = taxRevAttr?.type === "csv";
+    const isLive = taxRevAttr && taxRevAttr.type !== "fallback";
     console.log(
       `Tax Revenue: ${isLive ? "✅" : "⚠️"} ${taxRevAttr?.type?.toUpperCase() || "N/A"} (${yearCount} años, último ${d.latestYear})`,
     );
@@ -661,7 +661,7 @@ function displaySourceSummary(status, sourceResults) {
     const yearCount = d.years?.length || 0;
     const latestYear = d.latestYear;
     const latestEntries = d.byYear?.[String(latestYear)]?.entries?.length || 0;
-    const isLive = balanceAttr?.type === "xlsx";
+    const isLive = balanceAttr && balanceAttr.type !== "fallback";
     console.log(
       `Balanzas CCAA: ${isLive ? "✅" : "⚠️"} ${balanceAttr?.type?.toUpperCase() || "N/A"} (${yearCount} años, ${latestEntries} CCAA en ${latestYear})`,
     );
@@ -675,7 +675,7 @@ function displaySourceSummary(status, sourceResults) {
     const yearCount = d.years?.length || 0;
     const latestYear = d.latestYear;
     const latestEntries = d.byYear?.[String(latestYear)]?.entries?.length || 0;
-    const isLive = spendingAttr?.type === "xlsx";
+    const isLive = spendingAttr && spendingAttr.type !== "fallback";
     console.log(
       `Gasto CCAA: ${isLive ? "✅" : "⚠️"} ${spendingAttr?.type?.toUpperCase() || "N/A"} (${yearCount} años, ${latestEntries} CCAA en ${latestYear})`,
     );
@@ -688,7 +688,7 @@ function displaySourceSummary(status, sourceResults) {
     const foralAttr = d.sourceAttribution?.foral;
     const latestYear = d.latestYear;
     const latestEntries = d.byYear?.[String(latestYear)]?.entries?.length || 0;
-    const isLive = foralAttr?.type === "api";
+    const isLive = foralAttr && foralAttr.type !== "fallback";
     console.log(
       `Flujos forales: ${isLive ? "✅" : "⚠️"} ${foralAttr?.type?.toUpperCase() || "N/A"} (${latestEntries} CCAA en ${latestYear})`,
     );

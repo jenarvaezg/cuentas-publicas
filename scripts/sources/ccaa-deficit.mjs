@@ -1,8 +1,12 @@
 import XLSX from "xlsx";
 import { fetchWithRetry } from "../lib/fetch-utils.mjs";
+import { normalizeText } from "../lib/text-utils.mjs";
 
-const IGAE_DEFICIT_URL =
-  "https://www.hacienda.gob.es/cdi/ContabilidadNacional/AALL/Serie_Mensual/Capacidad_Financiacion/1.%20capacidad_necesidad_financiaci%C3%B3n_sectores.xlsx";
+const IGAE_DEFICIT_BASE_URL =
+  "https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-M/M_CCAA_Sub_Det_";
+
+const IGAE_DEFICIT_MIN_YEAR = 2021;
+const IGAE_DEFICIT_MAX_TRAILING_MISSES = 1;
 
 // Reference fallback data for CCAA capacity/need of financing (Capacidad (+) / Necesidad (-) de financiación)
 // Valores en millones de euros, cierre 2023 base (datos provisionales/avance IGAE).
@@ -53,30 +57,182 @@ const CCAA_MAP = {
   "La Rioja": "CA17",
 };
 
-function normalizeText(text) {
-  if (!text) return "";
-  return String(text)
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
+function buildYearUrl(year) {
+  return `${IGAE_DEFICIT_BASE_URL}${year}.xlsx`;
 }
 
-function findB9Row(rows) {
-  // Capacidad (+) / Necesidad (-) de financiación (B.9)
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i] || [];
-    const firstCell = normalizeText(row[0]);
-    if (
-      firstCell.includes("capacidad") &&
-      firstCell.includes("necesidad") &&
-      firstCell.includes("financiacion")
-    ) {
-      return i;
+function parseCcaaSheet(sheetName, workbookSheet) {
+  const rows = XLSX.utils.sheet_to_json(workbookSheet, { header: 1, defval: "" });
+  if (rows.length < 10) return null;
+
+  // The community name is typically around row 11, col 1 in the new format like: "Comunidad Autónoma de Andalucía" or "- Impuestos del tipo valor añadido"
+  // But wait, the previous snippet showed sheetName mapped to CCAA name in the 'Indice' sheet.
+  // It's safer to rely on the 'Indice' mapping, handled externally, but we need the B.9 row here.
+
+  const b9Row = rows.find(r => r[0] && String(r[0]).trim() === "B.9");
+  if (!b9Row) {
+    return null;
+  }
+
+  // Find the last numeric column in the B.9 row which represents the accumulated data for the latest month in that year
+  let lastNumericValue = null;
+  for (let i = b9Row.length - 1; i >= 1; i--) {
+    const val = Number(b9Row[i]);
+    if (!isNaN(val) && b9Row[i] !== "" && b9Row[i] !== null) {
+      lastNumericValue = val;
+      break;
     }
   }
-  return -1;
+
+  if (lastNumericValue === null) {
+    return null;
+  }
+
+  return lastNumericValue;
+}
+
+function parseYearWorkbook(year, workbook) {
+  const indiceSheet = workbook.Sheets["Indice"];
+  if (!indiceSheet) throw new Error("No se encontró la hoja Indice");
+
+  const indiceRows = XLSX.utils.sheet_to_json(indiceSheet, { header: 1, defval: "" });
+
+  // Build a map of sheetName (e.g. Tabla2a) to CCAA code
+  const sheetToCcaa = {};
+  for (const row of indiceRows) {
+    if (!row[1]) continue;
+    const match = String(row[1]).match(/Tabla (\d+a):\s*(.+)/i);
+    if (match) {
+      const sheetName = `Tabla${match[1]}`;
+      const rawName = normalizeText(match[2].trim());
+      const mappedCode = CCAA_MAP[match[2].trim()] || CCAA_MAP[Object.keys(CCAA_MAP).find(k => normalizeText(k) === rawName)];
+      if (mappedCode) {
+        sheetToCcaa[sheetName] = mappedCode;
+      }
+    }
+  }
+
+  const entries = [];
+  for (const [sheetName, ccaaCode] of Object.entries(sheetToCcaa)) {
+    const sheet = workbook.Sheets[sheetName.replace("Tabla", "Tabla")]; // exact case
+    // Ensure we handle case insensitivity if needed, though usually it matches exactly
+    const actualSheetName = workbook.SheetNames.find(n => n.toLowerCase() === sheetName.toLowerCase());
+
+    if (!actualSheetName || !workbook.Sheets[actualSheetName]) {
+      console.warn(`    ⚠️ Hoja ${sheetName} no encontrada para ${ccaaCode}`);
+      continue;
+    }
+
+    const value = parseCcaaSheet(actualSheetName, workbook.Sheets[actualSheetName]);
+    if (value !== null) {
+      entries.push({
+        code: ccaaCode,
+        value: value
+      });
+    }
+  }
+
+  if (entries.length === 0) {
+    throw new Error("No se extrajeron datos de las hojas de CCAA");
+  }
+
+  // Sort by CCAA code for consistency
+  entries.sort((a, b) => a.code.localeCompare(b.code));
+
+  return entries;
+}
+
+async function downloadWorkbook(year, url, fetcher) {
+  const response = await fetcher(
+    url,
+    { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" } },
+    { maxRetries: 2, timeoutMs: 30000 }
+  );
+
+  const buffer = await response.arrayBuffer();
+  if (buffer.byteLength < 5000) {
+    throw new Error(`Archivo demasiado pequeño (${buffer.byteLength} bytes). Posible bloqueo 403 HTML.`);
+  }
+
+  return XLSX.read(Buffer.from(buffer), { type: "buffer" });
+}
+
+export async function fetchCcaaDeficit(fetcher = fetchWithRetry) {
+  console.log("Obteniendo datos de Déficit SEC 2010 por CCAA (IGAE)...");
+
+  const byYear = {};
+  const currentYear = new Date().getUTCFullYear();
+  let hits = 0;
+  let misses = 0;
+
+  for (let year = currentYear; year >= IGAE_DEFICIT_MIN_YEAR; year--) {
+    const url = buildYearUrl(year);
+    try {
+      const workbook = await downloadWorkbook(year, url, fetcher);
+      const entries = parseYearWorkbook(year, workbook);
+      byYear[String(year)] = { entries };
+      console.log(`    ${year}: ${entries.length} CCAA procesadas`);
+      hits++;
+      misses = 0;
+    } catch (error) {
+      misses++;
+      if (hits === 0 && year >= currentYear - 1) {
+        console.log(`    ℹ️ ${year}: no encontrado (${error.message.split('\\n')[0]})`);
+      }
+      if (hits > 0 && misses >= IGAE_DEFICIT_MAX_TRAILING_MISSES) break;
+      // Stop if we haven't found anything recently
+      if (hits === 0 && misses >= 2) break;
+    }
+  }
+
+  const yearsObj = Object.keys(byYear).map(Number).sort((a, b) => b - a);
+
+  if (yearsObj.length === 0) {
+    console.log("  ℹ️ Aviso: No se pudieron descargar años válidos de IGAE.");
+    console.log("  ℹ️ Utilizando fallback dataset (Cierre 2023 base)...");
+
+    const fallbackInfo = getLatestYearDataFromFallback();
+
+    return {
+      success: true,
+      lastUpdated: new Date().toISOString(),
+      latestYear: fallbackInfo.latestYear,
+      data: fallbackInfo.data, // keeping legacy structure mapping for UI
+      years: [fallbackInfo.latestYear],
+      byYear: {
+        [fallbackInfo.latestYear]: {
+          entries: Object.entries(fallbackInfo.data).map(([code, value]) => ({ code, value }))
+        }
+      },
+      source: "igae-cn-regional",
+      note: "Capacidad/Necesidad de financiación (B.9) SEC 2010. Utilizando datos fallback debido a fallos en origen.",
+    };
+  }
+
+  const latestYear = yearsObj[0];
+  // Transform back to expected key-value format for main UI consumption
+  const latestDataMap = {};
+  byYear[String(latestYear)].entries.forEach(e => {
+    latestDataMap[e.code] = e.value;
+  });
+
+  return {
+    success: true,
+    lastUpdated: new Date().toISOString(),
+    latestYear,
+    years: yearsObj,
+    data: latestDataMap,
+    byYear,
+    source: "igae-cn-regional",
+    sourceAttribution: {
+      balances: {
+        source: `IGAE — Cuentas Regionales (${latestYear})`,
+        url: buildYearUrl(latestYear),
+        type: "xlsx",
+        note: "Capacidad (+) / Necesidad (-) de financiación (B.9). Mensual acumulado SEC 2010."
+      }
+    }
+  };
 }
 
 function getLatestYearDataFromFallback() {
@@ -91,73 +247,6 @@ function getLatestYearDataFromFallback() {
   };
 }
 
-export async function fetchCcaaDeficit() {
-  console.log("Obteniendo datos de Déficit SEC 2010 por CCAA (IGAE)...");
-
-  try {
-    const response = await fetchWithRetry(IGAE_DEFICIT_URL, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    // Si la IGAE bloquea, el archivo suele ser un HTML muy pequeño (ej. 800 bytes)
-    if (arrayBuffer.byteLength < 5000) {
-      throw new Error(
-        `Archivo demasiado pequeño (${arrayBuffer.byteLength} bytes). Posible bloqueo HTML de la IGAE.`,
-      );
-    }
-
-    const workbook = XLSX.read(arrayBuffer, { type: "array" });
-    const mainSheetName =
-      workbook.SheetNames.find((n) => n.toLowerCase().includes("ccaa")) ||
-      workbook.SheetNames[0];
-    const sheet = workbook.Sheets[mainSheetName];
-
-    // Parse to JSON array of arrays
-    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null });
-
-    const b9RowIndex = findB9Row(rows);
-    if (b9RowIndex === -1) {
-      throw new Error(
-        'No se encontró la fila "Capacidad (+) / Necesidad (-) de financiación (B.9)" en el Excel.',
-      );
-    }
-
-    const headerRowIndex = 0; // Usualmente las CCAA están en cabeceras superiores, pero IGAE usa un formato complejo.
-    // ... Implementaremos la lógica de parseo si conseguimos un archivo real.
-    // Dado que el bloqueo es muy agresivo, lanzamos error estructurado y caemos al fallback de forma elegante por ahora
-    throw new Error(
-      "Implementación de parser suspendida debido a bloqueos sistemáticos 403/HTML redirect de la IGAE en el servidor de CI. Retornando dataset fallback.",
-    );
-  } catch (error) {
-    console.warn(
-      `⚠️ Aviso: No se pudieron parsear los datos oficiales de déficit IGAE: ${error.message}`,
-    );
-    console.log("ℹ️ Utilizando fallback dataset (Cierre 2023 base)...");
-
-    const fallbackInfo = getLatestYearDataFromFallback();
-
-    return {
-      success: true,
-      lastUpdated: new Date().toISOString(),
-      latestYear: fallbackInfo.latestYear,
-      data: fallbackInfo.data,
-      source: "igae-cn-regional",
-      note: "Capacidad/Necesidad de financiación (B.9) SEC 2010. Utilizando datos fallback debido a protección anti-scraping en origen.",
-    };
-  }
-}
-
-export default async function runCcaaDeficit() {
-  return await fetchCcaaDeficit();
+export default async function runCcaaDeficit(fetcher = fetchWithRetry) {
+  return await fetchCcaaDeficit(fetcher);
 }

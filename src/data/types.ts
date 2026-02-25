@@ -1,3 +1,11 @@
+export interface SourceDetail {
+  name: string;
+  url?: string;
+  date?: string;
+  realDataDate?: string;
+  note?: string;
+}
+
 export interface DataSourceAttribution {
   source: string;
   type: "api" | "csv" | "xlsx" | "fallback" | "derived" | "cross-reference";

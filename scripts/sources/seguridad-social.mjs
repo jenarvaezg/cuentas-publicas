@@ -1,70 +1,14 @@
 import { linearRegression } from '../lib/regression.mjs'
 import XLSX from 'xlsx'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
+import {
+  normalizeExcelUrl,
+  collectExcelCandidates,
+  parseExcelMetadata,
+} from '../lib/ss-scraper.mjs'
 
 const SS_BASE = 'https://www.seg-social.es'
 const EST24_URL = `${SS_BASE}/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24`
-const MONTH_NAMES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
-
-function normalizeExcelUrl(pathOrUrl) {
-  const cleaned = String(pathOrUrl || '').replace(/&amp;/g, '&').trim()
-  if (!cleaned) return null
-
-  try {
-    return new URL(cleaned, `${SS_BASE}/`).toString()
-  } catch {
-    if (cleaned.startsWith('http')) return cleaned
-    return `${SS_BASE}${cleaned}`
-  }
-}
-
-function buildRecentRegFallbackUrls(months = 4) {
-  const fallback = []
-  const today = new Date()
-
-  for (let i = 0; i < months; i++) {
-    const dt = new Date(today.getFullYear(), today.getMonth() - i, 1)
-    const yyyymm = `${dt.getFullYear()}${String(dt.getMonth() + 1).padStart(2, '0')}`
-    fallback.push(`${SS_BASE}/REG${yyyymm}.xlsx`)
-    fallback.push(`${SS_BASE}/wps/wcm/connect/wss/REG${yyyymm}.xlsx`)
-  }
-
-  return fallback
-}
-
-function collectExcelCandidates(html) {
-  const regexPattern = /href=["']([^"']*REG\d{6}\.xlsx[^"']*)["']/i
-  const primaryMatch = html.match(regexPattern)
-  const primaryUrl = primaryMatch ? normalizeExcelUrl(primaryMatch[1]) : null
-
-  const allXlsx = [...html.matchAll(/href=["']([^"']*\.xlsx[^"']*)["']/gi)]
-  const regUrlsFromPage = allXlsx
-    .map(match => normalizeExcelUrl(match[1]))
-    .filter(Boolean)
-    .filter(url => /REG\d{6}\.xlsx/i.test(url))
-
-  const candidateUrls = [
-    primaryUrl,
-    ...regUrlsFromPage,
-    ...buildRecentRegFallbackUrls(4)
-  ].filter(Boolean)
-
-  return [...new Set(candidateUrls)]
-}
-
-function parseExcelMetadata(excelUrl) {
-  const filename = excelUrl.split('/').pop()?.split('?')[0] || 'unknown'
-  const dateMatch = filename.match(/REG(\d{4})(\d{2})/)
-  const excelDate = dateMatch
-    ? `${dateMatch[1]}-${dateMatch[2]}-01`
-    : new Date().toISOString().split('T')[0]
-  const monthLabel = dateMatch
-    ? `${MONTH_NAMES[parseInt(dateMatch[2]) - 1]} ${dateMatch[1]}`
-    : 'fecha desconocida'
-
-  return { filename, excelDate, monthLabel }
-}
 
 function parseSSExcelBuffer(buffer, excelUrl) {
   const { excelDate, monthLabel } = parseExcelMetadata(excelUrl)
@@ -198,7 +142,7 @@ function parseSSExcelBuffer(buffer, excelUrl) {
  *
  * @returns {Promise<Object>} Pension data object
  */
-export async function downloadPensionData() {
+export async function downloadPensionData(fetcher = fetchWithRetry) {
   console.log('\n=== Descargando datos de pensiones (Seguridad Social) ===')
   console.log()
   console.log('  Estrategia: scraping Excel desde Seg. Social')
@@ -209,7 +153,7 @@ export async function downloadPensionData() {
   let liveDataError = null
 
   try {
-    liveData = await fetchFromSSExcel()
+    liveData = await fetchFromSSExcel(fetcher)
   } catch (error) {
     liveDataError = error?.message || 'error desconocido'
     console.log(`  ❌ Error en scraping: ${error.message}`)
@@ -237,12 +181,12 @@ export async function downloadPensionData() {
  *
  * @returns {Promise<Object|null>} Parsed pension data or null
  */
-export async function fetchFromSSExcel() {
+export async function fetchFromSSExcel(fetcher = fetchWithRetry) {
   // Step 1: Fetch the index page
   console.log('  1. Descargando página índice EST24...')
   console.log(`    URL: ${EST24_URL}`)
 
-  const pageResponse = await fetchWithRetry(EST24_URL, {
+  const pageResponse = await fetcher(EST24_URL, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)',
       'Accept': 'text/html'
@@ -272,7 +216,7 @@ export async function fetchFromSSExcel() {
     console.log(`    [${i + 1}/${candidateExcelUrls.length}] ${filename} (${monthLabel})`)
 
     try {
-      const xlsxResponse = await fetchWithRetry(candidateUrl, {
+      const xlsxResponse = await fetcher(candidateUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (compatible; DashboardFiscal/1.0)'
         }
