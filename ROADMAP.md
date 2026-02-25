@@ -111,13 +111,41 @@ Motor matemático central (`useMemo` en `FlowsSankeyBlock.tsx`).
 - ✅ **5. Bug fix COFOG key mapping:** Divisiones "01"/"10" → nodos `COFOG_01_RESTO`/`COFOG_10_RESTO` (antes silenciosamente perdidos).
 - ✅ **Validación:** Excluir las 17 CCAA resta exactamente 725.001 M€ (100% del presupuesto consolidado).
 
+### Fase 6: Residuos tributarios centrales ✅
+Corrección del gap de ~80.000 M€ en la simulación What-If.
+
+- ✅ **Diagnóstico:** Los nodos tributarios del Sankey usan totales nacionales Eurostat, pero los datos regionales AEAT solo cubren impuestos gestionados a nivel CCAA. La parte gestionada centralmente (IVA nacional, IRPF central, etc.) no estaba atribuida a ninguna región.
+- ✅ **Solución:** Calcular `taxResiduals` (Sankey node − suma regional) y distribuirlos GDP-proporcionalmente al excluir regiones, mismo patrón que los residuos de gasto central.
+- ✅ **Resultado:** Excluir las 17 CCAA deja residuo de ~542 M€ (0,07%) por redondeo acumulado, vs ~80.000 M€ antes.
+- ✅ **Documentación:** Tooltip expandible con metodología completa del What-If (fuentes, supuestos, limitaciones).
+
 ### Mejoras pendientes del Simulador Territorial
 
 - ⏳ **Proxies refinados por categoría de gasto:** En vez de usar PIB para todo, usar deuda/deuda total para intereses, población para defensa, y PIB para administración general. Mayor fidelidad económica.
 - ⏳ **Tooltip de transparencia:** Al pasar el ratón sobre un nodo restado, mostrar desglose "X M€ directos + Y M€ proporcional (proxy PIB)".
-- ⏳ **Métricas per cápita:** Cuando se selecciona una sola CCAA, mostrar equivalencias por habitante (€/persona).
 - ⏳ **Inversiones Reales y Subvenciones (Fase 2 original):** Licitaciones PLACSP y subvenciones BDNS por CCAA.
 - ⏳ **Nóminas AGE (Fase 3 original):** Distribución de funcionarios del Estado por CCAA y rama.
+
+---
+
+## Follow the Money — De tu nómina al servicio público 🆕
+
+Objetivo final: que cualquier ciudadano pueda ver cómo fluyen sus impuestos desde su nómina hasta el servicio público concreto que recibe en su municipio. Plan detallado en [`.claude/plans/follow-the-money.md`](.claude/plans/follow-the-money.md).
+
+### Fase A: Sankey por CCAA ⏳
+Selector de scope integrado en el `FlowsSankeyBlock` existente: España → CCAA individual. El mismo componente, misma interacción, distinto grafo. Muestra ingresos recaudados, gasto COFOG regional, transferencias Estado↔CCAA, pensiones, desempleo y balance. **Sin ETLs nuevos** — reorganiza datos existentes (AEAT, IGAE, fiscal balance, cuentas regionales).
+
+### Fase B: Calculadora personal ⏳
+Input: salario bruto + estimación de consumo. Output: desglose de IRPF (por tramos), SS, IVA estimado. Se conecta al Sankey: tus euros personales fluyen por el diagrama.
+
+### Fase C: Presupuestos municipales (top 50) ⏳
+ETL nuevo sobre liquidaciones presupuestarias de MINHAP (datos.gob.es). Mapear categorías municipales a COFOG-like. Empezar por las 50 ciudades más grandes.
+
+### Fase D: Atribución multinivel ⏳
+Conectar Nacional → CCAA → Municipio. Proxy inicial: proporción poblacional. Refinar con datos reales (áreas sanitarias, distritos educativos, inversiones localizadas).
+
+### Fase E: Sankey personal completo ⏳
+Vista unificada: tu nómina → tus impuestos → nivel nacional → CCAA → municipio → servicios concretos. Comparador: "¿Y si vivieras en otra ciudad?"
 
 ---
 

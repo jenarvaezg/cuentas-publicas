@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { SankeyLink, SankeyNode } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
+import { buildCcaaGraph, CCAA_NAMES } from "@/utils/buildCcaaGraph";
 import { formatCompact } from "@/utils/formatters";
 
 // Helper to filter graph to a specific selected node's forward/backward paths
@@ -77,10 +78,11 @@ export const FlowsSankeyBlock: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [excludedRegions, setExcludedRegions] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState<number>(flows?.latestYear ?? 2024);
+  const [scope, setScope] = useState<string>("national");
   const { lang } = useI18n();
 
-  // What-If is only available for the latest year (regional datasets are single-year)
-  const whatIfAvailable = selectedYear === flows?.latestYear;
+  // What-If is only available for the latest year in national scope
+  const whatIfAvailable = selectedYear === flows?.latestYear && scope === "national";
 
   // Clear exclusions when What-If becomes unavailable
   useEffect(() => {
@@ -89,11 +91,33 @@ export const FlowsSankeyBlock: React.FC = () => {
     }
   }, [whatIfAvailable]);
 
+  // Force latest year when entering CCAA mode (regional data is single-year)
+  useEffect(() => {
+    if (scope !== "national" && flows?.latestYear) {
+      setSelectedYear(flows.latestYear);
+    }
+  }, [scope, flows?.latestYear]);
+
+  const selectedCcaaName =
+    scope !== "national"
+      ? (CCAA_NAMES[scope] ??
+        ccaaSpending?.byYear[ccaaSpending.latestYear]?.entries.find((e) => e.code === scope)
+          ?.name ??
+        scope)
+      : null;
+
   const copy = useMemo(() => {
     return lang === "en"
       ? {
-          title: "Public Accounts Circulation",
-          description: `Aggregate flows of income, debt, and spending for ${selectedYear}. Click any node to drill-down into its specific path.`,
+          title:
+            scope !== "national" && selectedCcaaName
+              ? `${selectedCcaaName} — Fiscal Flows`
+              : "Public Accounts Circulation",
+          description:
+            scope !== "national" && selectedCcaaName
+              ? `Estimated fiscal flows attributed to ${selectedCcaaName} (${selectedYear}). Income: regional taxes (AEAT) + proportional SS + other. Spending: regional COFOG + pensions + unemployment + proportional central services. Click any node to drill-down.`
+              : `Aggregate flows of income, debt, and spending for ${selectedYear}. Click any node to drill-down into its specific path.`,
+          scopeLabel: "Scope",
           allSpain: "Spain (Consolidated)",
           excludeRegionGroup: "Exclude regions from balance (What-If):",
           clearExclusions: "Clear Exclusions",
@@ -102,18 +126,25 @@ export const FlowsSankeyBlock: React.FC = () => {
           yearLabel: "Year",
           whatIfUnavailable: `Regional data only available for ${flows?.latestYear}. What-If simulation disabled.`,
           infoBox:
-            "The flow consolidates data from the Tax Agency (AEAT), General Comptroller (IGAE), and Eurostat guaranteeing a strictly mathematically balanced graph. The ribbons' thickness is proportional to the millions of euros. Hover over a ribbon/node to see the exact amount.",
+            "The flow consolidates data from Eurostat (total revenue/expenditure), IGAE (COFOG functional spending), AEAT (tax breakdown by type), and Social Security (pension payroll). IGAE categories are scaled to match Eurostat's total expenditure. Tax nodes use AEAT national proportions applied to Eurostat totals. Pensions and debt interest are extracted from their respective COFOG categories. The deficit equals expenditure minus revenue. The graph is strictly mathematically balanced: total inputs = total outputs.",
+          whatIfInfo:
+            "The What-If simulator estimates the fiscal balance excluding selected regions. Income side: uses AEAT regional delegations data for common-regime taxes and foral contribution flows for Navarra/País Vasco; centrally-managed tax portions (not attributed to any specific CCAA) are distributed by GDP share. Social contributions use regional Eurostat NUTS2 accounts; other revenue is proportional to regional GDP. Expense side: uses IGAE COFOG regional spending, Social Security regional pensions, and SEPE regional unemployment benefits. Central spending not in any CCAA budget (defence, national police, debt interest, central administration) is distributed by GDP share. Approximation: some regional datasets may reference slightly different periods, and GDP-proportional distribution of central items is a proxy, not an exact attribution.",
           nodeLabels: {
             // General
-            INGRESOS_TOTALES: "Total Income",
+            INGRESOS_TOTALES: scope !== "national" ? "Attributed Income" : "Total Income",
             IMPUESTOS_DIRECTOS: "Direct Taxes",
             IMPUESTOS_INDIRECTOS: "Indirect Taxes",
             COTIZACIONES: "Social Contributions",
             OTROS_INGRESOS: "Other Income",
-            CONSOLIDADO: "Consolidated Budget",
+            CONSOLIDADO:
+              scope !== "national" && selectedCcaaName
+                ? `Fiscal Activity — ${selectedCcaaName}`
+                : "Consolidated Budget",
             GASTOS_TOTALES: "Total Spending",
             DEFICIT: "Deficit (New Debt)",
             SUPERAVIT: "Surplus (Financing Capacity)",
+            TRANSFERENCIA_NETA: "Net Transfer (Receives)",
+            CONTRIBUCION_NETA: "Net Contribution (Gives)",
 
             // Taxes
             IRPF: "Personal Income Tax",
@@ -145,8 +176,15 @@ export const FlowsSankeyBlock: React.FC = () => {
           } as Record<string, string>,
         }
       : {
-          title: "Circulación de las Cuentas Públicas",
-          description: `Flujos agregados de ingresos, deuda y gasto para el año ${selectedYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`,
+          title:
+            scope !== "national" && selectedCcaaName
+              ? `${selectedCcaaName} — Flujos Fiscales`
+              : "Circulación de las Cuentas Públicas",
+          description:
+            scope !== "national" && selectedCcaaName
+              ? `Flujos fiscales estimados atribuidos a ${selectedCcaaName} (${selectedYear}). Ingresos: impuestos regionales (AEAT) + SS proporcional + otros. Gastos: COFOG regional + pensiones + desempleo + servicios centrales proporcionales. Haz clic en cualquier nodo para explorar.`
+              : `Flujos agregados de ingresos, deuda y gasto para el año ${selectedYear}. Haz clic en cualquier nodo para explorar su rama (zoom-in).`,
+          scopeLabel: "Ámbito",
           allSpain: "España (Consolidado)",
           excludeRegionGroup: "Excluir regiones del balance (What-If):",
           clearExclusions: "Limpiar Exclusiones",
@@ -155,18 +193,25 @@ export const FlowsSankeyBlock: React.FC = () => {
           yearLabel: "Año",
           whatIfUnavailable: `Datos regionales solo disponibles para ${flows?.latestYear}. Simulación What-If desactivada.`,
           infoBox:
-            "El flujo consolida los datos de AEAT, IGAE y Eurostat garantizando un balance matemático exacto. El ancho de las cintas es proporcional a los importes en millones de euros. Haz hover sobre una cinta para ver la cantidad exacta.",
+            "El flujo consolida datos de Eurostat (ingresos/gastos totales), IGAE (gasto funcional COFOG), AEAT (desglose tributario por figura) y Seguridad Social (nómina de pensiones). Las categorías IGAE se escalan para cuadrar con el gasto total de Eurostat. Los nodos de impuestos usan proporciones nacionales AEAT aplicadas a los totales Eurostat. Pensiones e intereses de deuda se extraen de sus categorías COFOG respectivas. El déficit es la diferencia entre gasto e ingresos. El grafo está estrictamente balanceado: total de entradas = total de salidas.",
+          whatIfInfo:
+            "El simulador What-If estima el balance fiscal excluyendo las regiones seleccionadas. Ingresos: usa datos de delegaciones territoriales AEAT para impuestos de régimen común y flujos de contribución foral para Navarra/País Vasco; la parte de recaudación gestionada centralmente (no atribuida a ninguna CCAA concreta) se distribuye por cuota de PIB. Las cotizaciones sociales usan cuentas regionales Eurostat NUTS2; otros ingresos se reparten proporcionalmente al PIB regional. Gastos: usa gasto regional COFOG de IGAE, pensiones regionales de la Seguridad Social y prestaciones de desempleo regionales del SEPE. El gasto central no asignado a ninguna CCAA (defensa, policía nacional, intereses de deuda, administración central) se distribuye por cuota de PIB. Aproximación: algunos conjuntos de datos regionales pueden referirse a periodos ligeramente distintos, y la distribución por PIB de partidas centrales es una estimación, no una atribución exacta.",
           nodeLabels: {
             // General
-            INGRESOS_TOTALES: "Ingresos Totales",
+            INGRESOS_TOTALES: scope !== "national" ? "Ingresos Atribuidos" : "Ingresos Totales",
             IMPUESTOS_DIRECTOS: "Impuestos Directos",
             IMPUESTOS_INDIRECTOS: "Impuestos Indirectos",
             COTIZACIONES: "Cotizaciones Sociales",
             OTROS_INGRESOS: "Otros Ingresos",
-            CONSOLIDADO: "Presupuesto Consolidado",
+            CONSOLIDADO:
+              scope !== "national" && selectedCcaaName
+                ? `Actividad Fiscal — ${selectedCcaaName}`
+                : "Presupuesto Consolidado",
             GASTOS_TOTALES: "Gastos Totales",
             DEFICIT: "Déficit (Nueva Deuda)",
             SUPERAVIT: "Superávit (Cap. Financiación)",
+            TRANSFERENCIA_NETA: "Transferencia Neta (Recibe)",
+            CONTRIBUCION_NETA: "Contribución Neta (Aporta)",
 
             // Taxes
             IRPF: "IRPF",
@@ -197,13 +242,37 @@ export const FlowsSankeyBlock: React.FC = () => {
             DESEMPLEO: "Desempleo",
           } as Record<string, string>,
         };
-  }, [lang, selectedYear, flows?.latestYear]);
+  }, [lang, selectedYear, flows?.latestYear, scope, selectedCcaaName]);
 
   // Resolve the year's nodes/links from byYear
   const yearData = useMemo(() => {
     if (!flows?.byYear) return null;
     return flows.byYear[String(selectedYear)] ?? null;
   }, [flows, selectedYear]);
+
+  // Build CCAA-specific Sankey graph when a region is selected
+  const ccaaGraphData = useMemo(() => {
+    if (scope === "national" || !yearData) return null;
+    return buildCcaaGraph({
+      ccaaCode: scope,
+      nationalYearData: yearData,
+      taxRevenue,
+      ccaaSpending,
+      ccaaForalFlows,
+      pensionsRegional,
+      unemploymentRegional,
+      regionalAccounts,
+    });
+  }, [
+    scope,
+    yearData,
+    taxRevenue,
+    ccaaSpending,
+    ccaaForalFlows,
+    pensionsRegional,
+    unemploymentRegional,
+    regionalAccounts,
+  ]);
 
   const ccaaOptions = useMemo(() => {
     if (!ccaaSpending) return [];
@@ -216,6 +285,14 @@ export const FlowsSankeyBlock: React.FC = () => {
 
   const { activeNodes, activeLinks } = useMemo(() => {
     if (!yearData) return { activeNodes: [], activeLinks: [] };
+
+    // CCAA mode: use pre-built graph directly (no What-If subtraction)
+    if (scope !== "national" && ccaaGraphData) {
+      return {
+        activeNodes: ccaaGraphData.nodes,
+        activeLinks: ccaaGraphData.links,
+      };
+    }
 
     // Deep clone to avoid mutating original data
     const currentNodes = yearData.nodes.map((n) => ({ ...n }));
@@ -300,6 +377,11 @@ export const FlowsSankeyBlock: React.FC = () => {
         }
       }
 
+      // Resolve actual latest year for CCAA tax data (may lag behind national)
+      const taxCcaaYears = taxRevenue?.ccaa ? Object.keys(taxRevenue.ccaa).map(Number) : [];
+      const taxCcaaLatestYear = taxCcaaYears.length > 0 ? String(Math.max(...taxCcaaYears)) : null;
+      const taxNationalYear = taxCcaaLatestYear ?? String(taxRevenue?.latestYear ?? "");
+
       const centralResiduals: Record<string, number> = {};
       for (const node of yearData.nodes) {
         if (node.id === "GASTO_INTERESES") {
@@ -319,10 +401,52 @@ export const FlowsSankeyBlock: React.FC = () => {
         }
       }
 
-      // Resolve actual latest year for CCAA tax data (may lag behind national)
-      const taxCcaaYears = taxRevenue?.ccaa ? Object.keys(taxRevenue.ccaa).map(Number) : [];
-      const taxCcaaLatestYear = taxCcaaYears.length > 0 ? String(Math.max(...taxCcaaYears)) : null;
-      const taxNationalYear = taxCcaaLatestYear ?? String(taxRevenue?.latestYear ?? "");
+      // Precompute central tax residuals (Sankey tax node − sum of all regional attributions)
+      // AEAT delegaciones data covers taxes managed regionally, but not centrally-managed
+      // portions (e.g., national-level IVA, centrally-collected IRPF). These residuals are
+      // distributed GDP-proportionally when excluding regions.
+      const taxResiduals: Record<string, { amount: number; type: "direct" | "indirect" }> = {};
+      {
+        const allTaxEntries = taxCcaaLatestYear
+          ? (taxRevenue?.ccaa[taxCcaaLatestYear]?.entries ?? [])
+          : [];
+        const commonTaxEntries = allTaxEntries.filter(
+          (e) => e.code !== "CA15" && e.code !== "CA16",
+        );
+        const nationalData = taxRevenue?.national[taxNationalYear];
+
+        let sumIrpf = commonTaxEntries.reduce((s, e) => s + e.irpf, 0);
+        let sumIs = commonTaxEntries.reduce((s, e) => s + e.sociedades, 0);
+        const sumIrnr = commonTaxEntries.reduce((s, e) => s + e.irnr, 0);
+        let sumIva = commonTaxEntries.reduce((s, e) => s + e.iva, 0);
+        const sumIiee = commonTaxEntries.reduce((s, e) => s + e.iiee, 0);
+
+        // Add foral regime estimates (CA15/CA16 use taxRevenue split by national proportions)
+        const foralEntriesAll = ccaaForalFlows?.byYear[ccaaForalFlows.latestYear]?.entries ?? [];
+        if (nationalData && nationalData.total > 0) {
+          for (const fe of foralEntriesAll) {
+            const rev = fe.taxRevenue ?? 0;
+            sumIrpf += rev * (nationalData.irpf / nationalData.total);
+            sumIva += rev * (nationalData.iva / nationalData.total);
+            sumIs += rev * (nationalData.sociedades / nationalData.total);
+          }
+        }
+
+        const taxNodeResidualPairs: [string, number, "direct" | "indirect"][] = [
+          ["IRPF", sumIrpf, "direct"],
+          ["IS", sumIs, "direct"],
+          ["IRNR", sumIrnr, "direct"],
+          ["IVA", sumIva, "indirect"],
+          ["IIEE", sumIiee, "indirect"],
+        ];
+        for (const [nodeId, sumRegional, type] of taxNodeResidualPairs) {
+          const nodeAmount = yearData.nodes.find((n) => n.id === nodeId)?.amount ?? 0;
+          const residual = Math.max(0, nodeAmount - sumRegional);
+          if (residual > 0) {
+            taxResiduals[nodeId] = { amount: residual, type };
+          }
+        }
+      }
 
       // Aggregate subtractions across all excluded regions
       for (const regionId of excludedRegions) {
@@ -467,6 +591,23 @@ export const FlowsSankeyBlock: React.FC = () => {
                 );
               }
             }
+
+            // 8. Subtract central tax residuals (GDP-proportional)
+            // Centrally-collected taxes not in any CCAA's AEAT delegación data
+            for (const [nodeId, { amount: residual, type }] of Object.entries(taxResiduals)) {
+              if (residual > 0) {
+                const actualTaxResidual = subtractFromNodeAndLink(
+                  nodeId,
+                  residual * gdpProportion,
+                  true,
+                );
+                if (type === "direct") {
+                  directTaxesSubtracted += actualTaxResidual;
+                } else {
+                  indirectTaxesSubtracted += actualTaxResidual;
+                }
+              }
+            }
           }
         }
       }
@@ -548,6 +689,8 @@ export const FlowsSankeyBlock: React.FC = () => {
     regionalAccounts,
     demographics,
     copy,
+    scope,
+    ccaaGraphData,
   ]);
 
   const { filteredNodes, filteredLinks } = useMemo(() => {
@@ -567,104 +710,147 @@ export const FlowsSankeyBlock: React.FC = () => {
           </div>
         </div>
 
+        {/* Scope selector */}
+        <div className="mt-4 flex items-center gap-3">
+          <span className="text-sm font-medium text-muted-foreground">{copy.scopeLabel}</span>
+          <select
+            value={scope}
+            onChange={(e) => {
+              setScope(e.target.value);
+              setSelectedNode(null);
+            }}
+            className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          >
+            <option value="national">{copy.allSpain}</option>
+            {ccaaOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Year selector */}
         <div className="mt-4">
           <span className="text-sm font-medium text-muted-foreground mr-3">{copy.yearLabel}</span>
           <div className="flex flex-wrap gap-1.5 mt-1.5">
-            {(flows.years ?? []).map((year) => (
-              <button
-                type="button"
-                key={year}
-                onClick={() => {
-                  setSelectedYear(year);
-                  setSelectedNode(null);
-                }}
-                className={`
-                  px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 border
-                  ${
-                    year === selectedYear
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background border-border text-foreground hover:bg-muted"
-                  }
-                `}
-              >
-                {year}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-muted-foreground">
-              {copy.excludeRegionGroup}
-            </span>
-            {excludedRegions.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setExcludedRegions([]);
-                  setSelectedNode(null);
-                }}
-                className="h-8 text-xs text-muted-foreground hover:text-foreground"
-              >
-                {copy.clearExclusions}
-              </Button>
-            )}
-          </div>
-
-          {!whatIfAvailable && (
-            <p className="text-xs text-muted-foreground/70 italic mb-2">{copy.whatIfUnavailable}</p>
-          )}
-
-          <div className="flex flex-wrap gap-2 items-center">
-            {ccaaOptions.map((opt) => {
-              const isExcluded = excludedRegions.includes(opt.value);
+            {(flows.years ?? []).map((year) => {
+              const disabled = scope !== "national" && year !== flows.latestYear;
               return (
                 <button
                   type="button"
-                  key={opt.value}
-                  disabled={!whatIfAvailable}
+                  key={year}
+                  disabled={disabled}
                   onClick={() => {
-                    setExcludedRegions(
-                      (prev) =>
-                        prev.includes(opt.value)
-                          ? prev.filter((r) => r !== opt.value) // Remove
-                          : [...prev, opt.value], // Add
-                    );
-                    setSelectedNode(null); // Reset drilldown when simulating
+                    setSelectedYear(year);
+                    setSelectedNode(null);
                   }}
                   className={`
-                    px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
+                    px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 border
                     ${
-                      !whatIfAvailable
-                        ? "opacity-50 cursor-not-allowed"
-                        : isExcluded
-                          ? "bg-destructive/10 border-destructive/20 text-destructive line-through decoration-destructive/50"
+                      disabled
+                        ? "opacity-40 cursor-not-allowed border-border text-muted-foreground"
+                        : year === selectedYear
+                          ? "bg-primary text-primary-foreground border-primary"
                           : "bg-background border-border text-foreground hover:bg-muted"
                     }
                   `}
                 >
-                  {opt.label}
+                  {year}
                 </button>
               );
             })}
           </div>
-
-          {selectedNode && (
-            <div className="mt-4 flex justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setSelectedNode(null)}
-                className="shrink-0 flex items-center gap-2"
-              >
-                <ZoomOut className="w-4 h-4" />
-                {copy.resetView}
-              </Button>
-            </div>
-          )}
         </div>
+
+        {/* What-If section: only visible in national scope */}
+        {scope === "national" && (
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-muted-foreground">
+                {copy.excludeRegionGroup}
+              </span>
+              {excludedRegions.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setExcludedRegions([]);
+                    setSelectedNode(null);
+                  }}
+                  className="h-8 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  {copy.clearExclusions}
+                </Button>
+              )}
+            </div>
+
+            {!whatIfAvailable && (
+              <p className="text-xs text-muted-foreground/70 italic mb-2">
+                {copy.whatIfUnavailable}
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2 items-center">
+              {ccaaOptions.map((opt) => {
+                const isExcluded = excludedRegions.includes(opt.value);
+                return (
+                  <button
+                    type="button"
+                    key={opt.value}
+                    disabled={!whatIfAvailable}
+                    onClick={() => {
+                      setExcludedRegions(
+                        (prev) =>
+                          prev.includes(opt.value)
+                            ? prev.filter((r) => r !== opt.value) // Remove
+                            : [...prev, opt.value], // Add
+                      );
+                      setSelectedNode(null); // Reset drilldown when simulating
+                    }}
+                    className={`
+                      px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
+                      ${
+                        !whatIfAvailable
+                          ? "opacity-50 cursor-not-allowed"
+                          : isExcluded
+                            ? "bg-destructive/10 border-destructive/20 text-destructive line-through decoration-destructive/50"
+                            : "bg-background border-border text-foreground hover:bg-muted"
+                      }
+                    `}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {whatIfAvailable && (
+              <details className="mt-3 text-xs text-muted-foreground">
+                <summary className="cursor-pointer hover:text-foreground inline-flex items-center gap-1">
+                  <Info className="w-3 h-3" />
+                  {lang === "en"
+                    ? "What-If methodology & assumptions"
+                    : "Metodología y supuestos del What-If"}
+                </summary>
+                <p className="mt-2 leading-relaxed bg-muted/30 rounded-md p-3">{copy.whatIfInfo}</p>
+              </details>
+            )}
+          </div>
+        )}
+
+        {selectedNode && (
+          <div className="mt-4 flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setSelectedNode(null)}
+              className="shrink-0 flex items-center gap-2"
+            >
+              <ZoomOut className="w-4 h-4" />
+              {copy.resetView}
+            </Button>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="p-0">
         <div className="h-[650px] w-full px-2 py-4 bg-background/50">
