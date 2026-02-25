@@ -30,12 +30,9 @@ export function PensionsBlock() {
   const copy = msg.blocks.pensions;
 
   const expensePerSecond = pensions.current.expensePerSecond;
-  const pensionExpenseToGDP =
-    (pensions.current.annualExpense / demographics.gdp) * 100;
+  const pensionExpenseToGDP = (pensions.current.annualExpense / demographics.gdp) * 100;
 
-  const sparklineData = pensions.historical
-    .slice(-20)
-    .map((d) => d.monthlyPayroll);
+  const sparklineData = pensions.historical.slice(-20).map((d) => d.monthlyPayroll);
 
   const pensionDate = formatDate(pensions.lastUpdated);
   const demoDate = formatDate(demographics.lastUpdated);
@@ -57,16 +54,14 @@ export function PensionsBlock() {
     ? fromAttribution(pensions.sourceAttribution.averagePensionRetirement)
     : withDate(SS_PENSIONES, pensionDate);
 
-  const contributoryDeficitSource = pensions.sourceAttribution
-    ?.contributoryDeficit
+  const contributoryDeficitSource = pensions.sourceAttribution?.contributoryDeficit
     ? fromAttribution(pensions.sourceAttribution.contributoryDeficit)
     : {
         ...CALCULO_DERIVADO,
         note: copy.deficitNote,
       };
 
-  const contributorsPerPensionerSource = pensions.sourceAttribution
-    ?.contributorsPerPensioner
+  const contributorsPerPensionerSource = pensions.sourceAttribution?.contributorsPerPensioner
     ? fromAttribution(pensions.sourceAttribution.contributorsPerPensioner)
     : { ...CALCULO_DERIVADO, note: copy.ratioNote };
 
@@ -87,10 +82,7 @@ export function PensionsBlock() {
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
           <CardTitle>{msg.blocks.pensions.title}</CardTitle>
-          <ExportBlockButton
-            targetId="pensiones"
-            filenamePrefix="cuentas-publicas-pensiones"
-          />
+          <ExportBlockButton targetId="pensiones" filenamePrefix="cuentas-publicas-pensiones" />
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -162,11 +154,7 @@ export function PensionsBlock() {
             value={formatPercent(pensionExpenseToGDP)}
             tooltip={copy.pensionToGdpTooltip}
             delay={0.25}
-            sources={[
-              { ...CALCULO_DERIVADO, note: copy.gdpNote },
-              ssNomina,
-              inePibSource,
-            ]}
+            sources={[{ ...CALCULO_DERIVADO, note: copy.gdpNote }, ssNomina, inePibSource]}
           />
           <StatCard
             label={copy.reserveFund}

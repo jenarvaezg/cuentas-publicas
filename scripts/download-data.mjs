@@ -33,6 +33,7 @@ import {
   displayDataComparison,
   displayFreshnessWarnings,
 } from "./lib/reporting.mjs";
+import { VALIDATORS, validateDelta } from "./lib/validators.mjs";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -773,10 +774,42 @@ async function main() {
   // Write individual data files
   console.log("\n=== Escribiendo archivos JSON ===");
 
+  const validationSummary = [];
+
   for (const source of SOURCE_REGISTRY) {
     if (status[source.name]) {
-      writeMirroredDataFile(source.fileName, resolvedValues[source.name]);
-      console.log(`✅ ${source.fileName}`);
+      const data = resolvedValues[source.name];
+
+      // Shape validation
+      const validator = VALIDATORS[source.name];
+      const validationErrors = validator ? validator(data) : [];
+      if (validationErrors.length > 0) {
+        console.warn(`⚠️  ${source.fileName} - Validación:`);
+        for (const err of validationErrors) {
+          console.warn(`     • ${err}`);
+        }
+        validationSummary.push({ name: source.name, errors: validationErrors, deltaWarnings: [] });
+      }
+
+      // Delta validation against previously written data
+      const prevData = existingData[source.name];
+      const deltaWarnings = validateDelta(source.name, prevData, data);
+      if (deltaWarnings.length > 0) {
+        console.warn(`⚠️  ${source.fileName} - Cambios grandes:`);
+        for (const w of deltaWarnings) {
+          console.warn(`     • ${w}`);
+        }
+        const existing = validationSummary.find((e) => e.name === source.name);
+        if (existing) {
+          existing.deltaWarnings = deltaWarnings;
+        } else {
+          validationSummary.push({ name: source.name, errors: [], deltaWarnings });
+        }
+      }
+
+      writeMirroredDataFile(source.fileName, data);
+      const validStatus = validationErrors.length === 0 ? "✅" : "⚠️ ";
+      console.log(`${validStatus} ${source.fileName}`);
     } else {
       console.error(
         `❌ ${source.fileName} - Error:`,
@@ -785,6 +818,15 @@ async function main() {
           fallbackKeys[source.name],
         ),
       );
+    }
+  }
+
+  // Validation summary
+  if (validationSummary.length > 0) {
+    console.warn(`\n⚠️  Resumen de validación: ${validationSummary.length} fuente(s) con advertencias`);
+    for (const entry of validationSummary) {
+      const total = entry.errors.length + entry.deltaWarnings.length;
+      console.warn(`   ${entry.name}: ${total} advertencia(s)`);
     }
   }
 
