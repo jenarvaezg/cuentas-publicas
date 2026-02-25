@@ -50,6 +50,23 @@ export function formatCompact(value: number): string {
   return formatCurrency(value);
 }
 
+// Abbreviate large counts (no currency symbol): "10,4 M", "2,3 mm"
+export function formatCompactCount(value: number, decimals = 1): string {
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+  const isEnglish = getCurrentLanguage() === "en";
+
+  if (absValue >= 1_000_000_000) {
+    return `${sign}${formatNumber(absValue / 1_000_000_000, decimals)} ${isEnglish ? "B" : "mm"}`;
+  } else if (absValue >= 1_000_000) {
+    return `${sign}${formatNumber(absValue / 1_000_000, decimals)} M`;
+  } else if (absValue >= 1_000) {
+    return `${sign}${formatNumber(absValue / 1_000, decimals)} ${isEnglish ? "k" : "mil"}`;
+  }
+
+  return formatNumber(value, 0);
+}
+
 // Format percentage with 1 decimal
 export function formatPercent(value: number): string {
   return new Intl.NumberFormat(getCurrentLocale(), {

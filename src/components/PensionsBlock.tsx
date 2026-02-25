@@ -13,6 +13,7 @@ import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import {
   formatCompact,
+  formatCompactCount,
   formatCurrency,
   formatDate,
   formatNumber,
@@ -232,7 +233,7 @@ export function PensionsBlock() {
           />
           <StatCard
             label={copy.activePensions}
-            value={formatNumber(pensions.current.totalPensions, 0)}
+            value={formatCompactCount(pensions.current.totalPensions)}
             tooltip={copy.activePensionsTooltip}
             delay={0.35}
             sources={[ssPensiones]}
