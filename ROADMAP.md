@@ -1,6 +1,6 @@
 # Roadmap — Dashboard Fiscal de España
 
-Estado validado contra el código actual: **24 febrero 2026**.
+Estado validado contra el código actual: **25 febrero 2026**.
 
 Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
 
@@ -57,58 +57,67 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
   - ⏳ Permitir comparar esperanza de vida entre paises
   - ⏳ Permitir comparar fecundidad entre paises
   - ⏳ Datos de flujos migratorios (entradas/salidas)
+  - ⏳ Poblacion actual y diferentes estimados, teniendo en cuenta flujos migratorios y natalidad/mortalidad
 
 ---
 
-## Simulador Territorial (Sankey Avanzado) ⏳
+## Simulador Territorial (Sankey Avanzado) 🟡
 
 El objetivo es transformar la herramienta actual en un **simulador macroeconómico 100% fidedigno** mediante Data Lakes de archivos JSON estáticos (matrices "CCAA -> COFOG -> EUROS") autogenerados por ETLs y conectados matemáticamente a los Nodos/Enlaces del Sankey.
 
-### Fase 1: Pensiones y Desempleo (El Gran Gasto Social)
+### Fase 1: Pensiones y Desempleo (El Gran Gasto Social) ✅
 Las transferencias directas a familias suponen el grueso del gasto estatal.
 
-- ⏳ **1.1. Pensiones Territorializadas:**
-  - **Script ETL:** Crear `scripts/etl/pensions-regional.mjs` que parsee estadisticas de la Seg. Social.
-  - **Output JSON:** `src/data/pensions-regional.json` (ej: `{"CA01": { "gasto": 15000000 }, "CA02": ...}`).
-  - **Integración Sankey:** Restar el valor al nodo `PENSIONES` y al enlace desde `GASTOS_TOTALES`.
-- ⏳ **1.2. Prestaciones por Desempleo (SEPE):**
-  - **Script ETL:** Crear `scripts/etl/unemployment-regional.mjs`.
-  - **Output JSON:** `src/data/unemployment-regional.json`.
-  - **Integración Sankey:** Restar el valor al nodo `DESEMPLEO`.
+- ✅ **1.1. Pensiones Territorializadas:**
+  - **Script ETL:** `scripts/sources/pensions-regional.mjs` — parseo de estadísticas de la Seg. Social por CCAA.
+  - **Output JSON:** `src/data/pensions-regional.json` (19 CCAA, gasto anual en pensiones).
+  - **Integración Sankey:** Resta directa al nodo `GASTO_PENSIONES` y enlace desde `CONSOLIDADO`.
+- ✅ **1.2. Prestaciones por Desempleo (Eurostat):**
+  - **Script ETL:** `scripts/sources/unemployment-regional.mjs` — reescrito con API Eurostat (`lfst_r_lfu3pers` + `gov_10a_exp` GF1005).
+  - **Output JSON:** `src/data/unemployment-regional.json` (19 CCAA, distribución proporcional por parados NUTS2).
+  - **Integración Sankey:** Resta al nodo `COFOG_10_RESTO` (Protección Social excl. pensiones).
 
-### Fase 2: Inversiones Reales y Subvenciones
+### Fase 2: Inversiones Reales y Subvenciones ⏳
 El Estado Central asume la construcción de infraestructuras interregionales y rescates a empresas.
 
 - ⏳ **2.1. Licitaciones y Obra Pública (Cap. 6):**
-  - **Script ETL:** Scraper de la Plataforma de Contratos (`scripts/etl/contracts-regional.mjs`) mapeado por CCAA y Función COFOG.
-  - **Output JSON:** `src/data/investments-regional.json`.
-  - **Integración Sankey:** Restar del nodo COFOG correspondiente (ej. `ASUNTOS_ECONOMICOS`).
+  - **Script ETL:** Scraper de la Plataforma de Contratos mapeado por CCAA y Función COFOG.
+  - **Integración Sankey:** Restar del nodo COFOG correspondiente (ej. `COFOG_04`).
 - ⏳ **2.2. Subvenciones del Estado (Cap. 4 y 7):**
-  - **Script ETL:** Consumir la base de datos BDNS y agrupar por CCAA fiscal de los beneficiarios en `src/data/subsidies-regional.json`.
-  - **Integración Sankey:** Restar proporcionalmente de las áreas subvencionadas (`AGRICULTURA`, `INDUSTRIA`).
+  - **Script ETL:** Consumir la base de datos BDNS y agrupar por CCAA fiscal.
+  - **Integración Sankey:** Restar proporcionalmente de las áreas subvencionadas.
 
-### Fase 3: Nóminas de la Administración General del Estado (AGE)
+### Fase 3: Nóminas de la Administración General del Estado (AGE) ⏳
 Sueldos de policías, jueces, militares y delegaciones ministeriales ubicados físicamente en la región.
 
 - ⏳ **3.1. Distribución de Funcionarios del Estado:**
   - **Script ETL:** Extraer efectivos del Boletín de Personal AAPP y cruzar con sueldos PGE.
-  - **Output JSON:** `src/data/age-salaries-regional.json` desglosado por rama (Defensa, Justicia, etc.).
-  - **Integración Sankey:** Restar del nodo respectivo (`SERVICIOS_PUBLICOS`, `DEFENSA`, `ORDEN_PUBLICO`).
+  - **Integración Sankey:** Restar del nodo respectivo (`COFOG_01_RESTO`, `COFOG_02`, `COFOG_03`).
 
-### Fase 4: Bienes Públicos Indivisibles (Proxy Demográfico)
+### Fase 4: Bienes Públicos Indivisibles (Proxy PIB) ✅
 Gastos no localizables geográficamente (ej. Exteriores, Corona, Congreso, Deudas).
 
-- ⏳ **4.1. Extracción de Pesos Demográficos/PIB:**
-  - **Cálculo:** Calcular el `%` de población/PIB de la región sobre España desde `demographics.json`.
-  - **Integración Sankey:** Restar ese `%` proporcionalmente a los nodos indivisibles (`DEFENSA`, `ASUNTOS_EXTERIORES`, `INTERESES_DEUDA`).
+- ✅ **4.1. Extracción de Pesos PIB Regional:**
+  - **Cálculo:** % PIB regional sobre España desde `regional-accounts.json`.
+  - **Integración Sankey:** Resta proporcional al PIB de los residuos centrales (gasto Sankey − suma regional COFOG) en cada nodo de gasto, incluyendo `GASTO_INTERESES`, `COFOG_01_RESTO` a `COFOG_09`, `GASTO_PENSIONES` y `COFOG_10_RESTO`.
 
-### Fase 5: El Balance de Masas (Déficit y Consolidado)
+### Fase 5: El Balance de Masas (Déficit y Consolidado) ✅
 Motor matemático central (`useMemo` en `FlowsSankeyBlock.tsx`).
 
-- ⏳ **1. Ingresos Excluidos:** Resta lo aportado a la caja común (golpea a `INGRESOS_TOTALES`).
-- ⏳ **2. Gastos Excluidos (Fases 1-4):** Resta todo el presupuesto autonómico y transferencias (golpea a `GASTOS_TOTALES`).
-- ⏳ **3. Diferencial (Déficit):** Si `(Nuevos Ingresos) < (Nuevos Gastos)`, el nuevo `DEFICIT` = `Gastos - Ingresos`.
-- ⏳ **4. Nodo Consolidado:** Reajusta su tamaño a la masa económica resultante.
+- ✅ **1. Ingresos Excluidos:** Resta impuestos cedidos, cotizaciones sociales y otros ingresos proporcionales al PIB.
+- ✅ **2. Gastos Excluidos (Fases 1-4):** Resta gasto COFOG regional, pensiones, desempleo y residuos centrales.
+- ✅ **3. Diferencial (Déficit):** `DEFICIT` = `max(0, Gastos − Ingresos)` tras exclusiones.
+- ✅ **4. Nodo Consolidado:** Reajuste automático: `CONSOLIDADO` = `Ingresos + Déficit`.
+- ✅ **5. Bug fix COFOG key mapping:** Divisiones "01"/"10" → nodos `COFOG_01_RESTO`/`COFOG_10_RESTO` (antes silenciosamente perdidos).
+- ✅ **Validación:** Excluir las 17 CCAA resta exactamente 725.001 M€ (100% del presupuesto consolidado).
+
+### Mejoras pendientes del Simulador Territorial
+
+- ⏳ **Proxies refinados por categoría de gasto:** En vez de usar PIB para todo, usar deuda/deuda total para intereses, población para defensa, y PIB para administración general. Mayor fidelidad económica.
+- ⏳ **Tooltip de transparencia:** Al pasar el ratón sobre un nodo restado, mostrar desglose "X M€ directos + Y M€ proporcional (proxy PIB)".
+- ⏳ **Métricas per cápita:** Cuando se selecciona una sola CCAA, mostrar equivalencias por habitante (€/persona).
+- ⏳ **Inversiones Reales y Subvenciones (Fase 2 original):** Licitaciones PLACSP y subvenciones BDNS por CCAA.
+- ⏳ **Nóminas AGE (Fase 3 original):** Distribución de funcionarios del Estado por CCAA y rama.
 
 ---
 
@@ -136,7 +145,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 
 ### Nuevas visualizaciones
 
-- **✅ Sankey fiscal ultra detallado**: visualización interactiva de flujos desde ingresos territoriales hacia usos finales del gasto, con simulador "What-If" para CCAA.
+- **✅ Sankey fiscal ultra detallado**: visualización interactiva de flujos desde ingresos territoriales hacia usos finales del gasto, con simulador "What-If" para CCAA. Incluye balance de masas completo (ingresos + gastos), atribución directa (pensiones, desempleo, COFOG regional, impuestos cedidos, cotizaciones) y proxy PIB para bienes indivisibles.
 - **✅ "De cada 1.000€ que entran, se reparten así"**: Integrado en el visor Sankey como herramienta proporcional del presupuesto consolidado.
 - **Proyecciones demográficas**: Pirámide de población actual + proyecciones INE a 20-30 años (ratio dependencia futuro).
 - **Población por provincia**: Desglose demográfico a nivel provincial. Fuente: INE (padrón continuo, estadísticas de nacimientos/defunciones, estadística de migraciones). Dificultad: ALTA.
@@ -145,6 +154,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 - **Simulador de ajuste fiscal**: "¿Qué pasaría si subimos/bajamos X impuesto un Y%?" — calculadora interactiva.
 - **Timeline de hitos**: Eventos económicos importantes (crisis 2008, COVID, reformas) superpuestos en los gráficos históricos.
 - **Rating crediticio**: Indicador confianza deuda (Moody's/S&P/Fitch — sin API pública, dificultad MUY ALTA).
+- **⏳ Contratación pública (Licitaciones)**: Volumen anual, tipo de contrato, procedimiento (abierto vs negociado), competencia media, participación PYME y tasa de desiertos. Fuente: PLACSP sindicación. Ver [plan detallado](#contratación-pública-licitaciones-).
 
 ### Robustez del pipeline
 
@@ -209,11 +219,174 @@ Objetivo: Construir cobertura fiscal territorial máxima y fresca para responder
 
 ---
 
+## Contratación Pública (Licitaciones) ⏳
+
+Integración de datos de contratación pública desde la **Plataforma de Contratación del Sector Público (PLACSP)**.
+
+Inspirado por [BquantFinance/licitaciones-espana](https://github.com/BquantFinance/licitaciones-espana) (~42M registros), pero consumiendo directamente los feeds oficiales de sindicación PLACSP para mantener el pipeline ligero y sin dependencias de terceros.
+
+### Fuente de datos
+
+Feeds de sindicación abiertos de PLACSP (sin autenticación):
+
+- **Anuales (2012–2024)**: `https://contrataciondelsectorpublico.gob.es/sindicacion/sindicacion_643/licitacionesPerfilesContratanteCompleto3_{YYYY}.zip`
+- **Mensuales (2025+)**: `…/licitacionesPerfilesContratanteCompleto3_{YYYYMM}.zip`
+
+Formato: ZIP → ATOM/XML (namespace CODICE). Licencia: reutilización abierta (datos.gob.es).
+
+### Estrategia: ligero por diseño
+
+**Problema**: Los ZIPs anuales pesan 100–300 MB y contienen ~500K–1M registros/año. Descargar todo el histórico sería >1.5 GB.
+
+**Solución**:
+1. **Histórico (2012–2024)**: Agregados anuales hardcodeados como `REFERENCE_DATA`. Son ~13 filas de totales, calculadas una vez localmente.
+2. **Reciente (últimos 2–3 meses)**: Descargar solo ZIPs mensuales (~20–50 MB/mes). Parsear XML en streaming (SAX), agregar en memoria, descartar raw.
+3. **Output**: `src/data/licitaciones.json` de ~50–100 KB.
+
+**Estimación CI**: +1–2 min al pipeline actual.
+
+### Campos a extraer (8 de ~40 disponibles)
+
+| Campo | Uso |
+|-------|-----|
+| `importe_sin_iva` | Volumen total € |
+| `importe_adjudicacion` | Importe adjudicado (cálculo de ahorro) |
+| `tipo_contrato` | Desglose: Obras / Servicios / Suministros / Concesiones |
+| `procedimiento` | Abierto / Negociado / Acuerdo marco → indicador de transparencia |
+| `estado` | Adjudicada / Desierta / Anulada → tasas de resolución |
+| `num_ofertas` | Competencia media por licitación |
+| `es_pyme` | Participación PYME |
+| `fecha_publicacion` | Serie temporal mensual |
+
+**Valores decodificados**:
+- **tipo_contrato**: Suministros (1), Servicios (2), Obras (3), Gestión Servicios Públicos (21), Concesión Obras (31), Concesión Servicios (40), Administrativo Especial (7), Privado (8), Patrimonial (50).
+- **procedimiento**: Abierto (1), Restringido (2), Negociado con publicidad (3), Negociado sin publicidad (4), Diálogo competitivo (5), Asociación innovación (6), Basado en acuerdo marco (100), Otros (999).
+- **estado**: Publicada (PUB), En evaluación (EV), Adjudicada (ADJ), Resuelta (RES), Anulada (ANUL), Desierta (DES).
+
+### Arquitectura técnica
+
+**Script** (`scripts/sources/licitaciones.mjs`):
+```
+1. Determinar últimos 2–3 meses disponibles (YYYYMM)
+2. Descargar ZIPs mensuales con fetchWithRetry() (~20–50 MB c/u)
+3. Descomprimir en memoria (zlib, sin temp files)
+4. Parsear ATOM/XML en streaming (SAX, no DOM)
+   → Por cada <entry>: extraer 8 campos, actualizar contadores, descartar registro
+5. Combinar contadores live con REFERENCE_DATA histórico
+6. Emitir licitaciones.json
+```
+
+**Gestión de memoria** — no acumular registros:
+```javascript
+for await (const entry of parseAtomEntries(zipStream)) {
+  const { tipo, procedimiento, importe, ... } = extractFields(entry);
+  aggregates.byYear[year].totalImporte += importe;
+  aggregates.byYear[year].byTipo[tipo].count++;
+  // ~2 KB de memoria por año, no 500K registros
+}
+```
+
+**Dependencias**: `sax` o `fast-xml-parser` (~50 KB) + built-in `zlib`.
+
+**Fallback**: `REFERENCE_DATA` con agregados 2022–2025 hardcodeados (patrón estándar del proyecto).
+
+### Tipos (`src/data/types.ts`)
+
+```typescript
+interface LicitacionesData {
+  lastUpdated: string;
+  current: {
+    totalLicitaciones: number;      // nº contratos año en curso
+    importeTotal: number;           // € sin IVA año en curso
+    importeAdjudicado: number;      // € adjudicado año en curso
+    tasaAdjudicacion: number;       // % adjudicadas / publicadas
+    tasaDesierta: number;           // % desiertas
+    ofertasMedia: number;           // media de ofertas por licitación
+    participacionPyme: number;      // % adjudicadas a PYMEs
+  };
+  byYear: Record<string, {
+    count: number; importe: number; adjudicado: number;
+    byTipo: Record<string, { count: number; importe: number }>;
+    byProcedimiento: Record<string, { count: number; importe: number }>;
+    byEstado: Record<string, number>;
+    ofertasMedia: number; pctPyme: number;
+  }>;
+  byMonth: Array<{ date: string; count: number; importe: number }>;
+  sourceAttribution: Record<string, DataSourceAttribution>;
+}
+```
+
+### Componente UI: `LicitacionesBlock.tsx`
+
+**Ubicación**: Después de `BudgetBlock` (COFOG), antes de `RevenueBlock`.
+Narrativa: "El Estado gasta en estas funciones (COFOG) → ejecuta ese gasto así (contratación) → lo financia con estos ingresos."
+
+**StatCards** (6–8 tarjetas):
+
+| Métrica | Tooltip (es) |
+|---------|-------------|
+| Volumen anual (€) | Importe total de contratos públicos publicados este año, sin IVA |
+| Licitaciones/día | Media de nuevos contratos publicados cada día hábil |
+| € por habitante | Si repartiéramos el gasto en contratación pública entre toda la población |
+| Ofertas de media | Cuántas empresas compiten de media por cada contrato público |
+| % Proc. abierto | Porcentaje de contratos por concurso abierto (máxima competencia y transparencia) |
+| % PYMEs | Proporción de contratos adjudicados a pequeñas y medianas empresas |
+| Tasa de desiertos | Licitaciones sin ofertas válidas — refleja problemas en diseño del contrato o del mercado |
+| Ahorro medio | Diferencia media entre presupuesto y adjudicación en licitaciones resueltas |
+
+**Gráficos**:
+1. Barras horizontales por tipo de contrato (Obras / Servicios / Suministros) — reutilizar `BudgetChart`.
+2. Sparklines en StatCards (serie mensual 12–24 meses).
+3. Donut de procedimientos (Abierto / Negociado / Acuerdo marco) — transparencia visual.
+
+### Integración Sankey (V2)
+
+Nodo "Contratación Pública" mostrando qué parte del gasto se ejecuta mediante contratos vs. transferencias directas. Requiere cruzar con COFOG. Segunda iteración.
+
+### Checklist de implementación
+
+- [ ] `scripts/sources/licitaciones.mjs` — script descarga + agregación streaming
+- [ ] `src/data/types.ts` — interfaz `LicitacionesData`
+- [ ] `scripts/download-data.mjs` — registrar source con `metaExtractor`
+- [ ] `src/hooks/useData.ts` — importar JSON, exponer en hook
+- [ ] `src/data/sources.ts` — atribución PLACSP
+- [ ] `src/i18n/messages.ts` — textos es/en
+- [ ] `src/components/LicitacionesBlock.tsx` — componente UI
+- [ ] `src/components/MethodologySection.tsx` — documentar fuente y metodología
+- [ ] `DATA-REGISTRY.md` — registrar dataset
+- [ ] `API.md` — documentar endpoint `/api/v1/licitaciones.json`
+- [ ] Tests unitarios del script (Vitest)
+- [ ] E2E smoke test del bloque
+
+### Riesgos y mitigaciones
+
+| Riesgo | Prob. | Mitigación |
+|--------|-------|------------|
+| URLs mensuales cambian de pattern | Media | Detección dinámica + fallback a mes anterior + REFERENCE_DATA |
+| XML schema cambia (CODICE) | Baja | Campos estables desde 2012; validación con warning |
+| Parseo XML lento (>3 min en CI) | Media | SAX streaming + solo 8 campos + skip entries sin importe |
+| PLACSP caído en CI | Media | REFERENCE_DATA hardcodeado |
+| ZIP mensual >100 MB | Baja | Limitar a último mes; timeout generoso (60s) |
+
+### Orden de implementación
+
+1. Script de descarga con REFERENCE_DATA + parseo streaming
+2. Tipos TypeScript
+3. Registro pipeline + hook useData
+4. Tests del script (Vitest, mock ZIP)
+5. Componente UI + i18n
+6. Docs sync (Methodology, DATA-REGISTRY, API)
+7. E2E smoke test
+
+---
+
 ## Orden Propuesto de Ejecución
 
-1. **Completar CCAA (déficit y gasto por comunidad)**  
+1. **Completar CCAA (déficit y gasto por comunidad)**
    Último gran bloque funcional pendiente antes de nuevas líneas de producto.
-2. **Ejecutar checklist territorial CCAA→Provincia→Ayuntamiento**  
+2. **Ejecutar checklist territorial CCAA→Provincia→Ayuntamiento**
    Seguir la sección "Checklist operativo por comunidad" comunidad a comunidad, con foco en máxima profundidad y frescura.
 3. ~~**Cerrar deuda documental del inventario de datos**~~
    ✅ `DATA-REGISTRY.md`, `API.md` y `openapi.json` alineados con los 11 datasets publicados en `/api/v1`.
+4. **Contratación Pública (Licitaciones)**
+   Integrar datos PLACSP según [plan detallado](#contratación-pública-licitaciones-).

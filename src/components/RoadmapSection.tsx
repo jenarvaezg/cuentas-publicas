@@ -21,7 +21,7 @@ interface RoadmapCopy {
 const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   es: {
     intro: "Este es el estado actual del proyecto y las funcionalidades que nos gustaría añadir.",
-    statusLine: "Estado validado: 24 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
+    statusLine: "Estado validado: 25 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
     phases: [
       {
         title: "Fase 1: Deuda + Pensiones (MVP) ✅",
@@ -73,6 +73,21 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "⏳ Comparativas internacionales (natalidad, mortalidad, esperanza de vida, fecundidad)",
         ],
       },
+      {
+        title: "Simulador Territorial (Sankey Avanzado) 🟡",
+        items: [
+          "✅ Pensiones territorializadas: ETL de Seg. Social por CCAA, resta directa al nodo GASTO_PENSIONES",
+          "✅ Desempleo regionalizado: ETL Eurostat (parados NUTS2 + COFOG GF1005), resta a COFOG_10_RESTO",
+          "✅ Bienes públicos indivisibles: proxy PIB regional para gastos no localizables (intereses, defensa, etc.)",
+          "✅ Balance de masas completo: ingresos (impuestos cedidos, cotizaciones, otros) + gastos (COFOG, pensiones, desempleo, residuos centrales)",
+          "✅ Motor de exclusión validado: excluir 17 CCAA resta 100% del presupuesto (725.001 M€)",
+          "⏳ Proxies refinados por categoría (deuda→cuota deuda, defensa→población, admin→PIB)",
+          "⏳ Tooltip de transparencia: desglose directo vs proporcional por nodo",
+          "⏳ Métricas per cápita cuando se selecciona una sola CCAA",
+          "⏳ Inversiones reales y subvenciones (Licitaciones PLACSP + BDNS por CCAA)",
+          "⏳ Nóminas AGE: distribución de funcionarios del Estado por CCAA y rama",
+        ],
+      },
     ],
     wishlists: [
       {
@@ -90,6 +105,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "Panorama de deuda pública + privada",
           "Simulador de ajuste fiscal",
           "Timeline de hitos (2008, COVID, reformas)",
+          "⏳ Contratación pública: volumen anual, tipo de contrato, procedimiento (abierto vs negociado), competencia media, participación PYME y tasa de desiertos (fuente: PLACSP sindicación). Plan detallado en ROADMAP.md",
         ],
       },
       {
@@ -109,7 +125,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   },
   en: {
     intro: "This is the current project status and the features we want to add next.",
-    statusLine: "Status validated: February 24, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
+    statusLine: "Status validated: February 25, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
     phases: [
       {
         title: "Phase 1: Debt + Pensions (MVP) ✅",
@@ -161,6 +177,21 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "⏳ International comparisons (birth rate, mortality, life expectancy, fertility)",
         ],
       },
+      {
+        title: "Territorial Simulator (Advanced Sankey) 🟡",
+        items: [
+          "✅ Regionalized pensions: Social Security ETL by region, direct subtraction from GASTO_PENSIONES node",
+          "✅ Regionalized unemployment: Eurostat ETL (NUTS2 unemployed + COFOG GF1005), subtraction from COFOG_10_RESTO",
+          "✅ Indivisible public goods: regional GDP proxy for non-localizable spending (debt interest, defence, etc.)",
+          "✅ Full mass balance: revenue (ceded taxes, social contributions, other) + spending (COFOG, pensions, unemployment, central residuals)",
+          "✅ Validated exclusion engine: excluding all 17 regions subtracts 100% of budget (725,001 M€)",
+          "⏳ Refined proxies per category (debt→debt share, defence→population, admin→GDP)",
+          "⏳ Transparency tooltip: direct vs proportional breakdown per node",
+          "⏳ Per-capita metrics when a single region is selected",
+          "⏳ Real investments and subsidies (PLACSP procurement + BDNS by region)",
+          "⏳ Central government payroll: civil servant distribution by region and branch",
+        ],
+      },
     ],
     wishlists: [
       {
@@ -178,6 +209,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "Public + private debt panorama",
           "Fiscal adjustment simulator",
           "Economic milestones timeline (2008, COVID, reforms)",
+          "⏳ Public procurement: annual volume, contract type, procedure (open vs negotiated), average competition, SME participation and void rate (source: PLACSP syndication feeds). Detailed plan in ROADMAP.md",
         ],
       },
       {
