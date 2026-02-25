@@ -906,14 +906,14 @@ export const FlowsSankeyBlock: React.FC = () => {
                 setSelectedNode((prev) => (prev === data.id ? null : data.id.toString()));
               }
             }}
-            valueFormat={(value: number) => formatCompact(value)}
+            valueFormat={(value: number) => formatCompact(value * 1_000_000)}
             // biome-ignore lint/suspicious/noExplicitAny: nivo Sankey tooltip type is not exported
             nodeTooltip={(node: any) => (
               <div className="bg-popover/80 backdrop-blur-md text-popover-foreground px-3 py-2 rounded-xl border border-white/10 shadow-xl text-sm">
                 <span className="font-semibold">
                   {copy.nodeLabels[node.node.id] || node.node.id.toString()}
                 </span>
-                : {formatCompact(node.node.value)} €
+                : {formatCompact(node.node.value * 1_000_000)}
               </div>
             )}
             theme={{

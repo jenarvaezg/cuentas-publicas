@@ -197,7 +197,7 @@ export const PersonalCalculator: React.FC<Props> = ({ spendingCategories, totalS
                       />
                     </div>
                     <span className="w-20 text-right font-medium tabular-nums">
-                      {formatCompact(d.personal)} €
+                      {formatCompact(d.personal)}
                     </span>
                     <span className="w-12 text-right text-muted-foreground tabular-nums">
                       {pct(d.share)}
