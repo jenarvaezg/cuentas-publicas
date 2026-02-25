@@ -157,7 +157,7 @@ describe("DemographicsBlock", () => {
 
     expect(screen.getByText("Demografía")).toBeDefined();
     const cards = screen.getAllByTestId("stat-card");
-    expect(cards).toHaveLength(8);
+    expect(cards).toHaveLength(9);
   });
 
   it("shows population pyramid when pyramid data exists", () => {
@@ -218,7 +218,7 @@ describe("DemographicsBlock", () => {
 
     expect(screen.getByText("Demografía")).toBeDefined();
     const cards = screen.getAllByTestId("stat-card");
-    expect(cards).toHaveLength(8);
+    expect(cards).toHaveLength(9);
     expect(screen.queryByTestId("pyramid-chart")).toBeNull();
   });
 

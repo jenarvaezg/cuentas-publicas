@@ -49,6 +49,8 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
   - ✅ Selector de año para evolución histórica de la pirámide
   - ✅ Gráficos de tendencias históricas (vital stats, life expectancy, inmigración)
   - ✅ Ratios de dependencia (old-age, youth, total) derivados de la pirámide
+  - ✅ Comparativas internacionales (natalidad, mortalidad, esperanza de vida, fecundidad) — gráfico de barras horizontales con 8 países EU + media UE-27, datos Eurostat
+  - ✅ Inflación anual (IPC): variación interanual del IPC con sparkline y tendencia
   - ⏳ Desglose provincial
   - ⏳ Proyecciones demográficas (INE a 20-30 años, poner diferentes estimaciones historicas para demostrar como se suelen equivocar https://x.com/rdomenechv/status/2014716812143816827, https://x.com/ocdeenespanol/status/2014020615791898800)
   - ⏳ Permitir comparar diferentes proyecciones entre paises
@@ -120,6 +122,7 @@ Corrección del gap de ~80.000 M€ en la simulación What-If.
 
 - ⏳ **Proxies refinados por categoría de gasto:** En vez de usar PIB para todo, usar deuda/deuda total para intereses, población para defensa, y PIB para administración general. Mayor fidelidad económica.
 - ✅ **Tooltip de transparencia:** Al pasar el ratón sobre un nodo restado, muestra desglose "X M€ directos + Y M€ proporcional (proxy PIB)" con `whatIfAttribution` en `SankeyNode`.
+- ✅ **Métricas per cápita:** Al seleccionar una sola CCAA en el Sankey, los tooltips muestran €/habitante junto al importe total (datos INE 2024).
 - ⏳ **Inversiones Reales y Subvenciones (Fase 2 original):** Licitaciones PLACSP y subvenciones BDNS por CCAA.
 - ⏳ **Nóminas AGE (Fase 3 original):** Distribución de funcionarios del Estado por CCAA y rama.
 
@@ -165,7 +168,7 @@ Ideas de funcionalidades y datos que nos gustaría añadir. Sin orden de priorid
 | SMI automático | Actualización manual cada enero | Tabla INE si existe, o historial hardcodeado | MEDIA |
 | CPI 2026 | La serie suele llegar hasta el último año cerrado; limita deflación del año en curso | INE publica media anual al cierre del año | BAJA (esperar) |
 | Tipo interés medio de la deuda | Calcular coste intereses dinámicamente | Tesoro Público — tipos medios emisión | MEDIA |
-| Inflación anual actual | Dato de contexto muy demandado | INE API — IPC variación anual (ya tenemos serie) | BAJA |
+| ✅ Inflación anual actual | Variación interanual IPC con sparkline y tendencia | INE API — IPC variación anual (serie en demographics.json) | HECHO |
 | Déficit acumulado recalculado | Eliminar hardcoded 300 mm€ | Script que sume gasto vs cotizaciones anualmente | MEDIA |
 
 ### Nuevas visualizaciones

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { SankeyLink, SankeyNode } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
-import { buildCcaaGraph, CCAA_NAMES } from "@/utils/buildCcaaGraph";
+import { buildCcaaGraph, CCAA_NAMES, CCAA_POPULATION } from "@/utils/buildCcaaGraph";
 import { formatCompact } from "@/utils/formatters";
 
 // Helper to filter graph to a specific selected node's forward/backward paths
@@ -80,7 +80,22 @@ export const FlowsSankeyBlock: React.FC = () => {
   const [excludedRegions, setExcludedRegions] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState<number>(flows?.latestYear ?? 2024);
   const [scope, setScope] = useState<string>("national");
-  const { lang } = useI18n();
+  const { lang, msg } = useI18n();
+
+  // Per-capita: population of the selected CCAA (null when national scope)
+  const ccaaPopulation = scope !== "national" ? (CCAA_POPULATION[scope] ?? null) : null;
+
+  // Formatter for per-capita amounts (no decimals, Spanish locale)
+  const formatPerCapita = useMemo(() => {
+    const locale = lang === "en" ? "en-GB" : "es-ES";
+    const fmt = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+    return (amountMillions: number): string => {
+      if (!ccaaPopulation || ccaaPopulation === 0) return "";
+      const totalEuros = amountMillions * 1_000_000;
+      const perCapita = totalEuros / ccaaPopulation;
+      return `${fmt.format(perCapita)} ${msg.sankey.perCapita}`;
+    };
+  }, [lang, ccaaPopulation, msg.sankey.perCapita]);
 
   // What-If is only available for the latest year in national scope
   const whatIfAvailable = selectedYear === flows?.latestYear && scope === "national";
@@ -769,6 +784,14 @@ export const FlowsSankeyBlock: React.FC = () => {
               </option>
             ))}
           </select>
+
+          {/* Per-capita indicator when a single CCAA is selected */}
+          {scope !== "national" && selectedCcaaName && ccaaPopulation && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+              {msg.sankey.populationLabel}:{" "}
+              {new Intl.NumberFormat(lang === "en" ? "en-GB" : "es-ES").format(ccaaPopulation)}
+            </span>
+          )}
         </div>
 
         {/* Year selector */}
@@ -939,6 +962,8 @@ export const FlowsSankeyBlock: React.FC = () => {
               const attr = nodeData?.whatIfAttribution;
               const hasAttribution =
                 attr && (attr.directSubtracted > 0 || attr.proportionalSubtracted > 0);
+              const perCapitaText =
+                ccaaPopulation && node.node.value > 0 ? formatPerCapita(node.node.value) : "";
 
               return (
                 <div className="bg-popover/80 backdrop-blur-md text-popover-foreground px-3 py-2 rounded-xl border border-white/10 shadow-xl text-sm max-w-xs">
@@ -946,6 +971,9 @@ export const FlowsSankeyBlock: React.FC = () => {
                     {copy.nodeLabels[node.node.id] || node.node.id.toString()}
                   </span>
                   : {formatCompact(node.node.value * 1_000_000)}
+                  {perCapitaText && (
+                    <div className="text-xs text-muted-foreground mt-0.5">{perCapitaText}</div>
+                  )}
                   {hasAttribution && (
                     <div className="mt-1.5 pt-1.5 border-t border-white/10 space-y-0.5 text-xs text-muted-foreground">
                       <div className="flex justify-between gap-4">

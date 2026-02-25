@@ -72,6 +72,11 @@ export const messages = {
         "Ha ocurrido un error inesperado. Recarga la página para intentarlo de nuevo.",
       boundaryReload: "Recargar página",
     },
+    sankey: {
+      perCapita: "€/hab.",
+      populationLabel: "Población",
+      singleCcaaIndicator: "Vista individual",
+    },
     blocks: {
       debt: {
         title: "Deuda Pública (PDE)",
@@ -99,6 +104,7 @@ export const messages = {
         naturalGrowth: "Crecimiento vegetativo",
         deathRate: "Tasa de mortalidad",
         immigrationShare: "% nacidos en el extranjero",
+        inflationRate: "Inflación anual (IPC)",
         pyramidTitle: "Pirámide de población por origen",
         vitalTrendsTitle: "Natalidad vs mortalidad (30 años)",
         lifeExpectancyTitle: "Esperanza de vida al nacer",
@@ -209,6 +215,11 @@ export const messages = {
       boundaryDescription: "An unexpected error occurred. Reload the page to try again.",
       boundaryReload: "Reload page",
     },
+    sankey: {
+      perCapita: "€/cap.",
+      populationLabel: "Population",
+      singleCcaaIndicator: "Single region view",
+    },
     blocks: {
       debt: {
         title: "Public Debt (EDP)",
@@ -236,6 +247,7 @@ export const messages = {
         naturalGrowth: "Natural growth",
         deathRate: "Death rate",
         immigrationShare: "% foreign-born",
+        inflationRate: "Annual inflation (CPI)",
         pyramidTitle: "Population pyramid by origin",
         vitalTrendsTitle: "Birth rate vs death rate (30 years)",
         lifeExpectancyTitle: "Life expectancy at birth",

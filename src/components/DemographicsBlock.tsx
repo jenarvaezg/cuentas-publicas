@@ -90,7 +90,8 @@ export function DemographicsBlock() {
   const { msg, lang } = useI18n();
   const dm = msg.blocks.demographics;
 
-  const { vitalStats, lifeExpectancy, pyramid, dependencyRatio, immigrationShare } = demographics;
+  const { vitalStats, lifeExpectancy, pyramid, dependencyRatio, immigrationShare, cpi } =
+    demographics;
 
   const dmTooltips =
     lang === "en"
@@ -109,6 +110,8 @@ export function DemographicsBlock() {
           deathRate: "How many people die for every 1,000 residents each year.",
           immigrationShare:
             "The percentage of people living in Spain who were born in another country.",
+          inflationRate:
+            "How much more expensive things are compared to a year ago, measured by the Consumer Price Index (CPI). A rate of 2% means a basket of goods that cost €100 last year now costs €102.",
         }
       : {
           population:
@@ -125,6 +128,8 @@ export function DemographicsBlock() {
           deathRate: "Cuántas personas fallecen por cada 1.000 habitantes al año.",
           immigrationShare:
             "El porcentaje de personas que viven en España pero nacieron en otro país.",
+          inflationRate:
+            "Cuánto más caras están las cosas respecto al año anterior, medido por el Índice de Precios al Consumo (IPC). Una tasa del 2% significa que lo que costaba 100 € el año pasado ahora cuesta 102 €.",
         };
 
   const [selectedYear, setSelectedYear] = useState<string>(() =>
@@ -239,6 +244,39 @@ export function DemographicsBlock() {
   const latestLifeExpBoth = lifeExpectancy?.both?.length
     ? lifeExpectancy.both[lifeExpectancy.both.length - 1].value
     : null;
+
+  // CPI year-over-year inflation rate
+  const { latestInflationRate, inflationSparkline, inflationTrend } = useMemo(() => {
+    const byYear = cpi?.byYear;
+    if (!byYear)
+      return {
+        latestInflationRate: null,
+        inflationSparkline: undefined,
+        inflationTrend: undefined,
+      };
+    const years = Object.keys(byYear)
+      .map(Number)
+      .sort((a, b) => a - b);
+    if (years.length < 2)
+      return {
+        latestInflationRate: null,
+        inflationSparkline: undefined,
+        inflationTrend: undefined,
+      };
+    const rates = years.slice(1).map((y) => (byYear[String(y)] / byYear[String(y - 1)] - 1) * 100);
+    const latest = rates[rates.length - 1];
+    const prev = rates[rates.length - 2];
+    const diff = latest - prev;
+    const sign = diff >= 0 ? "+" : "";
+    return {
+      latestInflationRate: latest,
+      inflationSparkline: rates,
+      inflationTrend: {
+        value: diff,
+        label: `${sign}${formatNumber(diff, 1)} pp`,
+      },
+    };
+  }, [cpi]);
 
   // Vital trends chart data (aligned by year)
   const vitalTrendsData = useMemo(() => {
@@ -432,6 +470,23 @@ export function DemographicsBlock() {
               immigrationShare?.historical ? yoyTrend(immigrationShare.historical, "%") : undefined
             }
             sources={[pyramidSource]}
+          />
+        </div>
+
+        {/* Row 3: inflation StatCard */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label={dm.inflationRate}
+            value={
+              latestInflationRate != null
+                ? `${formatNumber(latestInflationRate, 1)}%`
+                : msg.common.notAvailable
+            }
+            tooltip={dmTooltips.inflationRate}
+            delay={0.45}
+            sparklineData={inflationSparkline}
+            trend={inflationTrend}
+            sources={[populationSource]}
           />
         </div>
 
