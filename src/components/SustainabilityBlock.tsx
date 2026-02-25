@@ -47,9 +47,9 @@ export function SustainabilityBlock() {
           projectedGDP2050: "Projected Pension/GDP 2050",
           projectedGDP2050Tooltip:
             "European Commission Ageing Report 2024 baseline projection for Spain in 2050.",
-          cumulativeGap: "Cumulative Balance Gap",
+          cumulativeGap: "Cumulative Contributory Deficit",
           cumulativeGapTooltip:
-            "Sum of annual system balances since the first year of available data. Shows accumulated surplus/deficit over time.",
+            "Running total of annual deficits (contributions minus benefits) since 1995. This number only grows because every year the system pays out more than it collects. It never shrinks — each year's deficit adds to the pile.",
           chartRevenueVsExp: "Social Contributions vs Contributory Spending",
           chartReserveFund: "Reserve Fund Evolution",
           chartPensionGDP: "Contributory Spending % GDP — Spain vs EU + Projections",
@@ -85,9 +85,9 @@ export function SustainabilityBlock() {
           projectedGDP2050: "Proyeccion pensiones/PIB 2050",
           projectedGDP2050Tooltip:
             "Proyeccion base del Ageing Report 2024 de la Comision Europea para España en 2050.",
-          cumulativeGap: "Brecha acumulada del sistema",
+          cumulativeGap: "Déficit contributivo acumulado",
           cumulativeGapTooltip:
-            "Suma de balances anuales del sistema desde el primer año de datos. Muestra el superavit/deficit acumulado.",
+            "Suma de todos los déficits anuales (cotizaciones menos prestaciones) desde 1995. Esta cifra solo crece porque cada año el sistema paga más de lo que ingresa. Nunca se reduce — cada déficit anual se suma al anterior.",
           chartRevenueVsExp: "Cotizaciones sociales vs gasto contributivo",
           chartReserveFund: "Evolucion del Fondo de Reserva",
           chartPensionGDP: "Gasto contributivo % PIB — España vs UE + Proyecciones",
@@ -121,11 +121,14 @@ export function SustainabilityBlock() {
 
   const spainProjection2050 = data.projections.spain.find((p) => p.year === 2050);
 
-  // Cumulative balance
-  const cumulativeBalance = data.years.reduce(
-    (sum, y) => sum + (data.byYear[String(y)]?.ssBalance ?? 0),
-    0,
-  );
+  // Cumulative balance (running total for sparkline + final value)
+  const cumulativeByYear: number[] = [];
+  data.years.reduce((sum, y) => {
+    const next = sum + (data.byYear[String(y)]?.ssBalance ?? 0);
+    cumulativeByYear.push(next);
+    return next;
+  }, 0);
+  const cumulativeBalance = cumulativeByYear[cumulativeByYear.length - 1] ?? 0;
 
   // Source attribution
   const eurostatSource = data.sourceAttribution?.ssSustainability
@@ -286,6 +289,11 @@ export function SustainabilityBlock() {
               value={formatCompact(cumulativeBalance * 1e6)}
               tooltip={copy.cumulativeGapTooltip}
               delay={0.3}
+              sparklineData={cumulativeByYear}
+              trend={{
+                value: cumulativeBalance,
+                label: `${data.latestYear}`,
+              }}
               sources={[eurostatSource]}
             />
           </div>

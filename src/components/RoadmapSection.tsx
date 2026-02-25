@@ -89,6 +89,16 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "⏳ Nóminas AGE: distribución de funcionarios del Estado por CCAA y rama",
         ],
       },
+      {
+        title: "Follow the Money — De tu nómina al servicio público 🟡",
+        items: [
+          "✅ Fase A: Sankey por CCAA — selector de scope España → CCAA individual en el Sankey existente",
+          "✅ Fase B: Calculadora personal — desglose de IRPF por tramos, SS e IVA estimado conectado al Sankey",
+          "⏳ Fase C: Presupuestos municipales (top 50 ciudades, datos MINHAP)",
+          "⏳ Fase D: Atribución multinivel Nacional → CCAA → Municipio",
+          "⏳ Fase E: Sankey personal completo (tu nómina → servicios concretos + comparador entre ciudades)",
+        ],
+      },
     ],
     wishlists: [
       {
@@ -192,6 +202,16 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "⏳ Per-capita metrics when a single region is selected",
           "⏳ Real investments and subsidies (PLACSP procurement + BDNS by region)",
           "⏳ Central government payroll: civil servant distribution by region and branch",
+        ],
+      },
+      {
+        title: "Follow the Money — From your paycheck to public services 🟡",
+        items: [
+          "✅ Phase A: Region-level Sankey — scope selector Spain → individual region in the existing Sankey",
+          "✅ Phase B: Personal tax calculator — PIT breakdown by bracket, social contributions and estimated VAT linked to the Sankey",
+          "⏳ Phase C: Municipal budgets (top 50 cities, MINHAP data)",
+          "⏳ Phase D: Multi-level attribution National → Region → Municipality",
+          "⏳ Phase E: Full personal Sankey (your paycheck → concrete services + city comparator)",
         ],
       },
     ],

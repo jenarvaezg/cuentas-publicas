@@ -128,15 +128,15 @@ Corrección del gap de ~80.000 M€ en la simulación What-If.
 
 ---
 
-## Follow the Money — De tu nómina al servicio público 🆕
+## Follow the Money — De tu nómina al servicio público 🟡
 
 Objetivo final: que cualquier ciudadano pueda ver cómo fluyen sus impuestos desde su nómina hasta el servicio público concreto que recibe en su municipio. Plan detallado en [`.claude/plans/follow-the-money.md`](.claude/plans/follow-the-money.md).
 
-### Fase A: Sankey por CCAA ⏳
-Selector de scope integrado en el `FlowsSankeyBlock` existente: España → CCAA individual. El mismo componente, misma interacción, distinto grafo. Muestra ingresos recaudados, gasto COFOG regional, transferencias Estado↔CCAA, pensiones, desempleo y balance. **Sin ETLs nuevos** — reorganiza datos existentes (AEAT, IGAE, fiscal balance, cuentas regionales).
+### Fase A: Sankey por CCAA ✅
+Selector de scope integrado en el `FlowsSankeyBlock` existente: España → CCAA individual. El mismo componente, misma interacción, distinto grafo. Muestra ingresos recaudados, gasto COFOG regional, transferencias Estado↔CCAA, pensiones, desempleo y balance. **Sin ETLs nuevos** — reorganiza datos existentes (AEAT, IGAE, fiscal balance, cuentas regionales). **IMPLEMENTADO** (commit be629a1).
 
-### Fase B: Calculadora personal ⏳
-Input: salario bruto + estimación de consumo. Output: desglose de IRPF (por tramos), SS, IVA estimado. Se conecta al Sankey: tus euros personales fluyen por el diagrama.
+### Fase B: Calculadora personal ✅
+Input: salario bruto + estimación de consumo. Output: desglose de IRPF (por tramos), SS, IVA estimado. Se conecta al Sankey: tus euros personales fluyen por el diagrama. **IMPLEMENTADO** (commit 354ad02).
 
 ### Fase C: Presupuestos municipales (top 50) ⏳
 ETL nuevo sobre liquidaciones presupuestarias de MINHAP (datos.gob.es). Mapear categorías municipales a COFOG-like. Empezar por las 50 ciudades más grandes.
