@@ -5,131 +5,131 @@
   <link>https://cuentas-publicas.es/</link>
   <description>Feed RSS con actualizaciones automáticas del pipeline de datos fiscales.</description>
   <language>es-es</language>
-  <lastBuildDate>Thu, 26 Feb 2026 09:39:08 GMT</lastBuildDate>
+  <lastBuildDate>Thu, 26 Feb 2026 11:55:04 GMT</lastBuildDate>
   <item>
     <title>Actualización automática de datasets fiscales</title>
     <link>https://cuentas-publicas.es/seo-snapshot.html</link>
-    <guid isPermaLink="false">update-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
-    <description>Generación completada en 2026-02-26T09:39:08.366Z con 17 fuentes monitorizadas.</description>
+    <guid isPermaLink="false">update-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
+    <description>Generación completada en 2026-02-26T11:55:04.149Z con 17 fuentes monitorizadas.</description>
   </item>
   <item>
     <title>[OK] debt</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">debt-2025-11-30-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">debt-2025-11-30-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente debt. Fecha real de dato: 2025-11-30.</description>
   </item>
   <item>
     <title>[OK] demographics</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">demographics-2025-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">demographics-2025-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente demographics. Fecha real de dato: 2025-12-31.</description>
   </item>
   <item>
     <title>[OK] pensions</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">pensions-2026-01-01-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">pensions-2026-01-01-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente pensions. Fecha real de dato: 2026-01-01.</description>
   </item>
   <item>
     <title>[OK] budget</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">budget-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">budget-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente budget. Fecha real de dato: 2024-12-31.</description>
   </item>
   <item>
     <title>[OK] eurostat</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">eurostat-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">eurostat-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente eurostat. Fecha real de dato: 2024-12-31.</description>
   </item>
   <item>
     <title>[OK] ccaaDebt</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">ccaaDebt-2025-09-30-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">ccaaDebt-2025-09-30-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente ccaaDebt. Fecha real de dato: 2025-09-30.</description>
   </item>
   <item>
     <title>[OK] revenue</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">revenue-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">revenue-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente revenue. Fecha real de dato: 2024-12-31.</description>
   </item>
   <item>
     <title>[OK] taxRevenue</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">taxRevenue-2025-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">taxRevenue-2025-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente taxRevenue. Fecha real de dato: 2025-12-31.</description>
   </item>
   <item>
     <title>[OK] ccaaFiscalBalance</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">ccaaFiscalBalance-2023-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">ccaaFiscalBalance-2023-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente ccaaFiscalBalance. Fecha real de dato: 2023-12-31.</description>
   </item>
   <item>
     <title>[OK] ccaaSpending</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">ccaaSpending-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">ccaaSpending-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente ccaaSpending. Fecha real de dato: 2024-12-31.</description>
   </item>
   <item>
     <title>[OK] ccaaDeficit</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">ccaaDeficit-2025-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">ccaaDeficit-2025-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente ccaaDeficit. Fecha real de dato: 2025-12-31.</description>
   </item>
   <item>
     <title>[OK] ccaaForalFlows</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">ccaaForalFlows-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">ccaaForalFlows-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente ccaaForalFlows. Fecha real de dato: 2024-12-31.</description>
   </item>
   <item>
     <title>[OK] regionalAccounts</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">regionalAccounts-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">regionalAccounts-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente regionalAccounts. Fecha real de dato: 2024-12-31.</description>
   </item>
   <item>
     <title>[OK] pensionsRegional</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">pensionsRegional-2026-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">pensionsRegional-2026-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente pensionsRegional. Fecha real de dato: 2026-12-31.</description>
   </item>
   <item>
     <title>[OK] unemploymentRegional</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">unemploymentRegional-2023-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">unemploymentRegional-2023-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente unemploymentRegional. Fecha real de dato: 2023-12-31.</description>
   </item>
   <item>
     <title>[OK] flowsSankey</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">flowsSankey-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">flowsSankey-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente flowsSankey. Fecha real de dato: 2024-12-31.</description>
   </item>
   <item>
     <title>[OK] ssSustainability</title>
     <link>https://cuentas-publicas.es/api/v1/meta.json</link>
-    <guid isPermaLink="false">ssSustainability-2024-12-31-2026-02-26T09:39:08.366Z</guid>
-    <pubDate>Thu, 26 Feb 2026 09:39:08 GMT</pubDate>
+    <guid isPermaLink="false">ssSustainability-2024-12-31-2026-02-26T11:55:04.149Z</guid>
+    <pubDate>Thu, 26 Feb 2026 11:55:04 GMT</pubDate>
     <description>Fuente ssSustainability. Fecha real de dato: 2024-12-31.</description>
   </item>
 </channel>
