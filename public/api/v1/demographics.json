@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-26T11:54:40.907Z",
+  "lastUpdated": "2026-02-26T13:08:03.147Z",
   "population": 49570725,
   "activePopulation": 24940400,
   "gdp": 1685783000000,
@@ -10527,6 +10527,36 @@
       {
         "year": 2050,
         "value": 0.5
+      }
+    ],
+    "ourEstimate": [
+      {
+        "year": 2024,
+        "value": 1.1
+      },
+      {
+        "year": 2029,
+        "value": 0.99
+      },
+      {
+        "year": 2034,
+        "value": 0.88
+      },
+      {
+        "year": 2039,
+        "value": 0.77
+      },
+      {
+        "year": 2044,
+        "value": 0.66
+      },
+      {
+        "year": 2049,
+        "value": 0.55
+      },
+      {
+        "year": 2050,
+        "value": 0.53
       }
     ],
     "replacementLevel": 2.1
