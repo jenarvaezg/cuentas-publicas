@@ -1370,8 +1370,10 @@ const FERTILITY_PROJECTION_SERIES = [
  * @param {Array<{year: number, value: number}>} actual
  * @returns {Array<{year: number, value: number}>}
  */
-function computeFertilityLinearRegression(actual) {
-  const recent = actual.filter(p => p.year >= 2015)
+function computeFertilityLinearRegression(actual, yearsBack = 10) {
+  const lastYear = actual.length ? actual[actual.length - 1].year : 0
+  const cutoff = lastYear - yearsBack + 1
+  const recent = actual.filter(p => p.year >= cutoff)
   if (recent.length < 3) return []
 
   const n = recent.length
@@ -1383,7 +1385,6 @@ function computeFertilityLinearRegression(actual) {
   const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
   const intercept = (sumY - slope * sumX) / n
 
-  const lastYear = recent[recent.length - 1].year
   const points = []
   for (let y = lastYear; y <= 2050; y += 5) {
     const value = Math.round((slope * y + intercept) * 100) / 100
@@ -1407,7 +1408,8 @@ function buildFertilityProjections(actualFertilityRate) {
   return {
     actual: actualFertilityRate,
     projections: FERTILITY_PROJECTION_SERIES,
-    linearRegression: computeFertilityLinearRegression(actualFertilityRate),
+    linearRegression: computeFertilityLinearRegression(actualFertilityRate, 10),
+    ourEstimate: computeFertilityLinearRegression(actualFertilityRate, 5),
     replacementLevel: 2.1,
   }
 }

@@ -466,7 +466,8 @@ export interface FertilityProjectionSeries {
 export interface FertilityProjectionsData {
   actual: TimeSeriesPoint[]; // actual Spain TFR from ~2000-2024 (already in vitalStats, duplicated for chart convenience)
   projections: FertilityProjectionSeries[];
-  linearRegression: TimeSeriesPoint[]; // linear extrapolation from recent actual data
+  linearRegression: TimeSeriesPoint[]; // linear extrapolation from last 10 years
+  ourEstimate: TimeSeriesPoint[]; // linear extrapolation from last 5 years
   replacementLevel: number; // 2.1
 }
 

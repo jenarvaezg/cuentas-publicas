@@ -415,7 +415,8 @@ export const blockMessages = {
       fertilityProjections: {
         title: "Proyecciones de fecundidad: predicciones vs realidad",
         actual: "Datos reales (INE)",
-        regression: "Regresión lineal (tendencia actual)",
+        regression: "Regresión lineal (10 años)",
+        ourEstimate: "Nuestra estimación (5 años)",
         replacement: "Nivel de reemplazo (2,1)",
         subtitle:
           "Cada línea discontinua muestra lo que distintos organismos proyectaron para la fecundidad en España. Todas asumían una recuperación que nunca llegó.",
@@ -1006,7 +1007,8 @@ export const blockMessages = {
       fertilityProjections: {
         title: "Fertility projections: predictions vs reality",
         actual: "Actual data (INE)",
-        regression: "Linear regression (current trend)",
+        regression: "Linear regression (10 years)",
+        ourEstimate: "Our estimate (5 years)",
         replacement: "Replacement level (2.1)",
         subtitle:
           "Each dashed line shows what different institutions projected for Spain's fertility. They all assumed a recovery that never came.",

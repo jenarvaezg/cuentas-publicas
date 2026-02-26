@@ -12,7 +12,7 @@ import {
 import type { TimeSeriesPoint } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
-import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
+import { formatCompactCount, formatNumber, formatPercent } from "@/utils/formatters";
 import {
   type DemoEUIndicator,
   EUDemographicComparison,
@@ -243,7 +243,7 @@ export function DemographicsBlock() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard
             label={dm.population}
-            value={formatCompact(demographics.population)}
+            value={formatCompactCount(demographics.population)}
             tooltip={dmTooltips.population}
             delay={0.05}
             sparklineData={undefined}
@@ -387,7 +387,7 @@ export function DemographicsBlock() {
             {projections?.shortTerm?.national?.length ? (
               <StatCard
                 label={dm.projectedPopulation}
-                value={formatCompact(
+                value={formatCompactCount(
                   projections.shortTerm.national[projections.shortTerm.national.length - 1].value,
                 )}
                 tooltip={dmTooltips.projectedPopulation}
@@ -418,7 +418,7 @@ export function DemographicsBlock() {
                   return (
                     <StatCard
                       label={dm.netMigrationLatest}
-                      value={`+${formatCompact(latest.value)}`}
+                      value={`+${formatCompactCount(latest.value)}`}
                       tooltip={dmTooltips.netMigrationLatest}
                       delay={0.6}
                       sparklineData={migrationFlows.netMigration.map((p) => p.value)}
@@ -501,10 +501,12 @@ export function DemographicsBlock() {
               actual={fertilityProjections.actual}
               projections={fertilityProjections.projections}
               linearRegression={fertilityProjections.linearRegression}
+              ourEstimate={fertilityProjections.ourEstimate}
               replacementLevel={fertilityProjections.replacementLevel}
               title={dm.fertilityProjections.title}
               actualLabel={dm.fertilityProjections.actual}
               regressionLabel={dm.fertilityProjections.regression}
+              ourEstimateLabel={dm.fertilityProjections.ourEstimate}
               replacementLabel={dm.fertilityProjections.replacement}
             />
             <p className="text-[11px] text-muted-foreground/70 mt-2 text-center italic">

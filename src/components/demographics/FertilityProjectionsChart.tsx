@@ -58,10 +58,12 @@ export interface FertilityProjectionsChartProps {
   actual: Array<{ year: number; value: number }>;
   projections: FertilityProjectionSeries[];
   linearRegression: Array<{ year: number; value: number }>;
+  ourEstimate: Array<{ year: number; value: number }>;
   replacementLevel: number;
   title: string;
   actualLabel: string;
   regressionLabel: string;
+  ourEstimateLabel: string;
   replacementLabel: string;
 }
 
@@ -69,10 +71,12 @@ export function FertilityProjectionsChart({
   actual,
   projections,
   linearRegression,
+  ourEstimate,
   replacementLevel,
   title,
   actualLabel,
   regressionLabel,
+  ourEstimateLabel,
   replacementLabel,
 }: FertilityProjectionsChartProps) {
   if (!actual.length) return null;
@@ -82,6 +86,7 @@ export function FertilityProjectionsChart({
   for (const p of actual) allYears.add(p.year);
   for (const s of projections) for (const p of s.points) allYears.add(p.year);
   for (const p of linearRegression) allYears.add(p.year);
+  for (const p of ourEstimate) allYears.add(p.year);
 
   const chartData = [...allYears]
     .sort((a, b) => a - b)
@@ -98,6 +103,9 @@ export function FertilityProjectionsChart({
 
       const regPoint = linearRegression.find((p) => p.year === year);
       row.regression = regPoint?.value ?? null;
+
+      const estPoint = ourEstimate.find((p) => p.year === year);
+      row.ourEstimate = estPoint?.value ?? null;
 
       return row;
     });
@@ -136,7 +144,7 @@ export function FertilityProjectionsChart({
             {proj.source}
           </span>
         ))}
-        {/* Regression */}
+        {/* Regression 10y */}
         <span className="flex items-center gap-1.5">
           <svg width="20" height="6" className="inline-block" role="img" aria-hidden="true">
             <line
@@ -145,11 +153,19 @@ export function FertilityProjectionsChart({
               x2="20"
               y2="3"
               stroke="hsl(var(--chart-3))"
-              strokeWidth="2.5"
+              strokeWidth="2"
               strokeDasharray="3 3"
             />
           </svg>
           {regressionLabel}
+        </span>
+        {/* Our estimate 5y */}
+        <span className="flex items-center gap-1.5">
+          <span
+            className="inline-block w-5 h-0.5"
+            style={{ backgroundColor: "hsl(var(--chart-5))", height: "3px" }}
+          />
+          {ourEstimateLabel}
         </span>
         {/* Replacement level */}
         <span className="flex items-center gap-1.5">
@@ -225,18 +241,31 @@ export function FertilityProjectionsChart({
               strokeWidth={1.5}
               strokeDasharray="5 5"
               dot={false}
+              connectNulls
             />
           ))}
 
-          {/* Linear regression — dotted green */}
+          {/* Linear regression 10y — dotted green */}
           <Line
             type="monotone"
             dataKey="regression"
             name={regressionLabel}
             stroke="hsl(var(--chart-3))"
-            strokeWidth={2.5}
+            strokeWidth={2}
             strokeDasharray="3 3"
             dot={false}
+            connectNulls
+          />
+
+          {/* Our estimate 5y — solid bold */}
+          <Line
+            type="monotone"
+            dataKey="ourEstimate"
+            name={ourEstimateLabel}
+            stroke="hsl(var(--chart-5))"
+            strokeWidth={3}
+            dot={false}
+            connectNulls
           />
         </LineChart>
       </ResponsiveContainer>
