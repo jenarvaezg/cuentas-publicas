@@ -594,7 +594,7 @@ export interface SocialEconomyData {
   employmentShare: number;
   totalJobs: number;
   referenceYear: number;
-  sourceAttribution?: DataSourceAttribution;
+  sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
 // ── Living Conditions (INE) ────────────────────────────────────────

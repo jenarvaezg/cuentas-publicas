@@ -11,10 +11,9 @@ export function SocialEconomyBlock() {
 
   if (!socialEconomy) return null;
 
-  const source = socialEconomy.sourceAttribution
-    ? [fromAttribution(socialEconomy.sourceAttribution)]
+  const source = socialEconomy.sourceAttribution?.socialEconomy
+    ? [fromAttribution(socialEconomy.sourceAttribution.socialEconomy)]
     : [];
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
