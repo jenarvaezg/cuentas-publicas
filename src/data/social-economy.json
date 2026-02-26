@@ -1,0 +1,17 @@
+{
+  "lastUpdated": "2026-02-26T17:41:18.540Z",
+  "vab": 54424000000,
+  "pibShare": 11.1,
+  "employmentShare": 5.8,
+  "totalJobs": 1200000,
+  "referenceYear": 2023,
+  "sourceAttribution": {
+    "socialEconomy": {
+      "source": "INE — Cuenta Satélite de la Economía Social",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=30092",
+      "date": "2026-02-26",
+      "note": "Nota de prensa 26/02/2026. Datos referidos a 2023."
+    }
+  }
+}

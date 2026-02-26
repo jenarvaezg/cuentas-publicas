@@ -9,11 +9,13 @@ import debtJson from "@/data/debt.json";
 import demographicsJson from "@/data/demographics.json";
 import eurostatJson from "@/data/eurostat.json";
 import flowsJson from "@/data/flows.json";
+import livingConditionsJson from "@/data/living-conditions.json";
 import metaJson from "@/data/meta.json";
 import pensionsJson from "@/data/pensions.json";
 import pensionsRegionalJson from "@/data/pensions-regional.json";
 import regionalAccountsJson from "@/data/regional-accounts.json";
 import revenueJson from "@/data/revenue.json";
+import socialEconomyJson from "@/data/social-economy.json";
 import ssSustainabilityJson from "@/data/ss-sustainability.json";
 import taxRevenueJson from "@/data/tax-revenue.json";
 import type {
@@ -27,11 +29,13 @@ import type {
   DemographicsData,
   EurostatData,
   FlowsData,
+  LivingConditionsData,
   MetaData,
   PensionData,
   PensionsRegionalData,
   RegionalAccountsData,
   RevenueData,
+  SocialEconomyData,
   SSSustainabilityData,
   TaxRevenueData,
   UnemploymentRegionalData,
@@ -97,6 +101,8 @@ export function useData() {
     const taxRevenue = taxRevenueJson as TaxRevenueData;
     const flows = flowsJson as FlowsData;
     const ssSustainability = ssSustainabilityJson as SSSustainabilityData;
+    const socialEconomy = socialEconomyJson as SocialEconomyData;
+    const livingConditions = livingConditionsJson as LivingConditionsData;
     const unemploymentRegional = unemploymentRegionalJson as UnemploymentRegionalData;
 
     return {
@@ -116,6 +122,8 @@ export function useData() {
       taxRevenue,
       flows,
       ssSustainability,
+      socialEconomy,
+      livingConditions,
       unemploymentRegional,
       meta: metaJson as MetaData,
     };

@@ -451,6 +451,8 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 | Cotizaciones sociales (D61REC) | Eurostat API gov_10a_main | Anual | Alta |
 | Fondo de Reserva SS | ss-sustainability (RESERVE_FUND_HISTORY) | Anual | Media |
 | Cotizaciones sociales pensiones | ss-sustainability (D61REC cross-ref) | Anual | Media |
+| VAB Economía Social | social-economy (Tabla 30092) | Anual | Media |
+| Tasa AROPE / Gini | living-conditions (ECV) | Anual | Media |
 
 ### SEMI-AUTOMATIZADOS (se descargan pero con riesgo de rotura)
 | Dato | Fuente | Riesgo |

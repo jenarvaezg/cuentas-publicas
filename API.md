@@ -24,6 +24,8 @@ No requiere autenticación y está pensada para consumo de lectura (dashboards, 
 - `/api/v1/ccaa-deficit.json` — déficit/superávit (B.9) por CCAA (Contabilidad Nacional, IGAE)
 - `/api/v1/ccaa-foral-flows.json` — flujos forales de Navarra y País Vasco (aportación/cupo) y recaudación tributaria (`taxRevenue`)
 - `/api/v1/flows.json` — red de flujos balanceada (nodos y enlaces Sankey) consolidando ingresos y gastos
+- `/api/v1/social-economy.json` — Cuenta Satélite de la Economía Social: VAB, empleo y PIB (INE)
+- `/api/v1/living-conditions.json` — Encuesta de Condiciones de Vida: Tasa AROPE, Gini y renta media (INE)
 - `/api/v1/ss-sustainability.json` — sostenibilidad SS: cotizaciones, gasto pensiones, Fondo de Reserva, cotizantes/pensionista y proyecciones
 - `/api/v1/meta.json` — estado del pipeline y frescura por fuente
 - `/api/openapi.json` — especificación OpenAPI mínima del contrato público
@@ -133,6 +135,41 @@ projections: {
   eu27:  [{ year: number, pensionToGDP: number }],
 },
 sourceAttribution: { ssSustainability: DataSourceAttribution }
+```
+
+### social-economy.json — Schema
+
+Cuenta Satélite de la Economía Social del INE: peso económico y laboral de cooperativas, mutuas y otras entidades del sector.
+
+```json
+{
+  "lastUpdated": "string (ISO)",
+  "vab": number,           // Valor Añadido Bruto en euros
+  "pibShare": number,      // % sobre el PIB nacional
+  "employmentShare": number, // % sobre el empleo total
+  "totalJobs": number,     // Número de empleos directos
+  "referenceYear": number, // Año de referencia de los datos
+  "sourceAttribution": DataSourceAttribution
+}
+```
+
+### living-conditions.json — Schema
+
+Encuesta de Condiciones de Vida (INE): indicadores de riesgo de pobreza, desigualdad y renta.
+
+```json
+{
+  "lastUpdated": "string (ISO)",
+  "arope": number,         // Tasa AROPE (%)
+  "gini": number,          // Índice de Gini (0-100)
+  "averageIncome": number, // Renta media neta anual por persona (EUR)
+  "referenceYear": number,
+  "sourceAttribution": {
+    "arope": DataSourceAttribution,
+    "gini": DataSourceAttribution,
+    "averageIncome": DataSourceAttribution
+  }
+}
 ```
 
 ### pensions-regional.json — Schema

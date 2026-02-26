@@ -31,6 +31,7 @@ const DemographicsBlock = namedLazy(
   () => import("@/components/DemographicsBlock"),
   "DemographicsBlock",
 );
+const InequalityBlock = namedLazy(() => import("@/components/InequalityBlock"), "InequalityBlock");
 const EquivalenciasBlock = namedLazy(
   () => import("@/components/EquivalenciasBlock"),
   "EquivalenciasBlock",
@@ -46,6 +47,10 @@ const MethodologySection = namedLazy(
 const PensionsBlock = namedLazy(() => import("@/components/PensionsBlock"), "PensionsBlock");
 const RevenueBlock = namedLazy(() => import("@/components/RevenueBlock"), "RevenueBlock");
 const RoadmapSection = namedLazy(() => import("@/components/RoadmapSection"), "RoadmapSection");
+const SocialEconomyBlock = namedLazy(
+  () => import("@/components/SocialEconomyBlock"),
+  "SocialEconomyBlock",
+);
 const SustainabilityBlock = namedLazy(
   () => import("@/components/SustainabilityBlock"),
   "SustainabilityBlock",
@@ -58,12 +63,14 @@ const SECTION_IDS = [
   "coste-deuda",
   "pensiones",
   "ingresos-gastos",
+  "economia-social",
   "mapa-fiscal",
   "gasto-cofog",
   "recaudacion",
   "ue",
   "ccaa",
   "demografia",
+  "desigualdad",
   "sostenibilidad-ss",
   "metodologia",
 ] as const;
@@ -184,6 +191,10 @@ function App() {
         id: "c2-recaudacion",
         label: chapterCopy.c2.navLabel,
         items: [
+          {
+            id: "economia-social",
+            label: lang === "en" ? "Social Economy" : "Economía Social",
+          },
           { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
           { id: "recaudacion", label: msg.sections.recaudacion },
         ],
@@ -193,6 +204,10 @@ function App() {
         label: chapterCopy.c3.navLabel,
         items: [
           { id: "demografia", label: msg.sections.demografia },
+          {
+            id: "desigualdad",
+            label: lang === "en" ? "Inequality" : "Desigualdad",
+          },
           { id: "pensiones", label: msg.sections.pensiones },
           { id: "sostenibilidad-ss", label: msg.sections.sostenibilidadSS },
           { id: "gasto-cofog", label: msg.sections.gastoCofog },
@@ -410,6 +425,14 @@ function App() {
               }
             />
 
+            <section id="economia-social" className="scroll-mt-28">
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.1}>
+                  <SocialEconomyBlock />
+                </FadeIn>
+              </Suspense>
+            </section>
+
             <section id="ingresos-gastos" className="scroll-mt-28">
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.1}>
@@ -443,6 +466,13 @@ function App() {
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.1}>
                   <DemographicsBlock />
+                </FadeIn>
+              </Suspense>
+            </section>
+            <section id="desigualdad" className="scroll-mt-28">
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.15}>
+                  <InequalityBlock />
                 </FadeIn>
               </Suspense>
             </section>

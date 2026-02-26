@@ -197,6 +197,38 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
         ],
       },
       {
+        title: "Economía Social",
+        source: {
+          label: "INE (Cuenta Satélite de la Economía Social)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=30092",
+          note: "Primera edición (Feb 2026)",
+        },
+        paragraphs: [
+          "Se incorporan las métricas de la nueva Cuenta Satélite de la Economía Social del INE, que cuantifica el peso de cooperativas, mutuas, sociedades laborales y otras entidades de la economía social.",
+        ],
+        bullets: [
+          "Valor Añadido Bruto (VAB) del sector",
+          "Porcentaje sobre el PIB y el empleo total",
+          "Número total de empleos directos vinculados",
+        ],
+      },
+      {
+        title: "Condiciones de Vida y Desigualdad",
+        source: {
+          label: "INE (Encuesta de Condiciones de Vida)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=76847",
+          note: "Series AROPE, Gini y Renta",
+        },
+        paragraphs: [
+          "Se consumen indicadores de la Encuesta de Condiciones de Vida (ECV) para proporcionar contexto social a las cifras de gasto público.",
+        ],
+        bullets: [
+          "Tasa AROPE: Riesgo de pobreza o exclusión social (ECV6275)",
+          "Índice de Gini: Coeficiente de desigualdad de ingresos (ECV4838)",
+          "Renta media neta anual por persona (30648)",
+        ],
+      },
+      {
         title: "Contadores en tiempo real",
         paragraphs: [
           "Los contadores son representaciones visuales orientativas, no datos oficiales en tiempo real. Se renderizan con actualización periódica en cliente y números tabulares para estabilidad visual.",
@@ -405,6 +437,38 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
           "Region detail also includes a deficit/spending proxy: year-over-year EDP debt change (BdE) + AEAT regional tax revenue.",
           "This proxy is directional only and is not equivalent to official regional national-accounts balance.",
           "Region and metric selection is persisted in URL query state for shareable deep links.",
+        ],
+      },
+      {
+        title: "Social Economy",
+        source: {
+          label: "INE (Social Economy Satellite Account)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=30092",
+          note: "First edition (Feb 2026)",
+        },
+        paragraphs: [
+          "Incorporates metrics from the new INE Social Economy Satellite Account, quantifying the weight of cooperatives, mutuals, labor societies, and other social economy entities.",
+        ],
+        bullets: [
+          "Sector's Gross Value Added (GVA)",
+          "Share of total GDP and employment",
+          "Total number of direct jobs linked to the sector",
+        ],
+      },
+      {
+        title: "Living Conditions and Inequality",
+        source: {
+          label: "INE (Living Conditions Survey)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=76847",
+          note: "AROPE, Gini and Income series",
+        },
+        paragraphs: [
+          "The app pull indicators from the Living Conditions Survey (ECV) to provide social context to public spending figures.",
+        ],
+        bullets: [
+          "AROPE rate: At risk of poverty or social exclusion (ECV6275)",
+          "Gini index: Income inequality coefficient (ECV4838)",
+          "Average annual net income per person (30648)",
         ],
       },
       {

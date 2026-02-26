@@ -181,6 +181,26 @@
         }
       }
     },
+    "/api/v1/social-economy.json": {
+      "get": {
+        "summary": "Cuenta Satélite de la Economía Social: VAB, empleo y PIB",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/living-conditions.json": {
+      "get": {
+        "summary": "Encuesta de Condiciones de Vida: Tasa AROPE, Gini y renta media",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/meta.json": {
       "get": {
         "summary": "Estado y frescura del pipeline",

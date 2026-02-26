@@ -19,6 +19,8 @@ import downloadCcaaDeficitData from "./sources/ccaa-deficit.mjs";
 import { downloadRegionalPensionsData } from "./sources/pensions-regional.mjs";
 import { downloadRegionalAccountsData } from "./sources/regional-accounts.mjs";
 import { downloadUnemploymentRegionalData } from "./sources/unemployment-regional.mjs";
+import { downloadSocialEconomy } from "./sources/social-economy.mjs";
+import { downloadLivingConditions } from "./sources/living-conditions.mjs";
 import { downloadFlowsSankeyData } from "./sources/flows-sankey.mjs";
 import { downloadSSSustainability } from "./sources/ss-sustainability.mjs";
 import {
@@ -127,6 +129,8 @@ const FALLBACK_GUARD_KEYS = {
   regionalAccounts: ["regionalAccounts"],
   unemploymentRegional: ["unemployment"],
   pensionsRegional: ["byYear"],
+  socialEconomy: ["vab", "pibShare", "employmentShare"],
+  livingConditions: ["arope", "gini", "averageIncome"],
   flowsSankey: ["sankey"],
   ssSustainability: ["ssSustainability"],
 };
@@ -364,6 +368,28 @@ const SOURCE_REGISTRY = [
     }),
   },
   {
+    name: "socialEconomy",
+    fileName: "social-economy.json",
+    download: downloadSocialEconomy,
+    metaExtractor: (r) => ({
+      lastRealDataDate: pickLatestDate([
+        ...getAttributionDates(r.sourceAttribution),
+      ]),
+      referenceYear: r.referenceYear,
+    }),
+  },
+  {
+    name: "livingConditions",
+    fileName: "living-conditions.json",
+    download: downloadLivingConditions,
+    metaExtractor: (r) => ({
+      lastRealDataDate: pickLatestDate([
+        ...getAttributionDates(r.sourceAttribution),
+      ]),
+      referenceYear: r.referenceYear,
+    }),
+  },
+  {
     name: "ssSustainability",
     fileName: "ss-sustainability.json",
     download: downloadSSSustainability,
@@ -512,6 +538,16 @@ function buildPublicApiIndex(meta) {
         source: "Eurostat + Ageing Report",
         description:
           "Sostenibilidad de la Seguridad Social: cotizaciones, gasto contributivo, Fondo de Reserva y proyecciones",
+      },
+      {
+        path: "/api/v1/social-economy.json",
+        source: "INE",
+        description: "Cuenta Satélite de la Economía Social: VAB, empleo y PIB",
+      },
+      {
+        path: "/api/v1/living-conditions.json",
+        source: "INE",
+        description: "Encuesta de Condiciones de Vida: Tasa AROPE, Gini y renta media",
       },
       {
         path: "/api/v1/meta.json",
@@ -696,6 +732,29 @@ function displaySourceSummary(status, sourceResults) {
   } else {
     console.log("Flujos forales: ❌ Error");
   }
+
+  if (status.socialEconomy && sourceResults.socialEconomy.value) {
+    const d = sourceResults.socialEconomy.value;
+    const attr = d.sourceAttribution;
+    const isLive = attr && attr.type !== "fallback";
+    console.log(
+      `Economía Social: ${isLive ? "✅" : "⚠️"} ${attr?.type?.toUpperCase() || "N/A"} (${(d.vab / 1e9).toFixed(1)}B€, ${d.referenceYear})`,
+    );
+  } else {
+    console.log("Economía Social: ❌ Error");
+  }
+
+  if (status.livingConditions && sourceResults.livingConditions.value) {
+    const d = sourceResults.livingConditions.value;
+    const attr = d.sourceAttribution?.arope;
+    const isLive = attr && attr.type !== "fallback";
+    console.log(
+      `Condiciones de Vida: ${isLive ? "✅" : "⚠️"} ${attr?.type?.toUpperCase() || "N/A"} (AROPE ${d.arope}%, Gini ${d.gini})`,
+    );
+  } else {
+    console.log("Condiciones de Vida: ❌ Error");
+  }
+
   console.log();
 }
 

@@ -585,6 +585,29 @@ export interface RegionalAccountsData {
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
+// ── Social Economy (INE) ───────────────────────────────────────────
+
+export interface SocialEconomyData {
+  lastUpdated: string;
+  vab: number;
+  pibShare: number;
+  employmentShare: number;
+  totalJobs: number;
+  referenceYear: number;
+  sourceAttribution?: DataSourceAttribution;
+}
+
+// ── Living Conditions (INE) ────────────────────────────────────────
+
+export interface LivingConditionsData {
+  lastUpdated: string;
+  arope: number;
+  gini: number;
+  averageIncome: number;
+  referenceYear: number;
+  sourceAttribution?: Record<string, DataSourceAttribution>;
+}
+
 // ── Metadata ────────────────────────────────────────────────────────
 
 export interface MetaSourceEntry {
@@ -623,6 +646,8 @@ export interface MetaData {
     ccaaForalFlows?: boolean;
     pensionsRegional?: boolean;
     unemploymentRegional?: boolean;
+    socialEconomy?: boolean;
+    livingConditions?: boolean;
     flowsSankey?: boolean;
     ssSustainability?: boolean;
   };

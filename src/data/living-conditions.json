@@ -1,0 +1,27 @@
+{
+  "lastUpdated": "2026-02-26T17:41:18.721Z",
+  "arope": 25.7,
+  "gini": 30.8,
+  "averageIncome": 15620,
+  "referenceYear": 2025,
+  "sourceAttribution": {
+    "arope": {
+      "source": "INE — Tasa AROPE (ECV)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=76847",
+      "date": "2024-12-31"
+    },
+    "gini": {
+      "source": "INE — Índice de Gini (ECV)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=76846",
+      "date": "2024-12-31"
+    },
+    "averageIncome": {
+      "source": "INE — Renta media por persona (ECV)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=30648",
+      "date": "2026-02-26"
+    }
+  }
+}
