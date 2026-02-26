@@ -17,6 +17,7 @@ import {
   type DemoEUIndicator,
   EUDemographicComparison,
 } from "./demographics/EUDemographicComparison";
+import { FertilityProjectionsChart } from "./demographics/FertilityProjectionsChart";
 import { ImmigrationChart } from "./demographics/ImmigrationChart";
 import { LifeExpectancyChart } from "./demographics/LifeExpectancyChart";
 import { MigrationFlowsChart } from "./demographics/MigrationFlowsChart";
@@ -62,6 +63,7 @@ export function DemographicsBlock() {
     projections,
     migrationFlows,
     provincialPopulation,
+    fertilityProjections,
   } = demographics;
 
   const dmTooltips = dm.tooltips;
@@ -490,6 +492,25 @@ export function DemographicsBlock() {
             proportionLabel={dm.projections.proportionLabel}
             millionLabel={dm.projections.millionLabel}
           />
+        )}
+
+        {/* Fertility Projections */}
+        {fertilityProjections && fertilityProjections.projections.length > 0 && (
+          <div className="mt-6">
+            <FertilityProjectionsChart
+              actual={fertilityProjections.actual}
+              projections={fertilityProjections.projections}
+              linearRegression={fertilityProjections.linearRegression}
+              replacementLevel={fertilityProjections.replacementLevel}
+              title={dm.fertilityProjections.title}
+              actualLabel={dm.fertilityProjections.actual}
+              regressionLabel={dm.fertilityProjections.regression}
+              replacementLabel={dm.fertilityProjections.replacement}
+            />
+            <p className="text-[11px] text-muted-foreground/70 mt-2 text-center italic">
+              {dm.fertilityProjections.subtitle}
+            </p>
+          </div>
         )}
 
         {/* Migration Flows */}

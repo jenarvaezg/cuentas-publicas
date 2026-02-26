@@ -131,6 +131,7 @@ export interface DemographicsData {
   projections?: ProjectionsData;
   migrationFlows?: MigrationFlowsData;
   provincialPopulation?: ProvincialPopulationData;
+  fertilityProjections?: FertilityProjectionsData;
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
@@ -454,6 +455,19 @@ export interface MigrationFlowsData {
   immigration: TimeSeriesPoint[];
   emigration: TimeSeriesPoint[];
   netMigration: TimeSeriesPoint[];
+}
+
+export interface FertilityProjectionSeries {
+  source: string; // e.g. "ONU WPP 2017", "INE 2018"
+  publishedYear: number;
+  points: TimeSeriesPoint[]; // year + value (TFR)
+}
+
+export interface FertilityProjectionsData {
+  actual: TimeSeriesPoint[]; // actual Spain TFR from ~2000-2024 (already in vitalStats, duplicated for chart convenience)
+  projections: FertilityProjectionSeries[];
+  linearRegression: TimeSeriesPoint[]; // linear extrapolation from recent actual data
+  replacementLevel: number; // 2.1
 }
 
 export interface ProvincialPopulationEntry {

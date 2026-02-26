@@ -412,6 +412,14 @@ export const blockMessages = {
       projectedPopulation: "Población proyectada 2039",
       projectedDependency2050: "Dependencia 65+ en 2050",
       netMigrationLatest: "Saldo migratorio",
+      fertilityProjections: {
+        title: "Proyecciones de fecundidad: predicciones vs realidad",
+        actual: "Datos reales (INE)",
+        regression: "Regresión lineal (tendencia actual)",
+        replacement: "Nivel de reemplazo (2,1)",
+        subtitle:
+          "Cada línea discontinua muestra lo que distintos organismos proyectaron para la fecundidad en España. Todas asumían una recuperación que nunca llegó.",
+      },
       euComparison: {
         title: "Comparativa europea",
         indicatorLabels: {
@@ -995,6 +1003,14 @@ export const blockMessages = {
       projectedPopulation: "Projected population 2039",
       projectedDependency2050: "Old-age dependency 2050",
       netMigrationLatest: "Net migration",
+      fertilityProjections: {
+        title: "Fertility projections: predictions vs reality",
+        actual: "Actual data (INE)",
+        regression: "Linear regression (current trend)",
+        replacement: "Replacement level (2.1)",
+        subtitle:
+          "Each dashed line shows what different institutions projected for Spain's fertility. They all assumed a recovery that never came.",
+      },
       euComparison: {
         title: "European Comparison",
         indicatorLabels: {

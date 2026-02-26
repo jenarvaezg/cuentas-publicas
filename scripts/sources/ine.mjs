@@ -75,6 +75,7 @@ export async function downloadDemographics(fetcher = fetchWithRetry) {
         projections: detail.projections,
         migrationFlows: detail.migrationFlows,
         provincialPopulation: detail.provincialPopulation,
+        fertilityProjections: detail.fertilityProjections,
       })
       // Merge source attributions
       Object.assign(result.sourceAttribution, detail.sourceAttribution)
@@ -91,6 +92,7 @@ export async function downloadDemographics(fetcher = fetchWithRetry) {
         projections: fallbackDetail.projections,
         migrationFlows: fallbackDetail.migrationFlows,
         provincialPopulation: fallbackDetail.provincialPopulation,
+        fertilityProjections: fallbackDetail.fertilityProjections,
       })
       Object.assign(result.sourceAttribution, fallbackDetail.sourceAttribution)
     }
@@ -1283,6 +1285,133 @@ function fallbackProvincialPopulation() {
  * @param {Function} fetcher - Optional fetcher function (defaults to fetchWithRetry)
  * @returns {Promise<Object>} Detailed demographics data
  */
+// ─────────────────────────────────────────────
+// Fertility Projections (static reference data)
+// ─────────────────────────────────────────────
+
+const FERTILITY_PROJECTION_SERIES = [
+  {
+    source: 'ONU WPP 2010',
+    publishedYear: 2010,
+    // UN assumed convergence to ~1.85 for all below-replacement countries
+    points: [
+      { year: 2010, value: 1.37 }, // baseline
+      { year: 2025, value: 1.60 },
+      { year: 2050, value: 1.85 },
+    ],
+  },
+  {
+    source: 'ONU WPP 2017',
+    publishedYear: 2017,
+    // UN DESA: "fertility for Europe projected to increase from 1.6 to nearly 1.8 in 2045-2050"
+    points: [
+      { year: 2017, value: 1.33 }, // baseline
+      { year: 2025, value: 1.48 },
+      { year: 2050, value: 1.80 },
+    ],
+  },
+  {
+    source: 'ONU WPP 2022',
+    publishedYear: 2022,
+    // Significantly revised down after persistent decline
+    points: [
+      { year: 2022, value: 1.16 }, // baseline
+      { year: 2025, value: 1.22 },
+      { year: 2030, value: 1.26 },
+      { year: 2040, value: 1.31 },
+      { year: 2050, value: 1.36 },
+    ],
+  },
+  {
+    source: 'ONU WPP 2024',
+    publishedYear: 2024,
+    points: [
+      { year: 2024, value: 1.12 },
+      { year: 2026, value: 1.24 },
+      { year: 2030, value: 1.26 },
+      { year: 2035, value: 1.29 },
+      { year: 2040, value: 1.31 },
+      { year: 2050, value: 1.36 },
+    ],
+  },
+  {
+    source: 'INE 2018',
+    publishedYear: 2018,
+    // INE 2018: TFR 1.31 (2017) → 1.46 by 2050
+    points: [
+      { year: 2018, value: 1.31 },
+      { year: 2050, value: 1.46 },
+    ],
+  },
+  {
+    source: 'INE 2020',
+    publishedYear: 2020,
+    // Similar to AIReF 2020: ~1.43 by 2050
+    points: [
+      { year: 2020, value: 1.23 },
+      { year: 2050, value: 1.43 },
+    ],
+  },
+  {
+    source: 'INE 2024',
+    publishedYear: 2024,
+    points: [
+      { year: 2024, value: 1.16 },
+      { year: 2038, value: 1.24 },
+      { year: 2050, value: 1.30 },
+    ],
+  },
+]
+
+/**
+ * Compute a linear regression from actual fertility data (last 10 years) and
+ * extrapolate to 2050 in 5-year increments.
+ *
+ * @param {Array<{year: number, value: number}>} actual
+ * @returns {Array<{year: number, value: number}>}
+ */
+function computeFertilityLinearRegression(actual) {
+  const recent = actual.filter(p => p.year >= 2015)
+  if (recent.length < 3) return []
+
+  const n = recent.length
+  const sumX = recent.reduce((s, p) => s + p.year, 0)
+  const sumY = recent.reduce((s, p) => s + p.value, 0)
+  const sumXY = recent.reduce((s, p) => s + p.year * p.value, 0)
+  const sumX2 = recent.reduce((s, p) => s + p.year * p.year, 0)
+
+  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
+  const intercept = (sumY - slope * sumX) / n
+
+  const lastYear = recent[recent.length - 1].year
+  const points = []
+  for (let y = lastYear; y <= 2050; y += 5) {
+    const value = Math.round((slope * y + intercept) * 100) / 100
+    points.push({ year: y, value: Math.max(value, 0.5) })
+  }
+  // Make sure 2050 is included
+  if (points[points.length - 1]?.year !== 2050) {
+    const value = Math.round((slope * 2050 + intercept) * 100) / 100
+    points.push({ year: 2050, value: Math.max(value, 0.5) })
+  }
+  return points
+}
+
+/**
+ * Build fertility projections comparison data from actual fertility rate series.
+ *
+ * @param {Array<{year: number, value: number}>} actualFertilityRate
+ * @returns {Object} FertilityProjectionsData
+ */
+function buildFertilityProjections(actualFertilityRate) {
+  return {
+    actual: actualFertilityRate,
+    projections: FERTILITY_PROJECTION_SERIES,
+    linearRegression: computeFertilityLinearRegression(actualFertilityRate),
+    replacementLevel: 2.1,
+  }
+}
+
 export async function downloadDemographicsDetail(fetcher = fetchWithRetry) {
   console.log()
   console.log('  === Datos demográficos detallados ===')
@@ -1318,6 +1447,8 @@ export async function downloadDemographicsDetail(fetcher = fetchWithRetry) {
     console.log()
     console.log('  ✅ Datos demográficos detallados completados')
 
+    const fertilityProjections = buildFertilityProjections(vitalStats?.fertilityRate ?? fallbackDemographicsDetail().vitalStats.fertilityRate)
+
     return {
       vitalStats,
       lifeExpectancy,
@@ -1327,6 +1458,7 @@ export async function downloadDemographicsDetail(fetcher = fetchWithRetry) {
       projections,
       migrationFlows,
       provincialPopulation,
+      fertilityProjections,
       sourceAttribution: {
         vitalStats: {
           source: 'INE — Indicadores Demográficos Básicos',
@@ -1357,6 +1489,12 @@ export async function downloadDemographicsDetail(fetcher = fetchWithRetry) {
           source: 'INE — Padrón Continuo (tabla 2852)',
           type: 'api',
           url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=2852',
+        },
+        fertilityProjections: {
+          source: 'INE / ONU WPP — Proyecciones históricas de fecundidad',
+          type: 'reference',
+          url: 'https://population.un.org/wpp/',
+          note: 'Comparativa de proyecciones históricas vs datos reales',
         },
       },
     }
@@ -1442,6 +1580,10 @@ function fallbackDemographicsDetail() {
     projections: fallbackProjections(),
     migrationFlows: fallbackMigrationFlows(),
     provincialPopulation: fallbackProvincialPopulation(),
+    fertilityProjections: buildFertilityProjections([
+      { year: 2019, value: 1.24 }, { year: 2020, value: 1.19 }, { year: 2021, value: 1.19 },
+      { year: 2022, value: 1.16 }, { year: 2023, value: 1.12 }, { year: 2024, value: 1.16 },
+    ]),
     sourceAttribution: {
       vitalStats: {
         source: 'Valor referencia 2024 (INE IDB)',
@@ -1479,6 +1621,12 @@ function fallbackDemographicsDetail() {
         url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=2852',
         note: 'Población provincial referencia',
       },
+      fertilityProjections: {
+        source: 'INE / ONU WPP — Proyecciones históricas de fecundidad',
+        type: 'fallback',
+        url: 'https://population.un.org/wpp/',
+        note: 'Comparativa de proyecciones históricas vs datos reales',
+      },
     },
   }
 }
@@ -1513,6 +1661,7 @@ function buildFallbackDemographics() {
     projections: detail.projections,
     migrationFlows: detail.migrationFlows,
     provincialPopulation: detail.provincialPopulation,
+    fertilityProjections: detail.fertilityProjections,
     sourceAttribution: {
       population: pop.attribution,
       activePopulation: active.attribution,

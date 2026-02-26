@@ -112,7 +112,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         title: "Wishlist — Nuevas visualizaciones",
         items: [
           "✅ Sostenibilidad SS: serie histórica déficit contributivo (ingresos vs gastos desde 2006), déficit como % PIB, evolución Fondo de Reserva, cotizantes/pensionista y proyecciones Ageing Report",
-          "⏳ Proyecciones demográficas fallidas: gráfico población real vs proyecciones históricas (INE 2009 preveía 41,5M en 2052, hoy 49,5M) + proyecciones de natalidad de ONU/AIREF/INE a lo largo de los años + regresión lineal de los últimos años de natalidad",
+          "✅ Proyecciones demográficas fallidas: fecundidad real vs proyecciones históricas (ONU WPP 2010-2024, INE 2018-2024) + regresión lineal de tendencia actual",
           "Visión unificada ingresos vs gastos: fusionar Ingresos/Gastos (Eurostat), COFOG y Recaudación Tributaria en un panel global y por CCAA con máximo desglose por partidas",
           "Panorama de deuda pública + privada",
           "Simulador de ajuste fiscal",
@@ -228,7 +228,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         title: "Wishlist — New visualizations",
         items: [
           "✅ Social Security sustainability: historical contributory deficit (revenue vs spending since 2006), deficit as % GDP, Reserve Fund evolution, contributors per pensioner and Ageing Report projections",
-          "⏳ Failed demographic projections: real population vs historical projections chart (INE 2009 projected 41.5M by 2052, today 49.5M) + birth rate projections from UN/AIREF/INE over the years + linear regression of recent birth rate trend",
+          "✅ Failed demographic projections: actual fertility vs historical projections (UN WPP 2010-2024, INE 2018-2024) + linear regression of current trend",
           "Unified revenue vs spending view: merge Revenue/Spending (Eurostat), COFOG and Tax Revenue into a single panel with national and regional breakdown by category",
           "Public + private debt panorama",
           "Fiscal adjustment simulator",

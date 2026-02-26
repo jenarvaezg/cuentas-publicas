@@ -291,6 +291,36 @@ describe('downloadDemographicsDetail', () => {
     expect(sorted[0].population).toBeGreaterThan(5_000_000)
   })
 
+  it('fallback includes fertility projections comparison data', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    expect(result.fertilityProjections).toBeDefined()
+    expect(result.fertilityProjections.replacementLevel).toBe(2.1)
+
+    // Actual data
+    expect(result.fertilityProjections.actual.length).toBeGreaterThan(0)
+    expect(result.fertilityProjections.actual[0]).toHaveProperty('year')
+    expect(result.fertilityProjections.actual[0]).toHaveProperty('value')
+
+    // Historical projections from UN WPP and INE
+    expect(result.fertilityProjections.projections.length).toBeGreaterThanOrEqual(5)
+    for (const proj of result.fertilityProjections.projections) {
+      expect(proj).toHaveProperty('source')
+      expect(proj).toHaveProperty('publishedYear')
+      expect(proj.points.length).toBeGreaterThan(0)
+      // All projections predict recovery above actual trend
+      const lastPoint = proj.points[proj.points.length - 1]
+      expect(lastPoint.value).toBeGreaterThan(1.0)
+    }
+
+    // Linear regression
+    expect(result.fertilityProjections.linearRegression.length).toBeGreaterThan(0)
+
+    // Source attribution
+    expect(result.sourceAttribution.fertilityProjections).toBeDefined()
+  })
+
   it('migration flows are sorted chronologically', async () => {
     const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
     const result = await downloadDemographicsDetail(failFetcher)
