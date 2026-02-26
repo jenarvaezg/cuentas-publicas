@@ -4,7 +4,9 @@ import {
   fromAttribution,
   INE_IDB,
   INE_LIFE_EXPECTANCY,
+  INE_MIGRACIONES,
   INE_POBLACION,
+  INE_PROJECTIONS,
   INE_PYRAMID,
 } from "@/data/sources";
 import type { TimeSeriesPoint } from "@/data/types";
@@ -17,6 +19,9 @@ import {
 } from "./demographics/EUDemographicComparison";
 import { ImmigrationChart } from "./demographics/ImmigrationChart";
 import { LifeExpectancyChart } from "./demographics/LifeExpectancyChart";
+import { MigrationFlowsChart } from "./demographics/MigrationFlowsChart";
+import { ProjectionsChart } from "./demographics/ProjectionsChart";
+import { ProvincialRankingChart } from "./demographics/ProvincialRankingChart";
 import { VitalTrendsChart } from "./demographics/VitalTrendsChart";
 import { ExportBlockButton } from "./ExportBlockButton";
 import { PopulationPyramidChart } from "./PopulationPyramidChart";
@@ -47,8 +52,17 @@ export function DemographicsBlock() {
   const { msg } = useI18n();
   const dm = msg.blocks.demographics;
 
-  const { vitalStats, lifeExpectancy, pyramid, dependencyRatio, immigrationShare, cpi } =
-    demographics;
+  const {
+    vitalStats,
+    lifeExpectancy,
+    pyramid,
+    dependencyRatio,
+    immigrationShare,
+    cpi,
+    projections,
+    migrationFlows,
+    provincialPopulation,
+  } = demographics;
 
   const dmTooltips = dm.tooltips;
 
@@ -365,6 +379,55 @@ export function DemographicsBlock() {
           />
         </div>
 
+        {/* Row 4: Projections & Migration highlights */}
+        {(projections || migrationFlows) && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {projections?.shortTerm?.national?.length ? (
+              <StatCard
+                label={dm.projectedPopulation}
+                value={formatCompact(
+                  projections.shortTerm.national[projections.shortTerm.national.length - 1].value,
+                )}
+                tooltip={dmTooltips.projectedPopulation}
+                delay={0.5}
+                sources={[INE_PROJECTIONS]}
+              />
+            ) : null}
+            {projections?.indicators?.dependencyOldAge?.length
+              ? (() => {
+                  const target2050 = projections.indicators.dependencyOldAge.find(
+                    (p) => p.year === 2050,
+                  );
+                  return target2050 ? (
+                    <StatCard
+                      label={dm.projectedDependency2050}
+                      value={`${formatNumber(target2050.value, 1)}%`}
+                      tooltip={dmTooltips.projectedDependency2050}
+                      delay={0.55}
+                      sources={[INE_PROJECTIONS]}
+                    />
+                  ) : null;
+                })()
+              : null}
+            {migrationFlows?.netMigration?.length
+              ? (() => {
+                  const latest =
+                    migrationFlows.netMigration[migrationFlows.netMigration.length - 1];
+                  return (
+                    <StatCard
+                      label={dm.netMigrationLatest}
+                      value={`+${formatCompact(latest.value)}`}
+                      tooltip={dmTooltips.netMigrationLatest}
+                      delay={0.6}
+                      sparklineData={migrationFlows.netMigration.map((p) => p.value)}
+                      sources={[INE_MIGRACIONES]}
+                    />
+                  );
+                })()
+              : null}
+          </div>
+        )}
+
         {/* Population Pyramid with year selector */}
         {pyramid && pyramid.years.length > 0 && (
           <div>
@@ -407,6 +470,61 @@ export function DemographicsBlock() {
           title={dm.immigrationTrendTitle}
           shareLabel={dm.immigrationShare}
         />
+
+        {/* Population Projections */}
+        {projections && (
+          <ProjectionsChart
+            populationData={projections.shortTerm.national.map((p) => ({
+              year: p.year,
+              population: p.value,
+            }))}
+            agingData={projections.indicators.dependencyOldAge.map((p, i) => ({
+              year: p.year,
+              dependencyOldAge: p.value,
+              proportionOver65: projections.indicators.proportionOver65[i]?.value ?? 0,
+            }))}
+            populationTitle={dm.projections.populationTitle}
+            agingTitle={dm.projections.agingTitle}
+            populationLabel={dm.projections.populationLabel}
+            dependencyLabel={dm.projections.dependencyLabel}
+            proportionLabel={dm.projections.proportionLabel}
+            millionLabel={dm.projections.millionLabel}
+          />
+        )}
+
+        {/* Migration Flows */}
+        {migrationFlows && migrationFlows.immigration.length > 0 && (
+          <MigrationFlowsChart
+            data={migrationFlows.immigration.map((p) => ({
+              year: p.year,
+              immigration: p.value,
+              emigration: migrationFlows.emigration.find((e) => e.year === p.year)?.value ?? 0,
+              netMigration: migrationFlows.netMigration.find((n) => n.year === p.year)?.value ?? 0,
+            }))}
+            title={dm.migrationFlows.title}
+            immigrationLabel={dm.migrationFlows.immigration}
+            emigrationLabel={dm.migrationFlows.emigration}
+            netLabel={dm.migrationFlows.netMigration}
+          />
+        )}
+
+        {/* Provincial Population Ranking */}
+        {provincialPopulation && provincialPopulation.entries.length > 0 && (
+          <ProvincialRankingChart
+            entries={provincialPopulation.entries.map((e) => ({
+              code: e.code,
+              name: e.name,
+              ccaa: e.ccaa,
+              population: e.population,
+            }))}
+            latestYear={provincialPopulation.latestYear}
+            title={dm.provincial.title}
+            ccaaLabel={dm.provincial.ccaaLabel}
+            provincesLabel={dm.provincial.provincesLabel}
+            populationLabel={dm.provincial.populationLabel}
+            millionLabel={dm.provincial.millionLabel}
+          />
+        )}
 
         <EUDemographicComparison
           data={euChartData}

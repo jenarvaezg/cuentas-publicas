@@ -72,6 +72,9 @@ export async function downloadDemographics(fetcher = fetchWithRetry) {
         pyramid: detail.pyramid,
         dependencyRatio: detail.dependencyRatio,
         immigrationShare: detail.immigrationShare,
+        projections: detail.projections,
+        migrationFlows: detail.migrationFlows,
+        provincialPopulation: detail.provincialPopulation,
       })
       // Merge source attributions
       Object.assign(result.sourceAttribution, detail.sourceAttribution)
@@ -85,6 +88,9 @@ export async function downloadDemographics(fetcher = fetchWithRetry) {
         pyramid: fallbackDetail.pyramid,
         dependencyRatio: fallbackDetail.dependencyRatio,
         immigrationShare: fallbackDetail.immigrationShare,
+        projections: fallbackDetail.projections,
+        migrationFlows: fallbackDetail.migrationFlows,
+        provincialPopulation: fallbackDetail.provincialPopulation,
       })
       Object.assign(result.sourceAttribution, fallbackDetail.sourceAttribution)
     }
@@ -911,6 +917,365 @@ function deriveImmigrationShare(pyramid) {
   return { total: totalShare, byRegion, historical }
 }
 
+// ─────────────────────────────────────────────
+// Population Projections (INE table 36679 + long-term indicators)
+// ─────────────────────────────────────────────
+
+const SHORT_TERM_SERIES = {
+  'Total Nacional': 'PROP7993',
+  'Andalucía': 'PROP7990',
+  'Aragón': 'PROP7987',
+  'Asturias, Principado de': 'PROP7984',
+  'Balears, Illes': 'PROP7981',
+  'Canarias': 'PROP7978',
+  'Cantabria': 'PROP7975',
+  'Castilla y León': 'PROP7972',
+  'Castilla - La Mancha': 'PROP7969',
+  'Cataluña': 'PROP7966',
+  'Comunitat Valenciana': 'PROP7963',
+  'Extremadura': 'PROP7960',
+  'Galicia': 'PROP7957',
+  'Madrid, Comunidad de': 'PROP7954',
+  'Murcia, Región de': 'PROP7951',
+  'Navarra, Comunidad Foral de': 'PROP7948',
+  'País Vasco': 'PROP7945',
+  'Rioja, La': 'PROP7942',
+  'Ceuta': 'PROP7939',
+  'Melilla': 'PROP7936',
+}
+
+const PROJECTION_INDICATORS = [
+  { code: 'PROP7467', key: 'dependencyOldAge' },
+  { code: 'PROP7465', key: 'dependencyTotal' },
+  { code: 'PROP7463', key: 'proportionOver65' },
+  { code: 'PROP7446', key: 'populationGrowth' },
+  { code: 'PROP7447', key: 'naturalBalance' },
+  { code: 'PROP7448', key: 'netMigration' },
+]
+
+/**
+ * Fetch population projections: short-term by CCAA + long-term indicators.
+ */
+async function fetchProjections(fetcher) {
+  console.log()
+  console.log('  📊 Proyecciones de población (INE tabla 36679 + indicadores LP)...')
+
+  // Fetch all short-term series in parallel
+  const shortTermEntries = Object.entries(SHORT_TERM_SERIES)
+  const shortTermResults = await Promise.allSettled(
+    shortTermEntries.map(([, code]) => fetchSeries(code, 20, fetcher))
+  )
+
+  const shortTerm = { national: [], byCcaa: {} }
+  for (let i = 0; i < shortTermEntries.length; i++) {
+    const [name] = shortTermEntries[i]
+    const result = shortTermResults[i]
+    if (result.status === 'fulfilled') {
+      const parsed = result.value
+        .filter(p => p.Valor != null)
+        .map(p => ({ year: new Date(p.Fecha).getFullYear(), value: Math.round(p.Valor) }))
+        .sort((a, b) => a.year - b.year)
+      if (name === 'Total Nacional') {
+        shortTerm.national = parsed
+        console.log(`    ✅ Nacional: ${parsed.length} puntos, último ${parsed[parsed.length - 1]?.year}`)
+      } else {
+        shortTerm.byCcaa[name] = parsed
+      }
+    } else {
+      console.warn(`    ❌ ${name}: ${result.reason?.message}`)
+      if (name !== 'Total Nacional') shortTerm.byCcaa[name] = []
+    }
+  }
+
+  // Fetch long-term indicator projections in parallel
+  const indicatorResults = await Promise.allSettled(
+    PROJECTION_INDICATORS.map(({ code }) => fetchSeries(code, 100, fetcher))
+  )
+
+  const indicators = {}
+  for (let i = 0; i < PROJECTION_INDICATORS.length; i++) {
+    const { key, code } = PROJECTION_INDICATORS[i]
+    const result = indicatorResults[i]
+    if (result.status === 'fulfilled') {
+      const parsed = result.value
+        .filter(p => p.Valor != null)
+        .map(p => ({ year: new Date(p.Fecha).getFullYear(), value: Math.round(p.Valor * 100) / 100 }))
+        .sort((a, b) => a.year - b.year)
+      indicators[key] = parsed
+      const latest = parsed[parsed.length - 1]
+      console.log(`    ✅ ${key} (${code}): ${parsed.length} puntos, último ${latest?.year}=${latest?.value}`)
+    } else {
+      console.warn(`    ❌ ${key} (${code}): ${result.reason?.message}`)
+      indicators[key] = []
+    }
+  }
+
+  return { shortTerm, indicators }
+}
+
+function fallbackProjections() {
+  return {
+    shortTerm: {
+      national: [
+        { year: 2024, value: 48610458 }, { year: 2025, value: 49265049 },
+        { year: 2026, value: 49910256 }, { year: 2027, value: 50506066 },
+        { year: 2028, value: 51033947 }, { year: 2029, value: 51489372 },
+        { year: 2030, value: 51876063 }, { year: 2035, value: 53109717 },
+        { year: 2039, value: 53747904 },
+      ],
+      byCcaa: {},
+    },
+    indicators: {
+      dependencyOldAge: [
+        { year: 2024, value: 31.30 }, { year: 2030, value: 34.39 },
+        { year: 2040, value: 44.33 }, { year: 2050, value: 53.03 },
+        { year: 2060, value: 52.67 }, { year: 2074, value: 52.67 },
+      ],
+      dependencyTotal: [
+        { year: 2024, value: 53.30 }, { year: 2030, value: 56.39 },
+        { year: 2040, value: 66.33 }, { year: 2050, value: 73.03 },
+        { year: 2060, value: 72.67 }, { year: 2074, value: 73.89 },
+      ],
+      proportionOver65: [
+        { year: 2024, value: 20.40 }, { year: 2030, value: 22.50 },
+        { year: 2040, value: 27.00 }, { year: 2050, value: 30.00 },
+        { year: 2060, value: 30.00 }, { year: 2074, value: 30.29 },
+      ],
+      populationGrowth: [
+        { year: 2024, value: 13.40 }, { year: 2030, value: 7.00 },
+        { year: 2040, value: 3.00 }, { year: 2050, value: 1.00 },
+        { year: 2060, value: -0.50 }, { year: 2073, value: 0.29 },
+      ],
+      naturalBalance: [
+        { year: 2024, value: -2.70 }, { year: 2030, value: -3.50 },
+        { year: 2040, value: -4.50 }, { year: 2050, value: -5.50 },
+        { year: 2060, value: -6.00 }, { year: 2073, value: -5.18 },
+      ],
+      netMigration: [
+        { year: 2024, value: 16.10 }, { year: 2030, value: 10.00 },
+        { year: 2040, value: 7.50 }, { year: 2050, value: 6.00 },
+        { year: 2060, value: 5.50 }, { year: 2073, value: 5.48 },
+      ],
+    },
+  }
+}
+
+// ─────────────────────────────────────────────
+// Migration Flows (INE Estadística de Migraciones)
+// ─────────────────────────────────────────────
+
+/**
+ * Fetch immigration and emigration flows, merging old (op=71) and new (op=455) series.
+ */
+async function fetchMigrationFlows(fetcher) {
+  console.log()
+  console.log('  📊 Flujos migratorios (INE Estadística de Migraciones)...')
+
+  // Fetch all four series in parallel
+  const [oldImmResult, oldEmResult, newImmResult, newEmResult] = await Promise.allSettled([
+    fetchSeries('EM825679', 30, fetcher),   // old immigration (op=71, 2008-2020)
+    fetchSeries('EM950865', 30, fetcher),   // old emigration (op=71, 2008-2020)
+    fetchSeries('EM1765217', 10, fetcher),  // new immigration (op=455, 2021+)
+    fetchSeries('EM1843418', 10, fetcher),  // new emigration (op=455, 2021+)
+  ])
+
+  // Parse each series into year->value maps
+  function parseToYearMap(result) {
+    if (result.status !== 'fulfilled') return {}
+    const map = {}
+    for (const p of result.value) {
+      if (p.Valor == null) continue
+      const year = new Date(p.Fecha).getFullYear()
+      map[year] = Math.round(p.Valor)
+    }
+    return map
+  }
+
+  const oldImm = parseToYearMap(oldImmResult)
+  const oldEm = parseToYearMap(oldEmResult)
+  const newImm = parseToYearMap(newImmResult)
+  const newEm = parseToYearMap(newEmResult)
+
+  // Merge: prefer newer source (op=455) for 2021+, use old for earlier years
+  const immByYear = { ...oldImm }
+  for (const [year, val] of Object.entries(newImm)) {
+    if (Number(year) >= 2021) immByYear[year] = val
+  }
+
+  const emByYear = { ...oldEm }
+  for (const [year, val] of Object.entries(newEm)) {
+    if (Number(year) >= 2021) emByYear[year] = val
+  }
+
+  // Build sorted arrays and compute net migration
+  const allYears = [...new Set([...Object.keys(immByYear), ...Object.keys(emByYear)].map(Number))].sort((a, b) => a - b)
+
+  const immigration = allYears
+    .filter(y => immByYear[y] != null)
+    .map(y => ({ year: y, value: immByYear[y] }))
+
+  const emigration = allYears
+    .filter(y => emByYear[y] != null)
+    .map(y => ({ year: y, value: emByYear[y] }))
+
+  const netMigration = allYears
+    .filter(y => immByYear[y] != null && emByYear[y] != null)
+    .map(y => ({ year: y, value: immByYear[y] - emByYear[y] }))
+
+  console.log(`    ✅ Inmigración: ${immigration.length} años, Emigración: ${emigration.length} años, Neta: ${netMigration.length} años`)
+
+  return { immigration, emigration, netMigration }
+}
+
+function fallbackMigrationFlows() {
+  return {
+    immigration: [
+      { year: 2008, value: 599074 }, { year: 2010, value: 360704 },
+      { year: 2012, value: 304054 }, { year: 2014, value: 305454 },
+      { year: 2016, value: 414746 }, { year: 2018, value: 643684 },
+      { year: 2019, value: 750480 }, { year: 2020, value: 467918 },
+      { year: 2021, value: 887960 }, { year: 2022, value: 1258894 },
+      { year: 2023, value: 1250991 }, { year: 2024, value: 1288562 },
+    ],
+    emigration: [
+      { year: 2008, value: 288432 }, { year: 2010, value: 403379 },
+      { year: 2012, value: 446606 }, { year: 2014, value: 400430 },
+      { year: 2016, value: 327325 }, { year: 2018, value: 309526 },
+      { year: 2019, value: 296248 }, { year: 2020, value: 248561 },
+      { year: 2021, value: 696866 }, { year: 2022, value: 531889 },
+      { year: 2023, value: 608695 }, { year: 2024, value: 662294 },
+    ],
+    netMigration: [
+      { year: 2008, value: 310642 }, { year: 2010, value: -42675 },
+      { year: 2012, value: -142552 }, { year: 2014, value: -94976 },
+      { year: 2016, value: 87421 }, { year: 2018, value: 334158 },
+      { year: 2019, value: 454232 }, { year: 2020, value: 219357 },
+      { year: 2021, value: 191094 }, { year: 2022, value: 727005 },
+      { year: 2023, value: 642296 }, { year: 2024, value: 626268 },
+    ],
+  }
+}
+
+// ─────────────────────────────────────────────
+// Provincial Population (INE Padrón — table 2852)
+// ─────────────────────────────────────────────
+
+/** Province series from INE Padrón Continuo (table 2852), total population per province. */
+const PROVINCE_SERIES = [
+  { code: 'DPOP4', name: 'Álava', ccaa: 'País Vasco' },
+  { code: 'DPOP160', name: 'Albacete', ccaa: 'Castilla-La Mancha' },
+  { code: 'DPOP424', name: 'Alicante', ccaa: 'C. Valenciana' },
+  { code: 'DPOP850', name: 'Almería', ccaa: 'Andalucía' },
+  { code: 'DPOP15001', name: 'Asturias', ccaa: 'P. de Asturias' },
+  { code: 'DPOP1162', name: 'Ávila', ccaa: 'Castilla y León' },
+  { code: 'DPOP1909', name: 'Badajoz', ccaa: 'Extremadura' },
+  { code: 'DPOP2404', name: 'Baleares', ccaa: 'Islas Baleares' },
+  { code: 'DPOP2608', name: 'Barcelona', ccaa: 'Cataluña' },
+  { code: 'DPOP22522', name: 'Bizkaia', ccaa: 'País Vasco' },
+  { code: 'DPOP3544', name: 'Burgos', ccaa: 'Castilla y León' },
+  { code: 'DPOP4660', name: 'Cáceres', ccaa: 'Extremadura' },
+  { code: 'DPOP5320', name: 'Cádiz', ccaa: 'Andalucía' },
+  { code: 'DPOP17359', name: 'Cantabria', ccaa: 'Cantabria' },
+  { code: 'DPOP5455', name: 'Castellón', ccaa: 'C. Valenciana' },
+  { code: 'DPOP5866', name: 'Ciudad Real', ccaa: 'Castilla-La Mancha' },
+  { code: 'DPOP6175', name: 'Córdoba', ccaa: 'Andalucía' },
+  { code: 'DPOP6403', name: 'A Coruña', ccaa: 'Galicia' },
+  { code: 'DPOP6688', name: 'Cuenca', ccaa: 'Castilla-La Mancha' },
+  { code: 'DPOP9448', name: 'Gipuzkoa', ccaa: 'País Vasco' },
+  { code: 'DPOP7405', name: 'Girona', ccaa: 'Cataluña' },
+  { code: 'DPOP8074', name: 'Granada', ccaa: 'Andalucía' },
+  { code: 'DPOP8581', name: 'Guadalajara', ccaa: 'Castilla-La Mancha' },
+  { code: 'DPOP9715', name: 'Huelva', ccaa: 'Andalucía' },
+  { code: 'DPOP9955', name: 'Huesca', ccaa: 'Aragón' },
+  { code: 'DPOP10564', name: 'Jaén', ccaa: 'Andalucía' },
+  { code: 'DPOP10858', name: 'León', ccaa: 'Castilla y León' },
+  { code: 'DPOP11497', name: 'Lleida', ccaa: 'Cataluña' },
+  { code: 'DPOP12193', name: 'La Rioja', ccaa: 'La Rioja' },
+  { code: 'DPOP12718', name: 'Lugo', ccaa: 'Galicia' },
+  { code: 'DPOP12922', name: 'Madrid', ccaa: 'C. de Madrid' },
+  { code: 'DPOP13462', name: 'Málaga', ccaa: 'Andalucía' },
+  { code: 'DPOP13765', name: 'Murcia', ccaa: 'R. de Murcia' },
+  { code: 'DPOP13903', name: 'Navarra', ccaa: 'Navarra' },
+  { code: 'DPOP14722', name: 'Ourense', ccaa: 'Galicia' },
+  { code: 'DPOP15238', name: 'Palencia', ccaa: 'Castilla y León' },
+  { code: 'DPOP15814', name: 'Las Palmas', ccaa: 'Canarias' },
+  { code: 'DPOP15919', name: 'Pontevedra', ccaa: 'Galicia' },
+  { code: 'DPOP16108', name: 'Salamanca', ccaa: 'Castilla y León' },
+  { code: 'DPOP17197', name: 'S.C. Tenerife', ccaa: 'Canarias' },
+  { code: 'DPOP17668', name: 'Segovia', ccaa: 'Castilla y León' },
+  { code: 'DPOP18298', name: 'Sevilla', ccaa: 'Andalucía' },
+  { code: 'DPOP18616', name: 'Soria', ccaa: 'Castilla y León' },
+  { code: 'DPOP19168', name: 'Tarragona', ccaa: 'Cataluña' },
+  { code: 'DPOP19720', name: 'Teruel', ccaa: 'Aragón' },
+  { code: 'DPOP20431', name: 'Toledo', ccaa: 'Castilla-La Mancha' },
+  { code: 'DPOP21046', name: 'Valencia', ccaa: 'C. Valenciana' },
+  { code: 'DPOP21844', name: 'Valladolid', ccaa: 'Castilla y León' },
+  { code: 'DPOP22858', name: 'Zamora', ccaa: 'Castilla y León' },
+  { code: 'DPOP23605', name: 'Zaragoza', ccaa: 'Aragón' },
+  { code: 'DPOP33147', name: 'Ceuta', ccaa: 'Ceuta' },
+  { code: 'DPOP33144', name: 'Melilla', ccaa: 'Melilla' },
+]
+
+/**
+ * Fetch provincial population from INE Padrón Continuo (table 2852).
+ * Fetches 52 province series in batches of 20 to be API-friendly.
+ */
+async function fetchProvincialPopulation(fetcher) {
+  console.log()
+  console.log('  📊 Población provincial (INE Padrón tabla 2852)...')
+
+  const BATCH_SIZE = 20
+  const allResults = []
+  for (let i = 0; i < PROVINCE_SERIES.length; i += BATCH_SIZE) {
+    const batch = PROVINCE_SERIES.slice(i, i + BATCH_SIZE)
+    const batchResults = await Promise.allSettled(
+      batch.map(({ code }) => fetchSeries(code, 10, fetcher))
+    )
+    allResults.push(...batch.map((spec, idx) => ({ ...spec, result: batchResults[idx] })))
+  }
+
+  const entries = []
+  let latestYear = 0
+
+  for (const { name, ccaa, result } of allResults) {
+    if (result.status !== 'fulfilled') {
+      console.warn(`    ❌ ${name}: ${result.reason?.message}`)
+      continue
+    }
+    const historical = result.value
+      .filter(p => p.Valor != null)
+      .map(p => ({ year: p.Anyo ?? new Date(p.Fecha).getFullYear(), value: Math.round(p.Valor) }))
+      .sort((a, b) => a.year - b.year)
+
+    if (historical.length === 0) continue
+    const latest = historical[historical.length - 1]
+    if (latest.year > latestYear) latestYear = latest.year
+
+    entries.push({ code: name, name, ccaa, population: latest.value, historical })
+  }
+
+  console.log(`    ✅ ${entries.length} provincias, último año ${latestYear}`)
+  return { latestYear, entries }
+}
+
+function fallbackProvincialPopulation() {
+  return {
+    latestYear: 2025,
+    entries: [
+      { code: 'Madrid', name: 'Madrid', ccaa: 'C. de Madrid', population: 7_000_000, historical: [{ year: 2025, value: 7_000_000 }] },
+      { code: 'Barcelona', name: 'Barcelona', ccaa: 'Cataluña', population: 5_800_000, historical: [{ year: 2025, value: 5_800_000 }] },
+      { code: 'Valencia', name: 'Valencia', ccaa: 'C. Valenciana', population: 2_650_000, historical: [{ year: 2025, value: 2_650_000 }] },
+      { code: 'Sevilla', name: 'Sevilla', ccaa: 'Andalucía', population: 1_970_000, historical: [{ year: 2025, value: 1_970_000 }] },
+      { code: 'Alicante', name: 'Alicante', ccaa: 'C. Valenciana', population: 1_950_000, historical: [{ year: 2025, value: 1_950_000 }] },
+      { code: 'Málaga', name: 'Málaga', ccaa: 'Andalucía', population: 1_760_000, historical: [{ year: 2025, value: 1_760_000 }] },
+      { code: 'Murcia', name: 'Murcia', ccaa: 'R. de Murcia', population: 1_560_000, historical: [{ year: 2025, value: 1_560_000 }] },
+      { code: 'Cádiz', name: 'Cádiz', ccaa: 'Andalucía', population: 1_250_000, historical: [{ year: 2025, value: 1_250_000 }] },
+      { code: 'Bizkaia', name: 'Bizkaia', ccaa: 'País Vasco', population: 1_160_000, historical: [{ year: 2025, value: 1_160_000 }] },
+      { code: 'Las Palmas', name: 'Las Palmas', ccaa: 'Canarias', population: 1_150_000, historical: [{ year: 2025, value: 1_150_000 }] },
+    ],
+  }
+}
+
 /**
  * Download detailed demographics: vital stats, life expectancy, population pyramid
  * with immigration breakdown, dependency ratios, and immigration share.
@@ -923,10 +1288,22 @@ export async function downloadDemographicsDetail(fetcher = fetchWithRetry) {
   console.log('  === Datos demográficos detallados ===')
 
   try {
-    // Fetch vital stats and life expectancy in parallel
-    const [vitalStats, lifeExpectancy] = await Promise.all([
+    // Fetch vital stats, life expectancy, projections, migration flows and provincial pop in parallel
+    const [vitalStats, lifeExpectancy, projections, migrationFlows, provincialPopulation] = await Promise.all([
       fetchVitalStats(fetcher),
       fetchLifeExpectancy(fetcher),
+      fetchProjections(fetcher).catch(err => {
+        console.warn('⚠️ Proyecciones fallback:', err.message)
+        return fallbackProjections()
+      }),
+      fetchMigrationFlows(fetcher).catch(err => {
+        console.warn('⚠️ Flujos migratorios fallback:', err.message)
+        return fallbackMigrationFlows()
+      }),
+      fetchProvincialPopulation(fetcher).catch(err => {
+        console.warn('⚠️ Población provincial fallback:', err.message)
+        return fallbackProvincialPopulation()
+      }),
     ])
 
     // Fetch pyramid (heavier, sequential to be API-friendly)
@@ -947,6 +1324,9 @@ export async function downloadDemographicsDetail(fetcher = fetchWithRetry) {
       pyramid,
       dependencyRatio,
       immigrationShare,
+      projections,
+      migrationFlows,
+      provincialPopulation,
       sourceAttribution: {
         vitalStats: {
           source: 'INE — Indicadores Demográficos Básicos',
@@ -962,6 +1342,21 @@ export async function downloadDemographicsDetail(fetcher = fetchWithRetry) {
           source: 'INE — Cifras de Población por lugar de nacimiento',
           type: 'api',
           url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=56943',
+        },
+        projections: {
+          source: 'INE — Proyecciones de Población (corto y largo plazo)',
+          type: 'api',
+          url: 'https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736176953',
+        },
+        migrationFlows: {
+          source: 'INE — Estadística de Migraciones',
+          type: 'api',
+          url: 'https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177000',
+        },
+        provincialPopulation: {
+          source: 'INE — Padrón Continuo (tabla 2852)',
+          type: 'api',
+          url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=2852',
         },
       },
     }
@@ -1044,6 +1439,9 @@ function fallbackDemographicsDetail() {
       byRegion: { eu: 0.052, restEurope: 0.020, africa: 0.038, americas: 0.068, asiaOceania: 0.016 },
       historical: [{ year: 2024, value: 0.189 }],
     },
+    projections: fallbackProjections(),
+    migrationFlows: fallbackMigrationFlows(),
+    provincialPopulation: fallbackProvincialPopulation(),
     sourceAttribution: {
       vitalStats: {
         source: 'Valor referencia 2024 (INE IDB)',
@@ -1062,6 +1460,24 @@ function fallbackDemographicsDetail() {
         type: 'fallback',
         url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=56943',
         note: 'Pirámide de población referencia',
+      },
+      projections: {
+        source: 'Valor referencia (INE Proyecciones de Población)',
+        type: 'fallback',
+        url: 'https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736176953',
+        note: 'Proyecciones de Población referencia',
+      },
+      migrationFlows: {
+        source: 'Valor referencia (INE Estadística de Migraciones)',
+        type: 'fallback',
+        url: 'https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177000',
+        note: 'Flujos migratorios referencia',
+      },
+      provincialPopulation: {
+        source: 'Valor referencia (INE Padrón Continuo)',
+        type: 'fallback',
+        url: 'https://www.ine.es/jaxiT3/Tabla.htm?t=2852',
+        note: 'Población provincial referencia',
       },
     },
   }
@@ -1094,6 +1510,9 @@ function buildFallbackDemographics() {
     pyramid: detail.pyramid,
     dependencyRatio: detail.dependencyRatio,
     immigrationShare: detail.immigrationShare,
+    projections: detail.projections,
+    migrationFlows: detail.migrationFlows,
+    provincialPopulation: detail.provincialPopulation,
     sourceAttribution: {
       population: pop.attribution,
       activePopulation: active.attribution,

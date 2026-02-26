@@ -164,4 +164,143 @@ describe('downloadDemographicsDetail', () => {
     // total should be approximately old + youth
     expect(Math.abs(result.dependencyRatio.total - result.dependencyRatio.oldAge - result.dependencyRatio.youth)).toBeLessThan(0.01)
   })
+
+  it('fallback includes projections data', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    expect(result.projections).toBeDefined()
+
+    // Short-term national projections
+    expect(result.projections.shortTerm.national.length).toBeGreaterThan(0)
+    const firstNat = result.projections.shortTerm.national[0]
+    expect(firstNat).toHaveProperty('year')
+    expect(firstNat).toHaveProperty('value')
+    expect(firstNat.year).toBeGreaterThanOrEqual(2024)
+    expect(firstNat.value).toBeGreaterThan(40_000_000)
+
+    // Long-term indicators
+    const indicators = result.projections.indicators
+    expect(indicators.dependencyOldAge.length).toBeGreaterThan(0)
+    expect(indicators.dependencyTotal.length).toBeGreaterThan(0)
+    expect(indicators.proportionOver65.length).toBeGreaterThan(0)
+    expect(indicators.populationGrowth.length).toBeGreaterThan(0)
+    expect(indicators.naturalBalance.length).toBeGreaterThan(0)
+    expect(indicators.netMigration.length).toBeGreaterThan(0)
+
+    // Dependency should increase over time
+    const depFirst = indicators.dependencyOldAge[0].value
+    const depLast = indicators.dependencyOldAge.at(-1).value
+    expect(depLast).toBeGreaterThan(depFirst)
+  })
+
+  it('fallback includes migration flows data', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    expect(result.migrationFlows).toBeDefined()
+
+    // Immigration
+    expect(result.migrationFlows.immigration.length).toBeGreaterThan(0)
+    const firstImm = result.migrationFlows.immigration[0]
+    expect(firstImm).toHaveProperty('year')
+    expect(firstImm).toHaveProperty('value')
+    expect(firstImm.value).toBeGreaterThan(0)
+
+    // Emigration
+    expect(result.migrationFlows.emigration.length).toBeGreaterThan(0)
+    expect(result.migrationFlows.emigration[0].value).toBeGreaterThan(0)
+
+    // Net migration = immigration - emigration
+    expect(result.migrationFlows.netMigration.length).toBeGreaterThan(0)
+    const net2024 = result.migrationFlows.netMigration.find(p => p.year === 2024)
+    const imm2024 = result.migrationFlows.immigration.find(p => p.year === 2024)
+    const em2024 = result.migrationFlows.emigration.find(p => p.year === 2024)
+    if (net2024 && imm2024 && em2024) {
+      expect(net2024.value).toBe(imm2024.value - em2024.value)
+    }
+  })
+
+  it('fallback projections have realistic values', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    // Population should be between 45M-60M
+    for (const p of result.projections.shortTerm.national) {
+      expect(p.value).toBeGreaterThan(45_000_000)
+      expect(p.value).toBeLessThan(60_000_000)
+    }
+
+    // Dependency 65+ should be between 20-70%
+    for (const p of result.projections.indicators.dependencyOldAge) {
+      expect(p.value).toBeGreaterThan(20)
+      expect(p.value).toBeLessThan(70)
+    }
+
+    // Proportion 65+ should be between 15-40%
+    for (const p of result.projections.indicators.proportionOver65) {
+      expect(p.value).toBeGreaterThan(15)
+      expect(p.value).toBeLessThan(40)
+    }
+  })
+
+  it('fallback source attributions include projections, migration and provincial', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    expect(result.sourceAttribution.projections).toBeDefined()
+    expect(result.sourceAttribution.projections.type).toBe('fallback')
+    expect(result.sourceAttribution.migrationFlows).toBeDefined()
+    expect(result.sourceAttribution.migrationFlows.type).toBe('fallback')
+    expect(result.sourceAttribution.provincialPopulation).toBeDefined()
+    expect(result.sourceAttribution.provincialPopulation.type).toBe('fallback')
+  })
+
+  it('fallback includes provincial population data', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    expect(result.provincialPopulation).toBeDefined()
+    expect(result.provincialPopulation.latestYear).toBeGreaterThanOrEqual(2024)
+    expect(result.provincialPopulation.entries.length).toBeGreaterThan(0)
+
+    const first = result.provincialPopulation.entries[0]
+    expect(first).toHaveProperty('code')
+    expect(first).toHaveProperty('name')
+    expect(first).toHaveProperty('ccaa')
+    expect(first).toHaveProperty('population')
+    expect(first).toHaveProperty('historical')
+    expect(first.population).toBeGreaterThan(100_000)
+    expect(first.historical.length).toBeGreaterThan(0)
+    expect(first.historical[0]).toHaveProperty('year')
+    expect(first.historical[0]).toHaveProperty('value')
+  })
+
+  it('fallback provincial population has realistic values', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    // Total population across all provinces should be roughly Spain's population
+    const total = result.provincialPopulation.entries.reduce((s, e) => s + e.population, 0)
+    // Fallback only has top 10 provinces, so total won't equal full Spain
+    expect(total).toBeGreaterThan(20_000_000)
+
+    // Madrid should be the largest
+    const sorted = [...result.provincialPopulation.entries].sort((a, b) => b.population - a.population)
+    expect(sorted[0].name).toBe('Madrid')
+    expect(sorted[0].population).toBeGreaterThan(5_000_000)
+  })
+
+  it('migration flows are sorted chronologically', async () => {
+    const failFetcher = vi.fn().mockRejectedValue(new Error('fail'))
+    const result = await downloadDemographicsDetail(failFetcher)
+
+    const immYears = result.migrationFlows.immigration.map(p => p.year)
+    const emYears = result.migrationFlows.emigration.map(p => p.year)
+    const netYears = result.migrationFlows.netMigration.map(p => p.year)
+
+    expect(immYears).toEqual([...immYears].sort((a, b) => a - b))
+    expect(emYears).toEqual([...emYears].sort((a, b) => a - b))
+    expect(netYears).toEqual([...netYears].sort((a, b) => a - b))
+  })
 })

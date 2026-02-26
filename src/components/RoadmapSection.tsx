@@ -21,7 +21,7 @@ interface RoadmapCopy {
 const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   es: {
     intro: "Este es el estado actual del proyecto y las funcionalidades que nos gustaría añadir.",
-    statusLine: "Estado validado: 25 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
+    statusLine: "Estado validado: 26 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
     phases: [
       {
         title: "Fase 1: Deuda + Pensiones (MVP) ✅",
@@ -68,8 +68,8 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "✅ Selector de año para evolución histórica de la pirámide",
           "✅ Gráficos de tendencias históricas (demografía, esperanza de vida, inmigración)",
           "✅ Ratios de dependencia (vejez, juventud, total)",
-          "⏳ Desglose provincial",
-          "⏳ Proyecciones demográficas (INE a 20-30 años)",
+          "✅ Desglose provincial (52 provincias, Padrón INE)",
+          "✅ Proyecciones demográficas (INE a 20-30 años)",
           "✅ Comparativas internacionales (natalidad, mortalidad, esperanza de vida, fecundidad) — barras EU-27 con datos Eurostat",
         ],
       },
@@ -112,6 +112,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         title: "Wishlist — Nuevas visualizaciones",
         items: [
           "✅ Sostenibilidad SS: serie histórica déficit contributivo (ingresos vs gastos desde 2006), déficit como % PIB, evolución Fondo de Reserva, cotizantes/pensionista y proyecciones Ageing Report",
+          "⏳ Proyecciones demográficas fallidas: gráfico población real vs proyecciones históricas (INE 2009 preveía 41,5M en 2052, hoy 49,5M) + proyecciones de natalidad de ONU/AIREF/INE a lo largo de los años + regresión lineal de los últimos años de natalidad",
           "Visión unificada ingresos vs gastos: fusionar Ingresos/Gastos (Eurostat), COFOG y Recaudación Tributaria en un panel global y por CCAA con máximo desglose por partidas",
           "Panorama de deuda pública + privada",
           "Simulador de ajuste fiscal",
@@ -136,7 +137,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   },
   en: {
     intro: "This is the current project status and the features we want to add next.",
-    statusLine: "Status validated: February 25, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
+    statusLine: "Status validated: February 26, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
     phases: [
       {
         title: "Phase 1: Debt + Pensions (MVP) ✅",
@@ -183,8 +184,8 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
           "✅ Year selector for historical pyramid evolution",
           "✅ Historical trend charts (demographics, life expectancy, immigration)",
           "✅ Dependency ratios (old-age, youth, total)",
-          "⏳ Provincial breakdown",
-          "⏳ Demographic projections (INE 20-30 year forecast)",
+          "✅ Provincial breakdown (52 provinces, INE Padrón)",
+          "✅ Demographic projections (INE 20-30 year forecast)",
           "✅ International comparisons (birth rate, mortality, life expectancy, fertility) — EU-27 bar chart with Eurostat data",
         ],
       },
@@ -227,6 +228,7 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         title: "Wishlist — New visualizations",
         items: [
           "✅ Social Security sustainability: historical contributory deficit (revenue vs spending since 2006), deficit as % GDP, Reserve Fund evolution, contributors per pensioner and Ageing Report projections",
+          "⏳ Failed demographic projections: real population vs historical projections chart (INE 2009 projected 41.5M by 2052, today 49.5M) + birth rate projections from UN/AIREF/INE over the years + linear regression of recent birth rate trend",
           "Unified revenue vs spending view: merge Revenue/Spending (Eurostat), COFOG and Tax Revenue into a single panel with national and regional breakdown by category",
           "Public + private debt panorama",
           "Fiscal adjustment simulator",

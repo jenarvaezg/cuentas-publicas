@@ -128,6 +128,9 @@ export interface DemographicsData {
   pyramid?: PopulationPyramidData;
   dependencyRatio?: DependencyRatioData;
   immigrationShare?: ImmigrationShareData;
+  projections?: ProjectionsData;
+  migrationFlows?: MigrationFlowsData;
+  provincialPopulation?: ProvincialPopulationData;
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
@@ -430,6 +433,40 @@ export interface ImmigrationShareData {
   total: number;
   byRegion: Record<string, number>;
   historical: TimeSeriesPoint[];
+}
+
+export interface ProjectionsData {
+  shortTerm: {
+    national: TimeSeriesPoint[];
+    byCcaa: Record<string, TimeSeriesPoint[]>;
+  };
+  indicators: {
+    dependencyOldAge: TimeSeriesPoint[];
+    dependencyTotal: TimeSeriesPoint[];
+    proportionOver65: TimeSeriesPoint[];
+    populationGrowth: TimeSeriesPoint[];
+    naturalBalance: TimeSeriesPoint[];
+    netMigration: TimeSeriesPoint[];
+  };
+}
+
+export interface MigrationFlowsData {
+  immigration: TimeSeriesPoint[];
+  emigration: TimeSeriesPoint[];
+  netMigration: TimeSeriesPoint[];
+}
+
+export interface ProvincialPopulationEntry {
+  code: string;
+  name: string;
+  ccaa: string;
+  population: number;
+  historical: TimeSeriesPoint[];
+}
+
+export interface ProvincialPopulationData {
+  latestYear: number;
+  entries: ProvincialPopulationEntry[];
 }
 
 // ── SS Sustainability ────────────────────────────────────────────────

@@ -381,7 +381,37 @@ export const blockMessages = {
           "El porcentaje de personas que viven en España pero nacieron en otro país.",
         inflationRate:
           "Cuánto más caras están las cosas respecto al año anterior, medido por el Índice de Precios al Consumo (IPC). Una tasa del 2% significa que lo que costaba 100 € el año pasado ahora cuesta 102 €.",
+        projectedPopulation:
+          "La población que el INE estima que tendrá España en 2039 según las proyecciones a corto plazo. Incluye el efecto de la inmigración, la natalidad y la mortalidad previstas.",
+        projectedDependency2050:
+          "Por cada 100 personas en edad de trabajar (16-64), cuántas tendrán 65 años o más en 2050. Hoy estamos en ~31, llegaremos a ~53.",
+        netMigrationLatest:
+          "Diferencia entre personas que llegan a España del extranjero y las que se van. Un saldo positivo significa que llegan más de las que se marchan.",
       },
+      projections: {
+        populationTitle: "Proyección de población (2024–2039)",
+        agingTitle: "Envejecimiento proyectado (2024–2074)",
+        populationLabel: "Población",
+        dependencyLabel: "Dependencia 65+",
+        proportionLabel: "% mayores de 65",
+        millionLabel: "M",
+      },
+      migrationFlows: {
+        title: "Flujos migratorios con el extranjero",
+        immigration: "Inmigración",
+        emigration: "Emigración",
+        netMigration: "Saldo migratorio",
+      },
+      provincial: {
+        title: "Población por territorio",
+        ccaaLabel: "Comunidades",
+        provincesLabel: "Provincias",
+        populationLabel: "Habitantes",
+        millionLabel: "M",
+      },
+      projectedPopulation: "Población proyectada 2039",
+      projectedDependency2050: "Dependencia 65+ en 2050",
+      netMigrationLatest: "Saldo migratorio",
       euComparison: {
         title: "Comparativa europea",
         indicatorLabels: {
@@ -934,7 +964,37 @@ export const blockMessages = {
           "The percentage of people living in Spain who were born in another country.",
         inflationRate:
           "How much more expensive things are compared to a year ago, measured by the Consumer Price Index (CPI). A rate of 2% means a basket of goods that cost €100 last year now costs €102.",
+        projectedPopulation:
+          "The population INE estimates Spain will have in 2039 based on short-term projections. Includes projected immigration, birth and death rates.",
+        projectedDependency2050:
+          "For every 100 people of working age (16-64), how many will be 65 or older in 2050. Today it's ~31, it will reach ~53.",
+        netMigrationLatest:
+          "Difference between people arriving in Spain from abroad and those leaving. A positive balance means more arrive than depart.",
       },
+      projections: {
+        populationTitle: "Population projection (2024–2039)",
+        agingTitle: "Projected aging (2024–2074)",
+        populationLabel: "Population",
+        dependencyLabel: "Old-age dependency",
+        proportionLabel: "% aged 65+",
+        millionLabel: "M",
+      },
+      migrationFlows: {
+        title: "International migration flows",
+        immigration: "Immigration",
+        emigration: "Emigration",
+        netMigration: "Net migration",
+      },
+      provincial: {
+        title: "Population by territory",
+        ccaaLabel: "Regions",
+        provincesLabel: "Provinces",
+        populationLabel: "Inhabitants",
+        millionLabel: "M",
+      },
+      projectedPopulation: "Projected population 2039",
+      projectedDependency2050: "Old-age dependency 2050",
+      netMigrationLatest: "Net migration",
       euComparison: {
         title: "European Comparison",
         indicatorLabels: {

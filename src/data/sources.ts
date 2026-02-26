@@ -158,6 +158,21 @@ export const EUROSTAT_GOV_MAIN: SourceDetail = {
   note: "Ingresos y gastos AAPP, millones de euros (SEC 2010)",
 };
 
+export const INE_PROJECTIONS: SourceDetail = {
+  name: "INE — Proyecciones de Población",
+  url: "https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736176953",
+};
+
+export const INE_MIGRACIONES: SourceDetail = {
+  name: "INE — Estadística de Migraciones",
+  url: "https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177000",
+};
+
+export const INE_PADRON: SourceDetail = {
+  name: "INE — Padrón Municipal",
+  url: "https://www.ine.es/jaxiT3/Tabla.htm?t=2852",
+};
+
 /** Helper: add the data date to a source */
 export function withDate(source: SourceDetail, date: string): SourceDetail {
   return { ...source, date };
