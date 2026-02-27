@@ -5,7 +5,7 @@ test.describe("Smoke", () => {
     await page.goto("/");
 
     await expect(
-      page.getByRole("heading", { name: "Dashboard Fiscal de España" }),
+      page.getByRole("heading", { name: "Cuentas Públicas de España" }),
     ).toBeVisible();
 
     const headings = [
