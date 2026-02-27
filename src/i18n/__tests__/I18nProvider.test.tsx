@@ -38,7 +38,7 @@ describe("I18nProvider", () => {
       </I18nProvider>,
     );
 
-    expect(screen.getByRole("heading", { name: "Dashboard Fiscal de España" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Cuentas Públicas de España" })).toBeDefined();
     expect(document.documentElement.lang).toBe("es");
   });
 
@@ -52,13 +52,13 @@ describe("I18nProvider", () => {
       </I18nProvider>,
     );
 
-    expect(screen.getByRole("heading", { name: "Spain Fiscal Dashboard" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Spain Public Accounts" })).toBeDefined();
     const selector = screen.getByLabelText("Language");
     expect((selector as HTMLSelectElement).value).toBe("en");
 
     fireEvent.change(selector, { target: { value: "es" } });
 
-    expect(screen.getByRole("heading", { name: "Dashboard Fiscal de España" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Cuentas Públicas de España" })).toBeDefined();
     expect(window.localStorage.getItem("cuentas-publicas-lang")).toBe("es");
     expect(window.location.pathname).toBe("/");
   });
@@ -73,7 +73,7 @@ describe("I18nProvider", () => {
       </I18nProvider>,
     );
 
-    expect(screen.getByRole("heading", { name: "Spain Fiscal Dashboard" })).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Spain Public Accounts" })).toBeDefined();
     expect(window.location.pathname).toBe("/en");
     expect(window.location.search).toBe("");
   });

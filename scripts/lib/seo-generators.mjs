@@ -158,30 +158,40 @@ export function buildSeoSnapshotHtml({ meta, debt, pensions, budget, revenue }) 
     dateStyle: "medium",
     timeStyle: "short",
   });
+  const sectionLinks = SECTION_PAGE_DEFS.map(
+    (section) =>
+      `<a href="${SITE_URL}${buildSectionPath(section, "es")}">${section.titleEs}</a>`,
+  ).join("\n          ");
 
   return `<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snapshot SEO | Cuentas Públicas</title>
-    <meta name="description" content="Resumen estático pre-renderizado de Cuentas Públicas de España para SEO." />
+    <title>Cuentas Públicas de España | Snapshot SEO de Deuda, Pensiones y Gasto</title>
+    <meta name="description" content="Resumen estático de Cuentas Públicas de España con deuda, pensiones, gasto e ingresos públicos a partir de fuentes oficiales." />
+    <meta name="keywords" content="cuentas publicas, cuentas públicas, deuda pública españa, pensiones españa, gasto público españa" />
     <link rel="canonical" href="${SITE_URL}/seo-snapshot.html" />
+    <link rel="alternate" hreflang="es" href="${SITE_URL}/seo-snapshot.html" />
+    <link rel="alternate" hreflang="x-default" href="${SITE_URL}/" />
     <style>
       body { font-family: Manrope, system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #0f172a; }
       h1 { margin-bottom: .5rem; }
+      h2 { margin-top: 1.2rem; margin-bottom: .5rem; }
       .muted { color: #475569; }
       .grid { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 1rem; }
       .card { border: 1px solid #cbd5e1; border-radius: .75rem; padding: .85rem 1rem; background: #f8fafc; }
       .label { font-size: .82rem; color: #334155; margin-bottom: .35rem; }
       .value { font-weight: 700; font-size: 1.05rem; }
       ul { margin-top: .5rem; }
+      .links { margin-top: .8rem; display: flex; gap: .7rem; flex-wrap: wrap; }
     </style>
   </head>
   <body>
     <main>
       <h1>Cuentas Públicas de España en Tiempo Real</h1>
       <p class="muted">Snapshot pre-renderizado para motores de búsqueda. Actualizado: ${lastUpdated}.</p>
+      <p class="muted">Proyecto fiscal abierto con datos oficiales de España, también buscado como "Cuentas Publicas".</p>
 
       <section class="grid" aria-label="Métricas principales">
         <article class="card">
@@ -215,6 +225,13 @@ export function buildSeoSnapshotHtml({ meta, debt, pensions, budget, revenue }) 
           <li>IGAE (COFOG)</li>
           <li>Eurostat (comparativa UE e ingresos/gastos)</li>
         </ul>
+      </section>
+
+      <section>
+        <h2>Secciones principales</h2>
+        <div class="links">
+          ${sectionLinks}
+        </div>
       </section>
 
       <p class="muted">Versión interactiva: <a href="${SITE_URL}/">${SITE_URL}/</a></p>
@@ -326,8 +343,18 @@ export function buildSectionSnapshotHtml({
   const locale = isEnglish ? "en-US" : "es-ES";
   const title = isEnglish ? section.titleEn : section.titleEs;
   const description = isEnglish ? section.descriptionEn : section.descriptionEs;
+  const enrichedDescription = isEnglish
+    ? `${description} Static SEO route from Spain Public Accounts with official data.`
+    : `${description} Sección de Cuentas Públicas de España con datos oficiales y ruta estática para SEO.`;
   const routePath = buildSectionPath(section, lang);
   const interactiveUrl = `${SITE_URL}/?section=${section.id}${isEnglish ? "&lang=en" : ""}`;
+  const sectionHubLinks = SECTION_PAGE_DEFS.filter((entry) => entry.id !== section.id)
+    .map((entry) => {
+      const path = buildSectionPath(entry, lang);
+      const label = isEnglish ? entry.titleEn : entry.titleEs;
+      return `<a href="${SITE_URL}${path}">${label}</a>`;
+    })
+    .join("\n          ");
   const lastUpdated = new Date(meta.lastDownload).toLocaleString(locale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -353,8 +380,10 @@ export function buildSectionSnapshotHtml({
         revenue: "Revenue/expenditure latest year",
         revenueSeries: "Eurostat annual series",
         cta: "Open interactive dashboard section",
-        home: "Back to dashboard home",
+        home: "Spain Public Accounts home",
         language: "Language",
+        brandHint: "This page belongs to Spain Public Accounts, a public fiscal data project.",
+        related: "Related sections",
         methodology:
           "This page is generated automatically from the same datasets used by the SPA.",
       }
@@ -369,8 +398,11 @@ export function buildSectionSnapshotHtml({
         revenue: "Ingresos/gastos último año",
         revenueSeries: "Serie anual Eurostat",
         cta: "Abrir sección interactiva del dashboard",
-        home: "Volver al inicio del dashboard",
+        home: "Inicio de Cuentas Públicas",
         language: "Idioma",
+        brandHint:
+          "Esta página forma parte de Cuentas Públicas de España (también buscado como \"Cuentas Publicas\").",
+        related: "Secciones relacionadas",
         methodology:
           "Esta página se genera automáticamente con los mismos datasets de la SPA.",
       };
@@ -381,13 +413,16 @@ export function buildSectionSnapshotHtml({
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${title} | ${isEnglish ? "Spain Public Accounts" : "Cuentas Públicas de España"}</title>
-    <meta name="description" content="${description}" />
+    <meta name="description" content="${enrichedDescription}" />
+    <meta name="keywords" content="${isEnglish ? "spain public accounts, public debt spain, pensions spain, public spending spain" : "cuentas publicas, cuentas públicas, deuda pública españa, pensiones españa, gasto público españa"}" />
     <link rel="canonical" href="${SITE_URL}${routePath}" />
     <link rel="alternate" hreflang="es" href="${SITE_URL}${buildSectionPath(section, "es")}" />
     <link rel="alternate" hreflang="en" href="${SITE_URL}${buildSectionPath(section, "en")}" />
+    <link rel="alternate" hreflang="x-default" href="${SITE_URL}${buildSectionPath(section, "es")}" />
     <style>
       body { font-family: Manrope, system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #0f172a; }
       h1 { margin-bottom: .4rem; }
+      h2 { margin-top: 1.2rem; margin-bottom: .4rem; }
       .muted { color: #475569; }
       .grid { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 1rem; }
       .card { border: 1px solid #cbd5e1; border-radius: .75rem; padding: .85rem 1rem; background: #f8fafc; }
@@ -396,13 +431,31 @@ export function buildSectionSnapshotHtml({
       .cta { display: inline-block; margin-top: 1rem; border: 1px solid #1d4ed8; color: #1d4ed8; text-decoration: none; border-radius: .6rem; padding: .5rem .75rem; }
       .cta:hover { background: #eff6ff; }
       .links { margin-top: .8rem; display: flex; gap: .8rem; flex-wrap: wrap; }
+      .related { margin-top: 1rem; }
     </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "${title}",
+        "url": "${SITE_URL}${routePath}",
+        "description": "${enrichedDescription}",
+        "inLanguage": "${lang}",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "${isEnglish ? "Spain Public Accounts" : "Cuentas Públicas de España"}",
+          "alternateName": "${isEnglish ? "Spain Fiscal Dashboard" : "Cuentas Publicas de España"}",
+          "url": "${SITE_URL}/"
+        }
+      }
+    </script>
   </head>
   <body>
     <main>
       <h1>${title}</h1>
       <p class="muted">${labels.heading} · ${description}</p>
       <p class="muted">${labels.methodology} ${isEnglish ? "Updated" : "Actualizado"}: ${lastUpdated}.</p>
+      <p class="muted">${labels.brandHint}</p>
 
       <section class="grid" aria-label="${isEnglish ? "Main metrics" : "Métricas principales"}">
         <article class="card">
@@ -428,6 +481,12 @@ export function buildSectionSnapshotHtml({
       </section>
 
       <a class="cta" href="${interactiveUrl}">${labels.cta}</a>
+      <section class="related">
+        <h2>${labels.related}</h2>
+        <div class="links">
+          ${sectionHubLinks}
+        </div>
+      </section>
       <div class="links">
         <a href="${SITE_URL}/">${labels.home}</a>
         <a href="${SITE_URL}${routePath}">${labels.language}: ${lang.toUpperCase()}</a>

@@ -12,8 +12,8 @@ export const messages = {
     },
     header: {
       eyebrow: "Cuentas públicas en tiempo real",
-      title: "Dashboard Fiscal de España",
-      subtitle: "Deuda, pensiones y gasto público explicados con datos oficiales.",
+      title: "Cuentas Públicas de España",
+      subtitle: "Deuda, pensiones, ingresos y gasto público explicados con datos oficiales.",
       sourcesPrefix: "Fuentes: BdE, INE, Seguridad Social, IGAE y Eurostat · Última actualización:",
     },
     sections: {
@@ -31,9 +31,9 @@ export const messages = {
       metodologia: "Metodología",
     },
     app: {
-      pageTitle: "Cuentas Públicas de España en Tiempo Real",
+      pageTitle: "Cuentas Públicas de España | Dashboard Fiscal en Tiempo Real",
       pageDescription:
-        "Deuda pública, pensiones y gasto público de España. Datos oficiales actualizados en tiempo real.",
+        "Deuda pública, pensiones, ingresos y gasto público de España. Datos oficiales actualizados.",
       debtSummaryLabel: "Deuda Pública Total",
       debtSummaryNotePrefix: "Extrapolación sobre",
       debtSummaryNoteSuffix: "último dato:",
@@ -104,8 +104,8 @@ export const messages = {
     },
     header: {
       eyebrow: "Public accounts in real time",
-      title: "Spain Fiscal Dashboard",
-      subtitle: "Debt, pensions and public spending explained with official data.",
+      title: "Spain Public Accounts",
+      subtitle: "Debt, pensions, revenue and public spending explained with official data.",
       sourcesPrefix: "Sources: BdE, INE, Social Security, IGAE and Eurostat · Last update:",
     },
     sections: {
@@ -123,9 +123,9 @@ export const messages = {
       metodologia: "Methodology",
     },
     app: {
-      pageTitle: "Spain Public Accounts in Real Time",
+      pageTitle: "Spain Public Accounts | Real-Time Fiscal Dashboard",
       pageDescription:
-        "Public debt, pensions and spending indicators for Spain with official up-to-date data.",
+        "Spain public debt, pensions, revenue and spending with official up-to-date data.",
       debtSummaryLabel: "Total Public Debt",
       debtSummaryNotePrefix: "Extrapolation based on",
       debtSummaryNoteSuffix: "latest data:",

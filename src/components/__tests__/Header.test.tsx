@@ -34,7 +34,7 @@ describe("Header", () => {
     });
 
     render(<Header />);
-    expect(screen.getByText(/Dashboard Fiscal/)).toBeDefined();
+    expect(screen.getByText(/Cuentas Públicas de España/)).toBeDefined();
     expect(screen.getByText(/1 de enero de 2024/)).toBeDefined();
     expect(screen.getByTestId("theme-toggle")).toBeDefined();
   });

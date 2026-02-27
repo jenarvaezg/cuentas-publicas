@@ -8,12 +8,14 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cuentas Públicas de España en Tiempo Real</title>
+  <title>Cuentas Públicas de España | Dashboard Fiscal en Tiempo Real</title>
   <meta name="description"
-    content="Visualiza la deuda pública, el gasto en pensiones y otros indicadores fiscales de España actualizados en tiempo real. Datos del Banco de España, INE y Seguridad Social." />
-  <meta property="og:title" content="Cuentas Públicas de España en Tiempo Real" />
+    content="Cuentas Públicas de España: deuda pública, pensiones, gasto e ingresos con datos oficiales del Banco de España, INE, Seguridad Social, IGAE y Eurostat." />
+  <meta name="keywords"
+    content="cuentas publicas, cuentas públicas, deuda pública españa, pensiones españa, gasto público españa, deficit españa" />
+  <meta property="og:title" content="Cuentas Públicas de España | Dashboard Fiscal en Tiempo Real" />
   <meta property="og:description"
-    content="Deuda pública, pensiones y gasto público de España. Datos oficiales del Banco de España, INE y Seguridad Social, actualizados en tiempo real." />
+    content="Deuda pública, pensiones, ingresos y gasto público de España con datos oficiales actualizados." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://cuentas-publicas.es/" />
   <meta property="og:image" content="https://cuentas-publicas.es/og-image.png" />
@@ -21,11 +23,11 @@
   <meta property="og:image:height" content="630" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:locale" content="es_ES" />
-  <meta property="og:site_name" content="cuentas-publicas.es" />
+  <meta property="og:site_name" content="Cuentas Públicas de España" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Cuentas Públicas de España en Tiempo Real" />
+  <meta name="twitter:title" content="Cuentas Públicas de España | Dashboard Fiscal en Tiempo Real" />
   <meta name="twitter:description"
-    content="Deuda pública, pensiones y gasto público de España. Datos oficiales actualizados en tiempo real." />
+    content="Dashboard fiscal de España con deuda, pensiones, ingresos y gasto público a partir de fuentes oficiales." />
   <meta name="twitter:image" content="https://cuentas-publicas.es/og-image.png" />
   <meta name="theme-color" content="#1e3a5f" />
   <meta name="robots" content="index,follow,max-image-preview:large" />
@@ -34,15 +36,16 @@
   <link rel="alternate" type="application/rss+xml" title="Cuentas Públicas RSS" href="/feed.xml" />
   <link rel="alternate" type="text/html" hreflang="es" href="https://cuentas-publicas.es/" />
   <link rel="alternate" type="text/html" hreflang="en" href="https://cuentas-publicas.es/en/" />
+  <link rel="alternate" type="text/html" hreflang="x-default" href="https://cuentas-publicas.es/" />
   <script>
     (function () {
       const path = window.location.pathname;
       const isEnglishPath = path === "/en" || path.startsWith("/en/");
       if (!isEnglishPath) return;
 
-      const englishTitle = "Spain Public Accounts in Real Time";
+      const englishTitle = "Spain Public Accounts | Real-Time Fiscal Dashboard";
       const englishDescription =
-        "Public debt, pensions and spending indicators for Spain with official up-to-date data.";
+        "Spain public debt, pensions, revenue and spending with official up-to-date data.";
       const normalizedPath = path.endsWith("/") ? path : `${path}/`;
       const canonicalHref = `${window.location.origin}${normalizedPath}`;
 
@@ -79,6 +82,7 @@
     <div style="padding:2rem;max-width:900px;margin:0 auto;font-family:system-ui;color:#0f172a">
       <h1>Cuentas Públicas de España en Tiempo Real</h1>
       <p>Dashboard fiscal con datos oficiales del Banco de España, INE, Seguridad Social, IGAE y Eurostat.</p>
+      <p>También nos puedes encontrar como "Cuentas Publicas" (sin tilde) en buscadores.</p>
       <h2>Indicadores principales</h2>
       <ul>
         <li><strong>Deuda pública</strong> — Dato mensual PDE del Banco de España (be11b.csv)</li>
@@ -112,6 +116,7 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "Cuentas Públicas de España",
+        "alternateName": ["Cuentas Publicas de España", "Dashboard Fiscal de España"],
         "url": "https://cuentas-publicas.es/",
         "description": "Dashboard de deuda pública, pensiones e indicadores fiscales de España con datos oficiales.",
         "inLanguage": ["es", "en"],
@@ -125,13 +130,26 @@
   <script type="application/ld+json">
       {
         "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Cuentas Públicas de España",
+        "alternateName": "Cuentas Publicas de España",
+        "url": "https://cuentas-publicas.es/",
+        "sameAs": [
+          "https://github.com/jenarvaezg/cuentas-publicas"
+        ]
+      }
+    </script>
+  <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
         "@type": "Dataset",
         "name": "Cuentas Públicas de España — API v1",
         "description": "Datos abiertos de deuda, pensiones, gasto e ingresos públicos de España.",
         "url": "https://cuentas-publicas.es/api/v1/index.json",
         "creator": {
           "@type": "Organization",
-          "name": "Cuentas Públicas de España"
+          "name": "Cuentas Públicas de España",
+          "alternateName": "Cuentas Publicas de España"
         },
         "distribution": [
           {
