@@ -449,6 +449,10 @@ export const blockMessages = {
       ssBalance: "Balance del sistema SS",
       ssBalanceTooltip:
         "Diferencia entre cotizaciones sociales y prestaciones contributivas en efectivo. Un valor negativo indica deficit estructural.",
+      ssBalanceInsightDeficit:
+        "En {year}, el sistema contributivo cerró con un agujero de {gap}: las cotizaciones de trabajadores y empresas no alcanzaron para pagar las prestaciones contributivas de ese año. Esa diferencia no desaparece por sí sola; se cubre con transferencias del Estado (impuestos generales) y, cuando hace falta, con más financiación pública. Si esta dinámica se repite varios ejercicios, el déficit se acumula y reduce el margen para financiar otras políticas.",
+      ssBalanceInsightSurplus:
+        "En {year}, las cotizaciones superaron el gasto contributivo en {gap}. Es una señal positiva en el corto plazo, pero no garantiza equilibrio estructural: el envejecimiento, carreras laborales más cortas o salarios más débiles pueden volver a abrir déficit. Por eso conviene mirar la tendencia de varios años y no solo un dato puntual.",
       pensionGDP: "Gasto contributivo / PIB",
       pensionGDPTooltip:
         "Porcentaje del PIB destinado a prestaciones contributivas. Valores altos reflejan mayor presion sobre un sistema financiado por cotizaciones.",
@@ -1092,6 +1096,10 @@ export const blockMessages = {
       ssBalance: "SS System Balance",
       ssBalanceTooltip:
         "Difference between social contributions and contributory cash benefits. Negative values indicate a structural contributory deficit.",
+      ssBalanceInsightDeficit:
+        "In {year}, the contributory system closed with a shortfall of {gap}: payroll contributions from workers and employers did not cover contributory benefits paid that year. That gap does not vanish on its own; it is financed through state transfers (general taxation) and, when needed, additional public financing. If this pattern persists over several years, the cumulative deficit grows and reduces fiscal room for other policies.",
+      ssBalanceInsightSurplus:
+        "In {year}, social contributions exceeded contributory spending by {gap}. That is a positive short-term signal, but it does not guarantee structural balance: ageing, shorter contribution careers, or weaker wages can push the system back into deficit. This is why multi-year trend tracking matters more than a single annual print.",
       pensionGDP: "Contributory Spending / GDP",
       pensionGDPTooltip:
         "Share of GDP devoted to contributory social benefits. Higher values imply stronger pressure on payroll-funded spending.",

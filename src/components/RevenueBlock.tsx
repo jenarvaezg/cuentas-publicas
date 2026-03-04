@@ -95,7 +95,11 @@ export const HistoricalTooltip = ({
   );
 };
 
-export function RevenueBlock() {
+interface RevenueBlockProps {
+  exportTargetId?: string;
+}
+
+export function RevenueBlock({ exportTargetId = "ingresos-gastos" }: RevenueBlockProps) {
   const { revenue, demographics } = useData();
   const { msg } = useI18n();
 
@@ -180,7 +184,7 @@ export function RevenueBlock() {
             </select>
           </div>
           <ExportBlockButton
-            targetId="ingresos-gastos"
+            targetId={exportTargetId}
             filenamePrefix="cuentas-publicas-ingresos-gastos"
           />
         </div>

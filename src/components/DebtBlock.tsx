@@ -75,8 +75,6 @@ export function DebtBlock() {
       : impliedGDP > 0
         ? totalDebtSparkline.map((value) => (value / impliedGDP) * 100)
         : [];
-  const yoyChange = debt.current.yearOverYearChange;
-
   // Last data point date from historical
   const lastDebtDate =
     debt.historical.length > 0
@@ -100,13 +98,6 @@ export function DebtBlock() {
   const inePibSource = demographics.sourceAttribution?.gdp
     ? fromAttribution(demographics.sourceAttribution.gdp)
     : withDate(INE_PIB, demoDate);
-
-  const yoySource = debt.sourceAttribution?.yearOverYearChange
-    ? fromAttribution(debt.sourceAttribution.yearOverYearChange)
-    : {
-        ...CALCULO_DERIVADO,
-        note: copy.yoyNote,
-      };
 
   return (
     <Card>
@@ -168,19 +159,6 @@ export function DebtBlock() {
             delay={0.3}
             sparklineData={debtLocalAndSsSparkline}
             sources={[bdeSource]}
-          />
-
-          <StatCard
-            label={copy.yoyLabel}
-            value={formatPercent(yoyChange)}
-            tooltip={copy.yoyTooltip}
-            delay={0.35}
-            trend={{
-              value: yoyChange,
-              label: formatPercent(Math.abs(yoyChange)),
-            }}
-            sparklineData={totalDebtSparkline}
-            sources={[yoySource, bdeSource]}
           />
         </div>
 

@@ -139,139 +139,143 @@ export function DebtImplicationsBlock() {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {tab === "cost" && (
-          <div role="tabpanel" id="debt-panel-cost" aria-labelledby="debt-tab-cost">
-            <div className="flex flex-col items-center py-6 border-b gap-2">
-              <RealtimeCounter
-                baseValue={0}
-                perSecond={interestPerSecond}
-                suffix=" €"
-                size="lg"
-                decimals={0}
-                label={costCopy.realtimeLabel}
-              />
-              <p className="text-xs text-muted-foreground/80 text-center">
-                {costCopy.realtimeNote}
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <StatCard
-                label={costCopy.annualInterest}
-                value={formatCompact(debt.current.interestExpense)}
-                tooltip={costCopy.annualInterestTooltip}
-                delay={0.05}
-                sparklineData={annualInterestSparkline}
-                sources={[interestSource]}
-              />
-              <StatCard
-                label={costCopy.averageCost}
-                value={formatPercent(averageCost)}
-                tooltip={costCopy.averageCostTooltip}
-                delay={0.1}
-                sparklineData={averageCostSparkline}
-                sources={[
-                  { ...CALCULO_DERIVADO, note: costCopy.averageCostNote },
-                  interestSource,
-                  totalDebtSource,
-                ]}
-              />
-            </div>
+        <div
+          role="tabpanel"
+          id="debt-panel-cost"
+          aria-labelledby="debt-tab-cost"
+          hidden={tab !== "cost"}
+        >
+          <div className="flex flex-col items-center py-6 border-b gap-2">
+            <RealtimeCounter
+              baseValue={0}
+              perSecond={interestPerSecond}
+              suffix=" €"
+              size="lg"
+              decimals={0}
+              label={costCopy.realtimeLabel}
+            />
+            <p className="text-xs text-muted-foreground/80 text-center">{costCopy.realtimeNote}</p>
           </div>
-        )}
-        {tab === "perspective" && (
-          <div role="tabpanel" id="debt-panel-perspective" aria-labelledby="debt-tab-perspective">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <StatCard
-                label={eqCopy.monthsLabel}
-                value={`${formatNumber(monthsOfSMI, 1)} ${eqCopy.monthsUnit}`}
-                tooltip={eqCopy.monthsLabelTooltip}
-                delay={0.05}
-                sparklineData={monthsOfSMISparkline}
-                sources={[
-                  {
-                    ...CALCULO_DERIVADO,
-                    note: `${eqCopy.perCapitaLabel} (${formatCompact(debtPerCapita)}) / SMI (${formatNumber(demographics.smi, 0)} ${eqCopy.monthsNoteSuffix})`,
-                  },
-                  bdeSource,
-                  inePopSource,
-                ]}
-              />
-              <StatCard
-                label={eqCopy.salaryLabel}
-                value={`${formatNumber(yearsOfSalary, 1)} ${eqCopy.yearsUnit}`}
-                tooltip={eqCopy.salaryLabelTooltip}
-                delay={0.1}
-                sparklineData={yearsOfSalarySparkline}
-                sources={[
-                  {
-                    ...CALCULO_DERIVADO,
-                    note: `${eqCopy.perCapitaLabel} / ${eqCopy.averageSalaryLabel} (${formatNumber(demographics.averageSalary, 0)} ${eqCopy.salaryNoteSuffix})`,
-                  },
-                  bdeSource,
-                  inePopSource,
-                ]}
-              />
-              <StatCard
-                label={eqCopy.spendingLabel}
-                value={`${formatNumber(yearsOfSpending, 1)} ${eqCopy.yearsUnit}`}
-                tooltip={eqCopy.spendingLabelTooltip}
-                delay={0.15}
-                sparklineData={yearsOfSpendingSparkline}
-                sources={[
-                  {
-                    ...CALCULO_DERIVADO,
-                    note: `${eqCopy.debtTotalLabel} / ${eqCopy.spendingLabelShort} ${latestBudgetYear} (${formatCompact(budgetTotalEuros)})`,
-                  },
-                  bdeSource,
-                  igaeSource,
-                ]}
-              />
-              <StatCard
-                label={eqCopy.pensionsLabel}
-                value={`${formatNumber(yearsOfPensions, 1)} ${eqCopy.yearsUnit}`}
-                tooltip={eqCopy.pensionsLabelTooltip}
-                delay={0.2}
-                sparklineData={yearsOfPensionsSparkline}
-                sources={[
-                  {
-                    ...CALCULO_DERIVADO,
-                    note: `${eqCopy.debtTotalLabel} / ${eqCopy.annualPensionsLabel} (${formatCompact(pensions.current.annualExpense)})`,
-                  },
-                  bdeSource,
-                ]}
-              />
-              <StatCard
-                label={eqCopy.interestLabel}
-                value={`${formatNumber(daysOfInterest, 0)} ${eqCopy.daysUnit}`}
-                tooltip={eqCopy.interestLabelTooltip}
-                delay={0.25}
-                sparklineData={daysOfInterestSparkline}
-                sources={[
-                  {
-                    ...CALCULO_DERIVADO,
-                    note: `${eqCopy.annualInterestLabel} (${formatCompact(debt.current.interestExpense)}) / ${eqCopy.publicDailyLabel}`,
-                  },
-                  ESTIMACION_INTERESES,
-                  igaeSource,
-                ]}
-              />
-              <StatCard
-                label={eqCopy.dailySpendingLabel}
-                value={formatCompact(dailySpending)}
-                tooltip={eqCopy.dailySpendingLabelTooltip}
-                delay={0.3}
-                sparklineData={dailySpendingSparkline}
-                sources={[
-                  {
-                    ...CALCULO_DERIVADO,
-                    note: `${eqCopy.spendingLabelShort} ${latestBudgetYear} / 365 ${eqCopy.daysUnit}`,
-                  },
-                  igaeSource,
-                ]}
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <StatCard
+              label={costCopy.annualInterest}
+              value={formatCompact(debt.current.interestExpense)}
+              tooltip={costCopy.annualInterestTooltip}
+              delay={0.05}
+              sparklineData={annualInterestSparkline}
+              sources={[interestSource]}
+            />
+            <StatCard
+              label={costCopy.averageCost}
+              value={formatPercent(averageCost)}
+              tooltip={costCopy.averageCostTooltip}
+              delay={0.1}
+              sparklineData={averageCostSparkline}
+              sources={[
+                { ...CALCULO_DERIVADO, note: costCopy.averageCostNote },
+                interestSource,
+                totalDebtSource,
+              ]}
+            />
           </div>
-        )}
+        </div>
+        <div
+          role="tabpanel"
+          id="debt-panel-perspective"
+          aria-labelledby="debt-tab-perspective"
+          hidden={tab !== "perspective"}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <StatCard
+              label={eqCopy.monthsLabel}
+              value={`${formatNumber(monthsOfSMI, 1)} ${eqCopy.monthsUnit}`}
+              tooltip={eqCopy.monthsLabelTooltip}
+              delay={0.05}
+              sparklineData={monthsOfSMISparkline}
+              sources={[
+                {
+                  ...CALCULO_DERIVADO,
+                  note: `${eqCopy.perCapitaLabel} (${formatCompact(debtPerCapita)}) / SMI (${formatNumber(demographics.smi, 0)} ${eqCopy.monthsNoteSuffix})`,
+                },
+                bdeSource,
+                inePopSource,
+              ]}
+            />
+            <StatCard
+              label={eqCopy.salaryLabel}
+              value={`${formatNumber(yearsOfSalary, 1)} ${eqCopy.yearsUnit}`}
+              tooltip={eqCopy.salaryLabelTooltip}
+              delay={0.1}
+              sparklineData={yearsOfSalarySparkline}
+              sources={[
+                {
+                  ...CALCULO_DERIVADO,
+                  note: `${eqCopy.perCapitaLabel} / ${eqCopy.averageSalaryLabel} (${formatNumber(demographics.averageSalary, 0)} ${eqCopy.salaryNoteSuffix})`,
+                },
+                bdeSource,
+                inePopSource,
+              ]}
+            />
+            <StatCard
+              label={eqCopy.spendingLabel}
+              value={`${formatNumber(yearsOfSpending, 1)} ${eqCopy.yearsUnit}`}
+              tooltip={eqCopy.spendingLabelTooltip}
+              delay={0.15}
+              sparklineData={yearsOfSpendingSparkline}
+              sources={[
+                {
+                  ...CALCULO_DERIVADO,
+                  note: `${eqCopy.debtTotalLabel} / ${eqCopy.spendingLabelShort} ${latestBudgetYear} (${formatCompact(budgetTotalEuros)})`,
+                },
+                bdeSource,
+                igaeSource,
+              ]}
+            />
+            <StatCard
+              label={eqCopy.pensionsLabel}
+              value={`${formatNumber(yearsOfPensions, 1)} ${eqCopy.yearsUnit}`}
+              tooltip={eqCopy.pensionsLabelTooltip}
+              delay={0.2}
+              sparklineData={yearsOfPensionsSparkline}
+              sources={[
+                {
+                  ...CALCULO_DERIVADO,
+                  note: `${eqCopy.debtTotalLabel} / ${eqCopy.annualPensionsLabel} (${formatCompact(pensions.current.annualExpense)})`,
+                },
+                bdeSource,
+              ]}
+            />
+            <StatCard
+              label={eqCopy.interestLabel}
+              value={`${formatNumber(daysOfInterest, 0)} ${eqCopy.daysUnit}`}
+              tooltip={eqCopy.interestLabelTooltip}
+              delay={0.25}
+              sparklineData={daysOfInterestSparkline}
+              sources={[
+                {
+                  ...CALCULO_DERIVADO,
+                  note: `${eqCopy.annualInterestLabel} (${formatCompact(debt.current.interestExpense)}) / ${eqCopy.publicDailyLabel}`,
+                },
+                ESTIMACION_INTERESES,
+                igaeSource,
+              ]}
+            />
+            <StatCard
+              label={eqCopy.dailySpendingLabel}
+              value={formatCompact(dailySpending)}
+              tooltip={eqCopy.dailySpendingLabelTooltip}
+              delay={0.3}
+              sparklineData={dailySpendingSparkline}
+              sources={[
+                {
+                  ...CALCULO_DERIVADO,
+                  note: `${eqCopy.spendingLabelShort} ${latestBudgetYear} / 365 ${eqCopy.daysUnit}`,
+                },
+                igaeSource,
+              ]}
+            />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

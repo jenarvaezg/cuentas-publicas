@@ -114,7 +114,11 @@ const EffectiveRateTooltip = ({
   );
 };
 
-export function TaxRevenueBlock() {
+interface TaxRevenueBlockProps {
+  exportTargetId?: string;
+}
+
+export function TaxRevenueBlock({ exportTargetId = "recaudacion" }: TaxRevenueBlockProps) {
   const { taxRevenue, demographics, ccaaFiscalBalance } = useData();
   const { msg, lang } = useI18n();
 
@@ -495,7 +499,7 @@ export function TaxRevenueBlock() {
               </div>
 
               <ExportBlockButton
-                targetId="recaudacion"
+                targetId={exportTargetId}
                 filenamePrefix="cuentas-publicas-recaudacion"
               />
             </div>

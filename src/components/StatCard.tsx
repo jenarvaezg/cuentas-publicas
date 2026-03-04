@@ -15,6 +15,7 @@ interface StatCardProps {
   label: string;
   value: string;
   tooltip?: string;
+  insight?: string;
   trend?: { value: number; label: string };
   sparklineData?: number[];
   sources?: SourceDetail[];
@@ -26,6 +27,7 @@ export const StatCard = memo(function StatCard({
   label,
   value,
   tooltip,
+  insight,
   trend,
   sparklineData,
   sources,
@@ -261,6 +263,12 @@ export const StatCard = memo(function StatCard({
                   placeholder={sparkline.placeholder}
                 />
               </div>
+            )}
+
+            {insight && (
+              <p className="mt-3 rounded-md border border-border/40 bg-muted/30 px-3 py-2 text-left text-xs leading-relaxed text-muted-foreground">
+                {insight}
+              </p>
             )}
 
             {sources && sources.length > 0 && (

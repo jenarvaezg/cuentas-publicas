@@ -43,24 +43,19 @@ const MethodologySection = namedLazy(
   "MethodologySection",
 );
 const PensionsBlock = namedLazy(() => import("@/components/PensionsBlock"), "PensionsBlock");
-const RevenueBlock = namedLazy(() => import("@/components/RevenueBlock"), "RevenueBlock");
-const RoadmapSection = namedLazy(() => import("@/components/RoadmapSection"), "RoadmapSection");
-const SocialEconomyBlock = namedLazy(
-  () => import("@/components/SocialEconomyBlock"),
-  "SocialEconomyBlock",
+const RevenueDashboardBlock = namedLazy(
+  () => import("@/components/RevenueDashboardBlock"),
+  "RevenueDashboardBlock",
 );
 const SustainabilityBlock = namedLazy(
   () => import("@/components/SustainabilityBlock"),
   "SustainabilityBlock",
 );
-const TaxRevenueBlock = namedLazy(() => import("@/components/TaxRevenueBlock"), "TaxRevenueBlock");
 
 const SECTION_IDS = [
   "resumen",
   "mapa-fiscal",
   "ingresos-gastos",
-  "recaudacion",
-  "economia-social",
   "gasto-cofog",
   "demografia",
   "pensiones",
@@ -71,6 +66,11 @@ const SECTION_IDS = [
   "ue",
   "metodologia",
 ] as const;
+
+const SECTION_ALIASES: Record<string, (typeof SECTION_IDS)[number]> = {
+  recaudacion: "ingresos-gastos",
+  "economia-social": "ingresos-gastos",
+};
 
 function ChapterDivider({ title, subtitle }: { title: string; subtitle: string }) {
   return (
@@ -134,11 +134,6 @@ function App() {
         label: chapterCopy.c2.navLabel,
         items: [
           { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
-          { id: "recaudacion", label: msg.sections.recaudacion },
-          {
-            id: "economia-social",
-            label: msg.sections.economiaSocial,
-          },
           { id: "gasto-cofog", label: msg.sections.gastoCofog },
         ],
       },
@@ -193,7 +188,8 @@ function App() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const section = getSearchParam("section");
+    const rawSection = getSearchParam("section");
+    const section = rawSection ? (SECTION_ALIASES[rawSection] ?? rawSection) : rawSection;
     const isValidSection = SECTION_IDS.some((item) => item === section);
     if (!section || !isValidSection || section === "resumen") return;
 
@@ -341,27 +337,13 @@ function App() {
             <section id="ingresos-gastos" className="scroll-mt-28">
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.1}>
-                  <RevenueBlock />
-                </FadeIn>
-              </Suspense>
-            </section>
-            <section id="recaudacion" className="scroll-mt-28">
-              <Suspense fallback={<SectionSkeleton />}>
-                <FadeIn delay={0.2}>
-                  <TaxRevenueBlock />
-                </FadeIn>
-              </Suspense>
-            </section>
-            <section id="economia-social" className="scroll-mt-28">
-              <Suspense fallback={<SectionSkeleton />}>
-                <FadeIn delay={0.3}>
-                  <SocialEconomyBlock />
+                  <RevenueDashboardBlock />
                 </FadeIn>
               </Suspense>
             </section>
             <section id="gasto-cofog" className="scroll-mt-28">
               <Suspense fallback={<SectionSkeleton />}>
-                <FadeIn delay={0.4}>
+                <FadeIn delay={0.2}>
                   <BudgetBlock />
                 </FadeIn>
               </Suspense>
@@ -380,7 +362,7 @@ function App() {
             <section id="demografia" className="scroll-mt-28">
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.1}>
-                  <DemographicsBlock />
+                  <DemographicsBlock compact />
                 </FadeIn>
               </Suspense>
             </section>
@@ -445,11 +427,6 @@ function App() {
             <section id="metodologia" className="scroll-mt-28 pt-8">
               <Suspense fallback={<SectionSkeleton />}>
                 <MethodologySection />
-              </Suspense>
-            </section>
-            <section className="scroll-mt-28">
-              <Suspense fallback={<SectionSkeleton />}>
-                <RoadmapSection />
               </Suspense>
             </section>
           </section>

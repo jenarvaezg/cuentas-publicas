@@ -129,69 +129,80 @@ export const FlowsHeader: React.FC<FlowsHeaderProps> = ({
 
       {/* What-If section: only visible in national scope */}
       {scope === "national" && (
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
+        <details className="mt-4 rounded-lg border border-border/60 bg-background/70">
+          <summary className="list-none cursor-pointer px-3 py-2.5 flex items-center justify-between">
             <span className="text-sm font-medium text-muted-foreground">
               {copy.excludeRegionGroup}
             </span>
             {excludedRegions.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClearExclusions}
-                className="h-8 text-xs text-muted-foreground hover:text-foreground"
-              >
-                {copy.clearExclusions}
-              </Button>
+              <span className="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/30">
+                {excludedRegions.length}
+              </span>
+            )}
+          </summary>
+          <div className="px-3 pb-3 pt-1">
+            <div className="flex items-center justify-end mb-2">
+              {excludedRegions.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClearExclusions}
+                  className="h-8 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  {copy.clearExclusions}
+                </Button>
+              )}
+            </div>
+
+            {!whatIfAvailable && (
+              <p className="text-xs text-muted-foreground/70 italic mb-2">
+                {copy.whatIfUnavailable}
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2 items-center">
+              {ccaaOptions.map((opt) => {
+                const isExcluded = excludedRegions.includes(opt.value);
+                return (
+                  <button
+                    type="button"
+                    key={opt.value}
+                    disabled={!whatIfAvailable}
+                    onClick={() => {
+                      onExcludedRegionsChange((prev) =>
+                        prev.includes(opt.value)
+                          ? prev.filter((r) => r !== opt.value)
+                          : [...prev, opt.value],
+                      );
+                    }}
+                    className={`
+                      px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
+                      ${
+                        !whatIfAvailable
+                          ? "opacity-50 cursor-not-allowed"
+                          : isExcluded
+                            ? "bg-destructive/10 border-destructive/20 text-destructive line-through decoration-destructive/50"
+                            : "bg-background border-border text-foreground hover:bg-muted"
+                      }
+                    `}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {whatIfAvailable && (
+              <details className="mt-3 text-xs text-muted-foreground">
+                <summary className="cursor-pointer hover:text-foreground inline-flex items-center gap-1">
+                  <Info className="w-3 h-3" />
+                  {copy.whatIfMethodology}
+                </summary>
+                <p className="mt-2 leading-relaxed bg-muted/30 rounded-md p-3">{copy.whatIfInfo}</p>
+              </details>
             )}
           </div>
-
-          {!whatIfAvailable && (
-            <p className="text-xs text-muted-foreground/70 italic mb-2">{copy.whatIfUnavailable}</p>
-          )}
-
-          <div className="flex flex-wrap gap-2 items-center">
-            {ccaaOptions.map((opt) => {
-              const isExcluded = excludedRegions.includes(opt.value);
-              return (
-                <button
-                  type="button"
-                  key={opt.value}
-                  disabled={!whatIfAvailable}
-                  onClick={() => {
-                    onExcludedRegionsChange((prev) =>
-                      prev.includes(opt.value)
-                        ? prev.filter((r) => r !== opt.value)
-                        : [...prev, opt.value],
-                    );
-                  }}
-                  className={`
-                    px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
-                    ${
-                      !whatIfAvailable
-                        ? "opacity-50 cursor-not-allowed"
-                        : isExcluded
-                          ? "bg-destructive/10 border-destructive/20 text-destructive line-through decoration-destructive/50"
-                          : "bg-background border-border text-foreground hover:bg-muted"
-                    }
-                  `}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {whatIfAvailable && (
-            <details className="mt-3 text-xs text-muted-foreground">
-              <summary className="cursor-pointer hover:text-foreground inline-flex items-center gap-1">
-                <Info className="w-3 h-3" />
-                {copy.whatIfMethodology}
-              </summary>
-              <p className="mt-2 leading-relaxed bg-muted/30 rounded-md p-3">{copy.whatIfInfo}</p>
-            </details>
-          )}
-        </div>
+        </details>
       )}
 
       <PersonalCalculator spendingCategories={spendingCategories} totalSpending={totalSpending} />

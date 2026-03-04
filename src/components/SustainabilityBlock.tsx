@@ -35,6 +35,16 @@ export function SustainabilityBlock() {
   const data = ssSustainability;
   const latestYear = String(data.latestYear);
   const latestData = data.byYear[latestYear];
+  const latestBalance = latestData?.ssBalance ?? 0;
+  const latestBalanceGap = formatCompact(Math.abs(latestBalance) * 1_000_000);
+  const ssBalanceInsight =
+    latestBalance < 0
+      ? copy.ssBalanceInsightDeficit
+          .replace("{year}", latestYear)
+          .replace("{gap}", latestBalanceGap)
+      : copy.ssBalanceInsightSurplus
+          .replace("{year}", latestYear)
+          .replace("{gap}", latestBalanceGap);
 
   // StatCard data
   const balanceSparkline = data.years.map((y) => data.byYear[String(y)]?.ssBalance ?? 0);
@@ -107,6 +117,7 @@ export function SustainabilityBlock() {
               label={copy.ssBalance}
               value={formatCompact(latestData?.ssBalance ?? 0)}
               tooltip={copy.ssBalanceTooltip}
+              insight={ssBalanceInsight}
               delay={0.05}
               className="lg:col-span-2"
               sparklineData={balanceSparkline}
