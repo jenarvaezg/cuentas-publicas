@@ -22,7 +22,7 @@ interface SimpleTooltipProps {
   label?: number;
 }
 
-function SimpleTooltip({ active, payload, label }: SimpleTooltipProps) {
+export function SimpleTooltip({ active, payload, label }: SimpleTooltipProps) {
   if (!active || !payload?.length || !label) return null;
   return (
     <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
@@ -37,7 +37,12 @@ function SimpleTooltip({ active, payload, label }: SimpleTooltipProps) {
 }
 
 interface MigrationFlowsChartProps {
-  data: Array<{ year: number; immigration: number; emigration: number; netMigration: number }>;
+  data: Array<{
+    year: number;
+    immigration: number;
+    emigration: number;
+    netMigration: number;
+  }>;
   title: string;
   immigrationLabel: string;
   emigrationLabel: string;

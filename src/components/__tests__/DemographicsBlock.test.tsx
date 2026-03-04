@@ -21,6 +21,42 @@ vi.mock("../ExportBlockButton", () => ({
   ExportBlockButton: () => null,
 }));
 
+vi.mock("../demographics/VitalTrendsChart", () => ({
+  VitalTrendsChart: ({ title }: any) => <div data-testid="vital-trends-chart">{title}</div>,
+}));
+
+vi.mock("../demographics/LifeExpectancyChart", () => ({
+  LifeExpectancyChart: ({ title }: any) => <div data-testid="life-expectancy-chart">{title}</div>,
+}));
+
+vi.mock("../demographics/ImmigrationChart", () => ({
+  ImmigrationChart: ({ title }: any) => <div data-testid="immigration-chart">{title}</div>,
+}));
+
+vi.mock("../demographics/MigrationFlowsChart", () => ({
+  MigrationFlowsChart: ({ title }: any) => <div data-testid="migration-flows-chart">{title}</div>,
+}));
+
+vi.mock("../demographics/ProjectionsChart", () => ({
+  ProjectionsChart: () => <div data-testid="projections-chart">Projections</div>,
+}));
+
+vi.mock("../demographics/FertilityProjectionsChart", () => ({
+  FertilityProjectionsChart: () => (
+    <div data-testid="fertility-projections-chart">FertilityProjections</div>
+  ),
+}));
+
+vi.mock("../demographics/ProvincialRankingChart", () => ({
+  ProvincialRankingChart: ({ title }: any) => (
+    <div data-testid="provincial-ranking-chart">{title}</div>
+  ),
+}));
+
+vi.mock("../demographics/EUDemographicComparison", () => ({
+  EUDemographicComparison: ({ title }: any) => <div data-testid="eu-comparison-chart">{title}</div>,
+}));
+
 vi.mock("recharts", () => {
   const Passthrough = ({ children }: any) => <div>{children}</div>;
   return {
@@ -177,8 +213,7 @@ describe("DemographicsBlock", () => {
     });
     render(<DemographicsBlock />);
 
-    expect(screen.getByText("Natalidad vs mortalidad (30 años)")).toBeDefined();
-    expect(screen.getAllByTestId("line").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByTestId("vital-trends-chart")).toBeDefined();
   });
 
   it("renders life expectancy chart", () => {
@@ -188,7 +223,7 @@ describe("DemographicsBlock", () => {
     });
     render(<DemographicsBlock />);
 
-    expect(screen.getByText("Esperanza de vida al nacer")).toBeDefined();
+    expect(screen.getByTestId("life-expectancy-chart")).toBeDefined();
   });
 
   it("renders immigration trend chart after clicking migration tab", () => {
@@ -200,8 +235,7 @@ describe("DemographicsBlock", () => {
 
     fireEvent.click(screen.getByText("Migración"));
 
-    expect(screen.getByText("Evolución % nacidos en el extranjero")).toBeDefined();
-    expect(screen.getAllByTestId("area").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId("immigration-chart")).toBeDefined();
   });
 
   it("handles missing optional data gracefully", () => {
@@ -240,5 +274,325 @@ describe("DemographicsBlock", () => {
     const cards = screen.getAllByTestId("stat-card");
     const ndCards = cards.filter((c) => c.textContent?.includes("N/D"));
     expect(ndCards.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it("renders projections tab content when clicking Proyecciones", () => {
+    const demographicsWithProjections = {
+      ...baseDemographics,
+      projections: {
+        shortTerm: {
+          national: [
+            { year: 2025, value: 48_700_000 },
+            { year: 2030, value: 49_000_000 },
+          ],
+        },
+        indicators: {
+          dependencyOldAge: [
+            { year: 2025, value: 32.1 },
+            { year: 2050, value: 58.3 },
+          ],
+          proportionOver65: [
+            { year: 2025, value: 20.5 },
+            { year: 2050, value: 34.1 },
+          ],
+        },
+      },
+    };
+    (useData as any).mockReturnValue({
+      demographics: demographicsWithProjections,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Proyecciones"));
+
+    expect(screen.getByTestId("projections-chart")).toBeDefined();
+  });
+
+  it("renders territory tab content when clicking Provincias", () => {
+    const demographicsWithProvincial = {
+      ...baseDemographics,
+      provincialPopulation: {
+        latestYear: 2024,
+        entries: [
+          { code: "28", name: "Madrid", ccaa: "Madrid", population: 6_800_000 },
+          {
+            code: "08",
+            name: "Barcelona",
+            ccaa: "Cataluña",
+            population: 5_800_000,
+          },
+        ],
+      },
+    };
+    (useData as any).mockReturnValue({
+      demographics: demographicsWithProvincial,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Provincias"));
+
+    expect(screen.getByTestId("provincial-ranking-chart")).toBeDefined();
+  });
+
+  it("renders EU comparison tab content when clicking Comparativa UE", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Comparativa UE"));
+
+    expect(screen.getByTestId("eu-comparison-chart")).toBeDefined();
+  });
+
+  it("renders MigrationFlowsChart in migration tab when migrationFlows data exists", () => {
+    const demographicsWithFlows = {
+      ...baseDemographics,
+      migrationFlows: {
+        immigration: [
+          { year: 2022, value: 750_000 },
+          { year: 2023, value: 800_000 },
+        ],
+        emigration: [
+          { year: 2022, value: 300_000 },
+          { year: 2023, value: 320_000 },
+        ],
+        netMigration: [
+          { year: 2022, value: 450_000 },
+          { year: 2023, value: 480_000 },
+        ],
+      },
+    };
+    (useData as any).mockReturnValue({
+      demographics: demographicsWithFlows,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Migración"));
+
+    expect(screen.getByTestId("immigration-chart")).toBeDefined();
+    expect(screen.getByTestId("migration-flows-chart")).toBeDefined();
+  });
+
+  it("renders FertilityProjectionsChart in projections tab when fertilityProjections data exists", () => {
+    const demographicsWithFertility = {
+      ...baseDemographics,
+      projections: {
+        shortTerm: {
+          national: [
+            { year: 2025, value: 48_700_000 },
+            { year: 2030, value: 49_000_000 },
+          ],
+        },
+        indicators: {
+          dependencyOldAge: [{ year: 2050, value: 58.3 }],
+          proportionOver65: [{ year: 2050, value: 34.1 }],
+        },
+      },
+      fertilityProjections: {
+        actual: [
+          { year: 2022, value: 1.16 },
+          { year: 2023, value: 1.12 },
+        ],
+        projections: [
+          { year: 2024, value: 1.1 },
+          { year: 2030, value: 1.05 },
+        ],
+        linearRegression: [
+          { year: 2024, value: 1.09 },
+          { year: 2030, value: 1.0 },
+        ],
+        ourEstimate: [
+          { year: 2024, value: 1.1 },
+          { year: 2030, value: 1.02 },
+        ],
+        replacementLevel: 2.1,
+      },
+    };
+    (useData as any).mockReturnValue({
+      demographics: demographicsWithFertility,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Proyecciones"));
+
+    expect(screen.getByTestId("projections-chart")).toBeDefined();
+    expect(screen.getByTestId("fertility-projections-chart")).toBeDefined();
+  });
+
+  it("renders livingConditions section when livingConditions data provided", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+      livingConditions: {
+        lastUpdated: "2026-01-01T00:00:00.000Z",
+        arope: 26.5,
+        gini: 33.0,
+        averageIncome: 14_500,
+        referenceYear: 2023,
+      },
+    });
+    render(<DemographicsBlock />);
+
+    const cards = screen.getAllByTestId("stat-card");
+    // 9 base cards + 3 livingConditions cards = 12
+    expect(cards.length).toBeGreaterThanOrEqual(12);
+  });
+
+  it("does not render territory chart when provincialPopulation is missing", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Provincias"));
+
+    expect(screen.queryByTestId("provincial-ranking-chart")).toBeNull();
+  });
+
+  it("does not render projections chart when projections data is missing", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Proyecciones"));
+
+    expect(screen.queryByTestId("projections-chart")).toBeNull();
+  });
+
+  it("changes year selection for population pyramid", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    const select = screen.getByRole("combobox");
+    fireEvent.change(select, { target: { value: "2023" } });
+
+    expect((select as HTMLSelectElement).value).toBe("2023");
+    expect(screen.getByTestId("pyramid-chart")).toBeDefined();
+  });
+
+  it("navigates tabs with ArrowRight keyboard key", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    const tablist = screen.getByRole("tablist");
+
+    // Default is "vital". ArrowRight should move to "migration".
+    fireEvent.keyDown(tablist, { key: "ArrowRight" });
+
+    expect(screen.getByTestId("immigration-chart")).toBeDefined();
+  });
+
+  it("navigates tabs with ArrowLeft keyboard key", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    const tablist = screen.getByRole("tablist");
+
+    // Default is "vital". ArrowLeft wraps around to last tab "eu".
+    fireEvent.keyDown(tablist, { key: "ArrowLeft" });
+
+    expect(screen.getByTestId("eu-comparison-chart")).toBeDefined();
+  });
+
+  it("navigates to last tab with End keyboard key", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    const tablist = screen.getByRole("tablist");
+
+    fireEvent.keyDown(tablist, { key: "End" });
+
+    expect(screen.getByTestId("eu-comparison-chart")).toBeDefined();
+  });
+
+  it("navigates to first tab with Home keyboard key", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    const tablist = screen.getByRole("tablist");
+
+    // First move away from "vital" tab
+    fireEvent.keyDown(tablist, { key: "End" });
+    expect(screen.getByTestId("eu-comparison-chart")).toBeDefined();
+
+    // Home should go back to "vital"
+    fireEvent.keyDown(tablist, { key: "Home" });
+
+    expect(screen.getByTestId("vital-trends-chart")).toBeDefined();
+  });
+
+  it("tab buttons have correct aria-selected state", () => {
+    (useData as any).mockReturnValue({
+      demographics: baseDemographics,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    const vitalTab = screen.getByRole("tab", { name: "Tendencias vitales" });
+    const migrationTab = screen.getByRole("tab", { name: "Migración" });
+
+    expect(vitalTab.getAttribute("aria-selected")).toBe("true");
+    expect(migrationTab.getAttribute("aria-selected")).toBe("false");
+
+    fireEvent.click(migrationTab);
+
+    expect(vitalTab.getAttribute("aria-selected")).toBe("false");
+    expect(migrationTab.getAttribute("aria-selected")).toBe("true");
+  });
+
+  it("renders stat cards for projections and migrationFlows when data present", () => {
+    const demographicsWithExtras = {
+      ...baseDemographics,
+      projections: {
+        shortTerm: {
+          national: [
+            { year: 2025, value: 48_700_000 },
+            { year: 2030, value: 49_000_000 },
+          ],
+        },
+        indicators: {
+          dependencyOldAge: [{ year: 2050, value: 58.3 }],
+          proportionOver65: [{ year: 2050, value: 34.1 }],
+        },
+      },
+      migrationFlows: {
+        immigration: [{ year: 2023, value: 800_000 }],
+        emigration: [{ year: 2023, value: 320_000 }],
+        netMigration: [{ year: 2023, value: 480_000 }],
+      },
+    };
+    (useData as any).mockReturnValue({
+      demographics: demographicsWithExtras,
+      eurostat: baseEurostat,
+    });
+    render(<DemographicsBlock />);
+
+    const cards = screen.getAllByTestId("stat-card");
+    // Should have more stat cards than the base 9 (projectedPopulation, projectedDependency2050, netMigrationLatest)
+    expect(cards.length).toBeGreaterThan(9);
   });
 });

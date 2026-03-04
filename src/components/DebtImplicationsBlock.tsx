@@ -10,6 +10,7 @@ import {
   resolveSource,
 } from "@/data/sources";
 import { useData } from "@/hooks/useData";
+import { useTabKeyboardNav } from "@/hooks/useTabKeyboardNav";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
 import { ExportBlockButton } from "./ExportBlockButton";
@@ -19,7 +20,9 @@ import { StatCard } from "./StatCard";
 export function DebtImplicationsBlock() {
   const [tab, setTab] = useState<"cost" | "perspective">("cost");
   const { debt, demographics, pensions, budget } = useData();
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
+  const DEBT_TABS = ["cost", "perspective"] as const;
+  const { onKeyDown: tabKeyDown } = useTabKeyboardNav(DEBT_TABS, tab, setTab);
 
   // --- Debt cost computations ---
   const costCopy = msg.blocks.debtCost;
@@ -63,20 +66,34 @@ export function DebtImplicationsBlock() {
             <p className="text-sm text-muted-foreground">{eqCopy.subtitle}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <div className="flex items-center rounded-md border border-input bg-background p-0.5">
+            <div
+              role="tablist"
+              onKeyDown={tabKeyDown}
+              className="flex items-center rounded-md border border-input bg-background p-0.5"
+            >
               <button
                 type="button"
+                role="tab"
+                id="debt-tab-cost"
+                aria-selected={tab === "cost"}
+                aria-controls="debt-panel-cost"
+                tabIndex={tab === "cost" ? 0 : -1}
                 onClick={() => setTab("cost")}
                 className={`px-2.5 py-1 text-xs rounded-sm transition-colors ${tab === "cost" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
               >
-                {lang === "en" ? "Debt cost" : "Coste de la deuda"}
+                {costCopy.tabCost}
               </button>
               <button
                 type="button"
+                role="tab"
+                id="debt-tab-perspective"
+                aria-selected={tab === "perspective"}
+                aria-controls="debt-panel-perspective"
+                tabIndex={tab === "perspective" ? 0 : -1}
                 onClick={() => setTab("perspective")}
                 className={`px-2.5 py-1 text-xs rounded-sm transition-colors ${tab === "perspective" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
               >
-                {lang === "en" ? "Put it in perspective" : "Ponlo en perspectiva"}
+                {costCopy.tabPerspective}
               </button>
             </div>
             <ExportBlockButton
@@ -88,7 +105,7 @@ export function DebtImplicationsBlock() {
       </CardHeader>
       <CardContent className="space-y-6">
         {tab === "cost" && (
-          <>
+          <div role="tabpanel" id="debt-panel-cost" aria-labelledby="debt-tab-cost">
             <div className="flex flex-col items-center py-6 border-b gap-2">
               <RealtimeCounter
                 baseValue={0}
@@ -122,92 +139,94 @@ export function DebtImplicationsBlock() {
                 ]}
               />
             </div>
-          </>
+          </div>
         )}
         {tab === "perspective" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <StatCard
-              label={eqCopy.monthsLabel}
-              value={`${formatNumber(monthsOfSMI, 1)} ${eqCopy.monthsUnit}`}
-              tooltip={eqCopy.monthsLabelTooltip}
-              delay={0.05}
-              sources={[
-                {
-                  ...CALCULO_DERIVADO,
-                  note: `${eqCopy.perCapitaLabel} (${formatCompact(debtPerCapita)}) / SMI (${formatNumber(demographics.smi, 0)} ${eqCopy.monthsNoteSuffix})`,
-                },
-                bdeSource,
-                inePopSource,
-              ]}
-            />
-            <StatCard
-              label={eqCopy.salaryLabel}
-              value={`${formatNumber(yearsOfSalary, 1)} ${eqCopy.yearsUnit}`}
-              tooltip={eqCopy.salaryLabelTooltip}
-              delay={0.1}
-              sources={[
-                {
-                  ...CALCULO_DERIVADO,
-                  note: `${eqCopy.perCapitaLabel} / ${eqCopy.averageSalaryLabel} (${formatNumber(demographics.averageSalary, 0)} ${eqCopy.salaryNoteSuffix})`,
-                },
-                bdeSource,
-                inePopSource,
-              ]}
-            />
-            <StatCard
-              label={eqCopy.spendingLabel}
-              value={`${formatNumber(yearsOfSpending, 1)} ${eqCopy.yearsUnit}`}
-              tooltip={eqCopy.spendingLabelTooltip}
-              delay={0.15}
-              sources={[
-                {
-                  ...CALCULO_DERIVADO,
-                  note: `${eqCopy.debtTotalLabel} / ${eqCopy.spendingLabelShort} ${latestBudgetYear} (${formatCompact(budgetTotalEuros)})`,
-                },
-                bdeSource,
-                igaeSource,
-              ]}
-            />
-            <StatCard
-              label={eqCopy.pensionsLabel}
-              value={`${formatNumber(yearsOfPensions, 1)} ${eqCopy.yearsUnit}`}
-              tooltip={eqCopy.pensionsLabelTooltip}
-              delay={0.2}
-              sources={[
-                {
-                  ...CALCULO_DERIVADO,
-                  note: `${eqCopy.debtTotalLabel} / ${eqCopy.annualPensionsLabel} (${formatCompact(pensions.current.annualExpense)})`,
-                },
-                bdeSource,
-              ]}
-            />
-            <StatCard
-              label={eqCopy.interestLabel}
-              value={`${formatNumber(daysOfInterest, 0)} ${eqCopy.daysUnit}`}
-              tooltip={eqCopy.interestLabelTooltip}
-              delay={0.25}
-              sources={[
-                {
-                  ...CALCULO_DERIVADO,
-                  note: `${eqCopy.annualInterestLabel} (${formatCompact(debt.current.interestExpense)}) / ${eqCopy.publicDailyLabel}`,
-                },
-                ESTIMACION_INTERESES,
-                igaeSource,
-              ]}
-            />
-            <StatCard
-              label={eqCopy.dailySpendingLabel}
-              value={formatCompact(dailySpending)}
-              tooltip={eqCopy.dailySpendingLabelTooltip}
-              delay={0.3}
-              sources={[
-                {
-                  ...CALCULO_DERIVADO,
-                  note: `${eqCopy.spendingLabelShort} ${latestBudgetYear} / 365 ${eqCopy.daysUnit}`,
-                },
-                igaeSource,
-              ]}
-            />
+          <div role="tabpanel" id="debt-panel-perspective" aria-labelledby="debt-tab-perspective">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <StatCard
+                label={eqCopy.monthsLabel}
+                value={`${formatNumber(monthsOfSMI, 1)} ${eqCopy.monthsUnit}`}
+                tooltip={eqCopy.monthsLabelTooltip}
+                delay={0.05}
+                sources={[
+                  {
+                    ...CALCULO_DERIVADO,
+                    note: `${eqCopy.perCapitaLabel} (${formatCompact(debtPerCapita)}) / SMI (${formatNumber(demographics.smi, 0)} ${eqCopy.monthsNoteSuffix})`,
+                  },
+                  bdeSource,
+                  inePopSource,
+                ]}
+              />
+              <StatCard
+                label={eqCopy.salaryLabel}
+                value={`${formatNumber(yearsOfSalary, 1)} ${eqCopy.yearsUnit}`}
+                tooltip={eqCopy.salaryLabelTooltip}
+                delay={0.1}
+                sources={[
+                  {
+                    ...CALCULO_DERIVADO,
+                    note: `${eqCopy.perCapitaLabel} / ${eqCopy.averageSalaryLabel} (${formatNumber(demographics.averageSalary, 0)} ${eqCopy.salaryNoteSuffix})`,
+                  },
+                  bdeSource,
+                  inePopSource,
+                ]}
+              />
+              <StatCard
+                label={eqCopy.spendingLabel}
+                value={`${formatNumber(yearsOfSpending, 1)} ${eqCopy.yearsUnit}`}
+                tooltip={eqCopy.spendingLabelTooltip}
+                delay={0.15}
+                sources={[
+                  {
+                    ...CALCULO_DERIVADO,
+                    note: `${eqCopy.debtTotalLabel} / ${eqCopy.spendingLabelShort} ${latestBudgetYear} (${formatCompact(budgetTotalEuros)})`,
+                  },
+                  bdeSource,
+                  igaeSource,
+                ]}
+              />
+              <StatCard
+                label={eqCopy.pensionsLabel}
+                value={`${formatNumber(yearsOfPensions, 1)} ${eqCopy.yearsUnit}`}
+                tooltip={eqCopy.pensionsLabelTooltip}
+                delay={0.2}
+                sources={[
+                  {
+                    ...CALCULO_DERIVADO,
+                    note: `${eqCopy.debtTotalLabel} / ${eqCopy.annualPensionsLabel} (${formatCompact(pensions.current.annualExpense)})`,
+                  },
+                  bdeSource,
+                ]}
+              />
+              <StatCard
+                label={eqCopy.interestLabel}
+                value={`${formatNumber(daysOfInterest, 0)} ${eqCopy.daysUnit}`}
+                tooltip={eqCopy.interestLabelTooltip}
+                delay={0.25}
+                sources={[
+                  {
+                    ...CALCULO_DERIVADO,
+                    note: `${eqCopy.annualInterestLabel} (${formatCompact(debt.current.interestExpense)}) / ${eqCopy.publicDailyLabel}`,
+                  },
+                  ESTIMACION_INTERESES,
+                  igaeSource,
+                ]}
+              />
+              <StatCard
+                label={eqCopy.dailySpendingLabel}
+                value={formatCompact(dailySpending)}
+                tooltip={eqCopy.dailySpendingLabelTooltip}
+                delay={0.3}
+                sources={[
+                  {
+                    ...CALCULO_DERIVADO,
+                    note: `${eqCopy.spendingLabelShort} ${latestBudgetYear} / 365 ${eqCopy.daysUnit}`,
+                  },
+                  igaeSource,
+                ]}
+              />
+            </div>
           </div>
         )}
       </CardContent>

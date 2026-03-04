@@ -34,7 +34,11 @@ export default function ThemeToggle() {
           : msg.blocks.themeToggle.switchToDark
       }
     >
-      {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {theme === "dark" ? (
+        <Sun className="h-4 w-4" aria-hidden="true" />
+      ) : (
+        <Moon className="h-4 w-4" aria-hidden="true" />
+      )}
     </Button>
   );
 }

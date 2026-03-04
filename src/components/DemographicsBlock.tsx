@@ -12,6 +12,7 @@ import {
 } from "@/data/sources";
 import type { TimeSeriesPoint } from "@/data/types";
 import { useData } from "@/hooks/useData";
+import { useTabKeyboardNav } from "@/hooks/useTabKeyboardNav";
 import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
 import { formatCompactCount, formatNumber, formatPercent } from "@/utils/formatters";
@@ -80,6 +81,8 @@ export function DemographicsBlock() {
   const [selectedEUIndicator, setSelectedEUIndicator] = useState<DemoEUIndicator>("birthRate");
 
   const [chartTab, setChartTab] = useState<ChartTab>("vital");
+  const CHART_TABS = ["vital", "migration", "projections", "territory", "eu"] as const;
+  const { onKeyDown: chartTabKeyDown } = useTabKeyboardNav(CHART_TABS, chartTab, setChartTab);
 
   const tabLabels: Record<ChartTab, string> =
     lang === "en"
@@ -484,11 +487,20 @@ export function DemographicsBlock() {
         )}
 
         {/* Chart tabs */}
-        <div className="flex flex-wrap items-center gap-2 mt-6 mb-4">
+        <div
+          role="tablist"
+          onKeyDown={chartTabKeyDown}
+          className="flex flex-wrap items-center gap-2 mt-6 mb-4"
+        >
           {(["vital", "migration", "projections", "territory", "eu"] as const).map((tab) => (
             <button
               key={tab}
               type="button"
+              role="tab"
+              id={`demo-tab-${tab}`}
+              aria-selected={chartTab === tab}
+              aria-controls={`demo-panel-${tab}`}
+              tabIndex={chartTab === tab ? 0 : -1}
               onClick={() => setChartTab(tab)}
               className={cn(
                 "px-3 py-1.5 text-xs font-medium rounded-full border transition-colors",
@@ -504,7 +516,7 @@ export function DemographicsBlock() {
 
         {/* Tab content */}
         {chartTab === "vital" && (
-          <>
+          <div role="tabpanel" id="demo-panel-vital" aria-labelledby="demo-tab-vital">
             <VitalTrendsChart
               data={vitalTrendsData}
               title={dm.vitalTrendsTitle}
@@ -519,11 +531,11 @@ export function DemographicsBlock() {
               femaleLabel={dm.pyramidFemale}
               yearsLabel={dm.years}
             />
-          </>
+          </div>
         )}
 
         {chartTab === "migration" && (
-          <>
+          <div role="tabpanel" id="demo-panel-migration" aria-labelledby="demo-tab-migration">
             <ImmigrationChart
               data={immigrationData}
               title={dm.immigrationTrendTitle}
@@ -544,11 +556,11 @@ export function DemographicsBlock() {
                 netLabel={dm.migrationFlows.netMigration}
               />
             )}
-          </>
+          </div>
         )}
 
         {chartTab === "projections" && (
-          <>
+          <div role="tabpanel" id="demo-panel-projections" aria-labelledby="demo-tab-projections">
             {projections && (
               <ProjectionsChart
                 populationData={projections.shortTerm.national.map((p) => ({
@@ -587,47 +599,50 @@ export function DemographicsBlock() {
                 </p>
               </div>
             )}
-          </>
+          </div>
         )}
 
-        {chartTab === "territory" &&
-          provincialPopulation &&
-          provincialPopulation.entries.length > 0 && (
-            <ProvincialRankingChart
-              entries={provincialPopulation.entries.map((e) => ({
-                code: e.code,
-                name: e.name,
-                ccaa: e.ccaa,
-                population: e.population,
-              }))}
-              latestYear={provincialPopulation.latestYear}
-              title={dm.provincial.title}
-              ccaaLabel={dm.provincial.ccaaLabel}
-              provincesLabel={dm.provincial.provincesLabel}
-              populationLabel={dm.provincial.populationLabel}
-              millionLabel={dm.provincial.millionLabel}
-            />
-          )}
+        {chartTab === "territory" && (
+          <div role="tabpanel" id="demo-panel-territory" aria-labelledby="demo-tab-territory">
+            {provincialPopulation && provincialPopulation.entries.length > 0 && (
+              <ProvincialRankingChart
+                entries={provincialPopulation.entries.map((e) => ({
+                  code: e.code,
+                  name: e.name,
+                  ccaa: e.ccaa,
+                  population: e.population,
+                }))}
+                latestYear={provincialPopulation.latestYear}
+                title={dm.provincial.title}
+                ccaaLabel={dm.provincial.ccaaLabel}
+                provincesLabel={dm.provincial.provincesLabel}
+                populationLabel={dm.provincial.populationLabel}
+                millionLabel={dm.provincial.millionLabel}
+              />
+            )}
+          </div>
+        )}
 
         {chartTab === "eu" && (
-          <EUDemographicComparison
-            data={euChartData}
-            eu27Value={eu27Value}
-            selectedIndicator={selectedEUIndicator}
-            onIndicatorChange={setSelectedEUIndicator}
-            title={euCopy.title}
-            indicatorLabels={euCopy.indicatorLabels}
-            units={euCopy.units}
-            eu27Avg={euCopy.eu27Avg}
-            eurostatYear={eurostat.year}
-          />
+          <div role="tabpanel" id="demo-panel-eu" aria-labelledby="demo-tab-eu">
+            <EUDemographicComparison
+              data={euChartData}
+              eu27Value={eu27Value}
+              selectedIndicator={selectedEUIndicator}
+              onIndicatorChange={setSelectedEUIndicator}
+              title={euCopy.title}
+              indicatorLabels={euCopy.indicatorLabels}
+              units={euCopy.units}
+              eu27Avg={euCopy.eu27Avg}
+              eurostatYear={eurostat.year}
+            />
+          </div>
         )}
 
-        {/* Living Conditions (absorbed from InequalityBlock) */}
         {livingConditions && (
           <div className="space-y-4 pt-6 border-t border-border/50">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-[0.08em]">
-              {lang === "en" ? "Living Conditions" : "Condiciones de vida"}
+              {dm.livingConditionsTitle}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <StatCard

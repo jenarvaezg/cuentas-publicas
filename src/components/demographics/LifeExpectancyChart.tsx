@@ -21,7 +21,7 @@ interface SimpleTooltipProps {
   suffix?: string;
 }
 
-function SimpleTooltip({ active, payload, label, suffix = "" }: SimpleTooltipProps) {
+export function SimpleTooltip({ active, payload, label, suffix = "" }: SimpleTooltipProps) {
   if (!active || !payload?.length || !label) return null;
   return (
     <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">

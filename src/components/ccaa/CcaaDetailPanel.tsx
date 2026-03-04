@@ -86,6 +86,8 @@ interface CcaaDetailPanelProps {
     foralTaxRevenueRef: string;
     taxRevenueRef: string;
     proxyNote: string;
+    surplus: string;
+    deficit: string;
   };
   notAvailable: string;
 }
@@ -227,7 +229,7 @@ export function CcaaDetailPanel({
           ) : (
             <>
               <p className="text-sm font-semibold mt-1">
-                {selectedDeficitEuros >= 0 ? "Superávit" : "Déficit"}:{" "}
+                {selectedDeficitEuros >= 0 ? copy.surplus : copy.deficit}:{" "}
                 {selectedDeficitEuros >= 0 ? "+" : "-"}
                 {formatCompact(Math.abs(selectedDeficitEuros))}
               </p>

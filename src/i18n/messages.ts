@@ -28,6 +28,8 @@ export const messages = {
       ccaa: "CCAA",
       demografia: "Demografía",
       sostenibilidadSS: "Sostenibilidad SS",
+      mapaFiscal: "Mapa Fiscal",
+      economiaSocial: "Economía Social",
       metodologia: "Metodología",
     },
     app: {
@@ -63,6 +65,8 @@ export const messages = {
       sectionNavigationAria: "Navegación por secciones",
       staleDataTagPrefix: "dato",
       realtimeOffline: "Estás sin conexión. Mostrando datos y recursos cacheados.",
+      showLess: "Ver menos",
+      fullAnalysis: "Ver análisis completo",
     },
     pwa: {
       updateAvailablePrompt:
@@ -120,6 +124,8 @@ export const messages = {
       ccaa: "Regions",
       demografia: "Demographics",
       sostenibilidadSS: "SS Sustainability",
+      mapaFiscal: "Fiscal Map",
+      economiaSocial: "Social Economy",
       metodologia: "Methodology",
     },
     app: {
@@ -152,6 +158,8 @@ export const messages = {
       notAvailable: "N/A",
       sourceLabel: "Source",
       moreInformation: "More information",
+      showLess: "Show less",
+      fullAnalysis: "Full analysis",
       sectionNavigationAria: "Section navigation",
       staleDataTagPrefix: "data",
       realtimeOffline: "You are offline. Showing cached data and resources.",

@@ -142,7 +142,7 @@ export const StatCard = memo(function StatCard({
                                         className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
                                       >
                                         {src.name}
-                                        <ExternalLink className="h-3 w-3" />
+                                        <ExternalLink className="h-3 w-3" aria-hidden="true" />
                                       </a>
                                     ) : (
                                       <span>{src.name}</span>
@@ -248,7 +248,7 @@ export const StatCard = memo(function StatCard({
                       className="hover:text-foreground transition-colors inline-flex items-center gap-0.5"
                     >
                       {primarySource.name}
-                      <ExternalLink className="h-2 w-2" />
+                      <ExternalLink className="h-2 w-2" aria-hidden="true" />
                     </a>
                   ) : (
                     <span>{primarySource?.name}</span>

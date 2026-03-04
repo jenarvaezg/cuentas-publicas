@@ -36,7 +36,7 @@ export function ExportBlockButton({ targetId, filenamePrefix }: ExportBlockButto
         onClick={handleExport}
         disabled={isExporting}
       >
-        <Download className="h-3.5 w-3.5" />
+        <Download className="h-3.5 w-3.5" aria-hidden="true" />
         {isExporting ? msg.common.exporting : msg.common.exportPng}
       </Button>
       {hasError && <output className="text-[10px] text-rose-500">{msg.common.exportError}</output>}

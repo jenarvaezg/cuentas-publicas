@@ -17,13 +17,13 @@ export interface CcaaBarDatum {
   isTop3: boolean;
 }
 
-interface CcaaTooltipProps {
+export interface CcaaTooltipProps {
   active?: boolean;
   payload?: Array<{ payload: CcaaBarDatum }>;
   metricLabel: string;
 }
 
-const CcaaTooltip = ({ active, payload, metricLabel }: CcaaTooltipProps) => {
+export const CcaaTooltip = ({ active, payload, metricLabel }: CcaaTooltipProps) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (

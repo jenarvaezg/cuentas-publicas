@@ -563,9 +563,9 @@ export function MethodologySection() {
         >
           <h2 className="text-lg font-semibold">{msg.blocks.methodology.title}</h2>
           {isOpen ? (
-            <ChevronUp className="h-5 w-5 text-muted-foreground" />
+            <ChevronUp className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
           ) : (
-            <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            <ChevronDown className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
           )}
         </button>
       </CardHeader>

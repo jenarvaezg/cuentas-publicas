@@ -19,7 +19,7 @@ if (typeof window !== "undefined") {
       }
     },
     onOfflineReady() {
-      console.info(pwaCopy.offlineReadyLog);
+      if (import.meta.env.DEV) console.info(pwaCopy.offlineReadyLog);
     },
   });
 }

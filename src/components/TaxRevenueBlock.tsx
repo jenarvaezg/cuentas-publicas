@@ -16,6 +16,7 @@ import type {
   TaxRevenueYearNational,
 } from "@/data/types";
 import { useData } from "@/hooks/useData";
+import { useTabKeyboardNav } from "@/hooks/useTabKeyboardNav";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber } from "@/utils/formatters";
 import { getSearchParam, updateSearchParams } from "@/utils/url-state";
@@ -135,6 +136,8 @@ export function TaxRevenueBlock() {
   const latestBalanceYear = ccaaFiscalBalance?.latestYear ?? balanceYears[balanceYears.length - 1];
 
   const [activeTab, setActiveTab] = useState<TabKey>(() => parseTabFromQuery());
+  const TAX_TABS = ["nacional", "ccaa"] as const;
+  const { onKeyDown: taxTabKeyDown } = useTabKeyboardNav(TAX_TABS, activeTab, setActiveTab);
   const [selectedTaxType, setSelectedTaxType] = useState<TaxTypeKey>(() => parseTaxTypeFromQuery());
   const [ccaaMode, setCcaaMode] = useState<CcaaModeKey>(() => parseCcaaModeFromQuery());
   const [selectedBalanceMetric, setSelectedBalanceMetric] = useState<BalanceMetricKey>(() =>
@@ -384,6 +387,11 @@ export function TaxRevenueBlock() {
   const TabButton = ({ tab, label }: { tab: TabKey; label: string }) => (
     <button
       type="button"
+      role="tab"
+      id={`tax-tab-${tab}`}
+      aria-selected={activeTab === tab}
+      aria-controls={`tax-panel-${tab}`}
+      tabIndex={activeTab === tab ? 0 : -1}
       onClick={() => setActiveTab(tab)}
       className={`px-2.5 py-1 text-xs rounded-sm transition-colors ${
         activeTab === tab
@@ -403,7 +411,11 @@ export function TaxRevenueBlock() {
             <CardTitle>{msg.blocks.taxRevenue.title}</CardTitle>
             <div className="flex flex-wrap items-center gap-3">
               {/* Tab toggle */}
-              <div className="flex items-center rounded-md border border-input bg-background p-0.5">
+              <div
+                role="tablist"
+                onKeyDown={taxTabKeyDown}
+                className="flex items-center rounded-md border border-input bg-background p-0.5"
+              >
                 <TabButton tab="nacional" label={copy.nacional} />
                 <TabButton tab="ccaa" label={copy.porCcaa} />
               </div>
@@ -495,7 +507,12 @@ export function TaxRevenueBlock() {
 
         {/* Nacional tab */}
         {activeTab === "nacional" && (
-          <div className="space-y-5">
+          <div
+            role="tabpanel"
+            id="tax-panel-nacional"
+            aria-labelledby="tax-tab-nacional"
+            className="space-y-5"
+          >
             <SectionExpander id="tax-effective-rates" count={3}>
               <div>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-1 text-center">
@@ -651,39 +668,41 @@ export function TaxRevenueBlock() {
 
         {/* CCAA tab */}
         {activeTab === "ccaa" && (
-          <CcaaTaxTab
-            data={ccaaChartData}
-            chartHeight={ccaaChartHeight}
-            xDomain={ccaaXDomain}
-            ccaaMode={ccaaMode}
-            selectedTaxType={selectedTaxType}
-            selectedBalanceMetric={selectedBalanceMetric}
-            metricLabel={ccaaMetricLabel}
-            taxNames={taxNames}
-            onCcaaModeChange={setCcaaMode}
-            onTaxTypeChange={setSelectedTaxType}
-            onBalanceMetricChange={setSelectedBalanceMetric}
-            copy={{
-              ccaaMode: copy.ccaaMode,
-              ccaaModeAeat: copy.ccaaModeAeat,
-              ccaaModeBalance: copy.ccaaModeBalance,
-              taxType: copy.taxType,
-              allTaxes: copy.allTaxes,
-              balanceMetric: copy.balanceMetric,
-              balanceNet: copy.balanceNet,
-              balanceCeded: copy.balanceCeded,
-              balanceTransfers: copy.balanceTransfers,
-              top3: copy.top3,
-              restRegions: copy.restRegions,
-              balancePositive: copy.balancePositive,
-              balanceNegative: copy.balanceNegative,
-              ccaaNoData: copy.ccaaNoData,
-              balanceNoData: copy.balanceNoData,
-              foralNote: copy.foralNote,
-              balanceCoverageNote: copy.balanceCoverageNote,
-              balanceFormulaNote: copy.balanceFormulaNote,
-            }}
-          />
+          <div role="tabpanel" id="tax-panel-ccaa" aria-labelledby="tax-tab-ccaa">
+            <CcaaTaxTab
+              data={ccaaChartData}
+              chartHeight={ccaaChartHeight}
+              xDomain={ccaaXDomain}
+              ccaaMode={ccaaMode}
+              selectedTaxType={selectedTaxType}
+              selectedBalanceMetric={selectedBalanceMetric}
+              metricLabel={ccaaMetricLabel}
+              taxNames={taxNames}
+              onCcaaModeChange={setCcaaMode}
+              onTaxTypeChange={setSelectedTaxType}
+              onBalanceMetricChange={setSelectedBalanceMetric}
+              copy={{
+                ccaaMode: copy.ccaaMode,
+                ccaaModeAeat: copy.ccaaModeAeat,
+                ccaaModeBalance: copy.ccaaModeBalance,
+                taxType: copy.taxType,
+                allTaxes: copy.allTaxes,
+                balanceMetric: copy.balanceMetric,
+                balanceNet: copy.balanceNet,
+                balanceCeded: copy.balanceCeded,
+                balanceTransfers: copy.balanceTransfers,
+                top3: copy.top3,
+                restRegions: copy.restRegions,
+                balancePositive: copy.balancePositive,
+                balanceNegative: copy.balanceNegative,
+                ccaaNoData: copy.ccaaNoData,
+                balanceNoData: copy.balanceNoData,
+                foralNote: copy.foralNote,
+                balanceCoverageNote: copy.balanceCoverageNote,
+                balanceFormulaNote: copy.balanceFormulaNote,
+              }}
+            />
+          </div>
         )}
 
         {/* Footer note */}

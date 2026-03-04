@@ -8,20 +8,15 @@ interface Phase {
   items: string[];
 }
 
+// Structural keys (intro, statusLine, cta, etc.) live in messages.ts under blocks.roadmap.
+// Only phases/wishlists remain inline because they contain long-form arrays.
 interface RoadmapCopy {
-  intro: string;
-  statusLine: string;
   phases: Phase[];
   wishlists: Array<{ title: string; items: string[] }>;
-  cta: string;
-  openSourceLabel: string;
-  issueLabel: string;
 }
 
 const copyByLang: Record<"es" | "en", RoadmapCopy> = {
   es: {
-    intro: "Este es el estado actual del proyecto y las funcionalidades que nos gustaría añadir.",
-    statusLine: "Estado validado: 26 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
     phases: [
       {
         title: "Fase 1: Deuda + Pensiones (MVP) ✅",
@@ -131,13 +126,8 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         ],
       },
     ],
-    cta: "¿Tienes una idea o quieres contribuir? Abre un",
-    openSourceLabel: "open source",
-    issueLabel: "issue en GitHub",
   },
   en: {
-    intro: "This is the current project status and the features we want to add next.",
-    statusLine: "Status validated: February 26, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
     phases: [
       {
         title: "Phase 1: Debt + Pensions (MVP) ✅",
@@ -247,9 +237,6 @@ const copyByLang: Record<"es" | "en", RoadmapCopy> = {
         ],
       },
     ],
-    cta: "Do you have an idea or want to contribute? Open a",
-    openSourceLabel: "open source",
-    issueLabel: "GitHub issue",
   },
 };
 
@@ -271,9 +258,9 @@ export function RoadmapSection() {
         >
           <h2 className="text-lg font-semibold">{msg.blocks.roadmap.title}</h2>
           {isOpen ? (
-            <ChevronUp className="h-5 w-5 text-muted-foreground" />
+            <ChevronUp className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
           ) : (
-            <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            <ChevronDown className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
           )}
         </button>
       </CardHeader>
@@ -282,18 +269,18 @@ export function RoadmapSection() {
         <CardContent id="roadmap-content" className="space-y-6 text-sm leading-relaxed">
           <div className="prose prose-sm dark:prose-invert max-w-none">
             <p className="text-muted-foreground">
-              {copy.intro}{" "}
+              {msg.blocks.roadmap.intro}{" "}
               <a
                 href="https://github.com/jenarvaezg/cuentas-publicas"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline underline-offset-4 hover:text-primary transition-colors"
               >
-                {copy.openSourceLabel}
+                {msg.blocks.roadmap.openSourceLabel}
               </a>
               .
             </p>
-            <p className="text-[11px] text-muted-foreground/80">{copy.statusLine}</p>
+            <p className="text-[11px] text-muted-foreground/80">{msg.blocks.roadmap.statusLine}</p>
 
             {copy.phases.map((phase) => (
               <div key={phase.title}>
@@ -321,14 +308,14 @@ export function RoadmapSection() {
 
             <div className="mt-6 pt-4 border-t text-xs text-muted-foreground/80">
               <p>
-                {copy.cta}{" "}
+                {msg.blocks.roadmap.cta}{" "}
                 <a
                   href="https://github.com/jenarvaezg/cuentas-publicas/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline underline-offset-4 hover:text-primary transition-colors"
                 >
-                  {copy.issueLabel}
+                  {msg.blocks.roadmap.issueLabel}
                 </a>
                 .
               </p>

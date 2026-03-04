@@ -49,9 +49,12 @@ export const PersonalCalculator: React.FC<Props> = ({ spendingCategories, totalS
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
       >
-        <Calculator className="w-4 h-4" />
+        <Calculator className="w-4 h-4" aria-hidden="true" />
         {copy.toggle}
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        />
       </button>
 
       {isOpen && (

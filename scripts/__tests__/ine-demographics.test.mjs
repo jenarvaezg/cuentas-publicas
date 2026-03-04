@@ -333,4 +333,199 @@ describe('downloadDemographicsDetail', () => {
     expect(emYears).toEqual([...emYears].sort((a, b) => a - b))
     expect(netYears).toEqual([...netYears].sort((a, b) => a - b))
   })
+
+  it('happy path — fetches all data successfully from API', async () => {
+    const respond = (data) => Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(data),
+    })
+    // Fecha must be a number so new Date(Fecha).getFullYear() works correctly
+    const makePoint = (valor, yearOffset = 0) => ({
+      Valor: valor,
+      Fecha: 1704067200000 + yearOffset * 31536000000,
+      Anyo: 2024 + yearOffset,
+    })
+
+    // Build pyramid metadata series
+    const pyramidSeries = []
+    const sexes = ['Hombres', 'Mujeres']
+    const birthPlaces = ['España', 'Unión Europea (sin España)', 'Europa (no UE)', 'África', 'Sudamérica', 'Asia']
+    const ageGroupNames = [
+      'De 0 a 4 años', 'De 5 a 9 años', 'De 10 a 14 años', 'De 15 a 19 años',
+      'De 20 a 24 años', 'De 25 a 29 años', 'De 30 a 34 años', 'De 35 a 39 años',
+      'De 40 a 44 años', 'De 45 a 49 años', 'De 50 a 54 años', 'De 55 a 59 años',
+      'De 60 a 64 años', 'De 65 a 69 años', 'De 70 a 74 años', 'De 75 a 79 años',
+      'De 80 a 84 años', 'De 85 a 89 años', '90 y más años',
+    ]
+    let codCounter = 1
+    for (const sex of sexes) {
+      for (const bp of birthPlaces) {
+        for (const ag of ageGroupNames) {
+          pyramidSeries.push({
+            COD: `PYR${codCounter++}`,
+            Nombre: `Total Nacional. ${bp}. ${ag}. ${sex}. Población. Número.`,
+          })
+        }
+      }
+    }
+
+    const mockFetcher = vi.fn().mockImplementation((url) => {
+      // PYRAMID METADATA
+      if (url.includes('SERIES_TABLA/56943')) {
+        return respond(pyramidSeries)
+      }
+
+      if (url.includes('DATOS_SERIE')) {
+        // Vital stats — fertility needs 3+ points for linear regression
+        if (url.includes('IDB37106')) return respond({ Data: [makePoint(7.62, -5), makePoint(7.19, -4), makePoint(7.12, -3), makePoint(6.73, -2), makePoint(6.53, -1), makePoint(6.30, 0)] })
+        if (url.includes('IDB47797')) return respond({ Data: [makePoint(8.83, -5), makePoint(10.37, -4), makePoint(9.33, -3), makePoint(9.11, -2), makePoint(9.10, -1), makePoint(9.40, 0)] })
+        if (url.includes('IDB72160')) return respond({ Data: [makePoint(1.24, -5), makePoint(1.19, -4), makePoint(1.19, -3), makePoint(1.16, -2), makePoint(1.12, -1), makePoint(1.14, 0)] })
+        if (url.includes('IDB55340')) return respond({ Data: [makePoint(-1.21, -5), makePoint(-3.18, -4), makePoint(-2.21, -3), makePoint(-2.38, -2), makePoint(-2.57, -1), makePoint(-3.10, 0)] })
+
+        // Life expectancy
+        if (url.includes('IDB53772')) return respond({ Data: [makePoint(83.50, -1), makePoint(83.70, 0)] })
+        if (url.includes('IDB53773')) return respond({ Data: [makePoint(80.70, -1), makePoint(80.90, 0)] })
+        if (url.includes('IDB53774')) return respond({ Data: [makePoint(86.10, -1), makePoint(86.30, 0)] })
+
+        // Migration flows
+        if (url.includes('EM825679')) return respond({ Data: [makePoint(600000, -4), makePoint(750000, -3)] })
+        if (url.includes('EM950865')) return respond({ Data: [makePoint(300000, -4), makePoint(350000, -3)] })
+        if (url.includes('EM1765217')) return respond({ Data: [makePoint(900000, -2), makePoint(1200000, 0)] })
+        if (url.includes('EM1843418')) return respond({ Data: [makePoint(500000, -2), makePoint(600000, 0)] })
+
+        // Projection indicators
+        if (url.includes('PROP7467')) return respond({ Data: [makePoint(31.30, 0), makePoint(34.39, 6)] })
+        if (url.includes('PROP7465')) return respond({ Data: [makePoint(53.30, 0), makePoint(56.39, 6)] })
+        if (url.includes('PROP7463')) return respond({ Data: [makePoint(20.40, 0), makePoint(22.50, 6)] })
+        if (url.includes('PROP7446')) return respond({ Data: [makePoint(13.40, 0), makePoint(7.00, 6)] })
+        if (url.includes('PROP7447')) return respond({ Data: [makePoint(-2.70, 0), makePoint(-3.50, 6)] })
+        if (url.includes('PROP7448')) return respond({ Data: [makePoint(16.10, 0), makePoint(10.00, 6)] })
+
+        // National projection
+        if (url.includes('PROP7993')) return respond({ Data: [makePoint(49000000, 0), makePoint(50000000, 1)] })
+
+        // CCAA short-term projections + province series — use Spain series for bigger values, foreign for smaller
+        if (url.includes('PROP') || url.includes('DPOP')) {
+          return respond({ Data: [makePoint(500000, -1), makePoint(510000, 0)] })
+        }
+
+        // Pyramid series: Spain-origin gets large values, foreign gets smaller but non-zero
+        if (url.includes('PYR')) {
+          const code = url.match(/PYR(\d+)/)?.[0] ?? ''
+          const codeNum = parseInt(code.replace('PYR', ''), 10)
+          // Spain series are the first 19 per sex block (codes 1-19 male, 133-151 female, etc.)
+          // Simpler: use a value dependent on whether code number mod 114 < 19 (Spain block)
+          const posInSexBp = (codeNum - 1) % 114
+          const isSpain = posInSexBp < 19
+          const valor = isSpain ? 500000 : 50000
+          return respond({ Data: [makePoint(valor, -1), makePoint(valor + 5000, 0)] })
+        }
+
+        return respond({ Data: [] })
+      }
+
+      return Promise.reject(new Error(`Unknown URL: ${url}`))
+    })
+
+    const result = await downloadDemographicsDetail(mockFetcher)
+
+    // Vital stats
+    expect(result.vitalStats.birthRate.length).toBeGreaterThan(0)
+    expect(result.vitalStats.deathRate.length).toBeGreaterThan(0)
+    expect(result.vitalStats.fertilityRate.length).toBeGreaterThan(0)
+    expect(result.vitalStats.naturalGrowth.length).toBeGreaterThan(0)
+
+    // Life expectancy
+    expect(result.lifeExpectancy.both.length).toBeGreaterThan(0)
+    expect(result.lifeExpectancy.male.length).toBeGreaterThan(0)
+    expect(result.lifeExpectancy.female.length).toBeGreaterThan(0)
+
+    // Pyramid
+    expect(result.pyramid.years.length).toBeGreaterThan(0)
+    expect(result.pyramid.ageGroups).toHaveLength(19)
+    expect(result.pyramid.regions).toHaveLength(6)
+
+    // Dependency ratios (derived from pyramid)
+    expect(result.dependencyRatio.oldAge).toBeGreaterThan(0)
+    expect(result.dependencyRatio.youth).toBeGreaterThan(0)
+    expect(result.dependencyRatio.total).toBeGreaterThan(0)
+
+    // Immigration share (derived from pyramid)
+    expect(result.immigrationShare.total).toBeGreaterThan(0)
+    expect(result.immigrationShare.historical.length).toBeGreaterThan(0)
+
+    // Projections
+    expect(result.projections.shortTerm.national.length).toBeGreaterThan(0)
+    expect(result.projections.indicators.dependencyOldAge.length).toBeGreaterThan(0)
+
+    // Migration flows
+    expect(result.migrationFlows.immigration.length).toBeGreaterThan(0)
+    expect(result.migrationFlows.emigration.length).toBeGreaterThan(0)
+    expect(result.migrationFlows.netMigration.length).toBeGreaterThan(0)
+
+    // Provincial population
+    expect(result.provincialPopulation.entries.length).toBeGreaterThan(0)
+    expect(result.provincialPopulation.latestYear).toBeGreaterThanOrEqual(2023)
+
+    // Fertility projections (built from vital stats fertility rate)
+    expect(result.fertilityProjections).toBeDefined()
+    expect(result.fertilityProjections.actual.length).toBeGreaterThan(0)
+    expect(result.fertilityProjections.projections.length).toBeGreaterThanOrEqual(5)
+    expect(result.fertilityProjections.linearRegression.length).toBeGreaterThan(0)
+    expect(result.fertilityProjections.ourEstimate.length).toBeGreaterThan(0)
+
+    // Source attributions — API types
+    expect(result.sourceAttribution.vitalStats.type).toBe('api')
+    expect(result.sourceAttribution.lifeExpectancy.type).toBe('api')
+    expect(result.sourceAttribution.pyramid.type).toBe('api')
+    expect(result.sourceAttribution.projections.type).toBe('api')
+    expect(result.sourceAttribution.migrationFlows.type).toBe('api')
+    expect(result.sourceAttribution.provincialPopulation.type).toBe('api')
+  }, 30000)
+
+  it('handles partial failures gracefully — pyramid fails, rest succeeds', async () => {
+    const respond = (data) => Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(data),
+    })
+    const makePoint = (valor, yearOffset = 0) => ({
+      Valor: valor,
+      Fecha: 1704067200000 + yearOffset * 31536000000,
+      Anyo: 2024 + yearOffset,
+    })
+
+    const mockFetcher = vi.fn().mockImplementation((url) => {
+      // FAIL for pyramid metadata — triggers outer catch, returns full fallback
+      if (url.includes('SERIES_TABLA')) return Promise.reject(new Error('Pyramid fetch failed'))
+
+      if (url.includes('DATOS_SERIE')) {
+        if (url.includes('IDB37106')) return respond({ Data: [makePoint(6.49, -1), makePoint(6.30, 0)] })
+        if (url.includes('IDB47797')) return respond({ Data: [makePoint(9.50, -1), makePoint(9.40, 0)] })
+        if (url.includes('IDB72160')) return respond({ Data: [makePoint(1.16, -1), makePoint(1.14, 0)] })
+        if (url.includes('IDB55340')) return respond({ Data: [makePoint(-3.01, -1), makePoint(-3.10, 0)] })
+        if (url.includes('IDB53772')) return respond({ Data: [makePoint(83.50, -1), makePoint(83.70, 0)] })
+        if (url.includes('IDB53773')) return respond({ Data: [makePoint(80.70, -1), makePoint(80.90, 0)] })
+        if (url.includes('IDB53774')) return respond({ Data: [makePoint(86.10, -1), makePoint(86.30, 0)] })
+        if (url.includes('EM825679')) return respond({ Data: [makePoint(600000, -4)] })
+        if (url.includes('EM950865')) return respond({ Data: [makePoint(300000, -4)] })
+        if (url.includes('EM1765217')) return respond({ Data: [makePoint(900000, 0)] })
+        if (url.includes('EM1843418')) return respond({ Data: [makePoint(500000, 0)] })
+        if (url.includes('PROP') || url.includes('DPOP')) return respond({ Data: [makePoint(500000, 0)] })
+        return respond({ Data: [] })
+      }
+
+      return Promise.reject(new Error('Unknown URL'))
+    })
+
+    // Pyramid failure is unhandled inside downloadDemographicsDetail (not wrapped with .catch),
+    // so the outer try/catch fires and falls back to fallbackDemographicsDetail()
+    const result = await downloadDemographicsDetail(mockFetcher)
+
+    expect(result.vitalStats).toBeDefined()
+    expect(result.vitalStats.birthRate.length).toBeGreaterThan(0)
+    expect(result.pyramid).toBeDefined()
+    expect(result.pyramid.years.length).toBeGreaterThan(0)
+    expect(result.dependencyRatio).toBeDefined()
+    expect(result.sourceAttribution.pyramid.type).toBe('fallback')
+  })
 })

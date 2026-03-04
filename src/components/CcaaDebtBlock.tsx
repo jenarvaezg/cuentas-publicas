@@ -313,6 +313,8 @@ export function CcaaDebtBlock() {
               foralTaxRevenueRef: copy.foralTaxRevenueRef,
               taxRevenueRef: copy.taxRevenueRef,
               proxyNote: copy.proxyNote,
+              surplus: copy.surplus,
+              deficit: copy.deficit,
             }}
             notAvailable={msg.common.notAvailable}
           />
@@ -398,7 +400,7 @@ export function CcaaDebtBlock() {
                 className="underline hover:text-foreground inline-flex items-center gap-0.5"
               >
                 {attr.name}
-                <ExternalLink className="h-2 w-2" />
+                <ExternalLink className="h-2 w-2" aria-hidden="true" />
               </a>
               <span>— {ccaaDebt.quarter}</span>
               {attr.note && <span className="hidden sm:inline">({attr.note})</span>}

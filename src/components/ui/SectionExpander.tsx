@@ -19,7 +19,7 @@ export function SectionExpander({
   defaultOpen = false,
   className,
 }: SectionExpanderProps) {
-  const { lang } = useI18n();
+  const { msg } = useI18n();
 
   const [isOpen, setIsOpen] = useState(() => {
     if (typeof window === "undefined") return defaultOpen;
@@ -36,12 +36,10 @@ export function SectionExpander({
   const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
   const label = isOpen
-    ? lang === "en"
-      ? "Show less"
-      : "Ver menos"
-    : lang === "en"
-      ? `Full analysis${count ? ` (${count} more)` : ""}`
-      : `Ver análisis completo${count ? ` (${count} más)` : ""}`;
+    ? msg.common.showLess
+    : count
+      ? `${msg.common.fullAnalysis} (${count})`
+      : msg.common.fullAnalysis;
 
   return (
     <div className={className}>

@@ -17,12 +17,12 @@ export interface NationalBarDatum {
   percentage: number;
 }
 
-interface NationalTooltipProps {
+export interface NationalTooltipProps {
   active?: boolean;
   payload?: Array<{ payload: NationalBarDatum }>;
 }
 
-const NationalTooltip = ({ active, payload }: NationalTooltipProps) => {
+export const NationalTooltip = ({ active, payload }: NationalTooltipProps) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (

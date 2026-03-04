@@ -38,4 +38,52 @@ describe("Header", () => {
     expect(screen.getByText(/1 de enero de 2024/)).toBeDefined();
     expect(screen.getByTestId("theme-toggle")).toBeDefined();
   });
+
+  it("shows fresh indicator when sources are recent", () => {
+    const recentDate = new Date().toISOString();
+    (useData as any).mockReturnValue({
+      meta: {
+        lastDownload: recentDate,
+        sources: {
+          debt: { lastRealDataDate: recentDate },
+          pensions: { lastRealDataDate: recentDate },
+        },
+      },
+    });
+
+    render(<Header />);
+    expect(screen.getByText("Datos al día")).toBeDefined();
+  });
+
+  it("shows stale warning when sources are old", () => {
+    const oldDate = "2023-01-01T00:00:00Z";
+    (useData as any).mockReturnValue({
+      meta: {
+        lastDownload: oldDate,
+        sources: {
+          debt: { lastRealDataDate: oldDate },
+          pensions: { lastRealDataDate: oldDate },
+        },
+      },
+    });
+
+    render(<Header />);
+    expect(screen.getByText("Algunos datos pueden estar desactualizados")).toBeDefined();
+  });
+
+  it("handles sources with null lastRealDataDate", () => {
+    (useData as any).mockReturnValue({
+      meta: {
+        lastDownload: "2024-06-01T00:00:00Z",
+        sources: {
+          debt: { lastRealDataDate: null },
+          pensions: {},
+        },
+      },
+    });
+
+    render(<Header />);
+    // No stale sources → fresh indicator
+    expect(screen.getByText(/Cuentas Públicas/)).toBeDefined();
+  });
 });

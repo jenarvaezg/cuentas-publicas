@@ -35,6 +35,8 @@ export const blockMessages = {
     },
     debtCost: {
       title: "Coste de la Deuda",
+      tabCost: "Coste de la deuda",
+      tabPerspective: "Ponlo en perspectiva",
       realtimeLabel: "Pagado en intereses desde que abriste la página",
       realtimeNote: "Basado en gasto anual estimado en intereses (~39.000 M€, PGE 2025)",
       annualInterest: "Gasto anual en intereses",
@@ -196,6 +198,8 @@ export const blockMessages = {
     },
     ccaa: {
       title: "Deuda por Comunidad Autónoma",
+      surplus: "Superávit",
+      deficit: "Déficit",
       metricLabels: {
         debtToGDP: "Deuda/PIB (%)",
         debtAbsolute: "Deuda total (€)",
@@ -339,6 +343,7 @@ export const blockMessages = {
     },
     demographics: {
       title: "Demografía",
+      livingConditionsTitle: "Condiciones de vida",
       population: "Población total",
       birthRate: "Tasa de natalidad",
       fertilityRate: "Tasa de fecundidad",
@@ -617,6 +622,11 @@ export const blockMessages = {
     },
     roadmap: {
       title: "Roadmap y wishlist",
+      intro: "Este es el estado actual del proyecto y las funcionalidades que nos gustaría añadir.",
+      statusLine: "Estado validado: 26 febrero 2026. Leyenda: ✅ hecho, 🟡 parcial, ⏳ pendiente.",
+      cta: "¿Tienes una idea o quieres contribuir? Abre un",
+      openSourceLabel: "open source",
+      issueLabel: "issue en GitHub",
     },
   },
   en: {
@@ -653,6 +663,8 @@ export const blockMessages = {
     },
     debtCost: {
       title: "Debt Cost",
+      tabCost: "Debt cost",
+      tabPerspective: "Put it in perspective",
       realtimeLabel: "Interest paid since you opened this page",
       realtimeNote: "Based on estimated annual interest spending (~€39B, 2025 budget)",
       annualInterest: "Annual interest spending",
@@ -821,6 +833,8 @@ export const blockMessages = {
     },
     ccaa: {
       title: "Debt by Autonomous Community",
+      surplus: "Surplus",
+      deficit: "Deficit",
       metricLabels: {
         debtToGDP: "Debt/GDP (%)",
         debtAbsolute: "Total debt (€)",
@@ -963,6 +977,7 @@ export const blockMessages = {
     },
     demographics: {
       title: "Demographics",
+      livingConditionsTitle: "Living Conditions",
       population: "Total population",
       birthRate: "Birth rate",
       fertilityRate: "Fertility rate",
@@ -1249,6 +1264,11 @@ export const blockMessages = {
     },
     roadmap: {
       title: "Roadmap and wishlist",
+      intro: "This is the current project status and the features we want to add next.",
+      statusLine: "Status validated: February 26, 2026. Legend: ✅ done, 🟡 partial, ⏳ pending.",
+      cta: "Do you have an idea or want to contribute? Open a",
+      openSourceLabel: "open source",
+      issueLabel: "GitHub issue",
     },
   },
 } as const;

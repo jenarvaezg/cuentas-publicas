@@ -108,68 +108,13 @@ function SectionSkeleton() {
 }
 
 function App() {
-  const { msg, lang } = useI18n();
+  const { msg } = useI18n();
 
   useDocumentMeta(msg.app.pageTitle, msg.app.pageDescription);
 
   const { debt, pensions } = useData();
 
-  const chapterCopy =
-    lang === "en"
-      ? {
-          c1: {
-            title: "The Big Picture",
-            subtitle: "National real-time debt and interactive fiscal map.",
-            navLabel: "Overview",
-          },
-          c2: {
-            title: "Revenue Engine",
-            subtitle: "Public income and tax collection breakdown.",
-            navLabel: "Revenue",
-          },
-          c3: {
-            title: "The Social Balance",
-            subtitle: "Demographics, pensions, and welfare sustainability.",
-            navLabel: "Welfare",
-          },
-          c4: {
-            title: "The National Mortgage",
-            subtitle: "Public debt, interest costs, and what they equivalate to.",
-            navLabel: "Debt",
-          },
-          c5: {
-            title: "The Territorial Game",
-            subtitle: "Regional debt, EU context, and methodology.",
-            navLabel: "Territory",
-          },
-        }
-      : {
-          c1: {
-            title: "El Gran Balance",
-            subtitle: "Deuda en tiempo real y el mapa fiscal interactivo.",
-            navLabel: "Resumen",
-          },
-          c2: {
-            title: "La Máquina de Recaudar",
-            subtitle: "Ingresos públicos y desglose de la recaudación tributaria.",
-            navLabel: "Ingresos",
-          },
-          c3: {
-            title: "La Balanza Social",
-            subtitle: "Demografía, pensiones y sostenibilidad del estado de bienestar.",
-            navLabel: "Estado Social",
-          },
-          c4: {
-            title: "La Hipoteca Nacional",
-            subtitle: "La deuda pública, el coste de los intereses y sus equivalencias.",
-            navLabel: "La Deuda",
-          },
-          c5: {
-            title: "El Juego Territorial",
-            subtitle: "Brecha autonómica, comparativa europea y metodología.",
-            navLabel: "Territorio",
-          },
-        };
+  const chapterCopy = msg.chapters;
 
   const sectionGroups = useMemo<SectionNavGroup[]>(
     () => [
@@ -180,7 +125,7 @@ function App() {
           { id: "resumen", label: msg.sections.resumen },
           {
             id: "mapa-fiscal",
-            label: lang === "en" ? "Fiscal Map" : "Mapa Fiscal",
+            label: msg.sections.mapaFiscal,
           },
         ],
       },
@@ -192,7 +137,7 @@ function App() {
           { id: "recaudacion", label: msg.sections.recaudacion },
           {
             id: "economia-social",
-            label: lang === "en" ? "Social Economy" : "Economía Social",
+            label: msg.sections.economiaSocial,
           },
           { id: "gasto-cofog", label: msg.sections.gastoCofog },
         ],
@@ -224,7 +169,7 @@ function App() {
         ],
       },
     ],
-    [chapterCopy, msg.sections, lang],
+    [chapterCopy, msg.sections],
   );
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
@@ -389,16 +334,8 @@ function App() {
             <ChapterDivider title={chapterCopy.c2.title} subtitle={chapterCopy.c2.subtitle} />
 
             <NarrativeBridge
-              title={
-                lang === "en"
-                  ? "The Eurostat vs Tax Agency gap"
-                  : "La brecha entre Eurostat y Hacienda"
-              }
-              text={
-                lang === "en"
-                  ? "To understand state revenue, we look at two sources: Eurostat's complete picture (General Government), which includes social contributions, and the Spanish Tax Agency's (AEAT) specific breakdown of direct and indirect taxes."
-                  : "Para entender los ingresos del Estado hay que mirar dos cajas: la fotografía completa de Eurostat (Administraciones Públicas), que incluye cotizaciones a la Seguridad Social; y el detalle estricto de la Agencia Tributaria (Hacienda), enfocado exclusivamente en los impuestos (IRPF, IVA...)."
-              }
+              title={msg.narrativeBridges.eurostatVsAeatTitle}
+              text={msg.narrativeBridges.eurostatVsAeatText}
             />
 
             <section id="ingresos-gastos" className="scroll-mt-28">
@@ -436,12 +373,8 @@ function App() {
             <ChapterDivider title={chapterCopy.c3.title} subtitle={chapterCopy.c3.subtitle} />
 
             <NarrativeBridge
-              title={lang === "en" ? "The Demographic Clock" : "El reloj demográfico"}
-              text={
-                lang === "en"
-                  ? "Spain's welfare system rests on a delicate population balance. As the demographic pyramid inverts and birth rates fall, the pressure on the pension system and Social Security inexorably rises."
-                  : "El sistema de bienestar español descansa sobre una frágil balanza poblacional. A medida que la pirámide demográfica se invierte y la natalidad cae, la presión sobre el sistema de pensiones y la Seguridad Social aumenta inexorablemente."
-              }
+              title={msg.narrativeBridges.demographicClockTitle}
+              text={msg.narrativeBridges.demographicClockText}
             />
 
             <section id="demografia" className="scroll-mt-28">
@@ -472,12 +405,8 @@ function App() {
             <ChapterDivider title={chapterCopy.c4.title} subtitle={chapterCopy.c4.subtitle} />
 
             <NarrativeBridge
-              title={lang === "en" ? "The Cost of Indebtedness" : "El coste del endeudamiento"}
-              text={
-                lang === "en"
-                  ? "Years of accumulated deficits generate a massive liability. This debt is not free: it generates annual interest payments that rival the country's largest departmental budgets, diverting funds from public services."
-                  : "Déficit tras déficit, año tras año, se genera un pasivo colosal. Esta deuda no sale gratis: genera unos intereses anuales que rivalizan con los mayores ministerios del país, drenando recursos de los servicios públicos."
-              }
+              title={msg.narrativeBridges.costOfDebtTitle}
+              text={msg.narrativeBridges.costOfDebtText}
             />
 
             <section id="deuda" className="scroll-mt-28">

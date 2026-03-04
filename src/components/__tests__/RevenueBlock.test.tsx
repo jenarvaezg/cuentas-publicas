@@ -157,6 +157,10 @@ describe("RevenueBlock", () => {
       <HistoricalTooltip
         active
         label={2024}
+        revenueLabel="Ingresos"
+        spendingLabel="Gastos"
+        surplusLabel="Superávit"
+        deficitLabel="Déficit"
         payload={[
           { dataKey: "ingresos", value: 500000, color: "green" },
           { dataKey: "gastos", value: 550000, color: "red" },
@@ -169,6 +173,10 @@ describe("RevenueBlock", () => {
       <HistoricalTooltip
         active
         label={2023}
+        revenueLabel="Ingresos"
+        spendingLabel="Gastos"
+        surplusLabel="Superávit"
+        deficitLabel="Déficit"
         payload={[
           { dataKey: "ingresos", value: 600000, color: "green" },
           { dataKey: "gastos", value: 550000, color: "red" },

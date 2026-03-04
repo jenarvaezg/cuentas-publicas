@@ -74,10 +74,10 @@ export const HistoricalTooltip = ({
   const ingresos = payload.find((p) => p.dataKey === "ingresos")?.value ?? 0;
   const gastos = payload.find((p) => p.dataKey === "gastos")?.value ?? 0;
   const balance = ingresos - gastos;
-  const revenueText = revenueLabel ?? "Ingresos";
-  const spendingText = spendingLabel ?? "Gastos";
-  const surplusText = surplusLabel ?? "Superávit";
-  const deficitText = deficitLabel ?? "Déficit";
+  const revenueText = revenueLabel;
+  const spendingText = spendingLabel;
+  const surplusText = surplusLabel;
+  const deficitText = deficitLabel;
   const millions = millionSuffix ?? "M€";
   return (
     <div className="bg-popover/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-xl text-sm">
