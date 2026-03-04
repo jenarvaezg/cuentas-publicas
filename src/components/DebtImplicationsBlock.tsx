@@ -29,6 +29,16 @@ export function DebtImplicationsBlock() {
   const interestPerSecond = debt.current.interestExpense / (365.25 * 24 * 60 * 60);
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
   const averageCost = (debt.current.interestExpense / currentDebt) * 100;
+  const totalDebtSparkline = debt.historical.slice(-20).map((point) => point.totalDebt);
+  const averageCostRatio = currentDebt > 0 ? debt.current.interestExpense / currentDebt : 0;
+  const annualInterestSparkline =
+    averageCostRatio > 0 ? totalDebtSparkline.map((value) => value * averageCostRatio) : [];
+  const averageCostSparkline =
+    debt.current.interestExpense > 0
+      ? totalDebtSparkline.map((value) =>
+          value > 0 ? (debt.current.interestExpense / value) * 100 : 0,
+        )
+      : [];
 
   const interestSource = debt.sourceAttribution?.interestExpense
     ? fromAttribution(debt.sourceAttribution.interestExpense)
@@ -52,6 +62,31 @@ export function DebtImplicationsBlock() {
   const daysOfInterest =
     budgetTotalEuros > 0 ? (debt.current.interestExpense / budgetTotalEuros) * 365 : 0;
   const dailySpending = budgetTotalEuros > 0 ? budgetTotalEuros / 365 : 0;
+  const monthsOfSMISparkline =
+    demographics.population > 0 && demographics.smi > 0
+      ? totalDebtSparkline.map((value) => value / demographics.population / demographics.smi)
+      : [];
+  const yearsOfSalarySparkline =
+    demographics.population > 0 && demographics.averageSalary > 0
+      ? totalDebtSparkline.map(
+          (value) => value / demographics.population / demographics.averageSalary,
+        )
+      : [];
+  const yearsOfSpendingSparkline =
+    budgetTotalEuros > 0 ? totalDebtSparkline.map((value) => value / budgetTotalEuros) : [];
+  const yearsOfPensionsSparkline =
+    pensions.current.annualExpense > 0
+      ? totalDebtSparkline.map((value) => value / pensions.current.annualExpense)
+      : [];
+  const daysOfInterestSparkline =
+    budgetTotalEuros > 0
+      ? annualInterestSparkline.map((value) => (value / budgetTotalEuros) * 365)
+      : [];
+  const dailySpendingSparkline = (budget.years ?? [])
+    .slice(-20)
+    .map((year) => (budget.byYear[String(year)]?.total ?? 0) * 1_000_000)
+    .filter((value) => value > 0)
+    .map((value) => value / 365);
 
   const bdeSource = resolveSource(debt.sourceAttribution?.totalDebt, BDE_BE11B);
   const inePopSource = resolveSource(demographics.sourceAttribution?.population, INE_POBLACION);
@@ -125,6 +160,7 @@ export function DebtImplicationsBlock() {
                 value={formatCompact(debt.current.interestExpense)}
                 tooltip={costCopy.annualInterestTooltip}
                 delay={0.05}
+                sparklineData={annualInterestSparkline}
                 sources={[interestSource]}
               />
               <StatCard
@@ -132,6 +168,7 @@ export function DebtImplicationsBlock() {
                 value={formatPercent(averageCost)}
                 tooltip={costCopy.averageCostTooltip}
                 delay={0.1}
+                sparklineData={averageCostSparkline}
                 sources={[
                   { ...CALCULO_DERIVADO, note: costCopy.averageCostNote },
                   interestSource,
@@ -149,6 +186,7 @@ export function DebtImplicationsBlock() {
                 value={`${formatNumber(monthsOfSMI, 1)} ${eqCopy.monthsUnit}`}
                 tooltip={eqCopy.monthsLabelTooltip}
                 delay={0.05}
+                sparklineData={monthsOfSMISparkline}
                 sources={[
                   {
                     ...CALCULO_DERIVADO,
@@ -163,6 +201,7 @@ export function DebtImplicationsBlock() {
                 value={`${formatNumber(yearsOfSalary, 1)} ${eqCopy.yearsUnit}`}
                 tooltip={eqCopy.salaryLabelTooltip}
                 delay={0.1}
+                sparklineData={yearsOfSalarySparkline}
                 sources={[
                   {
                     ...CALCULO_DERIVADO,
@@ -177,6 +216,7 @@ export function DebtImplicationsBlock() {
                 value={`${formatNumber(yearsOfSpending, 1)} ${eqCopy.yearsUnit}`}
                 tooltip={eqCopy.spendingLabelTooltip}
                 delay={0.15}
+                sparklineData={yearsOfSpendingSparkline}
                 sources={[
                   {
                     ...CALCULO_DERIVADO,
@@ -191,6 +231,7 @@ export function DebtImplicationsBlock() {
                 value={`${formatNumber(yearsOfPensions, 1)} ${eqCopy.yearsUnit}`}
                 tooltip={eqCopy.pensionsLabelTooltip}
                 delay={0.2}
+                sparklineData={yearsOfPensionsSparkline}
                 sources={[
                   {
                     ...CALCULO_DERIVADO,
@@ -204,6 +245,7 @@ export function DebtImplicationsBlock() {
                 value={`${formatNumber(daysOfInterest, 0)} ${eqCopy.daysUnit}`}
                 tooltip={eqCopy.interestLabelTooltip}
                 delay={0.25}
+                sparklineData={daysOfInterestSparkline}
                 sources={[
                   {
                     ...CALCULO_DERIVADO,
@@ -218,6 +260,7 @@ export function DebtImplicationsBlock() {
                 value={formatCompact(dailySpending)}
                 tooltip={eqCopy.dailySpendingLabelTooltip}
                 delay={0.3}
+                sparklineData={dailySpendingSparkline}
                 sources={[
                   {
                     ...CALCULO_DERIVADO,

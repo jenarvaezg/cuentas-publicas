@@ -226,8 +226,10 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 | Impuestos indirectos (D2REC) | **AUTOMATIZADO** | `gov_10a_main` na_item=D2REC, MIO_EUR | 30 años | BAJA |
 | Impuestos directos (D5REC) | **AUTOMATIZADO** | `gov_10a_main` na_item=D5REC, MIO_EUR | 30 años | BAJA |
 | Cotizaciones sociales (D61REC) | **AUTOMATIZADO** | `gov_10a_main` na_item=D61REC, MIO_EUR | 30 años | BAJA |
+| Ingresos/PIB (TR, PC_GDP) | **AUTOMATIZADO** | `gov_10a_main` na_item=TR, PC_GDP | 30 años | BAJA |
+| Gastos/PIB (TE, PC_GDP) | **AUTOMATIZADO** | `gov_10a_main` na_item=TE, PC_GDP | 30 años | BAJA |
 | Otros ingresos | **DERIVADO** | TR - D2REC - D5REC - D61REC | 30 años | BAJA |
-| Presión fiscal | **DERIVADO** | TR / PIB × 100 | — | BAJA |
+| Presión fiscal | **AUTOMATIZADO** | Serie anual `TR / PIB` de Eurostat (PC_GDP) | 30 años | BAJA |
 
 **URL** (estable — API pública REST):
 - Base: `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_main`
@@ -235,7 +237,7 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 - Sin autenticación necesaria
 - Filtros: `freq=A`, `unit=MIO_EUR`, `sector=S13`, `geo=ES`, `sinceTimePeriod=1995`
 
-**Método**: Mismo API REST de Eurostat que la comparativa europea. Se descargan 6 indicadores en paralelo como series temporales para España (S.13). Se parsea con `parseJsonStatTimeSeries` (variante del parser existente que extrae todos los años para un solo país). Los datos se fusionan por año con cálculo derivado de `otherRevenue`.
+**Método**: Mismo API REST de Eurostat que la comparativa europea. Se descargan 8 indicadores en paralelo como series temporales para España (S.13): 6 en `MIO_EUR` y 2 en `% PIB` (`PC_GDP`). Se parsea con `parseJsonStatTimeSeries` (variante del parser existente que extrae todos los años para un solo país). Los datos se fusionan por año con cálculo derivado de `otherRevenue`.
 
 **Desfase**: ~1-2 años (mismo que el resto de Eurostat).
 
@@ -449,10 +451,12 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 | Impuestos indirectos (D2REC) | Eurostat API gov_10a_main | Anual | Alta |
 | Impuestos directos (D5REC) | Eurostat API gov_10a_main | Anual | Alta |
 | Cotizaciones sociales (D61REC) | Eurostat API gov_10a_main | Anual | Alta |
+| Ingresos/PIB (TR, PC_GDP) | Eurostat API gov_10a_main | Anual | Alta |
+| Gastos/PIB (TE, PC_GDP) | Eurostat API gov_10a_main | Anual | Alta |
 | Fondo de Reserva SS | ss-sustainability (RESERVE_FUND_HISTORY) | Anual | Media |
 | Cotizaciones sociales pensiones | ss-sustainability (D61REC cross-ref) | Anual | Media |
-| VAB Economía Social | social-economy (Tabla 30092) | Anual | Media |
-| Tasa AROPE / Gini | living-conditions (ECV) | Anual | Media |
+| VAB, % PIB, % empleo y empleos directos Economía Social | social-economy (Tablas INE 78708 + 78713, series CSES) | Anual | Media |
+| Tasa AROPE / Gini / Renta media | living-conditions (ECV) | Anual | Media |
 
 ### SEMI-AUTOMATIZADOS (se descargan pero con riesgo de rotura)
 | Dato | Fuente | Riesgo |
@@ -508,12 +512,13 @@ scripts/
     ine.mjs                      # INE Tempus API (5 series + CPI)
     seguridad-social.mjs         # SS (HTML scraping + Excel)
     igae.mjs                     # IGAE (Excel COFOG)
-    eurostat.mjs                 # Eurostat API (5 indicadores EU-27 + 6 revenue ES)
+    eurostat.mjs                 # Eurostat API (5 indicadores EU-27 + 8 revenue ES)
     aeat.mjs                     # AEAT (series + delegaciones)
     hacienda-fiscal-balance.mjs  # Hacienda (balanzas fiscales CCAA, régimen común)
     ccaa-spending.mjs            # IGAE (gasto funcional CCAA, detalle COFOG)
     ccaa-foral-flows.mjs         # Navarra + Euskadi (flujos forales, scraping HTML)
     ss-sustainability.mjs        # Eurostat (cotizaciones, pensiones %PIB) + Ageing Report
+    social-economy.mjs           # INE Cuenta Satélite Economía Social (VAB/PIB/empleo)
   lib/
     fetch-utils.mjs              # fetchWithRetry (backoff + timeout)
     csv-parser.mjs               # Parser CSV formato español
@@ -526,13 +531,14 @@ src/data/
   budget.json                    # COFOG 30 años × 10 div × ~7 subcats
   eurostat.json                  # Comparativa EU-27 (5 indicadores × 8 países)
   ccaa-debt.json                 # Deuda por CCAA (17 comunidades, 2 indicadores)
-  revenue.json                   # Ingresos vs gastos AAPP (30 años, 6 indicadores)
+  revenue.json                   # Ingresos vs gastos AAPP (30 años, 8 indicadores)
   tax-revenue.json               # Recaudación AEAT (nacional + CCAA)
   ccaa-fiscal-balance.json       # Balanzas fiscales CCAA (2019-2023, régimen común)
   ccaa-spending.json             # Gasto funcional CCAA (COFOG detalle, 17 CCAA)
   ccaa-foral-flows.json          # Flujos forales Navarra y País Vasco (aportación/cupo)
   flows.json                     # Red consolidada de flujos ingresos/gastos (Sankey)
   ss-sustainability.json         # Sostenibilidad SS: cotizaciones, gasto pensiones, Fondo Reserva, proyecciones
+  social-economy.json            # Economía Social INE: VAB, %PIB, %empleo y empleos directos (2019-2023)
   meta.json                      # Estado última descarga
   types.ts                       # Interfaces TypeScript
   sources.ts                     # Atribución fuentes (URLs, nombres)

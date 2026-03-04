@@ -2,7 +2,6 @@ import { linearRegression } from '../lib/regression.mjs'
 import XLSX from 'xlsx'
 import { fetchWithRetry } from '../lib/fetch-utils.mjs'
 import {
-  normalizeExcelUrl,
   collectExcelCandidates,
   parseExcelMetadata,
 } from '../lib/ss-scraper.mjs'
@@ -10,15 +9,50 @@ import {
 const SS_BASE = 'https://www.seg-social.es'
 const EST24_URL = `${SS_BASE}/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24`
 
+function normalizeHeaderText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function toNumeric(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  const normalized = String(value || '')
+    .replace(/\./g, '')
+    .replace(',', '.')
+    .replace(/[^0-9.-]/g, '')
+    .trim()
+  const num = Number(normalized)
+  return Number.isFinite(num) ? num : 0
+}
+
+function selectRegimenSheet(sheetNames) {
+  const normalized = sheetNames.map((name) => ({
+    name,
+    key: normalizeHeaderText(name).replace(/\s+/g, '_'),
+  }))
+
+  const preferred =
+    normalized.find((s) => s.key.includes('regimen_clase') && !s.key.includes('sexo') && !s.key.includes('%')) ||
+    normalized.find((s) => s.key.includes('regimen_clase') && !s.key.includes('sexo')) ||
+    normalized.find((s) => s.key.includes('clase') && !s.key.includes('sexo') && !s.key.includes('%')) ||
+    normalized.find((s) => s.key.includes('regimen')) ||
+    normalized[1] ||
+    normalized[0]
+
+  return preferred?.name || null
+}
+
 function parseSSExcelBuffer(buffer, excelUrl) {
   const { excelDate, monthLabel } = parseExcelMetadata(excelUrl)
   const wb = XLSX.read(Buffer.from(buffer), { type: 'buffer' })
   console.log(`    Hojas: ${wb.SheetNames.join(', ')}`)
 
-  // Parse "Régimen_clase" sheet for totals
-  const sheetName = wb.SheetNames.find(n => n.toLowerCase().includes('gimen_clase'))
-    || wb.SheetNames.find(n => n.toLowerCase().includes('clase'))
-    || wb.SheetNames[1] // Usually second sheet
+  // Parse "Régimen_clase" sheet for totals (avoid sexo/% variants when possible).
+  const sheetName = selectRegimenSheet(wb.SheetNames)
 
   if (!sheetName) {
     throw new Error('No se encontró hoja de regímenes/clase')
@@ -27,60 +61,81 @@ function parseSSExcelBuffer(buffer, excelUrl) {
   console.log(`    Usando hoja: "${sheetName}"`)
 
   const ws = wb.Sheets[sheetName]
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1 })
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true })
 
-  // B4: Validación de headers Excel (tolerante a variantes reales: "Número", "Importe", "P. media")
-  const normalizeHeaderText = value => String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-
-  const scoreHeaderRow = row => {
-    const col1 = normalizeHeaderText(row?.[1])
-    const col2 = normalizeHeaderText(row?.[2])
-    const col3 = normalizeHeaderText(row?.[3])
-
-    const valid1 = /pensiones?|numero/.test(col1)
-    const valid2 = /importe|nomina/.test(col2)
-    const valid3 = /p\.?\s*media|pension\s*media|media/.test(col3)
+  const scoreHeaderRow = (row) => {
+    const cells = (row || []).map(normalizeHeaderText)
+    const hasNumber = cells.some((c) => /\bnumero\b/.test(c))
+    const hasAmount = cells.some((c) => /\bimporte\b|\bnomina\b/.test(c))
+    const hasAverage = cells.some((c) => /p\.?\s*media|pension\s*media|\bmedia\b/.test(c))
 
     return {
-      col1,
-      col2,
-      col3,
-      valid1,
-      valid2,
-      valid3,
-      score: [valid1, valid2, valid3].filter(Boolean).length
+      hasNumber,
+      hasAmount,
+      hasAverage,
+      score: [hasNumber, hasAmount, hasAverage].filter(Boolean).length,
     }
   }
 
   let bestHeader = null
-  for (let i = 0; i < Math.min(rows.length, 25); i++) {
+  for (let i = 0; i < Math.min(rows.length, 40); i++) {
     const scored = scoreHeaderRow(rows[i])
     if (!bestHeader || scored.score > bestHeader.score) {
       bestHeader = { ...scored, index: i }
     }
   }
 
-  if (bestHeader && bestHeader.score >= 2) {
-    console.log(`    Fila de cabecera detectada en posición ${bestHeader.index}`)
-    if (bestHeader.score === 3) {
-      console.log('    ✅ Cabeceras de columna validadas correctamente')
-    } else {
-      console.log(`    ℹ️  Cabecera parcial aceptada: [1]="${bestHeader.col1}", [2]="${bestHeader.col2}", [3]="${bestHeader.col3}"`)
-    }
+  const headerIndex = bestHeader?.score >= 2 ? bestHeader.index : -1
+  if (headerIndex >= 0) {
+    console.log(`    Fila de cabecera detectada en posición ${headerIndex}`)
   } else {
     console.warn('    ⚠️  No se pudo encontrar la fila de cabecera para validar columnas')
   }
 
+  const headerRow = headerIndex >= 0 ? (rows[headerIndex] || []) : []
+  const categoryRow = headerIndex > 0 ? (rows[headerIndex - 1] || []) : []
+
+  const isKindMatch = (cell, kind) => {
+    if (kind === 'number') return /\bnumero\b/.test(cell)
+    if (kind === 'amount') return /\bimporte\b|\bnomina\b/.test(cell)
+    if (kind === 'average') return /p\.?\s*media|pension\s*media|\bmedia\b/.test(cell)
+    return false
+  }
+
+  const findColumnIndex = (
+    kind,
+    {
+      categoryRegex = null,
+      nearIndex = null,
+      allowBlankCategory = false,
+      minIndex = 0,
+      maxIndex = Number.POSITIVE_INFINITY,
+    } = {},
+  ) => {
+    const candidates = []
+    for (let i = 0; i < headerRow.length; i++) {
+      if (i < minIndex || i > maxIndex) continue
+      const headerCell = normalizeHeaderText(headerRow[i])
+      if (!isKindMatch(headerCell, kind)) continue
+
+      const categoryCell = normalizeHeaderText(categoryRow[i])
+      if (categoryRegex && !categoryRegex.test(categoryCell)) {
+        if (!(allowBlankCategory && !categoryCell)) continue
+      }
+
+      const distance = nearIndex == null ? i : Math.abs(i - nearIndex)
+      candidates.push({ i, distance })
+    }
+
+    if (candidates.length === 0) return -1
+    candidates.sort((a, b) => a.distance - b.distance || a.i - b.i)
+    return candidates[0].i
+  }
+
   // Find "Total sistema" row
-  // Structure: [label, totalNum, totalImporte, totalMedia, incapNum, incapImporte, incapMedia, jubNum, jubImporte, jubMedia]
   let totalRow = null
   for (let i = 0; i < rows.length; i++) {
-    const firstCell = String(rows[i]?.[0] || '').toLowerCase().trim()
+    const firstCell = normalizeHeaderText(rows[i]?.[0])
     if (firstCell.includes('total sistema')) {
       totalRow = rows[i]
       console.log(`    Fila "Total sistema" encontrada en posición ${i}`)
@@ -92,13 +147,76 @@ function parseSSExcelBuffer(buffer, excelUrl) {
     throw new Error('No se encontró fila "Total sistema" en el Excel')
   }
 
+  const totalPensionsIdx =
+    findColumnIndex('number', { categoryRegex: /total pensiones|total/ }) !== -1
+      ? findColumnIndex('number', { categoryRegex: /total pensiones|total/ })
+      : 1
+  const monthlyPayrollIdx =
+    findColumnIndex('amount', {
+      categoryRegex: /total pensiones|total/,
+      nearIndex: totalPensionsIdx,
+      allowBlankCategory: true,
+    }) !== -1
+      ? findColumnIndex('amount', {
+        categoryRegex: /total pensiones|total/,
+        nearIndex: totalPensionsIdx,
+        allowBlankCategory: true,
+      })
+      : 2
+  const averagePensionIdx =
+    findColumnIndex('average', {
+      categoryRegex: /total pensiones|total/,
+      nearIndex: totalPensionsIdx,
+      allowBlankCategory: true,
+    }) !== -1
+      ? findColumnIndex('average', {
+        categoryRegex: /total pensiones|total/,
+        nearIndex: totalPensionsIdx,
+        allowBlankCategory: true,
+      })
+      : 3
+  const retirementPensionsIdx =
+    findColumnIndex('number', { categoryRegex: /jubil/ }) !== -1
+      ? findColumnIndex('number', { categoryRegex: /jubil/ })
+      : 7
+  const retirementPayrollIdx =
+    findColumnIndex('amount', {
+      categoryRegex: /jubil/,
+      nearIndex: retirementPensionsIdx,
+      allowBlankCategory: true,
+      minIndex: retirementPensionsIdx,
+    }) !== -1
+      ? findColumnIndex('amount', {
+        categoryRegex: /jubil/,
+        nearIndex: retirementPensionsIdx,
+        allowBlankCategory: true,
+        minIndex: retirementPensionsIdx,
+      })
+      : 8
+  const averageRetirementIdx =
+    findColumnIndex('average', {
+      categoryRegex: /jubil/,
+      nearIndex: retirementPensionsIdx,
+      allowBlankCategory: true,
+      minIndex: retirementPensionsIdx,
+    }) !== -1
+      ? findColumnIndex('average', {
+        categoryRegex: /jubil/,
+        nearIndex: retirementPensionsIdx,
+        allowBlankCategory: true,
+        minIndex: retirementPensionsIdx,
+      })
+      : 9
+
+  console.log(`    Columnas detectadas: total[N=${totalPensionsIdx}, I=${monthlyPayrollIdx}, M=${averagePensionIdx}] jubilación[N=${retirementPensionsIdx}, I=${retirementPayrollIdx}, M=${averageRetirementIdx}]`)
+
   // Extract values
-  const totalPensions = totalRow[1]         // Número total pensiones
-  const monthlyPayroll = totalRow[2]        // Importe total (€/mes)
-  const averagePension = totalRow[3]        // Pensión media (€/mes)
-  const retirementPensions = totalRow[7]    // Número jubilaciones
-  const retirementPayroll = totalRow[8]     // Importe jubilaciones
-  const averageRetirement = totalRow[9]     // Pensión media jubilación
+  const totalPensions = toNumeric(totalRow[totalPensionsIdx])
+  const monthlyPayroll = toNumeric(totalRow[monthlyPayrollIdx])
+  const averagePension = toNumeric(totalRow[averagePensionIdx])
+  const retirementPensions = toNumeric(totalRow[retirementPensionsIdx])
+  const retirementPayroll = toNumeric(totalRow[retirementPayrollIdx])
+  const averageRetirement = toNumeric(totalRow[averageRetirementIdx])
 
   console.log()
   console.log('  📊 Datos extraídos del Excel:')
@@ -614,16 +732,23 @@ export function buildHistoricalData(liveData) {
     historical.push({
       date: liveData.date,
       monthlyPayroll: totalPayroll,
-      totalPensions: liveData.totalPensions
+      totalPensions: liveData.totalPensions,
+      averagePensionRetirement: liveData.averagePensionRetirement,
     })
   } else {
     // Use reference as last point
     historical.push({
       date: '2026-01-31',
       monthlyPayroll: REFERENCE_DATA.monthlyPayrollSS + REFERENCE_DATA.monthlyPayrollClasesPasivas + REFERENCE_DATA.monthlyPayrollPNC,
-      totalPensions: REFERENCE_DATA.totalPensions
+      totalPensions: REFERENCE_DATA.totalPensions,
+      averagePensionRetirement: REFERENCE_DATA.averagePensionRetirement,
     })
   }
 
-  return historical
+  return historical.map((point) => ({
+    ...point,
+    averagePensionRetirement:
+      point.averagePensionRetirement ??
+      (point.totalPensions ? Math.round((point.monthlyPayroll / point.totalPensions) * 100) / 100 : undefined),
+  }))
 }

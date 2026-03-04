@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-26T17:41:18.743Z",
+  "lastUpdated": "2026-03-04T21:11:09.634Z",
   "latestYear": 2024,
   "years": [
     1995,
@@ -41,7 +41,9 @@
       "taxesIndirect": 46976,
       "taxesDirect": 44524,
       "socialContributions": 57354,
-      "otherRevenue": 26510
+      "otherRevenue": 26510,
+      "revenueToGDP": 37.3,
+      "expenditureToGDP": 44.1
     },
     "1996": {
       "totalRevenue": 187242,
@@ -50,7 +52,9 @@
       "taxesIndirect": 50957,
       "taxesDirect": 47710,
       "socialContributions": 60691,
-      "otherRevenue": 27884
+      "otherRevenue": 27884,
+      "revenueToGDP": 37,
+      "expenditureToGDP": 42.9
     },
     "1997": {
       "totalRevenue": 195859,
@@ -59,7 +63,9 @@
       "taxesIndirect": 54066,
       "taxesDirect": 50558,
       "socialContributions": 63301,
-      "otherRevenue": 27934
+      "otherRevenue": 27934,
+      "revenueToGDP": 37.6,
+      "expenditureToGDP": 41.5
     },
     "1998": {
       "totalRevenue": 211986,
@@ -68,7 +74,9 @@
       "taxesIndirect": 61202,
       "taxesDirect": 54607,
       "socialContributions": 67605,
-      "otherRevenue": 28572
+      "otherRevenue": 28572,
+      "revenueToGDP": 38.3,
+      "expenditureToGDP": 41
     },
     "1999": {
       "totalRevenue": 230397,
@@ -77,7 +85,9 @@
       "taxesIndirect": 67814,
       "taxesDirect": 57860,
       "socialContributions": 73986,
-      "otherRevenue": 30737
+      "otherRevenue": 30737,
+      "revenueToGDP": 38.7,
+      "expenditureToGDP": 39.9
     },
     "2000": {
       "totalRevenue": 245747,
@@ -86,7 +96,9 @@
       "taxesIndirect": 72939,
       "taxesDirect": 62882,
       "socialContributions": 80509,
-      "otherRevenue": 29417
+      "otherRevenue": 29417,
+      "revenueToGDP": 37.9,
+      "expenditureToGDP": 39.1
     },
     "2001": {
       "totalRevenue": 266006,
@@ -95,7 +107,9 @@
       "taxesIndirect": 76726,
       "taxesDirect": 67520,
       "socialContributions": 88138,
-      "otherRevenue": 33622
+      "otherRevenue": 33622,
+      "revenueToGDP": 37.9,
+      "expenditureToGDP": 38.4
     },
     "2002": {
       "totalRevenue": 287171,
@@ -104,7 +118,9 @@
       "taxesIndirect": 82033,
       "taxesDirect": 75736,
       "socialContributions": 94039,
-      "otherRevenue": 35363
+      "otherRevenue": 35363,
+      "revenueToGDP": 38.3,
+      "expenditureToGDP": 38.6
     },
     "2003": {
       "totalRevenue": 304787,
@@ -113,7 +129,9 @@
       "taxesIndirect": 89950,
       "taxesDirect": 77381,
       "socialContributions": 101025,
-      "otherRevenue": 36431
+      "otherRevenue": 36431,
+      "revenueToGDP": 38,
+      "expenditureToGDP": 38.3
     },
     "2004": {
       "totalRevenue": 332725,
@@ -122,7 +140,9 @@
       "taxesIndirect": 100460,
       "taxesDirect": 86080,
       "socialContributions": 108469,
-      "otherRevenue": 37716
+      "otherRevenue": 37716,
+      "revenueToGDP": 38.7,
+      "expenditureToGDP": 38.8
     },
     "2005": {
       "totalRevenue": 368206,
@@ -131,7 +151,9 @@
       "taxesIndirect": 112258,
       "taxesDirect": 99881,
       "socialContributions": 116666,
-      "otherRevenue": 39401
+      "otherRevenue": 39401,
+      "revenueToGDP": 39.7,
+      "expenditureToGDP": 38.4
     },
     "2006": {
       "totalRevenue": 407079,
@@ -140,7 +162,9 @@
       "taxesIndirect": 122204,
       "taxesDirect": 114702,
       "socialContributions": 126296,
-      "otherRevenue": 43877
+      "otherRevenue": 43877,
+      "revenueToGDP": 40.5,
+      "expenditureToGDP": 38.4
     },
     "2007": {
       "totalRevenue": 442451,
@@ -149,7 +173,9 @@
       "taxesIndirect": 122839,
       "taxesDirect": 135000,
       "socialContributions": 135643,
-      "otherRevenue": 48969
+      "otherRevenue": 48969,
+      "revenueToGDP": 41.1,
+      "expenditureToGDP": 39.2
     },
     "2008": {
       "totalRevenue": 409082,
@@ -158,7 +184,9 @@
       "taxesIndirect": 104356,
       "taxesDirect": 113916,
       "socialContributions": 140997,
-      "otherRevenue": 49813
+      "otherRevenue": 49813,
+      "revenueToGDP": 36.8,
+      "expenditureToGDP": 41.3
     },
     "2009": {
       "totalRevenue": 373777,
@@ -167,7 +195,9 @@
       "taxesIndirect": 86108,
       "taxesDirect": 97621,
       "socialContributions": 138190,
-      "otherRevenue": 51858
+      "otherRevenue": 51858,
+      "revenueToGDP": 34.8,
+      "expenditureToGDP": 46.1
     },
     "2010": {
       "totalRevenue": 391624,
@@ -176,7 +206,9 @@
       "taxesIndirect": 105981,
       "taxesDirect": 97247,
       "socialContributions": 136975,
-      "otherRevenue": 51421
+      "otherRevenue": 51421,
+      "revenueToGDP": 36.4,
+      "expenditureToGDP": 45.8
     },
     "2011": {
       "totalRevenue": 387333,
@@ -185,7 +217,9 @@
       "taxesIndirect": 102441,
       "taxesDirect": 98373,
       "socialContributions": 135458,
-      "otherRevenue": 51061
+      "otherRevenue": 51061,
+      "revenueToGDP": 36.2,
+      "expenditureToGDP": 45.9
     },
     "2012": {
       "totalRevenue": 390842,
@@ -194,7 +228,9 @@
       "taxesIndirect": 105324,
       "taxesDirect": 102973,
       "socialContributions": 129823,
-      "otherRevenue": 52722
+      "otherRevenue": 52722,
+      "revenueToGDP": 37.7,
+      "expenditureToGDP": 49.2
     },
     "2013": {
       "totalRevenue": 396593,
@@ -203,7 +239,9 @@
       "taxesIndirect": 112744,
       "taxesDirect": 102233,
       "socialContributions": 126856,
-      "otherRevenue": 54760
+      "otherRevenue": 54760,
+      "revenueToGDP": 38.7,
+      "expenditureToGDP": 46.2
     },
     "2014": {
       "totalRevenue": 405125,
@@ -212,7 +250,9 @@
       "taxesIndirect": 118365,
       "taxesDirect": 104395,
       "socialContributions": 128966,
-      "otherRevenue": 53399
+      "otherRevenue": 53399,
+      "revenueToGDP": 39,
+      "expenditureToGDP": 45
     },
     "2015": {
       "totalRevenue": 417645,
@@ -221,7 +261,9 @@
       "taxesIndirect": 126349,
       "taxesDirect": 107107,
       "socialContributions": 131508,
-      "otherRevenue": 52681
+      "otherRevenue": 52681,
+      "revenueToGDP": 38.4,
+      "expenditureToGDP": 43.7
     },
     "2016": {
       "totalRevenue": 425316,
@@ -230,7 +272,9 @@
       "taxesIndirect": 128812,
       "taxesDirect": 110002,
       "socialContributions": 135573,
-      "otherRevenue": 50929
+      "otherRevenue": 50929,
+      "revenueToGDP": 37.9,
+      "expenditureToGDP": 42.1
     },
     "2017": {
       "totalRevenue": 444005,
@@ -239,7 +283,9 @@
       "taxesIndirect": 135067,
       "taxesDirect": 116938,
       "socialContributions": 142430,
-      "otherRevenue": 49570
+      "otherRevenue": 49570,
+      "revenueToGDP": 37.9,
+      "expenditureToGDP": 41
     },
     "2018": {
       "totalRevenue": 472250,
@@ -248,7 +294,9 @@
       "taxesIndirect": 141184,
       "taxesDirect": 127284,
       "socialContributions": 149450,
-      "otherRevenue": 54332
+      "otherRevenue": 54332,
+      "revenueToGDP": 39,
+      "expenditureToGDP": 41.5
     },
     "2019": {
       "totalRevenue": 488347,
@@ -257,7 +305,9 @@
       "taxesIndirect": 143058,
       "taxesDirect": 129117,
       "socialContributions": 160656,
-      "otherRevenue": 55516
+      "otherRevenue": 55516,
+      "revenueToGDP": 39,
+      "expenditureToGDP": 42
     },
     "2020": {
       "totalRevenue": 468267,
@@ -266,7 +316,9 @@
       "taxesIndirect": 126756,
       "taxesDirect": 125348,
       "socialContributions": 162174,
-      "otherRevenue": 53989
+      "otherRevenue": 53989,
+      "revenueToGDP": 41.5,
+      "expenditureToGDP": 51.4
     },
     "2021": {
       "totalRevenue": 528950,
@@ -275,7 +327,9 @@
       "taxesIndirect": 146953,
       "taxesDirect": 143485,
       "socialContributions": 171687,
-      "otherRevenue": 66825
+      "otherRevenue": 66825,
+      "revenueToGDP": 42.8,
+      "expenditureToGDP": 49.5
     },
     "2022": {
       "totalRevenue": 574012,
@@ -284,7 +338,9 @@
       "taxesIndirect": 160429,
       "taxesDirect": 164770,
       "socialContributions": 180086,
-      "otherRevenue": 68727
+      "otherRevenue": 68727,
+      "revenueToGDP": 41.7,
+      "expenditureToGDP": 46.3
     },
     "2023": {
       "totalRevenue": 630198,
@@ -293,7 +349,9 @@
       "taxesIndirect": 165865,
       "taxesDirect": 183119,
       "socialContributions": 197003,
-      "otherRevenue": 84211
+      "otherRevenue": 84211,
+      "revenueToGDP": 42.1,
+      "expenditureToGDP": 45.4
     },
     "2024": {
       "totalRevenue": 673734,
@@ -302,7 +360,9 @@
       "taxesIndirect": 176937,
       "taxesDirect": 198711,
       "socialContributions": 210337,
-      "otherRevenue": 87749
+      "otherRevenue": 87749,
+      "revenueToGDP": 42.3,
+      "expenditureToGDP": 45.5
     }
   },
   "indicatorMeta": {
@@ -329,6 +389,14 @@
     "socialContributions": {
       "label": "Cotizaciones sociales",
       "unit": "M€"
+    },
+    "revenueToGDP": {
+      "label": "Ingresos/PIB",
+      "unit": "% del PIB"
+    },
+    "expenditureToGDP": {
+      "label": "Gastos/PIB",
+      "unit": "% del PIB"
     }
   },
   "sourceAttribution": {

@@ -17,7 +17,7 @@ const COFOG_NAMES = {
   '07': 'Salud',
   '08': 'Ocio, cultura y religión',
   '09': 'Educación',
-  '10': 'Protección social',
+  '10': 'Edad avanzada (Protección social)',
 }
 
 /**

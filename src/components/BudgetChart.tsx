@@ -27,7 +27,7 @@ const COFOG_COLORS: Record<string, string> = {
   "07": "hsl(340, 60%, 50%)", // Salud — pink
   "08": "hsl(265, 50%, 55%)", // Ocio, cultura — purple
   "09": "hsl(190, 60%, 45%)", // Educación — cyan
-  "10": "hsl(20, 70%, 50%)", // Protección social — dark orange
+  "10": "hsl(20, 70%, 50%)", // Edad avanzada (Protección social) — dark orange
 };
 
 function getColor(code: string): string {
@@ -259,7 +259,7 @@ export function BudgetChart({
           <YAxis
             type="category"
             dataKey="name"
-            width={180}
+            width={220}
             tick={{ fontSize: 11 }}
             stroke="hsl(var(--muted-foreground))"
           />

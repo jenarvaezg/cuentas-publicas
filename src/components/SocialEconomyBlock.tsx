@@ -14,6 +14,19 @@ export function SocialEconomyBlock() {
   const source = socialEconomy.sourceAttribution?.socialEconomy
     ? [fromAttribution(socialEconomy.sourceAttribution.socialEconomy)]
     : [];
+  const vabSparkline = socialEconomy.historical?.vab?.map((point) => point.value) ?? [
+    socialEconomy.vab,
+  ];
+  const pibShareSparkline = socialEconomy.historical?.pibShare?.map((point) => point.value) ?? [
+    socialEconomy.pibShare,
+  ];
+  const employmentShareSparkline = socialEconomy.historical?.employmentShare?.map(
+    (point) => point.value,
+  ) ?? [socialEconomy.employmentShare];
+  const totalJobsSparkline = socialEconomy.historical?.totalJobs?.map((point) => point.value) ?? [
+    socialEconomy.totalJobs,
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -25,24 +38,28 @@ export function SocialEconomyBlock() {
           label={t.vabLabel}
           value={`${formatCompact(socialEconomy.vab)}€`}
           tooltip={t.vabTooltip}
+          sparklineData={vabSparkline}
           sources={source}
         />
         <StatCard
           label={t.pibShare}
           value={`${formatNumber(socialEconomy.pibShare, 1)}%`}
           tooltip={t.pibShareTooltip}
+          sparklineData={pibShareSparkline}
           sources={source}
         />
         <StatCard
           label={t.employmentShare}
           value={`${formatNumber(socialEconomy.employmentShare, 1)}%`}
           tooltip={t.employmentShareTooltip}
+          sparklineData={employmentShareSparkline}
           sources={source}
         />
         <StatCard
           label={t.totalJobs}
           value={formatCompact(socialEconomy.totalJobs)}
           tooltip={t.totalJobsTooltip}
+          sparklineData={totalJobsSparkline}
           sources={source}
         />
       </div>

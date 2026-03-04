@@ -38,17 +38,31 @@ describe('seguridad-social source script', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     mockFetchWithExcelLink('REG202601.xlsx')
 
+    const sheetSexo = { id: 'sexo' }
+    const sheetClase = { id: 'clase' }
     XLSX.read.mockReturnValue({
-      SheetNames: ['Indice', 'Régimen_clase'],
-      Sheets: { 'Régimen_clase': {} }
+      SheetNames: ['Indice', 'Régimen_clase_sexo', 'Régimen_clase'],
+      Sheets: {
+        'Régimen_clase_sexo': sheetSexo,
+        'Régimen_clase': sheetClase,
+      },
     })
 
-    XLSX.utils.sheet_to_json.mockReturnValue([
-      ['RÉGIMEN', 'CLASE DE PENSIÓN'],
-      ['', 'TOTAL', '', '', 'INCAPACIDAD PERMANENTE', '', '', 'JUBILACIÓN'],
-      ['', 'Número', 'Importe (€)', 'P. media (€/mes)', 'Número', 'Importe (€)', 'P. media (€/mes)', 'Número', 'Importe (€)', 'P. media (€/mes)'],
-      ['Total sistema', 10452674, 14250714014, 1363.87, 0, 0, 0, 6520000, 10230000000, 1563.56]
-    ])
+    XLSX.utils.sheet_to_json.mockImplementation((sheet) => {
+      if (sheet === sheetSexo) {
+        return [
+          ['RÉGIMEN', 'TOTAL PENSIONES'],
+          ['', 'Núm.', 'P. media (€/mes)'],
+          ['Total sistema', 10452674, 1363.87],
+        ]
+      }
+      return [
+        ['RÉGIMEN', 'CLASE DE PENSIÓN'],
+        ['', 'TOTAL', '', '', 'INCAPACIDAD PERMANENTE', '', '', 'JUBILACIÓN'],
+        ['', 'Número', 'Importe (€)', 'P. media (€/mes)', 'Número', 'Importe (€)', 'P. media (€/mes)', 'Número', 'Importe (€)', 'P. media (€/mes)'],
+        ['Total sistema', 10452674, 14250714014, 1363.87, 0, 0, 0, 6520000, 10230000000, 1563.56]
+      ]
+    })
 
     const result = await fetchFromSSExcel()
 
@@ -58,6 +72,38 @@ describe('seguridad-social source script', () => {
     expect(result.date).toBe('2026-01-01')
     expect(fetchUtils.fetchWithRetry.mock.calls[1][0]).toBe('https://www.seg-social.es/REG202601.xlsx')
     expect(warnSpy).not.toHaveBeenCalled()
+  })
+
+  it('prioriza automáticamente el REG más reciente detectado en la página', async () => {
+    fetchUtils.fetchWithRetry.mockImplementation((url) => {
+      if (url.includes('EST24')) {
+        return Promise.resolve({
+          ok: true,
+          text: () =>
+            Promise.resolve(
+              '<a href="/wps/wcm/connect/wss/id-old/REG202512.xlsx?MOD=AJPERES">Old</a>' +
+              '<a href="/wps/wcm/connect/wss/id-new/REG202602.xlsx?MOD=AJPERES">New</a>'
+            ),
+        })
+      }
+      return Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(1)) })
+    })
+
+    XLSX.read.mockReturnValue({
+      SheetNames: ['Indice', 'Régimen_clase'],
+      Sheets: { 'Régimen_clase': {} },
+    })
+    XLSX.utils.sheet_to_json.mockReturnValue([
+      ['RÉGIMEN', 'CLASE DE PENSIÓN'],
+      ['', 'TOTAL', '', '', 'INCAPACIDAD PERMANENTE', '', '', 'JUBILACIÓN'],
+      ['', 'Número', 'Importe (€)', 'P. media (€/mes)', 'Número', 'Importe (€)', 'P. media (€/mes)', 'Número', 'Importe (€)', 'P. media (€/mes)'],
+      ['Total sistema', 10452674, 14250714014, 1363.87, 0, 0, 0, 6520000, 10230000000, 1563.56],
+    ])
+
+    const result = await fetchFromSSExcel()
+
+    expect(result.date).toBe('2026-02-01')
+    expect(fetchUtils.fetchWithRetry.mock.calls[1][0]).toContain('REG202602.xlsx')
   })
 
   it('mantiene warning si no encuentra una cabecera confiable', async () => {

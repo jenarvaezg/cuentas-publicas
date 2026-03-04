@@ -1,134 +1,134 @@
 {
-  "lastUpdated": "2026-02-26T17:41:19.425Z",
+  "lastUpdated": "2026-03-04T21:11:10.466Z",
   "latestYear": 2026,
   "byYear": {
     "2026": {
       "year": 2026,
-      "date": "2026-01-01",
-      "dateLabel": "enero 2026",
+      "date": "2026-02-01",
+      "dateLabel": "febrero 2026",
       "entries": [
         {
           "code": "CA01",
           "name": "Andalucía",
-          "annualAmount": 29577316427.68,
-          "monthlyAmount": 2112665459.12,
-          "pensionsCount": 1719814
+          "annualAmount": 29609772297.000004,
+          "monthlyAmount": 2114983735.5000002,
+          "pensionsCount": 1718069
         },
         {
           "code": "CA02",
           "name": "Aragón",
-          "annualAmount": 6438247125.38,
-          "monthlyAmount": 459874794.67,
-          "pensionsCount": 319434
+          "annualAmount": 6453479055.8,
+          "monthlyAmount": 460962789.7,
+          "pensionsCount": 319484
         },
         {
           "code": "CA03",
           "name": "Asturias",
-          "annualAmount": 6682212424.720001,
-          "monthlyAmount": 477300887.4800001,
-          "pensionsCount": 303392
+          "annualAmount": 6679633868.6,
+          "monthlyAmount": 477116704.90000004,
+          "pensionsCount": 302888
         },
         {
           "code": "CA04",
           "name": "Balears",
-          "annualAmount": 3830749326.1799994,
-          "monthlyAmount": 273624951.86999995,
-          "pensionsCount": 215236
+          "annualAmount": 3839023858.46,
+          "monthlyAmount": 274215989.89,
+          "pensionsCount": 215113
         },
         {
           "code": "CA05",
           "name": "Canarias",
-          "annualAmount": 6586853266.280001,
-          "monthlyAmount": 470489519.02000004,
-          "pensionsCount": 377961
+          "annualAmount": 6602008614.74,
+          "monthlyAmount": 471572043.90999997,
+          "pensionsCount": 378181
         },
         {
           "code": "CA06",
           "name": "Cantabria",
-          "annualAmount": 2998552561.1999993,
-          "monthlyAmount": 214182325.79999995,
-          "pensionsCount": 149460
+          "annualAmount": 3003180813.2200003,
+          "monthlyAmount": 214512915.23000002,
+          "pensionsCount": 149434
         },
         {
           "code": "CA07",
           "name": "Castilla y León",
-          "annualAmount": 12187728256.48,
-          "monthlyAmount": 870552018.3199999,
-          "pensionsCount": 637323
+          "annualAmount": 12211982164.619995,
+          "monthlyAmount": 872284440.3299997,
+          "pensionsCount": 637265
         },
         {
           "code": "CA08",
           "name": "Castilla - La Mancha",
-          "annualAmount": 7289972655.7,
-          "monthlyAmount": 520712332.55,
-          "pensionsCount": 406480
+          "annualAmount": 7304096250.08,
+          "monthlyAmount": 521721160.71999997,
+          "pensionsCount": 406461
         },
         {
           "code": "CA09",
           "name": "Cataluña",
-          "annualAmount": 36011750702.340004,
-          "monthlyAmount": 2572267907.3100004,
-          "pensionsCount": 1818012
+          "annualAmount": 36066179230.06,
+          "monthlyAmount": 2576155659.29,
+          "pensionsCount": 1816741
         },
         {
           "code": "CA10",
           "name": "Comunitat Valenciana",
-          "annualAmount": 18999836471,
-          "monthlyAmount": 1357131176.5,
-          "pensionsCount": 1074939
+          "annualAmount": 19030779117.84,
+          "monthlyAmount": 1359341365.56,
+          "pensionsCount": 1074359
         },
         {
           "code": "CA11",
           "name": "Extremadura",
-          "annualAmount": 4025479999.24,
-          "monthlyAmount": 287534285.65999997,
-          "pensionsCount": 247167
+          "annualAmount": 4030535083.540001,
+          "monthlyAmount": 287895363.1100001,
+          "pensionsCount": 246963
         },
         {
           "code": "CA12",
           "name": "Galicia",
-          "annualAmount": 12972378051.08,
-          "monthlyAmount": 926598432.22,
-          "pensionsCount": 789073
+          "annualAmount": 12973426718.42,
+          "monthlyAmount": 926673337.03,
+          "pensionsCount": 787441
         },
         {
           "code": "CA14",
           "name": "Murcia",
-          "annualAmount": 4619928991.72,
-          "monthlyAmount": 329994927.98,
-          "pensionsCount": 270649
+          "annualAmount": 4629049909.54,
+          "monthlyAmount": 330646422.11,
+          "pensionsCount": 270553
         },
         {
           "code": "CA16",
           "name": "País Vasco",
-          "annualAmount": 13798836057.3,
-          "monthlyAmount": 985631146.9499999,
-          "pensionsCount": 588972
+          "annualAmount": 13813293483.36,
+          "monthlyAmount": 986663820.24,
+          "pensionsCount": 588480
         },
         {
           "code": "CA17",
           "name": "Rioja (La)",
-          "annualAmount": 1435229849.06,
-          "monthlyAmount": 102516417.78999999,
-          "pensionsCount": 75793
+          "annualAmount": 1439766188,
+          "monthlyAmount": 102840442,
+          "pensionsCount": 75852
         },
         {
           "code": "CA18",
           "name": "Ceuta",
-          "annualAmount": 186576736.36,
-          "monthlyAmount": 13326909.74,
-          "pensionsCount": 9515
+          "annualAmount": 187338167.51999998,
+          "monthlyAmount": 13381297.68,
+          "pensionsCount": 9526
         },
         {
           "code": "CA19",
           "name": "Melilla",
-          "annualAmount": 172136849.50000003,
-          "monthlyAmount": 12295489.250000002,
-          "pensionsCount": 9178
+          "annualAmount": 172740423.52,
+          "monthlyAmount": 12338601.680000002,
+          "pensionsCount": 9193
         }
       ]
     }
   },
-  "source": "Seg. Social — Excel REG CA (enero 2026)",
-  "url": "https://www.seg-social.es/wps/wcm/connect/wss/b26cb096-dcbe-42e5-85b1-63953b8d95ec/CA202601.xlsx?MOD=AJPERES&CONVERT_TO=linktext&CACHEID=ROOTWORKSPACE.Z18_81D21J401P5L40QTIT61G41000-b26cb096-dcbe-42e5-85b1-63953b8d95ec-pMdvUVO"
+  "source": "Seg. Social — Excel REG CA (febrero 2026)",
+  "url": "https://www.seg-social.es/wps/wcm/connect/wss/b26cb096-dcbe-42e5-85b1-63953b8d95ec/CA202602.xlsx?MOD=AJPERES&CONVERT_TO=linktext&CACHEID=ROOTWORKSPACE.Z18_81D21J401P5L40QTIT61G41000-b26cb096-dcbe-42e5-85b1-63953b8d95ec-pOtHKBn"
 }

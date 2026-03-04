@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-26T17:41:19.388Z",
+  "lastUpdated": "2026-03-04T21:11:10.227Z",
   "years": [
     1995,
     1996,
@@ -447,7 +447,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 65961,
           "percentage": 32.48318247628803,
           "children": [
@@ -916,7 +916,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 68973,
           "percentage": 32.91041998683068,
           "children": [
@@ -1385,7 +1385,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 71317,
           "percentage": 33.12463132666664,
           "children": [
@@ -1854,7 +1854,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 73868,
           "percentage": 32.45561233232424,
           "children": [
@@ -2317,7 +2317,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 77370,
           "percentage": 32.538617792151534,
           "children": [
@@ -2786,7 +2786,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 82247,
           "percentage": 32.474424224237666,
           "children": [
@@ -3261,7 +3261,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 87398,
           "percentage": 32.46642768253496,
           "children": [
@@ -3736,7 +3736,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 94604,
           "percentage": 32.67536361030232,
           "children": [
@@ -4205,7 +4205,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 101961,
           "percentage": 33.126161483580034,
           "children": [
@@ -4674,7 +4674,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 109816,
           "percentage": 32.9119538700377,
           "children": [
@@ -5143,7 +5143,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 117948,
           "percentage": 33.05856468181118,
           "children": [
@@ -5612,7 +5612,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 127300,
           "percentage": 33.00004925380486,
           "children": [
@@ -6081,7 +6081,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 138115,
           "percentage": 32.715958726940244,
           "children": [
@@ -6550,7 +6550,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 153146,
           "percentage": 33.30614836901088,
           "children": [
@@ -7019,7 +7019,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 172746,
           "percentage": 34.943855908632095,
           "children": [
@@ -7488,7 +7488,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 179730,
           "percentage": 36.39607384921945,
           "children": [
@@ -7963,7 +7963,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 180794,
           "percentage": 36.82848924849463,
           "children": [
@@ -8438,7 +8438,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 183764,
           "percentage": 36.036679112672964,
           "children": [
@@ -8907,7 +8907,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 185373,
           "percentage": 39.15796010967515,
           "children": [
@@ -9376,7 +9376,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 185342,
           "percentage": 39.616450888229124,
           "children": [
@@ -9845,7 +9845,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 185186,
           "percentage": 38.99531052258088,
           "children": [
@@ -10314,7 +10314,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 189379,
           "percentage": 40.061812881703005,
           "children": [
@@ -10783,7 +10783,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 193870,
           "percentage": 40.39732615417955,
           "children": [
@@ -11258,7 +11258,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 203470,
           "percentage": 40.43577712726528,
           "children": [
@@ -11733,7 +11733,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 216733,
           "percentage": 41.14384103848177,
           "children": [
@@ -12214,7 +12214,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 247445,
           "percentage": 42.650871132989984,
           "children": [
@@ -12695,7 +12695,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 248671,
           "percentage": 40.69075997669867,
           "children": [
@@ -13176,7 +13176,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 252111,
           "percentage": 39.570596923328054,
           "children": [
@@ -13657,7 +13657,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 277327,
           "percentage": 40.76989231504282,
           "children": [
@@ -14138,7 +14138,7 @@
         },
         {
           "code": "10",
-          "name": "Protección social",
+          "name": "Edad avanzada (Protección social)",
           "amount": 297532,
           "percentage": 41.03883994642766,
           "children": [

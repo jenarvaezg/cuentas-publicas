@@ -64,6 +64,29 @@ export const StatCard = memo(function StatCard({
   const primarySource = sources?.[0];
   const primarySourceDate = primarySource?.realDataDate || primarySource?.date;
   const additionalSourcesCount = Math.max(0, (sources?.length ?? 0) - 1);
+  const trendValue = trend?.value;
+  const sparkline = useMemo(() => {
+    if (sparklineData?.length) {
+      if (sparklineData.length === 1) {
+        return { data: [sparklineData[0], sparklineData[0]], placeholder: false };
+      }
+      return { data: sparklineData, placeholder: false };
+    }
+
+    const seed = Array.from(label).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    const points = 16;
+    const base = 48 + (seed % 12);
+    const defaultSlope = ((seed % 5) - 2) * 0.03;
+    const trendSlope =
+      trendValue != null ? Math.max(-0.35, Math.min(0.35, trendValue / 150)) : defaultSlope;
+    const data = Array.from({ length: points }, (_, idx) => {
+      const x = points > 1 ? idx / (points - 1) : 0;
+      const wave = Math.sin((x * 2 + (seed % 6)) * Math.PI) * 0.45;
+      const drift = (x - 0.5) * trendSlope * 8;
+      return base + wave + drift;
+    });
+    return { data, placeholder: true };
+  }, [label, sparklineData, trendValue]);
 
   return (
     <TiltCard
@@ -230,9 +253,13 @@ export const StatCard = memo(function StatCard({
               </div>
             )}
 
-            {sparklineData && sparklineData.length > 0 && (
+            {sparkline.data.length > 0 && (
               <div className="pt-2 flex justify-center">
-                <SparklineChart data={sparklineData} />
+                <SparklineChart
+                  data={sparkline.data}
+                  color={sparkline.placeholder ? "hsl(var(--muted-foreground))" : undefined}
+                  placeholder={sparkline.placeholder}
+                />
               </div>
             )}
 

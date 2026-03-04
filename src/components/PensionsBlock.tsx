@@ -20,14 +20,34 @@ import { RealtimeCounter } from "./RealtimeCounter";
 import { StatCard } from "./StatCard";
 
 export function PensionsBlock() {
-  const { pensions } = useData();
+  const { pensions, ssSustainability } = useData();
   const { msg } = useI18n();
 
   const copy = msg.blocks.pensions;
 
   const expensePerSecond = pensions.current.expensePerSecond;
 
-  const sparklineData = pensions.historical.slice(-20).map((d) => d.monthlyPayroll);
+  const monthlyPayrollSparkline = pensions.historical.slice(-20).map((d) => d.monthlyPayroll);
+  const contributoryDeficitSparkline =
+    ssSustainability?.years?.map((year) => {
+      const annualBalance = ssSustainability.byYear[String(year)]?.ssBalance ?? 0;
+      return Math.max(0, -annualBalance) * 1_000_000;
+    }) ?? [];
+  const activePensionsSparkline = pensions.historical
+    .map((entry) => entry.totalPensions)
+    .filter((value): value is number => typeof value === "number");
+  const averageRetirementPensionSparkline = pensions.historical
+    .map((entry) => {
+      if (typeof entry.averagePensionRetirement === "number") {
+        return entry.averagePensionRetirement;
+      }
+      if (typeof entry.totalPensions === "number" && entry.totalPensions > 0) {
+        // Proxy when monthly retirement average is unavailable in historical points.
+        return entry.monthlyPayroll / entry.totalPensions;
+      }
+      return null;
+    })
+    .filter((value): value is number => value != null);
 
   const pensionDate = formatDate(pensions.lastUpdated);
 
@@ -99,7 +119,7 @@ export function PensionsBlock() {
             value={formatCompact(pensions.current.monthlyPayroll)}
             tooltip={copy.monthlyPayrollTooltip}
             delay={0.05}
-            sparklineData={sparklineData}
+            sparklineData={monthlyPayrollSparkline}
             sources={[ssNomina, { name: copy.includesSources }, pncSource]}
           />
           <StatCard
@@ -107,6 +127,7 @@ export function PensionsBlock() {
             value={formatCompact(pensions.current.contributoryDeficit)}
             tooltip={copy.contributoryDeficitTooltip}
             delay={0.1}
+            sparklineData={contributoryDeficitSparkline}
             trend={{
               value: -pensions.current.contributoryDeficit,
               label: formatCompact(pensions.current.contributoryDeficit),
@@ -118,6 +139,7 @@ export function PensionsBlock() {
             value={`${formatCurrency(pensions.current.averagePensionRetirement)}${copy.perMonthSuffix}`}
             tooltip={copy.averageRetirementPensionTooltip}
             delay={0.2}
+            sparklineData={averageRetirementPensionSparkline}
             sources={[avgPensionSource]}
           />
           <StatCard
@@ -125,6 +147,7 @@ export function PensionsBlock() {
             value={formatCompactCount(pensions.current.totalPensions)}
             tooltip={copy.activePensionsTooltip}
             delay={0.35}
+            sparklineData={activePensionsSparkline}
             sources={[ssPensiones]}
           />
         </div>

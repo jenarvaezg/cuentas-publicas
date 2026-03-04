@@ -13,6 +13,7 @@ Dashboard fiscal interactivo que muestra en tiempo real la deuda pública, el ga
 - **Recaudación tributaria** — desglose por impuesto (IRPF, IVA, Sociedades, IIEE, IRNR) y por CCAA, con drilldown en subcategorías y tipos efectivos proxy (IRPF/IVA/Sociedades sobre recaudación total)
 - **Deuda por CCAA** — ranking de 17 comunidades con vista `% PIB` y `€`
 - **Proxy déficit/gasto por CCAA** — estimación direccional basada en variación interanual de deuda BdE + ingresos tributarios AEAT
+- **Economía social (INE)** — VAB, peso relativo y empleo con histórico anual (2019-2023)
 - **Comparativa interanual** — modos absoluto, % peso y % cambio, con opción de euros reales (ajustados por IPC) o corrientes
 - **Modo oscuro/claro** — respeta la preferencia del sistema
   - **i18n ES/EN (interfaz + contenidos largos)** — selector persistente (ruta `/en/` para la versión en inglés) + metodología/roadmap bilingües
@@ -30,6 +31,7 @@ Dashboard fiscal interactivo que muestra en tiempo real la deuda pública, el ga
 | [IGAE](https://www.igae.pap.hacienda.gob.es) | Gasto funcional COFOG (Total AAPP) | Anual |
 | [Eurostat](https://ec.europa.eu/eurostat) | Comparativa UE e ingresos/gastos públicos | Anual |
 | [AEAT](https://sede.agenciatributaria.gob.es) | Recaudación tributaria por impuesto y CCAA | Mensual |
+| [INE (Cuenta Satélite de la Economía Social)](https://www.ine.es/jaxiT3/Tabla.htm?t=78708) | VAB, peso relativo y empleo (tablas 78708/78713) | Anual |
 
 Los datos se actualizan automáticamente cada lunes a las 08:00 UTC via GitHub Actions. Si una fuente falla, el dashboard sigue funcionando con los últimos datos conocidos (patrón fallback).
 
@@ -75,7 +77,7 @@ El proyecto tiene dos runtimes en un solo repo:
 2. **SPA React** (`src/`) — importa los JSON en build time. Sin backend, sin llamadas a API en runtime.
 
 ```
-scripts/sources/{bde,ine,seguridad-social,igae,eurostat,aeat}.mjs
+scripts/sources/{bde,ine,seguridad-social,igae,eurostat,aeat,social-economy}.mjs
   → scripts/download-data.mjs (orquestador, Promise.allSettled)
     → src/data/{debt,demographics,pensions,budget,eurostat,ccaa-debt,revenue,tax-revenue,meta}.json
     → public/api/v1/*.json + public/feed.xml + public/sitemap.xml + public/secciones/*.html + public/en/sections/*.html
@@ -95,7 +97,7 @@ scripts/sources/{bde,ine,seguridad-social,igae,eurostat,aeat}.mjs
 La web expone una API JSON estática versionada en `/api/v1/`.
 
 - Catálogo: `/api/v1/index.json`
-- Datos: `/api/v1/{debt,pensions,demographics,budget,revenue,eurostat,ccaa-debt,tax-revenue,meta}.json`
+- Datos: `/api/v1/{debt,pensions,demographics,budget,revenue,eurostat,ccaa-debt,tax-revenue,social-economy,meta}.json`
 - OpenAPI: `/api/openapi.json`
 
 Documentación y política de versionado: [`API.md`](API.md).

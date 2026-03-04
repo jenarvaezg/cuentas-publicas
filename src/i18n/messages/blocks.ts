@@ -238,7 +238,7 @@ export const blockMessages = {
         "07": "Salud",
         "08": "Ocio, cultura y religión",
         "09": "Educación",
-        "10": "Protección social",
+        "10": "Edad avanzada (Protección social)",
       },
       officialForalNote:
         "Navarra y País Vasco quedan fuera de este dataset (liquidación de régimen común).",
@@ -873,7 +873,7 @@ export const blockMessages = {
         "07": "Health",
         "08": "Recreation, culture and religion",
         "09": "Education",
-        "10": "Social protection",
+        "10": "Older age (Social protection)",
       },
       officialForalNote:
         "Navarra and País Vasco are excluded from this dataset (common-regime settlement).",

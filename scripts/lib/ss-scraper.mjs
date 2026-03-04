@@ -8,6 +8,11 @@ const MONTH_NAMES = [
   'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
 ]
 
+function extractRegPeriodKey(url) {
+  const match = String(url || '').match(/REG(\d{6})\.xlsx/i)
+  return match ? parseInt(match[1], 10) : Number.NaN
+}
+
 /**
  * Normalize a path or URL fragment into a full absolute URL for the SS site.
  * @param {string} pathOrUrl
@@ -32,21 +37,52 @@ export function normalizeExcelUrl(pathOrUrl) {
  * @returns {string[]} Deduplicated list of candidate URLs
  */
 export function collectExcelCandidates(html) {
-  const regexPattern = /href=["']([^"']*REG\d{6}\.xlsx[^"']*)["']/i
-  const primaryMatch = html.match(regexPattern)
-  const primaryUrl = primaryMatch ? normalizeExcelUrl(primaryMatch[1]) : null
-
   const allXlsx = [...html.matchAll(/href=["']([^"']*\.xlsx[^"']*)["']/gi)]
   const regUrlsFromPage = allXlsx
     .map((match) => normalizeExcelUrl(match[1]))
     .filter(Boolean)
     .filter((url) => /REG\d{6}\.xlsx/i.test(url))
 
-  const candidateUrls = [primaryUrl, ...regUrlsFromPage, ...buildRecentRegFallbackUrls(4)].filter(
-    Boolean,
-  )
+  const fallbackUrls = buildRecentRegFallbackUrls(4).filter(Boolean)
 
-  return [...new Set(candidateUrls)]
+  let candidateUrls = []
+  if (regUrlsFromPage.length > 0) {
+    const latestPagePeriod = Math.max(
+      ...regUrlsFromPage
+        .map(extractRegPeriodKey)
+        .filter((period) => Number.isFinite(period)),
+    )
+    const safeFallback = fallbackUrls.filter((url) => {
+      const period = extractRegPeriodKey(url)
+      return !Number.isFinite(period) || period <= latestPagePeriod
+    })
+    candidateUrls = [...regUrlsFromPage, ...safeFallback]
+  } else {
+    candidateUrls = [...fallbackUrls]
+  }
+
+  const deduped = [...new Set(candidateUrls)]
+
+  // Try newest publication first (REGYYYYMM), then keep URL variants with
+  // concrete query params before generic fallback URLs.
+  deduped.sort((a, b) => {
+    const periodA = extractRegPeriodKey(a)
+    const periodB = extractRegPeriodKey(b)
+
+    const hasPeriodA = Number.isFinite(periodA)
+    const hasPeriodB = Number.isFinite(periodB)
+    if (hasPeriodA && hasPeriodB && periodA !== periodB) return periodB - periodA
+    if (hasPeriodA && !hasPeriodB) return -1
+    if (!hasPeriodA && hasPeriodB) return 1
+
+    const hasQueryA = String(a).includes('?')
+    const hasQueryB = String(b).includes('?')
+    if (hasQueryA !== hasQueryB) return hasQueryA ? -1 : 1
+
+    return String(a).localeCompare(String(b))
+  })
+
+  return deduped
 }
 
 /**

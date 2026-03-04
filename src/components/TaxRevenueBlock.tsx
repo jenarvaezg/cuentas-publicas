@@ -19,6 +19,7 @@ import { useData } from "@/hooks/useData";
 import { useTabKeyboardNav } from "@/hooks/useTabKeyboardNav";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber } from "@/utils/formatters";
+import { buildPopulationSeries } from "@/utils/population-series";
 import { getSearchParam, updateSearchParams } from "@/utils/url-state";
 import { ExportBlockButton } from "./ExportBlockButton";
 import { StatCard } from "./StatCard";
@@ -225,6 +226,22 @@ export function TaxRevenueBlock() {
     if (!demographics.population || !totalEuros) return 0;
     return totalEuros / demographics.population;
   }, [totalEuros, demographics.population]);
+  const perCapitaSparkline = useMemo(() => {
+    const populationByYear = new Map(
+      buildPopulationSeries(demographics.provincialPopulation).map((point) => [
+        point.year,
+        point.value,
+      ]),
+    );
+    return years
+      .map((year) => {
+        const total = taxRevenue.national[String(year)]?.total;
+        const population = populationByYear.get(year);
+        if (total == null || population == null || population <= 0) return null;
+        return (total * 1_000_000) / population;
+      })
+      .filter((value): value is number => value != null);
+  }, [years, taxRevenue.national, demographics.provincialPopulation]);
 
   const selectedEffectiveRates = useMemo(() => {
     if (!yearData || !yearData.total) return null;
@@ -249,6 +266,38 @@ export function TaxRevenueBlock() {
       })
       .filter((item): item is EffectiveRateDatum => item !== null);
   }, [years, taxRevenue.national]);
+  const totalRevenueSparkline = useMemo(() => {
+    return years
+      .map((year) => {
+        const total = taxRevenue.national[String(year)]?.total;
+        if (total == null) return null;
+        return total * 1_000_000;
+      })
+      .filter((value): value is number => value != null);
+  }, [years, taxRevenue.national]);
+  const yoySparkline = useMemo(() => {
+    return years
+      .map((year, index) => {
+        if (index === 0) return null;
+        const current = taxRevenue.national[String(year)]?.total;
+        const previous = taxRevenue.national[String(years[index - 1])]?.total;
+        if (!current || !previous) return null;
+        return ((current - previous) / previous) * 100;
+      })
+      .filter((value): value is number => value != null);
+  }, [years, taxRevenue.national]);
+  const irpfRateSparkline = useMemo(
+    () => effectiveRatesSeries.map((point) => point.irpf),
+    [effectiveRatesSeries],
+  );
+  const ivaRateSparkline = useMemo(
+    () => effectiveRatesSeries.map((point) => point.iva),
+    [effectiveRatesSeries],
+  );
+  const sociedadesRateSparkline = useMemo(
+    () => effectiveRatesSeries.map((point) => point.sociedades),
+    [effectiveRatesSeries],
+  );
 
   // ── National chart data ──────────────────────────────────────────────────────
 
@@ -465,6 +514,7 @@ export function TaxRevenueBlock() {
               value={formatCompact(totalEuros)}
               tooltip={copy.totalRevenueTooltip}
               delay={0.05}
+              sparklineData={totalRevenueSparkline}
               className="md:col-span-2 lg:col-span-2"
               sources={[AEAT_SERIES]}
             />
@@ -484,6 +534,7 @@ export function TaxRevenueBlock() {
                     : "border-rose-500/30"
                   : undefined
               }
+              sparklineData={yoySparkline}
               sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeYoY }]}
             />
             <StatCard
@@ -491,6 +542,7 @@ export function TaxRevenueBlock() {
               value={perCapita > 0 ? `${formatNumber(perCapita, 0)} €` : "—"}
               tooltip={copy.perCapitaTooltip}
               delay={0.15}
+              sparklineData={perCapitaSparkline}
               sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePerCapita }, AEAT_SERIES]}
             />
           </div>
@@ -531,6 +583,7 @@ export function TaxRevenueBlock() {
                     }
                     tooltip={copy.effectiveRateIrpfTooltip}
                     delay={0.2}
+                    sparklineData={irpfRateSparkline}
                     sources={[
                       {
                         ...CALCULO_DERIVADO,
@@ -548,6 +601,7 @@ export function TaxRevenueBlock() {
                     }
                     tooltip={copy.effectiveRateIvaTooltip}
                     delay={0.25}
+                    sparklineData={ivaRateSparkline}
                     sources={[
                       {
                         ...CALCULO_DERIVADO,
@@ -565,6 +619,7 @@ export function TaxRevenueBlock() {
                     }
                     tooltip={copy.effectiveRateSociedadesTooltip}
                     delay={0.3}
+                    sparklineData={sociedadesRateSparkline}
                     sources={[
                       {
                         ...CALCULO_DERIVADO,

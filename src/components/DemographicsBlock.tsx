@@ -16,6 +16,7 @@ import { useTabKeyboardNav } from "@/hooks/useTabKeyboardNav";
 import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
 import { formatCompactCount, formatNumber, formatPercent } from "@/utils/formatters";
+import { buildPopulationSeries } from "@/utils/population-series";
 import {
   type DemoEUIndicator,
   EUDemographicComparison,
@@ -256,6 +257,43 @@ export function DemographicsBlock() {
       share: p.value * 100,
     }));
   }, [immigrationShare?.historical]);
+  const populationSparkline = useMemo(() => {
+    const series = buildPopulationSeries(provincialPopulation).map((point) => point.value);
+    if (series.length > 0) return series;
+
+    if (projections?.shortTerm?.national?.length) {
+      return projections.shortTerm.national.map((point) => point.value);
+    }
+
+    return undefined;
+  }, [provincialPopulation, projections?.shortTerm?.national]);
+  const projectedPopulationSparkline = projections?.shortTerm?.national?.length
+    ? projections.shortTerm.national.map((point) => point.value)
+    : undefined;
+  const dependencyRatioSparkline = projections?.indicators?.dependencyOldAge?.length
+    ? projections.indicators.dependencyOldAge.map((point) => point.value)
+    : undefined;
+  const projectedDependencySparkline = projections?.indicators?.dependencyOldAge?.length
+    ? projections.indicators.dependencyOldAge.map((point) => point.value)
+    : undefined;
+  const livingConditionsAropeSparkline = livingConditions?.historical?.arope?.length
+    ? sparkline(livingConditions.historical.arope)
+    : undefined;
+  const livingConditionsGiniSparkline = livingConditions?.historical?.gini?.length
+    ? sparkline(livingConditions.historical.gini)
+    : undefined;
+  const livingConditionsIncomeSparkline = livingConditions?.historical?.averageIncome?.length
+    ? sparkline(livingConditions.historical.averageIncome)
+    : undefined;
+  const livingConditionsAropeTrend = livingConditions?.historical?.arope?.length
+    ? yoyTrend(livingConditions.historical.arope, "pp")
+    : undefined;
+  const livingConditionsGiniTrend = livingConditions?.historical?.gini?.length
+    ? yoyTrend(livingConditions.historical.gini, "pt")
+    : undefined;
+  const livingConditionsIncomeTrend = livingConditions?.historical?.averageIncome?.length
+    ? yoyTrend(livingConditions.historical.averageIncome, "€")
+    : undefined;
 
   return (
     <Card>
@@ -273,7 +311,7 @@ export function DemographicsBlock() {
             value={formatCompactCount(demographics.population)}
             tooltip={dmTooltips.population}
             delay={0.05}
-            sparklineData={undefined}
+            sparklineData={populationSparkline}
             sources={[populationSource]}
           />
           <StatCard
@@ -319,6 +357,7 @@ export function DemographicsBlock() {
             }
             tooltip={dmTooltips.dependencyRatio}
             delay={0.2}
+            sparklineData={dependencyRatioSparkline}
             sources={[pyramidSource]}
           />
         </div>
@@ -425,6 +464,7 @@ export function DemographicsBlock() {
                     )}
                     tooltip={dmTooltips.projectedPopulation}
                     delay={0.5}
+                    sparklineData={projectedPopulationSparkline}
                     sources={[INE_PROJECTIONS]}
                   />
                 ) : null}
@@ -439,6 +479,7 @@ export function DemographicsBlock() {
                           value={`${formatNumber(target2050.value, 1)}%`}
                           tooltip={dmTooltips.projectedDependency2050}
                           delay={0.55}
+                          sparklineData={projectedDependencySparkline}
                           sources={[INE_PROJECTIONS]}
                         />
                       ) : null;
@@ -649,6 +690,8 @@ export function DemographicsBlock() {
                 label={inequalityCopy.aropeLabel}
                 value={`${formatNumber(livingConditions.arope, 1)}%`}
                 tooltip={inequalityCopy.aropeTooltip}
+                sparklineData={livingConditionsAropeSparkline}
+                trend={livingConditionsAropeTrend}
                 sources={
                   livingConditions.sourceAttribution?.arope
                     ? [fromAttribution(livingConditions.sourceAttribution.arope)]
@@ -659,6 +702,8 @@ export function DemographicsBlock() {
                 label={inequalityCopy.giniLabel}
                 value={formatNumber(livingConditions.gini, 1)}
                 tooltip={inequalityCopy.giniTooltip}
+                sparklineData={livingConditionsGiniSparkline}
+                trend={livingConditionsGiniTrend}
                 sources={
                   livingConditions.sourceAttribution?.gini
                     ? [fromAttribution(livingConditions.sourceAttribution.gini)]
@@ -669,6 +714,8 @@ export function DemographicsBlock() {
                 label={inequalityCopy.incomeLabel}
                 value={`${formatNumber(livingConditions.averageIncome, 0)}€`}
                 tooltip={inequalityCopy.incomeLabelTooltip}
+                sparklineData={livingConditionsIncomeSparkline}
+                trend={livingConditionsIncomeTrend}
                 sources={
                   livingConditions.sourceAttribution?.averageIncome
                     ? [fromAttribution(livingConditions.sourceAttribution.averageIncome)]

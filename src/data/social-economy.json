@@ -1,17 +1,135 @@
 {
-  "lastUpdated": "2026-02-26T17:41:18.540Z",
+  "lastUpdated": "2026-03-04T21:11:10.237Z",
   "vab": 54424000000,
-  "pibShare": 11.1,
+  "pibShare": 4,
   "employmentShare": 5.8,
-  "totalJobs": 1200000,
+  "totalJobs": 1276662,
   "referenceYear": 2023,
+  "historical": {
+    "vab": [
+      {
+        "year": 2019,
+        "value": 48318000000
+      },
+      {
+        "year": 2020,
+        "value": 46532000000
+      },
+      {
+        "year": 2021,
+        "value": 48477000000
+      },
+      {
+        "year": 2022,
+        "value": 50848000000
+      },
+      {
+        "year": 2023,
+        "value": 54424000000
+      }
+    ],
+    "pibShare": [
+      {
+        "year": 2019,
+        "value": 4.3
+      },
+      {
+        "year": 2020,
+        "value": 4.5
+      },
+      {
+        "year": 2021,
+        "value": 4.3
+      },
+      {
+        "year": 2022,
+        "value": 4.1
+      },
+      {
+        "year": 2023,
+        "value": 4
+      }
+    ],
+    "employmentShare": [
+      {
+        "year": 2019,
+        "value": 5.94
+      },
+      {
+        "year": 2020,
+        "value": 6.51
+      },
+      {
+        "year": 2021,
+        "value": 6.1
+      },
+      {
+        "year": 2022,
+        "value": 5.9
+      },
+      {
+        "year": 2023,
+        "value": 5.8
+      }
+    ],
+    "totalJobs": [
+      {
+        "year": 2019,
+        "value": 1250389
+      },
+      {
+        "year": 2020,
+        "value": 1225981
+      },
+      {
+        "year": 2021,
+        "value": 1238169
+      },
+      {
+        "year": 2022,
+        "value": 1255860
+      },
+      {
+        "year": 2023,
+        "value": 1276662
+      }
+    ]
+  },
   "sourceAttribution": {
     "socialEconomy": {
       "source": "INE — Cuenta Satélite de la Economía Social",
       "type": "api",
       "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=30092",
-      "date": "2026-02-26",
-      "note": "Nota de prensa 26/02/2026. Datos referidos a 2023."
+      "date": "2023-12-31",
+      "note": "Series INE CSES12739 (VAB), CSES17056 (% PIB), CSES16664 (% empleo) y CSES15096 (puestos de trabajo)."
+    },
+    "vab": {
+      "source": "INE — Economía Social (VAB)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=78708",
+      "date": "2023-12-31",
+      "note": "Total CNAE. Precios corrientes. Dato base. Valor añadido bruto."
+    },
+    "pibShare": {
+      "source": "INE — Economía Social (% PIB)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=78708",
+      "date": "2023-12-31",
+      "note": "Total CNAE. Precios corrientes. Porcentaje. Valor añadido bruto."
+    },
+    "employmentShare": {
+      "source": "INE — Economía Social (% empleo)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=78713",
+      "date": "2023-12-31",
+      "note": "Puestos de trabajo. Total CNAE. Porcentaje."
+    },
+    "totalJobs": {
+      "source": "INE — Economía Social (empleos directos)",
+      "type": "api",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=78713",
+      "date": "2023-12-31",
+      "note": "Puestos de trabajo. Total CNAE. Valor total."
     }
   }
 }

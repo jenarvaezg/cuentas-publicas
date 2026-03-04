@@ -15,7 +15,7 @@ No requiere autenticación y está pensada para consumo de lectura (dashboards, 
 - `/api/v1/pensions.json` — pensiones, nómina y métricas derivadas
 - `/api/v1/demographics.json` — población, EPA, PIB, salario, IPC, vital statistics y pirámide demográfica
 - `/api/v1/budget.json` — gasto COFOG por año/categoría
-- `/api/v1/revenue.json` — ingresos y gastos públicos (Eurostat)
+- `/api/v1/revenue.json` — ingresos y gastos públicos + ratios sobre PIB (Eurostat)
 - `/api/v1/eurostat.json` — comparativa UE por indicador
 - `/api/v1/ccaa-debt.json` — deuda por comunidad autónoma
 - `/api/v1/tax-revenue.json` — recaudación tributaria por impuesto y CCAA (AEAT)
@@ -24,7 +24,7 @@ No requiere autenticación y está pensada para consumo de lectura (dashboards, 
 - `/api/v1/ccaa-deficit.json` — déficit/superávit (B.9) por CCAA (Contabilidad Nacional, IGAE)
 - `/api/v1/ccaa-foral-flows.json` — flujos forales de Navarra y País Vasco (aportación/cupo) y recaudación tributaria (`taxRevenue`)
 - `/api/v1/flows.json` — red de flujos balanceada (nodos y enlaces Sankey) consolidando ingresos y gastos
-- `/api/v1/social-economy.json` — Cuenta Satélite de la Economía Social: VAB, empleo y PIB (INE)
+- `/api/v1/social-economy.json` — Cuenta Satélite de la Economía Social (INE): VAB, peso relativo y empleo (series históricas)
 - `/api/v1/living-conditions.json` — Encuesta de Condiciones de Vida: Tasa AROPE, Gini y renta media (INE)
 - `/api/v1/ss-sustainability.json` — sostenibilidad SS: cotizaciones, gasto pensiones, Fondo de Reserva, cotizantes/pensionista y proyecciones
 - `/api/v1/meta.json` — estado del pipeline y frescura por fuente
@@ -139,7 +139,7 @@ sourceAttribution: { ssSustainability: DataSourceAttribution }
 
 ### social-economy.json — Schema
 
-Cuenta Satélite de la Economía Social del INE: peso económico y laboral de cooperativas, mutuas y otras entidades del sector.
+Cuenta Satélite de la Economía Social del INE (tablas 78708 y 78713): peso económico y laboral de cooperativas, mutuas y otras entidades del sector.
 
 ```json
 {
@@ -149,7 +149,19 @@ Cuenta Satélite de la Economía Social del INE: peso económico y laboral de co
   "employmentShare": number, // % sobre el empleo total
   "totalJobs": number,     // Número de empleos directos
   "referenceYear": number, // Año de referencia de los datos
-  "sourceAttribution": DataSourceAttribution
+  "historical": {
+    "vab": [{ "year": number, "value": number }],
+    "pibShare": [{ "year": number, "value": number }],
+    "employmentShare": [{ "year": number, "value": number }],
+    "totalJobs": [{ "year": number, "value": number }]
+  },
+  "sourceAttribution": {
+    "socialEconomy": DataSourceAttribution,
+    "vab": DataSourceAttribution,
+    "pibShare": DataSourceAttribution,
+    "employmentShare": DataSourceAttribution,
+    "totalJobs": DataSourceAttribution
+  }
 }
 ```
 
@@ -164,6 +176,11 @@ Encuesta de Condiciones de Vida (INE): indicadores de riesgo de pobreza, desigua
   "gini": number,          // Índice de Gini (0-100)
   "averageIncome": number, // Renta media neta anual por persona (EUR)
   "referenceYear": number,
+  "historical": {
+    "arope": [{ "year": number, "value": number }],
+    "gini": [{ "year": number, "value": number }],
+    "averageIncome": [{ "year": number, "value": number }]
+  },
   "sourceAttribution": {
     "arope": DataSourceAttribution,
     "gini": DataSourceAttribution,

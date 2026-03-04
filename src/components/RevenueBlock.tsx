@@ -122,6 +122,26 @@ export function RevenueBlock() {
       };
     });
   }, [years, revenue.byYear]);
+  const revenueSparkline = useMemo(
+    () => historicalData.map((point) => point.ingresos * 1_000_000),
+    [historicalData],
+  );
+  const expenditureSparkline = useMemo(
+    () => historicalData.map((point) => point.gastos * 1_000_000),
+    [historicalData],
+  );
+  const balanceSparkline = useMemo(
+    () => historicalData.map((point) => point.balance * 1_000_000),
+    [historicalData],
+  );
+  const taxBurdenSparkline = useMemo(() => {
+    return years
+      .map((year) => {
+        const ratio = revenue.byYear[String(year)]?.revenueToGDP;
+        return typeof ratio === "number" ? ratio : null;
+      })
+      .filter((value): value is number => value != null);
+  }, [years, revenue.byYear]);
 
   // Derived stats
   const totalRevenueEuros = yearData ? yearData.totalRevenue * 1_000_000 : 0;
@@ -129,9 +149,10 @@ export function RevenueBlock() {
   const balanceEuros = yearData ? yearData.balance * 1_000_000 : 0;
 
   const presionFiscal = useMemo(() => {
+    if (typeof yearData?.revenueToGDP === "number") return yearData.revenueToGDP;
     if (!demographics.gdp || !totalRevenueEuros) return 0;
     return (totalRevenueEuros / demographics.gdp) * 100;
-  }, [totalRevenueEuros, demographics.gdp]);
+  }, [yearData?.revenueToGDP, totalRevenueEuros, demographics.gdp]);
 
   return (
     <Card>
@@ -172,6 +193,7 @@ export function RevenueBlock() {
             value={formatCompact(totalRevenueEuros)}
             tooltip={copy.totalRevenueTooltip}
             delay={0.05}
+            sparklineData={revenueSparkline}
             sources={[revenueSource]}
           />
           <StatCard
@@ -179,6 +201,7 @@ export function RevenueBlock() {
             value={formatCompact(totalExpenditureEuros)}
             tooltip={copy.totalExpenditureTooltip}
             delay={0.1}
+            sparklineData={expenditureSparkline}
             sources={[revenueSource]}
           />
           <StatCard
@@ -186,6 +209,7 @@ export function RevenueBlock() {
             value={formatCompact(balanceEuros)}
             tooltip={balanceEuros >= 0 ? copy.surplusTooltip : copy.deficitTooltip}
             delay={0.15}
+            sparklineData={balanceSparkline}
             className={balanceEuros >= 0 ? "border-emerald-500/30" : "border-rose-500/30"}
             sources={[revenueSource]}
           />
@@ -194,7 +218,12 @@ export function RevenueBlock() {
             value={formatPercent(presionFiscal)}
             tooltip={copy.taxBurdenTooltip}
             delay={0.2}
-            sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeNote }, revenueSource]}
+            sparklineData={taxBurdenSparkline}
+            sources={
+              typeof yearData?.revenueToGDP === "number"
+                ? [revenueSource]
+                : [{ ...CALCULO_DERIVADO, note: copy.derivativeNote }, revenueSource]
+            }
           />
         </div>
 

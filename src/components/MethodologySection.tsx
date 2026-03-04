@@ -199,17 +199,17 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
       {
         title: "Economía Social",
         source: {
-          label: "INE (Cuenta Satélite de la Economía Social)",
-          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=30092",
-          note: "Primera edición (Feb 2026)",
+          label: "INE (Cuenta Satélite de la Economía Social, tablas 78708/78713)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=78708",
+          note: "Serie anual 2019-2023",
         },
         paragraphs: [
-          "Se incorporan las métricas de la nueva Cuenta Satélite de la Economía Social del INE, que cuantifica el peso de cooperativas, mutuas, sociedades laborales y otras entidades de la economía social.",
+          "Se consumen series anuales de la Cuenta Satélite de la Economía Social del INE para medir la aportación económica y laboral del sector en España.",
         ],
         bullets: [
-          "Valor Añadido Bruto (VAB) del sector",
-          "Porcentaje sobre el PIB y el empleo total",
-          "Número total de empleos directos vinculados",
+          "VAB (serie CSES12739, tabla 78708)",
+          "Peso relativo del VAB (serie CSES17056, tabla 78708)",
+          "Empleo total y peso en el empleo (series CSES15096 y CSES16664, tabla 78713)",
         ],
       },
       {
@@ -442,17 +442,17 @@ const copyByLang: Record<"es" | "en", MethodologyCopy> = {
       {
         title: "Social Economy",
         source: {
-          label: "INE (Social Economy Satellite Account)",
-          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=30092",
-          note: "First edition (Feb 2026)",
+          label: "INE (Social Economy Satellite Account, tables 78708/78713)",
+          url: "https://www.ine.es/jaxiT3/Tabla.htm?t=78708",
+          note: "Annual series 2019-2023",
         },
         paragraphs: [
-          "Incorporates metrics from the new INE Social Economy Satellite Account, quantifying the weight of cooperatives, mutuals, labor societies, and other social economy entities.",
+          "The dashboard consumes annual time series from INE's Social Economy Satellite Account to track the sector's economic and labour footprint in Spain.",
         ],
         bullets: [
-          "Sector's Gross Value Added (GVA)",
-          "Share of total GDP and employment",
-          "Total number of direct jobs linked to the sector",
+          "GVA (series CSES12739, table 78708)",
+          "Relative GVA weight (series CSES17056, table 78708)",
+          "Total jobs and employment share (series CSES15096 and CSES16664, table 78713)",
         ],
       },
       {

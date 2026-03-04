@@ -25,7 +25,56 @@ export function DebtBlock() {
   const debtPerCapita = currentDebt / demographics.population;
   const debtPerContributor = currentDebt / demographics.activePopulation;
 
-  const sparklineData = debt.historical.slice(-20).map((d) => d.totalDebt);
+  const totalDebtSparkline = debt.historical.slice(-20).map((d) => d.totalDebt);
+  const debtPerCapitaSparkline =
+    demographics.population > 0
+      ? totalDebtSparkline.map((value) => value / demographics.population)
+      : [];
+  const debtPerContributorSparkline =
+    demographics.activePopulation > 0
+      ? totalDebtSparkline.map((value) => value / demographics.activePopulation)
+      : [];
+  const subsectorTotal =
+    debt.current.debtBySubsector.estado +
+    debt.current.debtBySubsector.ccaa +
+    debt.current.debtBySubsector.ccll +
+    debt.current.debtBySubsector.ss;
+  const debtStateSparkline =
+    subsectorTotal > 0
+      ? totalDebtSparkline.map(
+          (value) => value * (debt.current.debtBySubsector.estado / subsectorTotal),
+        )
+      : [];
+  const debtRegionsSparkline =
+    subsectorTotal > 0
+      ? totalDebtSparkline.map(
+          (value) => value * (debt.current.debtBySubsector.ccaa / subsectorTotal),
+        )
+      : [];
+  const debtLocalAndSsSparkline =
+    subsectorTotal > 0
+      ? totalDebtSparkline.map(
+          (value) =>
+            value *
+            ((debt.current.debtBySubsector.ccll + debt.current.debtBySubsector.ss) /
+              subsectorTotal),
+        )
+      : [];
+  const debtToGDPSparklineRaw = debt.historical
+    .filter(
+      (point): point is { date: string; totalDebt: number; debtToGDP: number } =>
+        typeof point.debtToGDP === "number",
+    )
+    .slice(-20)
+    .map((point) => point.debtToGDP);
+  const impliedGDP =
+    debt.current.debtToGDP > 0 ? debt.current.totalDebt / (debt.current.debtToGDP / 100) : 0;
+  const debtToGDPSparkline =
+    debtToGDPSparklineRaw.length > 0
+      ? debtToGDPSparklineRaw
+      : impliedGDP > 0
+        ? totalDebtSparkline.map((value) => (value / impliedGDP) * 100)
+        : [];
   const yoyChange = debt.current.yearOverYearChange;
 
   // Last data point date from historical
@@ -74,6 +123,7 @@ export function DebtBlock() {
             value={formatCurrency(debtPerCapita)}
             tooltip={copy.debtPerCapitaTooltip}
             delay={0.05}
+            sparklineData={debtPerCapitaSparkline}
             sources={[{ ...CALCULO_DERIVADO, note: copy.perCapitaNote }, bdeSource, inePopSource]}
           />
           <StatCard
@@ -81,6 +131,7 @@ export function DebtBlock() {
             value={formatCurrency(debtPerContributor)}
             tooltip={copy.debtPerContributorTooltip}
             delay={0.1}
+            sparklineData={debtPerContributorSparkline}
             sources={[{ ...CALCULO_DERIVADO, note: copy.contributorNote }, bdeSource, ineEpaSource]}
           />
           <StatCard
@@ -88,6 +139,7 @@ export function DebtBlock() {
             value={formatPercent(debt.current.debtToGDP)}
             tooltip={copy.ratioDebtGdpTooltip}
             delay={0.15}
+            sparklineData={debtToGDPSparkline.length > 0 ? debtToGDPSparkline : undefined}
             sources={[{ ...CALCULO_DERIVADO, note: copy.gdpNote }, bdeSource, inePibSource]}
           />
 
@@ -96,6 +148,7 @@ export function DebtBlock() {
             value={formatCompact(debt.current.debtBySubsector.estado)}
             tooltip={copy.debtStateTooltip}
             delay={0.2}
+            sparklineData={debtStateSparkline}
             sources={[bdeSource]}
           />
           <StatCard
@@ -103,6 +156,7 @@ export function DebtBlock() {
             value={formatCompact(debt.current.debtBySubsector.ccaa)}
             tooltip={copy.debtRegionsTooltip}
             delay={0.25}
+            sparklineData={debtRegionsSparkline}
             sources={[bdeSource]}
           />
           <StatCard
@@ -112,6 +166,7 @@ export function DebtBlock() {
             )}
             tooltip={copy.debtLocalAndSsTooltip}
             delay={0.3}
+            sparklineData={debtLocalAndSsSparkline}
             sources={[bdeSource]}
           />
 
@@ -124,7 +179,7 @@ export function DebtBlock() {
               value: yoyChange,
               label: formatPercent(Math.abs(yoyChange)),
             }}
-            sparklineData={sparklineData}
+            sparklineData={totalDebtSparkline}
             sources={[yoySource, bdeSource]}
           />
         </div>

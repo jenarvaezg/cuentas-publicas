@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-26T17:41:19.186Z",
+  "lastUpdated": "2026-03-04T21:11:09.664Z",
   "population": 49570725,
   "activePopulation": 24940400,
   "gdp": 1685783000000,
@@ -65,7 +65,7 @@
       "source": "INE — Encuesta Anual Estructura Salarial (serie EAES741)",
       "type": "api",
       "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=28191",
-      "date": "2022-12-31"
+      "date": "2023-12-31"
     },
     "smi": {
       "source": "BOE — Salario Mínimo Interprofesional 2026",

@@ -102,6 +102,7 @@ export interface PensionData {
     date: string;
     monthlyPayroll: number;
     totalPensions?: number;
+    averagePensionRetirement?: number;
   }>;
   regression: {
     slope: number;
@@ -194,6 +195,8 @@ export interface RevenueYearData {
   taxesDirect: number; // M€ — D5REC (IRPF, IS)
   socialContributions: number; // M€ — D61REC
   otherRevenue: number; // M€ — derived
+  revenueToGDP?: number; // % GDP — Eurostat TR / GDP
+  expenditureToGDP?: number; // % GDP — Eurostat TE / GDP
 }
 
 export interface RevenueData {
@@ -594,6 +597,12 @@ export interface SocialEconomyData {
   employmentShare: number;
   totalJobs: number;
   referenceYear: number;
+  historical?: {
+    vab: TimeSeriesPoint[];
+    pibShare: TimeSeriesPoint[];
+    employmentShare: TimeSeriesPoint[];
+    totalJobs: TimeSeriesPoint[];
+  };
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
@@ -605,6 +614,11 @@ export interface LivingConditionsData {
   gini: number;
   averageIncome: number;
   referenceYear: number;
+  historical?: {
+    arope: TimeSeriesPoint[];
+    gini: TimeSeriesPoint[];
+    averageIncome: TimeSeriesPoint[];
+  };
   sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 

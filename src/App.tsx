@@ -225,88 +225,88 @@ function App() {
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-chart-2/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
-              <FadeIn
-                delay={0.1}
-                className="lg:col-span-3 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center gap-4 hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
-                  {msg.app.debtSummaryLabel}
+              <FadeIn delay={0.1} className="lg:col-span-3">
+                <div className="h-full p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center gap-4 hover:shadow-primary/5 transition-[box-shadow,transform] duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
+                    {msg.app.debtSummaryLabel}
+                  </div>
+                  <RealtimeCounter
+                    baseValue={currentDebt}
+                    perSecond={debtPerSecond}
+                    suffix=" €"
+                    size="xl"
+                    label=""
+                    className="relative z-10 text-primary"
+                  />
+                  <p className="text-sm text-muted-foreground text-center relative z-10 mt-4 max-w-md">
+                    {msg.app.debtSummaryNotePrefix}{" "}
+                    <a
+                      href={BDE_BE11B.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-foreground font-medium transition-colors"
+                    >
+                      BdE be11b.csv
+                    </a>{" "}
+                    <br className="hidden sm:block" />
+                    <span className="opacity-70">
+                      ({msg.app.debtSummaryNoteSuffix} {lastDebtDate})
+                    </span>
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/40 text-center relative z-10">
+                    {msg.app.counterDisclaimer}
+                  </p>
                 </div>
-                <RealtimeCounter
-                  baseValue={currentDebt}
-                  perSecond={debtPerSecond}
-                  suffix=" €"
-                  size="xl"
-                  label=""
-                  className="relative z-10 text-primary"
-                />
-                <p className="text-sm text-muted-foreground text-center relative z-10 mt-4 max-w-md">
-                  {msg.app.debtSummaryNotePrefix}{" "}
-                  <a
-                    href={BDE_BE11B.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-foreground font-medium transition-colors"
-                  >
-                    BdE be11b.csv
-                  </a>{" "}
-                  <br className="hidden sm:block" />
-                  <span className="opacity-70">
-                    ({msg.app.debtSummaryNoteSuffix} {lastDebtDate})
-                  </span>
-                </p>
-                <p className="text-[10px] text-muted-foreground/40 text-center relative z-10">
-                  {msg.app.counterDisclaimer}
-                </p>
               </FadeIn>
 
               {/* Deficit Summary (col-span-2) */}
-              <FadeIn
-                delay={0.2}
-                className="lg:col-span-2 p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between gap-4 hover:shadow-chart-2/5 transition-all duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-chart-2/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
-                  {msg.app.deficitSummaryLabel}
-                </div>
-                <RealtimeCounter
-                  baseValue={cumulativeBase}
-                  perSecond={-deficitPerSecond}
-                  suffix=" €"
-                  size="lg"
-                  decimals={0}
-                  label=""
-                  className="relative z-10 text-destructive"
-                />
-                <p className="text-sm text-muted-foreground text-center relative z-10">
-                  {msg.app.deficitSummarySince}{" "}
-                  <span className="font-semibold text-foreground">
-                    {formatCompact(pensions.current.contributoryDeficit)}
-                  </span>
-                  {msg.app.perYear} ( {formatNumber(deficitPerSecond, 2)} €/s)
-                </p>
-                <div className="w-full border-t border-border/50 pt-4 mt-2 flex flex-col items-center gap-1 relative z-10">
-                  <div className="text-base font-bold tabular-nums text-foreground">
-                    {formatCompact(pensions.current.contributoryDeficit)}
+              <FadeIn delay={0.2} className="lg:col-span-2">
+                <div className="h-full p-8 md:p-10 border border-white/10 rounded-2xl bg-card/60 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-between gap-4 hover:shadow-chart-2/5 transition-[box-shadow,transform] duration-500 hover:-translate-y-1 cursor-default relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-chart-2/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-[0.15em] relative z-10 w-full text-center">
+                    {msg.app.deficitSummaryLabel}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">{msg.app.annualDeficit}</div>
+                  <RealtimeCounter
+                    baseValue={cumulativeBase}
+                    perSecond={-deficitPerSecond}
+                    suffix=" €"
+                    size="lg"
+                    decimals={0}
+                    label=""
+                    className="relative z-10 text-destructive"
+                  />
+                  <p className="text-sm text-muted-foreground text-center relative z-10">
+                    {msg.app.deficitSummarySince}{" "}
+                    <span className="font-semibold text-foreground">
+                      {formatCompact(pensions.current.contributoryDeficit)}
+                    </span>
+                    {msg.app.perYear} ( {formatNumber(deficitPerSecond, 2)} €/s)
+                  </p>
+                  <div className="w-full border-t border-border/50 pt-4 mt-2 flex flex-col items-center gap-1 relative z-10">
+                    <div className="text-base font-bold tabular-nums text-foreground">
+                      {formatCompact(pensions.current.contributoryDeficit)}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {msg.app.annualDeficit}
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground/60 text-center relative z-10 mt-2">
+                    Eurostat gov_10a_main (S1314) —{" "}
+                    <a
+                      href={SS_NOMINA.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-foreground transition-colors"
+                    >
+                      {CALCULO_DERIVADO.name}
+                    </a>{" "}
+                    ({pensionDate})
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/40 text-center relative z-10">
+                    {msg.app.counterDisclaimer}
+                  </p>
                 </div>
-                <p className="text-[11px] text-muted-foreground/60 text-center relative z-10 mt-2">
-                  Eurostat gov_10a_main (S1314) —{" "}
-                  <a
-                    href={SS_NOMINA.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-foreground transition-colors"
-                  >
-                    {CALCULO_DERIVADO.name}
-                  </a>{" "}
-                  ({pensionDate})
-                </p>
-                <p className="text-[10px] text-muted-foreground/40 text-center relative z-10">
-                  {msg.app.counterDisclaimer}
-                </p>
               </FadeIn>
             </div>
           </section>

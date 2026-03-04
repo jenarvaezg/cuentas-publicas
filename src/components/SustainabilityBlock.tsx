@@ -42,6 +42,10 @@ export function SustainabilityBlock() {
   const reserveSparkline = data.reserveFund.map((r) => r.balance);
   const contributorsLatest =
     data.contributorsPerPensioner[data.contributorsPerPensioner.length - 1];
+  const pensionGDPSparkline = data.pensionToGDP.spain.years.map(
+    (year) => data.pensionToGDP.spain.byYear[String(year)] ?? 0,
+  );
+  const projectedPensionGDPSparkline = data.projections.spain.map((point) => point.pensionToGDP);
 
   const spainProjection2050 = data.projections.spain.find((p) => p.year === 2050);
 
@@ -118,6 +122,7 @@ export function SustainabilityBlock() {
                 value={formatPercent(latestData?.pensionToGDP ?? 0)}
                 tooltip={copy.pensionGDPTooltip}
                 delay={0.1}
+                sparklineData={pensionGDPSparkline}
                 sources={[
                   eurostatSource,
                   {
@@ -206,6 +211,7 @@ export function SustainabilityBlock() {
                   value={formatPercent(spainProjection2050?.pensionToGDP ?? 0)}
                   tooltip={copy.projectedGDP2050Tooltip}
                   delay={0.25}
+                  sparklineData={projectedPensionGDPSparkline}
                   sources={[AGEING_REPORT]}
                 />
                 <StatCard

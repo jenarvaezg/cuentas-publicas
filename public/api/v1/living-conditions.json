@@ -1,27 +1,227 @@
 {
-  "lastUpdated": "2026-02-26T17:41:18.721Z",
+  "lastUpdated": "2026-03-04T21:11:09.646Z",
   "arope": 25.7,
   "gini": 30.8,
-  "averageIncome": 15620,
+  "averageIncome": 17914,
   "referenceYear": 2025,
+  "historical": {
+    "arope": [
+      {
+        "year": 2014,
+        "value": 30.2
+      },
+      {
+        "year": 2015,
+        "value": 28.7
+      },
+      {
+        "year": 2016,
+        "value": 28.8
+      },
+      {
+        "year": 2017,
+        "value": 27.5
+      },
+      {
+        "year": 2018,
+        "value": 27.3
+      },
+      {
+        "year": 2019,
+        "value": 26.2
+      },
+      {
+        "year": 2020,
+        "value": 27
+      },
+      {
+        "year": 2021,
+        "value": 27.8
+      },
+      {
+        "year": 2022,
+        "value": 26
+      },
+      {
+        "year": 2023,
+        "value": 26.5
+      },
+      {
+        "year": 2024,
+        "value": 25.8
+      },
+      {
+        "year": 2025,
+        "value": 25.7
+      }
+    ],
+    "gini": [
+      {
+        "year": 2008,
+        "value": 32.4
+      },
+      {
+        "year": 2009,
+        "value": 32.9
+      },
+      {
+        "year": 2010,
+        "value": 33.5
+      },
+      {
+        "year": 2011,
+        "value": 34
+      },
+      {
+        "year": 2012,
+        "value": 34.2
+      },
+      {
+        "year": 2013,
+        "value": 33.7
+      },
+      {
+        "year": 2014,
+        "value": 34.7
+      },
+      {
+        "year": 2015,
+        "value": 34.6
+      },
+      {
+        "year": 2016,
+        "value": 34.5
+      },
+      {
+        "year": 2017,
+        "value": 34.1
+      },
+      {
+        "year": 2018,
+        "value": 33.2
+      },
+      {
+        "year": 2019,
+        "value": 33
+      },
+      {
+        "year": 2020,
+        "value": 32.1
+      },
+      {
+        "year": 2021,
+        "value": 33
+      },
+      {
+        "year": 2022,
+        "value": 32
+      },
+      {
+        "year": 2023,
+        "value": 31.5
+      },
+      {
+        "year": 2024,
+        "value": 31.2
+      },
+      {
+        "year": 2025,
+        "value": 30.8
+      }
+    ],
+    "averageIncome": [
+      {
+        "year": 2008,
+        "value": 12237
+      },
+      {
+        "year": 2009,
+        "value": 12790
+      },
+      {
+        "year": 2010,
+        "value": 12933
+      },
+      {
+        "year": 2011,
+        "value": 12483
+      },
+      {
+        "year": 2012,
+        "value": 12327
+      },
+      {
+        "year": 2013,
+        "value": 11997
+      },
+      {
+        "year": 2014,
+        "value": 12021
+      },
+      {
+        "year": 2015,
+        "value": 11992
+      },
+      {
+        "year": 2016,
+        "value": 12347
+      },
+      {
+        "year": 2017,
+        "value": 12841
+      },
+      {
+        "year": 2018,
+        "value": 13223
+      },
+      {
+        "year": 2019,
+        "value": 13549
+      },
+      {
+        "year": 2020,
+        "value": 14212
+      },
+      {
+        "year": 2021,
+        "value": 14255
+      },
+      {
+        "year": 2022,
+        "value": 15086
+      },
+      {
+        "year": 2023,
+        "value": 16180
+      },
+      {
+        "year": 2024,
+        "value": 16917
+      },
+      {
+        "year": 2025,
+        "value": 17914
+      }
+    ]
+  },
   "sourceAttribution": {
     "arope": {
       "source": "INE — Tasa AROPE (ECV)",
       "type": "api",
       "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=76847",
-      "date": "2024-12-31"
+      "date": "2025-12-31"
     },
     "gini": {
       "source": "INE — Índice de Gini (ECV)",
       "type": "api",
       "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=76846",
-      "date": "2024-12-31"
+      "date": "2025-12-31"
     },
     "averageIncome": {
       "source": "INE — Renta media por persona (ECV)",
       "type": "api",
-      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=30648",
-      "date": "2026-02-26"
+      "url": "https://servicios.ine.es/wstempus/js/ES/DATOS_SERIE/ECV3761?nult=20",
+      "date": "2025-12-31"
     }
   }
 }

@@ -5,7 +5,9 @@ import { StatCard } from "../StatCard";
 
 // Mock SparklineChart
 vi.mock("../SparklineChart", () => ({
-  SparklineChart: () => <div data-testid="sparkline" />,
+  SparklineChart: ({ placeholder }: { placeholder?: boolean }) => (
+    <div data-testid="sparkline" data-placeholder={String(Boolean(placeholder))} />
+  ),
 }));
 
 // Mock CountUp to render synchronously using its own decimal/separator params
@@ -41,7 +43,16 @@ describe("StatCard", () => {
 
   it("renders sparkline when data is provided", () => {
     render(<StatCard label="L" value="V" sparklineData={[1, 2, 3]} />);
-    expect(screen.getByTestId("sparkline")).toBeDefined();
+    const sparkline = screen.getByTestId("sparkline");
+    expect(sparkline).toBeDefined();
+    expect(sparkline.getAttribute("data-placeholder")).toBe("false");
+  });
+
+  it("renders placeholder sparkline when no data is provided", () => {
+    render(<StatCard label="L" value="V" />);
+    const sparkline = screen.getByTestId("sparkline");
+    expect(sparkline).toBeDefined();
+    expect(sparkline.getAttribute("data-placeholder")).toBe("true");
   });
 
   it("renders compact sources inline and full details in the popover", () => {

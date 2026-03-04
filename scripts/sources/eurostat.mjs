@@ -284,38 +284,58 @@ const REVENUE_INDICATORS = {
     dataset: 'gov_10a_main',
     params: { freq: 'A', unit: 'MIO_EUR', sector: 'S13', na_item: 'TR' },
     label: 'Ingresos totales',
-    unit: 'M€'
+    unit: 'M€',
+    decimals: 0,
   },
   totalExpenditure: {
     dataset: 'gov_10a_main',
     params: { freq: 'A', unit: 'MIO_EUR', sector: 'S13', na_item: 'TE' },
     label: 'Gastos totales',
-    unit: 'M€'
+    unit: 'M€',
+    decimals: 0,
   },
   balance: {
     dataset: 'gov_10a_main',
     params: { freq: 'A', unit: 'MIO_EUR', sector: 'S13', na_item: 'B9' },
     label: 'Déficit/superávit',
-    unit: 'M€'
+    unit: 'M€',
+    decimals: 0,
   },
   taxesIndirect: {
     dataset: 'gov_10a_main',
     params: { freq: 'A', unit: 'MIO_EUR', sector: 'S13', na_item: 'D2REC' },
     label: 'Impuestos indirectos',
-    unit: 'M€'
+    unit: 'M€',
+    decimals: 0,
   },
   taxesDirect: {
     dataset: 'gov_10a_main',
     params: { freq: 'A', unit: 'MIO_EUR', sector: 'S13', na_item: 'D5REC' },
     label: 'Impuestos directos',
-    unit: 'M€'
+    unit: 'M€',
+    decimals: 0,
   },
   socialContributions: {
     dataset: 'gov_10a_main',
     params: { freq: 'A', unit: 'MIO_EUR', sector: 'S13', na_item: 'D61REC' },
     label: 'Cotizaciones sociales',
-    unit: 'M€'
-  }
+    unit: 'M€',
+    decimals: 0,
+  },
+  revenueToGDP: {
+    dataset: 'gov_10a_main',
+    params: { freq: 'A', unit: 'PC_GDP', sector: 'S13', na_item: 'TR' },
+    label: 'Ingresos/PIB',
+    unit: '% del PIB',
+    decimals: 2,
+  },
+  expenditureToGDP: {
+    dataset: 'gov_10a_main',
+    params: { freq: 'A', unit: 'PC_GDP', sector: 'S13', na_item: 'TE' },
+    label: 'Gastos/PIB',
+    unit: '% del PIB',
+    decimals: 2,
+  },
 }
 
 const REVENUE_FALLBACK = {
@@ -328,7 +348,9 @@ const REVENUE_FALLBACK = {
       taxesIndirect: 176937,
       taxesDirect: 198711,
       socialContributions: 210337,
-      otherRevenue: 87749
+      otherRevenue: 87749,
+      revenueToGDP: 40.0,
+      expenditureToGDP: 43.0,
     }
   }
 }
@@ -339,7 +361,7 @@ const REVENUE_FALLBACK = {
  * @param {string} country - Country code (e.g. 'ES')
  * @returns {{ byYear: Record<string, number>, years: number[] }}
  */
-export function parseJsonStatTimeSeries(data, country) {
+export function parseJsonStatTimeSeries(data, country, decimals = 0) {
   const dims = data.id
   const sizes = data.size
   const values = data.value
@@ -365,6 +387,7 @@ export function parseJsonStatTimeSeries(data, country) {
 
   const byYear = {}
   const years = []
+  const factor = 10 ** decimals
 
   for (const [yearStr, timeIdx] of Object.entries(timeCategoryIndex)) {
     const year = Number(yearStr)
@@ -383,7 +406,7 @@ export function parseJsonStatTimeSeries(data, country) {
 
     const val = values[flatIndex] ?? values[String(flatIndex)]
     if (val !== null && val !== undefined) {
-      byYear[String(year)] = Math.round(val)
+      byYear[String(year)] = Math.round(Number(val) * factor) / factor
       years.push(year)
     }
   }
@@ -404,7 +427,7 @@ export function parseJsonStatTimeSeries(data, country) {
  * @returns {Promise<{byYear: Record<string, number>, years: number[]}>}
  */
 async function fetchIndicatorTimeSeries(key, config, fetcher) {
-  const { dataset, params } = config
+  const { dataset, params, decimals = 0 } = config
 
   const url = new URL(`${EUROSTAT_BASE}/${dataset}`)
 
@@ -420,7 +443,7 @@ async function fetchIndicatorTimeSeries(key, config, fetcher) {
   const response = await fetcher(url.toString(), {}, { maxRetries: 1, timeoutMs: 20000 })
   const data = await response.json()
 
-  return parseJsonStatTimeSeries(data, 'ES')
+  return parseJsonStatTimeSeries(data, 'ES', decimals)
 }
 
 /**
@@ -491,7 +514,9 @@ export async function downloadRevenueData(fetcher = fetchWithRetry) {
         taxesIndirect,
         taxesDirect,
         socialContributions,
-        otherRevenue
+        otherRevenue,
+        revenueToGDP: indicatorData.revenueToGDP?.[y],
+        expenditureToGDP: indicatorData.expenditureToGDP?.[y],
       }
     }
 

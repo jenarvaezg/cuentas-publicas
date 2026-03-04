@@ -357,19 +357,31 @@ async function fetchAverageSalary() {
   console.log(`    Nota: esta encuesta se publica con ~2 años de retraso`)
 
   try {
-    const data = await fetchSeries('EAES741', 5)
+    const data = await fetchSeries('EAES741', 12)
 
     // Show all returned points
     for (let i = 0; i < data.length; i++) {
       const p = data[i]
-      const date = formatINEDate(p.Fecha)
+      const date = p?.Anyo ? `${p.Anyo}-12-31` : formatINEDate(p.Fecha)
       console.log(`    [${i + 1}] ${date}: ${p.Valor?.toLocaleString('es-ES') || 'null'}€`)
     }
 
-    // Take the most recent point
-    const latest = data[data.length - 1]
+    // Take the most recent valid point by date.
+    const withDate = data
+      .map((point) => ({
+        ...point,
+        __date: new Date(Number(point?.Fecha || 0)),
+      }))
+      .filter((point) => Number.isFinite(point?.Valor) && !Number.isNaN(point.__date.getTime()))
+      .sort((a, b) => a.__date.getTime() - b.__date.getTime())
+
+    const latest = withDate[withDate.length - 1]
+    if (!latest) {
+      throw new Error('No se encontraron puntos válidos en EAES741')
+    }
+
     const value = Math.round(latest.Valor)
-    const date = formatINEDate(latest.Fecha)
+    const date = latest?.Anyo ? `${latest.Anyo}-12-31` : formatINEDate(latest.Fecha)
 
     // Sanity check
     if (value < 15_000 || value > 100_000) {

@@ -6,6 +6,7 @@ import { useData } from "@/hooks/useData";
 import { useDeflator } from "@/hooks/useDeflator";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatNumber, formatPercent } from "@/utils/formatters";
+import { buildPopulationSeries } from "@/utils/population-series";
 import { BudgetChart, type CompareMode } from "./BudgetChart";
 import { ExportBlockButton } from "./ExportBlockButton";
 import { StatCard } from "./StatCard";
@@ -24,7 +25,7 @@ function deflateCategory(
 }
 
 export function BudgetBlock() {
-  const { budget, demographics } = useData();
+  const { budget, demographics, revenue } = useData();
   const { deflate, baseYear, available: cpiAvailable } = useDeflator();
   const { msg } = useI18n();
 
@@ -41,6 +42,7 @@ export function BudgetBlock() {
 
   const yearData = budget.byYear[String(selectedYear)];
   const comparisonData = comparisonYear ? budget.byYear[String(comparisonYear)] : undefined;
+  const revenueByYear = revenue?.byYear ?? {};
 
   const isDeflating = realTerms && cpiAvailable && !!comparisonYear;
 
@@ -74,14 +76,100 @@ export function BudgetBlock() {
   }, [totalEuros, demographics.population]);
 
   const gdpRatio = useMemo(() => {
+    const budgetYearTotal = budget.byYear[String(selectedYear)]?.total;
+    const revenueYear = revenueByYear[String(selectedYear)];
+    if (budgetYearTotal != null && revenueYear) {
+      if (
+        typeof revenueYear.expenditureToGDP === "number" &&
+        revenueYear.expenditureToGDP > 0 &&
+        revenueYear.totalExpenditure > 0
+      ) {
+        return (budgetYearTotal / revenueYear.totalExpenditure) * revenueYear.expenditureToGDP;
+      }
+      if (
+        typeof revenueYear.revenueToGDP === "number" &&
+        revenueYear.revenueToGDP > 0 &&
+        revenueYear.totalRevenue > 0
+      ) {
+        return (budgetYearTotal / revenueYear.totalRevenue) * revenueYear.revenueToGDP;
+      }
+    }
+
     if (!demographics.gdp || !totalEuros) return 0;
     return (totalEuros / demographics.gdp) * 100;
-  }, [totalEuros, demographics.gdp]);
+  }, [selectedYear, budget.byYear, revenueByYear, demographics.gdp, totalEuros]);
 
   const largestCategory = useMemo(() => {
     if (!displayCategories.length) return null;
     return displayCategories.reduce((max, cat) => (cat.amount > max.amount ? cat : max));
   }, [displayCategories]);
+  const totalSpendingSparkline = useMemo(() => {
+    return years
+      .map((year) => {
+        const yearTotal = budget.byYear[String(year)]?.total;
+        if (yearTotal == null) return null;
+        const amount = isDeflating ? deflate(yearTotal, year) : yearTotal;
+        return amount * 1_000_000;
+      })
+      .filter((value): value is number => value != null);
+  }, [years, budget.byYear, isDeflating, deflate]);
+  const largestCategorySparkline = useMemo(() => {
+    if (!largestCategory) return undefined;
+    const categoryCode = largestCategory.code;
+
+    return years
+      .map((year) => {
+        const category = budget.byYear[String(year)]?.categories.find(
+          (cat) => cat.code === categoryCode,
+        );
+        if (!category) return null;
+        const amount = isDeflating ? deflate(category.amount, year) : category.amount;
+        return amount * 1_000_000;
+      })
+      .filter((value): value is number => value != null);
+  }, [largestCategory, years, budget.byYear, isDeflating, deflate]);
+  const spendingPerCapitaSparkline = useMemo(() => {
+    const populationByYear = new Map(
+      buildPopulationSeries(demographics.provincialPopulation).map((point) => [
+        point.year,
+        point.value,
+      ]),
+    );
+    return years
+      .map((year) => {
+        const yearTotal = budget.byYear[String(year)]?.total;
+        const population = populationByYear.get(year);
+        if (yearTotal == null || population == null || population <= 0) return null;
+        const adjustedTotal = isDeflating ? deflate(yearTotal, year) : yearTotal;
+        return (adjustedTotal * 1_000_000) / population;
+      })
+      .filter((value): value is number => value != null);
+  }, [years, budget.byYear, demographics.provincialPopulation, isDeflating, deflate]);
+  const spendingToGDPSparkline = useMemo(() => {
+    return years
+      .map((year) => {
+        const budgetYearTotal = budget.byYear[String(year)]?.total;
+        const revenueYear = revenueByYear[String(year)];
+        if (budgetYearTotal == null || !revenueYear) return null;
+
+        if (
+          typeof revenueYear.expenditureToGDP === "number" &&
+          revenueYear.expenditureToGDP > 0 &&
+          revenueYear.totalExpenditure > 0
+        ) {
+          return (budgetYearTotal / revenueYear.totalExpenditure) * revenueYear.expenditureToGDP;
+        }
+        if (
+          typeof revenueYear.revenueToGDP === "number" &&
+          revenueYear.revenueToGDP > 0 &&
+          revenueYear.totalRevenue > 0
+        ) {
+          return (budgetYearTotal / revenueYear.totalRevenue) * revenueYear.revenueToGDP;
+        }
+        return null;
+      })
+      .filter((value): value is number => value != null);
+  }, [years, budget.byYear, revenueByYear]);
 
   // Source attributions
   const igaeSource = resolveSource(budget.sourceAttribution?.budget, IGAE_COFOG);
@@ -185,6 +273,7 @@ export function BudgetBlock() {
             value={formatCompact(totalEuros)}
             tooltip={copy.totalSpendingTooltip}
             delay={0.05}
+            sparklineData={totalSpendingSparkline}
             sources={[igaeSource]}
           />
           <StatCard
@@ -192,6 +281,7 @@ export function BudgetBlock() {
             value={`${formatNumber(perCapita, 0)} €`}
             tooltip={copy.spendingPerCapitaTooltip}
             delay={0.1}
+            sparklineData={spendingPerCapitaSparkline}
             sources={[{ ...CALCULO_DERIVADO, note: copy.derivativePopulation }, igaeSource]}
           />
           <StatCard
@@ -199,6 +289,7 @@ export function BudgetBlock() {
             value={formatPercent(gdpRatio)}
             tooltip={copy.spendingToGdpTooltip}
             delay={0.15}
+            sparklineData={spendingToGDPSparkline}
             sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeGdp }, igaeSource]}
           />
           {largestCategory && (
@@ -207,6 +298,7 @@ export function BudgetBlock() {
               value={`${largestCategory.name}`}
               tooltip={copy.largestItemTooltip}
               delay={0.2}
+              sparklineData={largestCategorySparkline}
               sources={[
                 {
                   name: `${formatNumber(largestCategory.percentage, 1)}% ${copy.ofTotal}`,
