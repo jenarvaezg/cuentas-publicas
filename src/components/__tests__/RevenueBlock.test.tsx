@@ -5,7 +5,6 @@ import { BreakdownTooltip, HistoricalTooltip, RevenueBlock } from "../RevenueBlo
 
 vi.mock("@/hooks/useData", () => ({ useData: vi.fn() }));
 
-let capturedBreakdownData: any[] = [];
 let capturedHistoricalData: any[] = [];
 
 vi.mock("recharts", async () => {
@@ -13,18 +12,12 @@ vi.mock("recharts", async () => {
   return {
     ...actual,
     ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-    BarChart: ({ children, data }: any) => {
-      capturedBreakdownData = data ?? [];
-      return <div data-testid="bar-chart">{children}</div>;
-    },
     AreaChart: ({ children, data }: any) => {
       capturedHistoricalData = data ?? [];
       return <div data-testid="area-chart">{children}</div>;
     },
-    Bar: ({ children }: any) => <div>{children}</div>,
     Area: ({ dataKey }: any) => <div data-testid={`area-${String(dataKey)}`} />,
     CartesianGrid: () => null,
-    Cell: () => null,
     XAxis: () => null,
     YAxis: () => null,
     Tooltip: () => null,
@@ -81,11 +74,10 @@ describe("RevenueBlock", () => {
       revenue: mockRevenue,
       demographics: { gdp: 2e12 },
     });
-    capturedBreakdownData = [];
     capturedHistoricalData = [];
   });
 
-  it("recalcula tarjetas y composición al cambiar de año", () => {
+  it("recalcula tarjetas al cambiar de año", () => {
     render(<RevenueBlock />);
     expect(screen.getByText("Ingresos vs Gastos Públicos")).toBeDefined();
 
@@ -93,24 +85,16 @@ describe("RevenueBlock", () => {
     expect(screen.getByText("Superávit")).toBeInTheDocument();
     expect(screen.getByText(/25,0\s*%/)).toBeInTheDocument();
 
-    expect(capturedBreakdownData.map((d) => d.key)).toEqual([
-      "taxesDirect",
-      "socialContributions",
-      "taxesIndirect",
-      "otherRevenue",
-    ]);
-
     const select = screen.getByLabelText("Año") as HTMLSelectElement;
     fireEvent.change(select, { target: { value: "2023" } });
     expect(select.value).toBe("2023");
     expect(screen.getByText(/30,0\s*%/)).toBeInTheDocument();
     expect(screen.getByText("50,0 mm€")).toBeInTheDocument();
-    expect(screen.getByTestId("bar-chart")).toBeInTheDocument();
     expect(screen.getByTestId("area-chart")).toBeInTheDocument();
     expect(capturedHistoricalData).toHaveLength(2);
   });
 
-  it("oculta breakdown e histórico cuando no hay datos útiles", () => {
+  it("oculta histórico cuando no hay datos útiles", () => {
     (useData as any).mockReturnValue({
       revenue: {
         years: [2024],
@@ -131,7 +115,6 @@ describe("RevenueBlock", () => {
     });
 
     render(<RevenueBlock />);
-    expect(screen.queryByTestId("bar-chart")).toBeNull();
     expect(screen.queryByTestId("area-chart")).toBeNull();
     expect(screen.getByText(/0,0\s*%/)).toBeInTheDocument();
   });

@@ -2,10 +2,7 @@ import { useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
-  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -98,25 +95,11 @@ export const HistoricalTooltip = ({
   );
 };
 
-const BREAKDOWN_COLORS = {
-  taxesDirect: "hsl(215, 65%, 45%)",
-  taxesIndirect: "hsl(30, 75%, 50%)",
-  socialContributions: "hsl(155, 55%, 40%)",
-  otherRevenue: "hsl(265, 50%, 55%)",
-};
-
 export function RevenueBlock() {
   const { revenue, demographics } = useData();
   const { msg } = useI18n();
 
   const copy = msg.blocks.revenue;
-
-  const breakdownLabels: Record<string, string> = {
-    taxesDirect: copy.taxesDirect,
-    taxesIndirect: copy.taxesIndirect,
-    socialContributions: copy.socialContributions,
-    otherRevenue: copy.otherRevenue,
-  };
 
   const years = revenue.years;
   const latestYear = revenue.latestYear;
@@ -126,48 +109,6 @@ export function RevenueBlock() {
   const yearData = revenue.byYear[String(selectedYear)];
 
   const revenueSource = resolveSource(revenue.sourceAttribution?.revenue, EUROSTAT_GOV_MAIN);
-
-  // Breakdown bar chart data
-  const breakdownData = useMemo<BreakdownDatum[]>(() => {
-    if (!yearData) return [];
-    const total = yearData.totalRevenue;
-    if (!total) return [];
-
-    const items: BreakdownDatum[] = [
-      {
-        name: breakdownLabels.taxesDirect,
-        key: "taxesDirect",
-        amount: yearData.taxesDirect,
-        percentage: (yearData.taxesDirect / total) * 100,
-      },
-      {
-        name: breakdownLabels.socialContributions,
-        key: "socialContributions",
-        amount: yearData.socialContributions,
-        percentage: (yearData.socialContributions / total) * 100,
-      },
-      {
-        name: breakdownLabels.taxesIndirect,
-        key: "taxesIndirect",
-        amount: yearData.taxesIndirect,
-        percentage: (yearData.taxesIndirect / total) * 100,
-      },
-      {
-        name: breakdownLabels.otherRevenue,
-        key: "otherRevenue",
-        amount: yearData.otherRevenue,
-        percentage: (yearData.otherRevenue / total) * 100,
-      },
-    ];
-
-    return items.sort((a, b) => b.amount - a.amount);
-  }, [
-    breakdownLabels.otherRevenue,
-    breakdownLabels.socialContributions,
-    breakdownLabels.taxesDirect,
-    breakdownLabels.taxesIndirect,
-    yearData,
-  ]);
 
   // Historical area chart data
   const historicalData = useMemo(() => {
@@ -256,45 +197,6 @@ export function RevenueBlock() {
             sources={[{ ...CALCULO_DERIVADO, note: copy.derivativeNote }, revenueSource]}
           />
         </div>
-
-        {/* Revenue breakdown bar chart */}
-        {breakdownData.length > 0 && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
-              {copy.compositionTitle} ({selectedYear})
-            </h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart
-                data={breakdownData}
-                layout="vertical"
-                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-              >
-                <XAxis
-                  type="number"
-                  tickFormatter={(v: number) => formatNumber(v, 0)}
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  width={220}
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <Tooltip content={<BreakdownTooltip millionSuffix="M€" />} />
-                <Bar dataKey="amount" radius={[0, 4, 4, 0]}>
-                  {breakdownData.map((entry) => (
-                    <Cell
-                      key={entry.key}
-                      fill={BREAKDOWN_COLORS[entry.key as keyof typeof BREAKDOWN_COLORS]}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
 
         {/* Historical area chart */}
         {historicalData.length > 1 && (

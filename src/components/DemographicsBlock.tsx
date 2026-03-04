@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionExpander } from "@/components/ui/SectionExpander";
 import {
   fromAttribution,
   INE_IDB,
@@ -12,6 +13,7 @@ import {
 import type { TimeSeriesPoint } from "@/data/types";
 import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
+import { cn } from "@/lib/utils";
 import { formatCompactCount, formatNumber, formatPercent } from "@/utils/formatters";
 import {
   type DemoEUIndicator,
@@ -27,6 +29,8 @@ import { VitalTrendsChart } from "./demographics/VitalTrendsChart";
 import { ExportBlockButton } from "./ExportBlockButton";
 import { PopulationPyramidChart } from "./PopulationPyramidChart";
 import { StatCard } from "./StatCard";
+
+type ChartTab = "vital" | "migration" | "projections" | "territory" | "eu";
 
 function lastN<T>(arr: T[], n: number): T[] {
   return arr.slice(Math.max(0, arr.length - n));
@@ -49,9 +53,10 @@ function yoyTrend(
 }
 
 export function DemographicsBlock() {
-  const { demographics, eurostat } = useData();
-  const { msg } = useI18n();
+  const { demographics, eurostat, livingConditions } = useData();
+  const { msg, lang } = useI18n();
   const dm = msg.blocks.demographics;
+  const inequalityCopy = msg.blocks.inequality;
 
   const {
     vitalStats,
@@ -73,6 +78,25 @@ export function DemographicsBlock() {
   );
 
   const [selectedEUIndicator, setSelectedEUIndicator] = useState<DemoEUIndicator>("birthRate");
+
+  const [chartTab, setChartTab] = useState<ChartTab>("vital");
+
+  const tabLabels: Record<ChartTab, string> =
+    lang === "en"
+      ? {
+          vital: "Vital trends",
+          migration: "Migration",
+          projections: "Projections",
+          territory: "Provinces",
+          eu: "EU comparison",
+        }
+      : {
+          vital: "Tendencias vitales",
+          migration: "Migración",
+          projections: "Proyecciones",
+          territory: "Provincias",
+          eu: "Comparativa UE",
+        };
 
   const euCopy = dm.euComparison;
 
@@ -239,7 +263,7 @@ export function DemographicsBlock() {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Row 1: 4 StatCards */}
+        {/* Row 1: 4 StatCards — always visible */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard
             label={dm.population}
@@ -296,141 +320,149 @@ export function DemographicsBlock() {
           />
         </div>
 
-        {/* Row 2: 4 StatCards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
-            label={dm.lifeExpectancy}
-            value={
-              latestLifeExpBoth != null
-                ? `${formatNumber(latestLifeExpBoth, 1)} ${dm.years}`
-                : msg.common.notAvailable
-            }
-            tooltip={dmTooltips.lifeExpectancy}
-            delay={0.25}
-            sparklineData={lifeExpectancy?.both ? sparkline(lifeExpectancy.both) : undefined}
-            trend={lifeExpectancy?.both ? yoyTrend(lifeExpectancy.both, dm.years) : undefined}
-            sources={[lifeExpSource]}
-          />
-          <StatCard
-            label={dm.naturalGrowth}
-            value={
-              latestNaturalGrowth != null
-                ? `${formatNumber(latestNaturalGrowth, 2)}\u2030`
-                : msg.common.notAvailable
-            }
-            tooltip={dmTooltips.naturalGrowth}
-            delay={0.3}
-            sparklineData={
-              vitalStats?.naturalGrowth ? sparkline(vitalStats.naturalGrowth) : undefined
-            }
-            trend={
-              vitalStats?.naturalGrowth
-                ? yoyTrend(vitalStats.naturalGrowth, dm.perThousand)
-                : undefined
-            }
-            sources={[vitalSource]}
-          />
-          <StatCard
-            label={dm.deathRate}
-            value={
-              latestDeathRate != null
-                ? `${formatNumber(latestDeathRate, 2)}\u2030`
-                : msg.common.notAvailable
-            }
-            tooltip={dmTooltips.deathRate}
-            delay={0.35}
-            sparklineData={vitalStats?.deathRate ? sparkline(vitalStats.deathRate) : undefined}
-            trend={
-              vitalStats?.deathRate ? yoyTrend(vitalStats.deathRate, dm.perThousand) : undefined
-            }
-            sources={[vitalSource]}
-          />
-          <StatCard
-            label={dm.immigrationShare}
-            value={
-              immigrationShare
-                ? formatPercent(immigrationShare.total * 100)
-                : msg.common.notAvailable
-            }
-            tooltip={dmTooltips.immigrationShare}
-            delay={0.4}
-            sparklineData={
-              immigrationShare?.historical ? sparkline(immigrationShare.historical) : undefined
-            }
-            trend={
-              immigrationShare?.historical ? yoyTrend(immigrationShare.historical, "%") : undefined
-            }
-            sources={[pyramidSource]}
-          />
-        </div>
-
-        {/* Row 3: inflation StatCard */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
-            label={dm.inflationRate}
-            value={
-              latestInflationRate != null
-                ? `${formatNumber(latestInflationRate, 1)}%`
-                : msg.common.notAvailable
-            }
-            tooltip={dmTooltips.inflationRate}
-            delay={0.45}
-            sparklineData={inflationSparkline}
-            trend={inflationTrend}
-            sources={[populationSource]}
-          />
-        </div>
-
-        {/* Row 4: Projections & Migration highlights */}
-        {(projections || migrationFlows) && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {projections?.shortTerm?.national?.length ? (
+        {/* Rows 2, 3, 4: collapsible via SectionExpander */}
+        <SectionExpander id="demographics-stats" count={8}>
+          <div className="space-y-6 pt-2">
+            {/* Row 2: 4 StatCards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard
-                label={dm.projectedPopulation}
-                value={formatCompactCount(
-                  projections.shortTerm.national[projections.shortTerm.national.length - 1].value,
-                )}
-                tooltip={dmTooltips.projectedPopulation}
-                delay={0.5}
-                sources={[INE_PROJECTIONS]}
+                label={dm.lifeExpectancy}
+                value={
+                  latestLifeExpBoth != null
+                    ? `${formatNumber(latestLifeExpBoth, 1)} ${dm.years}`
+                    : msg.common.notAvailable
+                }
+                tooltip={dmTooltips.lifeExpectancy}
+                delay={0.25}
+                sparklineData={lifeExpectancy?.both ? sparkline(lifeExpectancy.both) : undefined}
+                trend={lifeExpectancy?.both ? yoyTrend(lifeExpectancy.both, dm.years) : undefined}
+                sources={[lifeExpSource]}
               />
-            ) : null}
-            {projections?.indicators?.dependencyOldAge?.length
-              ? (() => {
-                  const target2050 = projections.indicators.dependencyOldAge.find(
-                    (p) => p.year === 2050,
-                  );
-                  return target2050 ? (
-                    <StatCard
-                      label={dm.projectedDependency2050}
-                      value={`${formatNumber(target2050.value, 1)}%`}
-                      tooltip={dmTooltips.projectedDependency2050}
-                      delay={0.55}
-                      sources={[INE_PROJECTIONS]}
-                    />
-                  ) : null;
-                })()
-              : null}
-            {migrationFlows?.netMigration?.length
-              ? (() => {
-                  const latest =
-                    migrationFlows.netMigration[migrationFlows.netMigration.length - 1];
-                  return (
-                    <StatCard
-                      label={dm.netMigrationLatest}
-                      value={`+${formatCompactCount(latest.value)}`}
-                      tooltip={dmTooltips.netMigrationLatest}
-                      delay={0.6}
-                      sparklineData={migrationFlows.netMigration.map((p) => p.value)}
-                      sources={[INE_MIGRACIONES]}
-                    />
-                  );
-                })()
-              : null}
-          </div>
-        )}
+              <StatCard
+                label={dm.naturalGrowth}
+                value={
+                  latestNaturalGrowth != null
+                    ? `${formatNumber(latestNaturalGrowth, 2)}\u2030`
+                    : msg.common.notAvailable
+                }
+                tooltip={dmTooltips.naturalGrowth}
+                delay={0.3}
+                sparklineData={
+                  vitalStats?.naturalGrowth ? sparkline(vitalStats.naturalGrowth) : undefined
+                }
+                trend={
+                  vitalStats?.naturalGrowth
+                    ? yoyTrend(vitalStats.naturalGrowth, dm.perThousand)
+                    : undefined
+                }
+                sources={[vitalSource]}
+              />
+              <StatCard
+                label={dm.deathRate}
+                value={
+                  latestDeathRate != null
+                    ? `${formatNumber(latestDeathRate, 2)}\u2030`
+                    : msg.common.notAvailable
+                }
+                tooltip={dmTooltips.deathRate}
+                delay={0.35}
+                sparklineData={vitalStats?.deathRate ? sparkline(vitalStats.deathRate) : undefined}
+                trend={
+                  vitalStats?.deathRate ? yoyTrend(vitalStats.deathRate, dm.perThousand) : undefined
+                }
+                sources={[vitalSource]}
+              />
+              <StatCard
+                label={dm.immigrationShare}
+                value={
+                  immigrationShare
+                    ? formatPercent(immigrationShare.total * 100)
+                    : msg.common.notAvailable
+                }
+                tooltip={dmTooltips.immigrationShare}
+                delay={0.4}
+                sparklineData={
+                  immigrationShare?.historical ? sparkline(immigrationShare.historical) : undefined
+                }
+                trend={
+                  immigrationShare?.historical
+                    ? yoyTrend(immigrationShare.historical, "%")
+                    : undefined
+                }
+                sources={[pyramidSource]}
+              />
+            </div>
 
-        {/* Population Pyramid with year selector */}
+            {/* Row 3: inflation StatCard */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <StatCard
+                label={dm.inflationRate}
+                value={
+                  latestInflationRate != null
+                    ? `${formatNumber(latestInflationRate, 1)}%`
+                    : msg.common.notAvailable
+                }
+                tooltip={dmTooltips.inflationRate}
+                delay={0.45}
+                sparklineData={inflationSparkline}
+                trend={inflationTrend}
+                sources={[populationSource]}
+              />
+            </div>
+
+            {/* Row 4: Projections & Migration highlights */}
+            {(projections || migrationFlows) && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {projections?.shortTerm?.national?.length ? (
+                  <StatCard
+                    label={dm.projectedPopulation}
+                    value={formatCompactCount(
+                      projections.shortTerm.national[projections.shortTerm.national.length - 1]
+                        .value,
+                    )}
+                    tooltip={dmTooltips.projectedPopulation}
+                    delay={0.5}
+                    sources={[INE_PROJECTIONS]}
+                  />
+                ) : null}
+                {projections?.indicators?.dependencyOldAge?.length
+                  ? (() => {
+                      const target2050 = projections.indicators.dependencyOldAge.find(
+                        (p) => p.year === 2050,
+                      );
+                      return target2050 ? (
+                        <StatCard
+                          label={dm.projectedDependency2050}
+                          value={`${formatNumber(target2050.value, 1)}%`}
+                          tooltip={dmTooltips.projectedDependency2050}
+                          delay={0.55}
+                          sources={[INE_PROJECTIONS]}
+                        />
+                      ) : null;
+                    })()
+                  : null}
+                {migrationFlows?.netMigration?.length
+                  ? (() => {
+                      const latest =
+                        migrationFlows.netMigration[migrationFlows.netMigration.length - 1];
+                      return (
+                        <StatCard
+                          label={dm.netMigrationLatest}
+                          value={`+${formatCompactCount(latest.value)}`}
+                          tooltip={dmTooltips.netMigrationLatest}
+                          delay={0.6}
+                          sparklineData={migrationFlows.netMigration.map((p) => p.value)}
+                          sources={[INE_MIGRACIONES]}
+                        />
+                      );
+                    })()
+                  : null}
+              </div>
+            )}
+          </div>
+        </SectionExpander>
+
+        {/* Population Pyramid with year selector — always visible */}
         {pyramid && pyramid.years.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -451,115 +483,186 @@ export function DemographicsBlock() {
           </div>
         )}
 
-        <VitalTrendsChart
-          data={vitalTrendsData}
-          title={dm.vitalTrendsTitle}
-          birthRateLabel={dm.birthRate}
-          deathRateLabel={dm.deathRate}
-        />
+        {/* Chart tabs */}
+        <div className="flex flex-wrap items-center gap-2 mt-6 mb-4">
+          {(["vital", "migration", "projections", "territory", "eu"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setChartTab(tab)}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-full border transition-colors",
+                chartTab === tab
+                  ? "border-primary/65 bg-primary/10 text-foreground"
+                  : "border-border/70 bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground",
+              )}
+            >
+              {tabLabels[tab]}
+            </button>
+          ))}
+        </div>
 
-        <LifeExpectancyChart
-          data={lifeExpData}
-          title={dm.lifeExpectancyTitle}
-          bothLabel={dm.lifeExpectancy}
-          maleLabel={dm.pyramidMale}
-          femaleLabel={dm.pyramidFemale}
-          yearsLabel={dm.years}
-        />
+        {/* Tab content */}
+        {chartTab === "vital" && (
+          <>
+            <VitalTrendsChart
+              data={vitalTrendsData}
+              title={dm.vitalTrendsTitle}
+              birthRateLabel={dm.birthRate}
+              deathRateLabel={dm.deathRate}
+            />
+            <LifeExpectancyChart
+              data={lifeExpData}
+              title={dm.lifeExpectancyTitle}
+              bothLabel={dm.lifeExpectancy}
+              maleLabel={dm.pyramidMale}
+              femaleLabel={dm.pyramidFemale}
+              yearsLabel={dm.years}
+            />
+          </>
+        )}
 
-        <ImmigrationChart
-          data={immigrationData}
-          title={dm.immigrationTrendTitle}
-          shareLabel={dm.immigrationShare}
-        />
+        {chartTab === "migration" && (
+          <>
+            <ImmigrationChart
+              data={immigrationData}
+              title={dm.immigrationTrendTitle}
+              shareLabel={dm.immigrationShare}
+            />
+            {migrationFlows && migrationFlows.immigration.length > 0 && (
+              <MigrationFlowsChart
+                data={migrationFlows.immigration.map((p) => ({
+                  year: p.year,
+                  immigration: p.value,
+                  emigration: migrationFlows.emigration.find((e) => e.year === p.year)?.value ?? 0,
+                  netMigration:
+                    migrationFlows.netMigration.find((n) => n.year === p.year)?.value ?? 0,
+                }))}
+                title={dm.migrationFlows.title}
+                immigrationLabel={dm.migrationFlows.immigration}
+                emigrationLabel={dm.migrationFlows.emigration}
+                netLabel={dm.migrationFlows.netMigration}
+              />
+            )}
+          </>
+        )}
 
-        {/* Population Projections */}
-        {projections && (
-          <ProjectionsChart
-            populationData={projections.shortTerm.national.map((p) => ({
-              year: p.year,
-              population: p.value,
-            }))}
-            agingData={projections.indicators.dependencyOldAge.map((p, i) => ({
-              year: p.year,
-              dependencyOldAge: p.value,
-              proportionOver65: projections.indicators.proportionOver65[i]?.value ?? 0,
-            }))}
-            populationTitle={dm.projections.populationTitle}
-            agingTitle={dm.projections.agingTitle}
-            populationLabel={dm.projections.populationLabel}
-            dependencyLabel={dm.projections.dependencyLabel}
-            proportionLabel={dm.projections.proportionLabel}
-            millionLabel={dm.projections.millionLabel}
+        {chartTab === "projections" && (
+          <>
+            {projections && (
+              <ProjectionsChart
+                populationData={projections.shortTerm.national.map((p) => ({
+                  year: p.year,
+                  population: p.value,
+                }))}
+                agingData={projections.indicators.dependencyOldAge.map((p, i) => ({
+                  year: p.year,
+                  dependencyOldAge: p.value,
+                  proportionOver65: projections.indicators.proportionOver65[i]?.value ?? 0,
+                }))}
+                populationTitle={dm.projections.populationTitle}
+                agingTitle={dm.projections.agingTitle}
+                populationLabel={dm.projections.populationLabel}
+                dependencyLabel={dm.projections.dependencyLabel}
+                proportionLabel={dm.projections.proportionLabel}
+                millionLabel={dm.projections.millionLabel}
+              />
+            )}
+            {fertilityProjections && fertilityProjections.projections.length > 0 && (
+              <div className="mt-6">
+                <FertilityProjectionsChart
+                  actual={fertilityProjections.actual}
+                  projections={fertilityProjections.projections}
+                  linearRegression={fertilityProjections.linearRegression}
+                  ourEstimate={fertilityProjections.ourEstimate}
+                  replacementLevel={fertilityProjections.replacementLevel}
+                  title={dm.fertilityProjections.title}
+                  actualLabel={dm.fertilityProjections.actual}
+                  regressionLabel={dm.fertilityProjections.regression}
+                  ourEstimateLabel={dm.fertilityProjections.ourEstimate}
+                  replacementLabel={dm.fertilityProjections.replacement}
+                />
+                <p className="text-[11px] text-muted-foreground/70 mt-2 text-center italic">
+                  {dm.fertilityProjections.subtitle}
+                </p>
+              </div>
+            )}
+          </>
+        )}
+
+        {chartTab === "territory" &&
+          provincialPopulation &&
+          provincialPopulation.entries.length > 0 && (
+            <ProvincialRankingChart
+              entries={provincialPopulation.entries.map((e) => ({
+                code: e.code,
+                name: e.name,
+                ccaa: e.ccaa,
+                population: e.population,
+              }))}
+              latestYear={provincialPopulation.latestYear}
+              title={dm.provincial.title}
+              ccaaLabel={dm.provincial.ccaaLabel}
+              provincesLabel={dm.provincial.provincesLabel}
+              populationLabel={dm.provincial.populationLabel}
+              millionLabel={dm.provincial.millionLabel}
+            />
+          )}
+
+        {chartTab === "eu" && (
+          <EUDemographicComparison
+            data={euChartData}
+            eu27Value={eu27Value}
+            selectedIndicator={selectedEUIndicator}
+            onIndicatorChange={setSelectedEUIndicator}
+            title={euCopy.title}
+            indicatorLabels={euCopy.indicatorLabels}
+            units={euCopy.units}
+            eu27Avg={euCopy.eu27Avg}
+            eurostatYear={eurostat.year}
           />
         )}
 
-        {/* Fertility Projections */}
-        {fertilityProjections && fertilityProjections.projections.length > 0 && (
-          <div className="mt-6">
-            <FertilityProjectionsChart
-              actual={fertilityProjections.actual}
-              projections={fertilityProjections.projections}
-              linearRegression={fertilityProjections.linearRegression}
-              ourEstimate={fertilityProjections.ourEstimate}
-              replacementLevel={fertilityProjections.replacementLevel}
-              title={dm.fertilityProjections.title}
-              actualLabel={dm.fertilityProjections.actual}
-              regressionLabel={dm.fertilityProjections.regression}
-              ourEstimateLabel={dm.fertilityProjections.ourEstimate}
-              replacementLabel={dm.fertilityProjections.replacement}
-            />
-            <p className="text-[11px] text-muted-foreground/70 mt-2 text-center italic">
-              {dm.fertilityProjections.subtitle}
-            </p>
+        {/* Living Conditions (absorbed from InequalityBlock) */}
+        {livingConditions && (
+          <div className="space-y-4 pt-6 border-t border-border/50">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-[0.08em]">
+              {lang === "en" ? "Living Conditions" : "Condiciones de vida"}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <StatCard
+                label={inequalityCopy.aropeLabel}
+                value={`${formatNumber(livingConditions.arope, 1)}%`}
+                tooltip={inequalityCopy.aropeTooltip}
+                sources={
+                  livingConditions.sourceAttribution?.arope
+                    ? [fromAttribution(livingConditions.sourceAttribution.arope)]
+                    : []
+                }
+              />
+              <StatCard
+                label={inequalityCopy.giniLabel}
+                value={formatNumber(livingConditions.gini, 1)}
+                tooltip={inequalityCopy.giniTooltip}
+                sources={
+                  livingConditions.sourceAttribution?.gini
+                    ? [fromAttribution(livingConditions.sourceAttribution.gini)]
+                    : []
+                }
+              />
+              <StatCard
+                label={inequalityCopy.incomeLabel}
+                value={`${formatNumber(livingConditions.averageIncome, 0)}€`}
+                tooltip={inequalityCopy.incomeLabelTooltip}
+                sources={
+                  livingConditions.sourceAttribution?.averageIncome
+                    ? [fromAttribution(livingConditions.sourceAttribution.averageIncome)]
+                    : []
+                }
+              />
+            </div>
           </div>
         )}
-
-        {/* Migration Flows */}
-        {migrationFlows && migrationFlows.immigration.length > 0 && (
-          <MigrationFlowsChart
-            data={migrationFlows.immigration.map((p) => ({
-              year: p.year,
-              immigration: p.value,
-              emigration: migrationFlows.emigration.find((e) => e.year === p.year)?.value ?? 0,
-              netMigration: migrationFlows.netMigration.find((n) => n.year === p.year)?.value ?? 0,
-            }))}
-            title={dm.migrationFlows.title}
-            immigrationLabel={dm.migrationFlows.immigration}
-            emigrationLabel={dm.migrationFlows.emigration}
-            netLabel={dm.migrationFlows.netMigration}
-          />
-        )}
-
-        {/* Provincial Population Ranking */}
-        {provincialPopulation && provincialPopulation.entries.length > 0 && (
-          <ProvincialRankingChart
-            entries={provincialPopulation.entries.map((e) => ({
-              code: e.code,
-              name: e.name,
-              ccaa: e.ccaa,
-              population: e.population,
-            }))}
-            latestYear={provincialPopulation.latestYear}
-            title={dm.provincial.title}
-            ccaaLabel={dm.provincial.ccaaLabel}
-            provincesLabel={dm.provincial.provincesLabel}
-            populationLabel={dm.provincial.populationLabel}
-            millionLabel={dm.provincial.millionLabel}
-          />
-        )}
-
-        <EUDemographicComparison
-          data={euChartData}
-          eu27Value={eu27Value}
-          selectedIndicator={selectedEUIndicator}
-          onIndicatorChange={setSelectedEUIndicator}
-          title={euCopy.title}
-          indicatorLabels={euCopy.indicatorLabels}
-          units={euCopy.units}
-          eu27Avg={euCopy.eu27Avg}
-          eurostatYear={eurostat.year}
-        />
       </CardContent>
     </Card>
   );

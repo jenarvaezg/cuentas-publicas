@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { useData } from "@/hooks/useData";
 import { DemographicsBlock } from "../DemographicsBlock";
@@ -191,12 +191,14 @@ describe("DemographicsBlock", () => {
     expect(screen.getByText("Esperanza de vida al nacer")).toBeDefined();
   });
 
-  it("renders immigration trend chart", () => {
+  it("renders immigration trend chart after clicking migration tab", () => {
     (useData as any).mockReturnValue({
       demographics: baseDemographics,
       eurostat: baseEurostat,
     });
     render(<DemographicsBlock />);
+
+    fireEvent.click(screen.getByText("Migración"));
 
     expect(screen.getByText("Evolución % nacidos en el extranjero")).toBeDefined();
     expect(screen.getAllByTestId("area").length).toBeGreaterThanOrEqual(1);

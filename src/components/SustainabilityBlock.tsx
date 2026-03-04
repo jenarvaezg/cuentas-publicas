@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionExpander } from "@/components/ui/SectionExpander";
 import {
   AGEING_REPORT,
   CALCULO_DERIVADO,
@@ -185,197 +186,213 @@ export function SustainabilityBlock() {
           </ResponsiveContainer>
         </div>
 
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            {copy.complementaryIndicators}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <StatCard
-              label={copy.reserveFund}
-              value={formatCompact((reserveFundLatest?.balance ?? 0) * 1e6)}
-              tooltip={copy.reserveFundTooltip}
-              delay={0.2}
-              sparklineData={reserveSparkline}
-              sources={[SS_FONDO_RESERVA]}
-            />
-            <StatCard
-              label={copy.projectedGDP2050}
-              value={formatPercent(spainProjection2050?.pensionToGDP ?? 0)}
-              tooltip={copy.projectedGDP2050Tooltip}
-              delay={0.25}
-              sources={[AGEING_REPORT]}
-            />
-            <StatCard
-              label={copy.cumulativeGap}
-              value={formatCompact(cumulativeBalance * 1e6)}
-              tooltip={copy.cumulativeGapTooltip}
-              delay={0.3}
-              sparklineData={cumulativeByYear}
-              trend={{
-                value: cumulativeBalance,
-                label: `${data.latestYear}`,
-              }}
-              sources={[eurostatSource]}
-            />
+        <SectionExpander id="sustainability-detail" count={3}>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-muted-foreground">
+                {copy.complementaryIndicators}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <StatCard
+                  label={copy.reserveFund}
+                  value={formatCompact((reserveFundLatest?.balance ?? 0) * 1e6)}
+                  tooltip={copy.reserveFundTooltip}
+                  delay={0.2}
+                  sparklineData={reserveSparkline}
+                  sources={[SS_FONDO_RESERVA]}
+                />
+                <StatCard
+                  label={copy.projectedGDP2050}
+                  value={formatPercent(spainProjection2050?.pensionToGDP ?? 0)}
+                  tooltip={copy.projectedGDP2050Tooltip}
+                  delay={0.25}
+                  sources={[AGEING_REPORT]}
+                />
+                <StatCard
+                  label={copy.cumulativeGap}
+                  value={formatCompact(Math.abs(cumulativeBalance) * 1e6)}
+                  tooltip={copy.cumulativeGapTooltip}
+                  delay={0.3}
+                  sparklineData={cumulativeByYear.map((v) => -v)}
+                  trend={{
+                    value: Math.abs(cumulativeBalance),
+                    label: `${data.latestYear}`,
+                  }}
+                  sources={[eurostatSource]}
+                />
+              </div>
+            </div>
+
+            {/* Chart 2: Reserve Fund Evolution */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-muted-foreground">
+                {copy.chartReserveFund}
+              </h3>
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart
+                  data={reserveFundData}
+                  margin={{ top: 5, right: 20, bottom: 5, left: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                  <XAxis dataKey="year" tick={{ fontSize: 11 }} tickFormatter={(v) => String(v)} />
+                  <YAxis
+                    tick={{ fontSize: 11 }}
+                    tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                    label={{
+                      value: copy.mEur,
+                      angle: -90,
+                      position: "insideLeft",
+                      style: { fontSize: 11 },
+                    }}
+                  />
+                  <Tooltip
+                    formatter={(value: number) => [
+                      `${formatNumber(value, 0)} ${copy.mEur}`,
+                      copy.reserveFund,
+                    ]}
+                    labelFormatter={(label) => String(label)}
+                  />
+                  <ReferenceLine
+                    y={66815}
+                    stroke="hsl(var(--chart-3))"
+                    strokeDasharray="4 4"
+                    label={{
+                      value: `${copy.peak}: 66.815 M\u20AC (2011)`,
+                      position: "top",
+                      style: { fontSize: 10, fill: "hsl(var(--chart-3))" },
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="balance"
+                    stroke="hsl(var(--chart-1))"
+                    strokeWidth={2.5}
+                    dot={{ r: 2 }}
+                    activeDot={{ r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Chart 3: Pension/GDP Spain vs EU + Projections */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-muted-foreground">
+                {copy.chartPensionGDP}
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={gdpChartData} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                  <XAxis dataKey="year" tick={{ fontSize: 11 }} tickFormatter={(v) => String(v)} />
+                  <YAxis
+                    tick={{ fontSize: 11 }}
+                    domain={["auto", "auto"]}
+                    tickFormatter={(v) => `${v}%`}
+                    label={{
+                      value: "% PIB",
+                      angle: -90,
+                      position: "insideLeft",
+                      style: { fontSize: 11 },
+                    }}
+                  />
+                  <Tooltip
+                    formatter={(value: unknown, name: string) => {
+                      if (value === null || value === undefined) return ["-", name];
+                      return [`${Number(value).toFixed(1)}%`, name];
+                    }}
+                    labelFormatter={(label) => String(label)}
+                  />
+                  <Legend />
+                  {/* Historical solid lines */}
+                  <Line
+                    type="monotone"
+                    dataKey="spainHistorical"
+                    name={copy.spain}
+                    stroke="hsl(var(--chart-2))"
+                    strokeWidth={2}
+                    dot={false}
+                    connectNulls
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="eu27Historical"
+                    name={copy.eu27}
+                    stroke="hsl(var(--chart-1))"
+                    strokeWidth={2}
+                    dot={false}
+                    connectNulls
+                  />
+                  {/* Projection dotted lines */}
+                  <Line
+                    type="monotone"
+                    dataKey="spainProjection"
+                    name={copy.spainProjection}
+                    stroke="hsl(var(--chart-2))"
+                    strokeWidth={2}
+                    strokeDasharray="6 4"
+                    dot={{ r: 3 }}
+                    connectNulls
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="eu27Projection"
+                    name={copy.eu27Projection}
+                    stroke="hsl(var(--chart-1))"
+                    strokeWidth={2}
+                    strokeDasharray="6 4"
+                    dot={{ r: 3 }}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="text-xs text-muted-foreground text-center">
+                {copy.sourceAgeing}: {data.projections.source}
+              </p>
+            </div>
+
+            {/* Chart 4: Contributors per Pensioner */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-muted-foreground">
+                {copy.chartContributors}
+              </h3>
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart
+                  data={contributorsData}
+                  margin={{ top: 5, right: 20, bottom: 5, left: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                  <XAxis dataKey="year" tick={{ fontSize: 11 }} tickFormatter={(v) => String(v)} />
+                  <YAxis
+                    tick={{ fontSize: 11 }}
+                    domain={[1.8, "auto"]}
+                    tickFormatter={(v) => v.toFixed(1)}
+                  />
+                  <Tooltip
+                    formatter={(value: number) => [value.toFixed(2), copy.contributorsRatio]}
+                    labelFormatter={(label) => String(label)}
+                  />
+                  <ReferenceLine
+                    y={2.0}
+                    stroke="hsl(var(--chart-2))"
+                    strokeDasharray="4 4"
+                    label={{
+                      value: copy.stressZone,
+                      position: "right",
+                      style: { fontSize: 10, fill: "hsl(var(--chart-2))" },
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="ratio"
+                    stroke="hsl(var(--chart-5))"
+                    strokeWidth={2.5}
+                    dot={{ r: 2 }}
+                    activeDot={{ r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        </div>
-
-        {/* Chart 2: Reserve Fund Evolution */}
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-muted-foreground">{copy.chartReserveFund}</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={reserveFundData} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="year" tick={{ fontSize: 11 }} tickFormatter={(v) => String(v)} />
-              <YAxis
-                tick={{ fontSize: 11 }}
-                tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
-                label={{
-                  value: copy.mEur,
-                  angle: -90,
-                  position: "insideLeft",
-                  style: { fontSize: 11 },
-                }}
-              />
-              <Tooltip
-                formatter={(value: number) => [
-                  `${formatNumber(value, 0)} ${copy.mEur}`,
-                  copy.reserveFund,
-                ]}
-                labelFormatter={(label) => String(label)}
-              />
-              <ReferenceLine
-                y={66815}
-                stroke="hsl(var(--chart-3))"
-                strokeDasharray="4 4"
-                label={{
-                  value: `${copy.peak}: 66.815 M\u20AC (2011)`,
-                  position: "top",
-                  style: { fontSize: 10, fill: "hsl(var(--chart-3))" },
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="balance"
-                stroke="hsl(var(--chart-1))"
-                strokeWidth={2.5}
-                dot={{ r: 2 }}
-                activeDot={{ r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Chart 3: Pension/GDP Spain vs EU + Projections */}
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-muted-foreground">{copy.chartPensionGDP}</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={gdpChartData} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="year" tick={{ fontSize: 11 }} tickFormatter={(v) => String(v)} />
-              <YAxis
-                tick={{ fontSize: 11 }}
-                domain={["auto", "auto"]}
-                tickFormatter={(v) => `${v}%`}
-                label={{
-                  value: "% PIB",
-                  angle: -90,
-                  position: "insideLeft",
-                  style: { fontSize: 11 },
-                }}
-              />
-              <Tooltip
-                formatter={(value: unknown, name: string) => {
-                  if (value === null || value === undefined) return ["-", name];
-                  return [`${Number(value).toFixed(1)}%`, name];
-                }}
-                labelFormatter={(label) => String(label)}
-              />
-              <Legend />
-              {/* Historical solid lines */}
-              <Line
-                type="monotone"
-                dataKey="spainHistorical"
-                name={copy.spain}
-                stroke="hsl(var(--chart-2))"
-                strokeWidth={2}
-                dot={false}
-                connectNulls
-              />
-              <Line
-                type="monotone"
-                dataKey="eu27Historical"
-                name={copy.eu27}
-                stroke="hsl(var(--chart-1))"
-                strokeWidth={2}
-                dot={false}
-                connectNulls
-              />
-              {/* Projection dotted lines */}
-              <Line
-                type="monotone"
-                dataKey="spainProjection"
-                name={copy.spainProjection}
-                stroke="hsl(var(--chart-2))"
-                strokeWidth={2}
-                strokeDasharray="6 4"
-                dot={{ r: 3 }}
-                connectNulls
-              />
-              <Line
-                type="monotone"
-                dataKey="eu27Projection"
-                name={copy.eu27Projection}
-                stroke="hsl(var(--chart-1))"
-                strokeWidth={2}
-                strokeDasharray="6 4"
-                dot={{ r: 3 }}
-                connectNulls
-              />
-            </LineChart>
-          </ResponsiveContainer>
-          <p className="text-xs text-muted-foreground text-center">
-            {copy.sourceAgeing}: {data.projections.source}
-          </p>
-        </div>
-
-        {/* Chart 4: Contributors per Pensioner */}
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-muted-foreground">{copy.chartContributors}</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={contributorsData} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="year" tick={{ fontSize: 11 }} tickFormatter={(v) => String(v)} />
-              <YAxis
-                tick={{ fontSize: 11 }}
-                domain={[1.8, "auto"]}
-                tickFormatter={(v) => v.toFixed(1)}
-              />
-              <Tooltip
-                formatter={(value: number) => [value.toFixed(2), copy.contributorsRatio]}
-                labelFormatter={(label) => String(label)}
-              />
-              <ReferenceLine
-                y={2.0}
-                stroke="hsl(var(--chart-2))"
-                strokeDasharray="4 4"
-                label={{
-                  value: copy.stressZone,
-                  position: "right",
-                  style: { fontSize: 10, fill: "hsl(var(--chart-2))" },
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="ratio"
-                stroke="hsl(var(--chart-5))"
-                strokeWidth={2.5}
-                dot={{ r: 2 }}
-                activeDot={{ r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        </SectionExpander>
       </CardContent>
     </Card>
   );

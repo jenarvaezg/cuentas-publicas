@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionExpander } from "@/components/ui/SectionExpander";
 import {
   AEAT_DELEGACIONES,
   AEAT_SERIES,
@@ -495,129 +496,136 @@ export function TaxRevenueBlock() {
         {/* Nacional tab */}
         {activeTab === "nacional" && (
           <div className="space-y-5">
-            <div>
-              <h3 className="text-sm font-semibold text-muted-foreground mb-1 text-center">
-                {copy.effectiveRatesTitle}
-              </h3>
-              <p className="text-xs text-muted-foreground/80 text-center mb-3">
-                {copy.effectiveRatesSubtitle}
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <StatCard
-                  label={copy.effectiveRateIrpf}
-                  value={
-                    selectedEffectiveRates
-                      ? `${formatNumber(selectedEffectiveRates.irpf, 1)}%`
-                      : "—"
-                  }
-                  tooltip={copy.effectiveRateIrpfTooltip}
-                  delay={0.2}
-                  sources={[
-                    {
-                      ...CALCULO_DERIVADO,
-                      note: copy.effectiveRateFormulaIrpf,
-                    },
-                    AEAT_SERIES,
-                  ]}
-                />
-                <StatCard
-                  label={copy.effectiveRateIva}
-                  value={
-                    selectedEffectiveRates ? `${formatNumber(selectedEffectiveRates.iva, 1)}%` : "—"
-                  }
-                  tooltip={copy.effectiveRateIvaTooltip}
-                  delay={0.25}
-                  sources={[
-                    { ...CALCULO_DERIVADO, note: copy.effectiveRateFormulaIva },
-                    AEAT_SERIES,
-                  ]}
-                />
-                <StatCard
-                  label={copy.effectiveRateSociedades}
-                  value={
-                    selectedEffectiveRates
-                      ? `${formatNumber(selectedEffectiveRates.sociedades, 1)}%`
-                      : "—"
-                  }
-                  tooltip={copy.effectiveRateSociedadesTooltip}
-                  delay={0.3}
-                  sources={[
-                    {
-                      ...CALCULO_DERIVADO,
-                      note: copy.effectiveRateFormulaSociedades,
-                    },
-                    AEAT_SERIES,
-                  ]}
-                />
-              </div>
-              {effectiveRatesSeries.length > 1 ? (
-                <>
-                  <ResponsiveContainer width="100%" height={240}>
-                    <BarChart
-                      data={effectiveRatesSeries}
-                      margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                    >
-                      <XAxis
-                        dataKey="year"
-                        tick={{ fontSize: 11 }}
-                        stroke="hsl(var(--muted-foreground))"
-                      />
-                      <YAxis
-                        tickFormatter={(v: number) => `${formatNumber(v, 0)}%`}
-                        tick={{ fontSize: 11 }}
-                        stroke="hsl(var(--muted-foreground))"
-                      />
-                      <Tooltip
-                        content={
-                          <EffectiveRateTooltip
-                            irpfLabel={copy.irpf}
-                            ivaLabel={copy.iva}
-                            sociedadesLabel={copy.sociedades}
-                          />
-                        }
-                      />
-                      <Bar dataKey="irpf" fill={TAX_COLORS.irpf} radius={[3, 3, 0, 0]} />
-                      <Bar dataKey="iva" fill={TAX_COLORS.iva} radius={[3, 3, 0, 0]} />
-                      <Bar
-                        dataKey="sociedades"
-                        fill={TAX_COLORS.sociedades}
-                        radius={[3, 3, 0, 0]}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                  <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground mt-2">
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm"
-                        style={{ background: TAX_COLORS.irpf }}
-                      />
-                      {copy.irpf}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm"
-                        style={{ background: TAX_COLORS.iva }}
-                      />
-                      {copy.iva}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm"
-                        style={{ background: TAX_COLORS.sociedades }}
-                      />
-                      {copy.sociedades}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground/80 text-center mt-2">
-                    {copy.effectiveRateProxyNote}
-                  </p>
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  {copy.noEffectiveRatesData}
+            <SectionExpander id="tax-effective-rates" count={3}>
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-1 text-center">
+                  {copy.effectiveRatesTitle}
+                </h3>
+                <p className="text-xs text-muted-foreground/80 text-center mb-3">
+                  {copy.effectiveRatesSubtitle}
                 </p>
-              )}
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <StatCard
+                    label={copy.effectiveRateIrpf}
+                    value={
+                      selectedEffectiveRates
+                        ? `${formatNumber(selectedEffectiveRates.irpf, 1)}%`
+                        : "—"
+                    }
+                    tooltip={copy.effectiveRateIrpfTooltip}
+                    delay={0.2}
+                    sources={[
+                      {
+                        ...CALCULO_DERIVADO,
+                        note: copy.effectiveRateFormulaIrpf,
+                      },
+                      AEAT_SERIES,
+                    ]}
+                  />
+                  <StatCard
+                    label={copy.effectiveRateIva}
+                    value={
+                      selectedEffectiveRates
+                        ? `${formatNumber(selectedEffectiveRates.iva, 1)}%`
+                        : "—"
+                    }
+                    tooltip={copy.effectiveRateIvaTooltip}
+                    delay={0.25}
+                    sources={[
+                      {
+                        ...CALCULO_DERIVADO,
+                        note: copy.effectiveRateFormulaIva,
+                      },
+                      AEAT_SERIES,
+                    ]}
+                  />
+                  <StatCard
+                    label={copy.effectiveRateSociedades}
+                    value={
+                      selectedEffectiveRates
+                        ? `${formatNumber(selectedEffectiveRates.sociedades, 1)}%`
+                        : "—"
+                    }
+                    tooltip={copy.effectiveRateSociedadesTooltip}
+                    delay={0.3}
+                    sources={[
+                      {
+                        ...CALCULO_DERIVADO,
+                        note: copy.effectiveRateFormulaSociedades,
+                      },
+                      AEAT_SERIES,
+                    ]}
+                  />
+                </div>
+                {effectiveRatesSeries.length > 1 ? (
+                  <>
+                    <ResponsiveContainer width="100%" height={240}>
+                      <BarChart
+                        data={effectiveRatesSeries}
+                        margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                      >
+                        <XAxis
+                          dataKey="year"
+                          tick={{ fontSize: 11 }}
+                          stroke="hsl(var(--muted-foreground))"
+                        />
+                        <YAxis
+                          tickFormatter={(v: number) => `${formatNumber(v, 0)}%`}
+                          tick={{ fontSize: 11 }}
+                          stroke="hsl(var(--muted-foreground))"
+                        />
+                        <Tooltip
+                          content={
+                            <EffectiveRateTooltip
+                              irpfLabel={copy.irpf}
+                              ivaLabel={copy.iva}
+                              sociedadesLabel={copy.sociedades}
+                            />
+                          }
+                        />
+                        <Bar dataKey="irpf" fill={TAX_COLORS.irpf} radius={[3, 3, 0, 0]} />
+                        <Bar dataKey="iva" fill={TAX_COLORS.iva} radius={[3, 3, 0, 0]} />
+                        <Bar
+                          dataKey="sociedades"
+                          fill={TAX_COLORS.sociedades}
+                          radius={[3, 3, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground mt-2">
+                      <span className="flex items-center gap-1.5">
+                        <span
+                          className="inline-block w-3 h-3 rounded-sm"
+                          style={{ background: TAX_COLORS.irpf }}
+                        />
+                        {copy.irpf}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span
+                          className="inline-block w-3 h-3 rounded-sm"
+                          style={{ background: TAX_COLORS.iva }}
+                        />
+                        {copy.iva}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span
+                          className="inline-block w-3 h-3 rounded-sm"
+                          style={{ background: TAX_COLORS.sociedades }}
+                        />
+                        {copy.sociedades}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground/80 text-center mt-2">
+                      {copy.effectiveRateProxyNote}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    {copy.noEffectiveRatesData}
+                  </p>
+                )}
+              </div>
+            </SectionExpander>
 
             <NationalTaxChart
               data={activeNationalData}

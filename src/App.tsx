@@ -26,15 +26,13 @@ const ComparativaEUBlock = namedLazy(
   "ComparativaEUBlock",
 );
 const DebtBlock = namedLazy(() => import("@/components/DebtBlock"), "DebtBlock");
-const DebtCostBlock = namedLazy(() => import("@/components/DebtCostBlock"), "DebtCostBlock");
+const DebtImplicationsBlock = namedLazy(
+  () => import("@/components/DebtImplicationsBlock"),
+  "DebtImplicationsBlock",
+);
 const DemographicsBlock = namedLazy(
   () => import("@/components/DemographicsBlock"),
   "DemographicsBlock",
-);
-const InequalityBlock = namedLazy(() => import("@/components/InequalityBlock"), "InequalityBlock");
-const EquivalenciasBlock = namedLazy(
-  () => import("@/components/EquivalenciasBlock"),
-  "EquivalenciasBlock",
 );
 const FlowsSankeyBlock = namedLazy(
   () => import("@/components/FlowsSankeyBlock"),
@@ -59,19 +57,18 @@ const TaxRevenueBlock = namedLazy(() => import("@/components/TaxRevenueBlock"), 
 
 const SECTION_IDS = [
   "resumen",
+  "mapa-fiscal",
+  "ingresos-gastos",
+  "recaudacion",
+  "economia-social",
+  "gasto-cofog",
+  "demografia",
+  "pensiones",
+  "sostenibilidad-ss",
   "deuda",
   "coste-deuda",
-  "pensiones",
-  "ingresos-gastos",
-  "economia-social",
-  "mapa-fiscal",
-  "gasto-cofog",
-  "recaudacion",
-  "ue",
   "ccaa",
-  "demografia",
-  "desigualdad",
-  "sostenibilidad-ss",
+  "ue",
   "metodologia",
 ] as const;
 
@@ -131,8 +128,8 @@ function App() {
             navLabel: "Revenue",
           },
           c3: {
-            title: "Demographics & Welfare",
-            subtitle: "Population aging and the cost of the welfare state.",
+            title: "The Social Balance",
+            subtitle: "Demographics, pensions, and welfare sustainability.",
             navLabel: "Welfare",
           },
           c4: {
@@ -158,8 +155,8 @@ function App() {
             navLabel: "Ingresos",
           },
           c3: {
-            title: "El Invierno Demográfico",
-            subtitle: "Envejecimiento poblacional y la factura del estado de bienestar.",
+            title: "La Balanza Social",
+            subtitle: "Demografía, pensiones y sostenibilidad del estado de bienestar.",
             navLabel: "Estado Social",
           },
           c4: {
@@ -191,12 +188,13 @@ function App() {
         id: "c2-recaudacion",
         label: chapterCopy.c2.navLabel,
         items: [
+          { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
+          { id: "recaudacion", label: msg.sections.recaudacion },
           {
             id: "economia-social",
             label: lang === "en" ? "Social Economy" : "Economía Social",
           },
-          { id: "ingresos-gastos", label: msg.sections.ingresosGastos },
-          { id: "recaudacion", label: msg.sections.recaudacion },
+          { id: "gasto-cofog", label: msg.sections.gastoCofog },
         ],
       },
       {
@@ -204,13 +202,8 @@ function App() {
         label: chapterCopy.c3.navLabel,
         items: [
           { id: "demografia", label: msg.sections.demografia },
-          {
-            id: "desigualdad",
-            label: lang === "en" ? "Inequality" : "Desigualdad",
-          },
           { id: "pensiones", label: msg.sections.pensiones },
           { id: "sostenibilidad-ss", label: msg.sections.sostenibilidadSS },
-          { id: "gasto-cofog", label: msg.sections.gastoCofog },
         ],
       },
       {
@@ -239,16 +232,13 @@ function App() {
 
   const deficitPerSecond = pensions.current.contributoryDeficit / (365.25 * 86_400);
 
-  // Cumulative deficit since 2011 (base + time elapsed since baseDate)
+  // Cumulative deficit since 2009 (base − time elapsed since baseDate)
+  // base is negative, deficitPerSecond is positive (annual deficit as absolute value),
+  // so we subtract to make the cumulative grow more negative over time.
   const cumDef = pensions.current.cumulativeDeficit;
   const cumulativeBase = cumDef
-    ? cumDef.base + deficitPerSecond * ((Date.now() - new Date(cumDef.baseDate).getTime()) / 1000)
+    ? cumDef.base - deficitPerSecond * ((Date.now() - new Date(cumDef.baseDate).getTime()) / 1000)
     : 0;
-
-  // Year-to-date deficit
-  const yearStart = new Date(new Date().getFullYear(), 0, 1).getTime();
-  const secondsSinceYearStart = (Date.now() - yearStart) / 1000;
-  const accumulatedDeficit = deficitPerSecond * secondsSinceYearStart;
 
   const lastDebtDate =
     debt.historical.length > 0
@@ -337,7 +327,7 @@ function App() {
                 </div>
                 <RealtimeCounter
                   baseValue={cumulativeBase}
-                  perSecond={deficitPerSecond}
+                  perSecond={-deficitPerSecond}
                   suffix=" €"
                   size="lg"
                   decimals={0}
@@ -352,24 +342,10 @@ function App() {
                   {msg.app.perYear} ( {formatNumber(deficitPerSecond, 2)} €/s)
                 </p>
                 <div className="w-full border-t border-border/50 pt-4 mt-2 flex flex-col items-center gap-1 relative z-10">
-                  <div className="grid grid-cols-2 gap-4 w-full text-center divide-x divide-border/50">
-                    <div>
-                      <div className="text-base font-bold tabular-nums text-foreground">
-                        {formatCompact(accumulatedDeficit)}
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {msg.app.thisYear} {new Date().getFullYear()}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-base font-bold tabular-nums text-foreground">
-                        {formatCompact(pensions.current.contributoryDeficit)}
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {msg.app.annualDeficit}
-                      </div>
-                    </div>
+                  <div className="text-base font-bold tabular-nums text-foreground">
+                    {formatCompact(pensions.current.contributoryDeficit)}
                   </div>
+                  <div className="text-xs text-muted-foreground mt-1">{msg.app.annualDeficit}</div>
                 </div>
                 <p className="text-[11px] text-muted-foreground/60 text-center relative z-10 mt-2">
                   Eurostat gov_10a_main (S1314) —{" "}
@@ -425,14 +401,6 @@ function App() {
               }
             />
 
-            <section id="economia-social" className="scroll-mt-28">
-              <Suspense fallback={<SectionSkeleton />}>
-                <FadeIn delay={0.1}>
-                  <SocialEconomyBlock />
-                </FadeIn>
-              </Suspense>
-            </section>
-
             <section id="ingresos-gastos" className="scroll-mt-28">
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.1}>
@@ -444,6 +412,20 @@ function App() {
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.2}>
                   <TaxRevenueBlock />
+                </FadeIn>
+              </Suspense>
+            </section>
+            <section id="economia-social" className="scroll-mt-28">
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.3}>
+                  <SocialEconomyBlock />
+                </FadeIn>
+              </Suspense>
+            </section>
+            <section id="gasto-cofog" className="scroll-mt-28">
+              <Suspense fallback={<SectionSkeleton />}>
+                <FadeIn delay={0.4}>
+                  <BudgetBlock />
                 </FadeIn>
               </Suspense>
             </section>
@@ -469,13 +451,6 @@ function App() {
                 </FadeIn>
               </Suspense>
             </section>
-            <section id="desigualdad" className="scroll-mt-28">
-              <Suspense fallback={<SectionSkeleton />}>
-                <FadeIn delay={0.15}>
-                  <InequalityBlock />
-                </FadeIn>
-              </Suspense>
-            </section>
             <section id="pensiones" className="scroll-mt-28">
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.2}>
@@ -487,13 +462,6 @@ function App() {
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.3}>
                   <SustainabilityBlock />
-                </FadeIn>
-              </Suspense>
-            </section>
-            <section id="gasto-cofog" className="scroll-mt-28">
-              <Suspense fallback={<SectionSkeleton />}>
-                <FadeIn delay={0.4}>
-                  <BudgetBlock />
                 </FadeIn>
               </Suspense>
             </section>
@@ -522,14 +490,7 @@ function App() {
             <section id="coste-deuda" className="scroll-mt-28">
               <Suspense fallback={<SectionSkeleton />}>
                 <FadeIn delay={0.2}>
-                  <DebtCostBlock />
-                </FadeIn>
-              </Suspense>
-            </section>
-            <section className="scroll-mt-28">
-              <Suspense fallback={<SectionSkeleton />}>
-                <FadeIn delay={0.3}>
-                  <EquivalenciasBlock />
+                  <DebtImplicationsBlock />
                 </FadeIn>
               </Suspense>
             </section>

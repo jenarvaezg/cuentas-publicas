@@ -16,10 +16,6 @@ vi.mock("../StatCard", () => ({
   ),
 }));
 
-vi.mock("../RealtimeCounter", () => ({
-  RealtimeCounter: ({ baseValue }: any) => <div data-testid="realtime-counter">{baseValue}</div>,
-}));
-
 describe("DebtBlock", () => {
   const mockData = {
     debt: {
@@ -47,7 +43,6 @@ describe("DebtBlock", () => {
     render(<DebtBlock />);
 
     expect(screen.getByText("Deuda Pública (PDE)")).toBeDefined();
-    expect(screen.getByTestId("realtime-counter")).toBeDefined();
     expect(screen.getByText("Deuda per cápita")).toBeDefined();
     expect(screen.getByText("Deuda CCAA")).toBeDefined();
   });
@@ -60,6 +55,6 @@ describe("DebtBlock", () => {
     (useData as any).mockReturnValue(emptyData);
     render(<DebtBlock />);
 
-    expect(screen.getByText(/último dato: N\/D/)).toBeDefined();
+    expect(screen.getByText("Deuda Pública (PDE)")).toBeDefined();
   });
 });

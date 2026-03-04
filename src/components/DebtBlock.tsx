@@ -12,7 +12,6 @@ import { useData } from "@/hooks/useData";
 import { useI18n } from "@/i18n/I18nProvider";
 import { formatCompact, formatCurrency, formatDate, formatPercent } from "@/utils/formatters";
 import { ExportBlockButton } from "./ExportBlockButton";
-import { RealtimeCounter } from "./RealtimeCounter";
 import { StatCard } from "./StatCard";
 
 export function DebtBlock() {
@@ -22,7 +21,6 @@ export function DebtBlock() {
   const copy = msg.blocks.debt;
 
   const currentDebt = debt.regression.intercept + debt.regression.slope * Date.now();
-  const perSecond = debt.regression.debtPerSecond;
 
   const debtPerCapita = currentDebt / demographics.population;
   const debtPerContributor = currentDebt / demographics.activePopulation;
@@ -70,28 +68,6 @@ export function DebtBlock() {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex flex-col items-center py-6 border-b gap-2">
-          <RealtimeCounter
-            baseValue={currentDebt}
-            perSecond={perSecond}
-            suffix=" €"
-            size="lg"
-            label={copy.realtimeLabel}
-          />
-          <p className="text-xs text-muted-foreground/80 text-center">
-            {copy.extrapolationPrefix}{" "}
-            <a
-              href={BDE_BE11B.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-foreground"
-            >
-              BdE be11b.csv
-            </a>{" "}
-            ({copy.lastOfficial} {lastDebtDate})
-          </p>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             label={copy.debtPerCapita}
