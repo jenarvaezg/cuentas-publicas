@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-09T08:54:03.018Z",
-  "year": 2024,
+  "lastUpdated": "2026-03-16T09:04:51.701Z",
+  "year": 2025,
   "countries": [
     "ES",
     "DE",
@@ -63,14 +63,14 @@
       "EU27_2020": 19.2
     },
     "unemploymentRate": {
-      "ES": 11.4,
-      "DE": 3.4,
-      "FR": 7.4,
-      "IT": 6.5,
-      "PT": 6.5,
-      "EL": 10.1,
-      "NL": 3.7,
-      "EU27_2020": 5.9
+      "ES": 10.5,
+      "DE": 3.8,
+      "FR": 7.7,
+      "IT": 6.1,
+      "PT": 6,
+      "EL": 8.9,
+      "NL": 3.9,
+      "EU27_2020": 6
     },
     "birthRate": {
       "ES": 6.5,
@@ -104,13 +104,13 @@
     },
     "lifeExpectancy": {
       "ES": 84,
-      "DE": 81.5,
-      "FR": 83.1,
-      "IT": 84.1,
+      "DE": 81.2,
+      "FR": 83,
+      "IT": 83.7,
       "PT": 82.5,
       "EL": 81.9,
-      "NL": 82,
-      "EU27_2020": 81.7
+      "NL": 81.9,
+      "EU27_2020": 81.5
     }
   },
   "indicatorMeta": {
@@ -156,8 +156,8 @@
       "source": "Eurostat",
       "type": "api",
       "url": "https://ec.europa.eu/eurostat/databrowser/",
-      "date": "2024-12-31",
-      "note": "Datos comparativos EU-27 (2024)"
+      "date": "2025-12-31",
+      "note": "Datos comparativos EU-27 (2025)"
     }
   }
 }
