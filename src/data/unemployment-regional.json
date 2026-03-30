@@ -1,104 +1,104 @@
 {
-  "lastUpdated": "2026-03-23T09:05:23.182Z",
-  "latestYear": 2023,
+  "lastUpdated": "2026-03-30T09:20:50.115Z",
+  "latestYear": 2024,
   "byYear": {
-    "2023": {
-      "total": 22995000002,
+    "2024": {
+      "total": 24077000000,
       "entries": [
         {
           "code": "CA01",
           "name": "Andalucía",
-          "amount": 5662848661
+          "amount": 5929306684
         },
         {
           "code": "CA02",
           "name": "Aragón",
-          "amount": 456480546
+          "amount": 477959648
         },
         {
           "code": "CA03",
           "name": "Asturias",
-          "amount": 385933552
+          "amount": 404093157
         },
         {
           "code": "CA04",
           "name": "Illes Balears",
-          "amount": 519557858
+          "amount": 544004981
         },
         {
           "code": "CA05",
           "name": "Canarias",
-          "amount": 1332093229
+          "amount": 1394773154
         },
         {
           "code": "CA06",
           "name": "Cantabria",
-          "amount": 185912077
+          "amount": 194659929
         },
         {
           "code": "CA07",
           "name": "Castilla y León",
-          "amount": 883082365
+          "amount": 924634664
         },
         {
           "code": "CA08",
           "name": "Castilla-La Mancha",
-          "amount": 1148671046
+          "amount": 1202720277
         },
         {
           "code": "CA09",
           "name": "Cataluña",
-          "amount": 3100747852
+          "amount": 3246649534
         },
         {
           "code": "CA10",
           "name": "C. Valenciana",
-          "amount": 2811920162
+          "amount": 2944231430
         },
         {
           "code": "CA11",
           "name": "Extremadura",
-          "amount": 636582870
+          "amount": 666536454
         },
         {
           "code": "CA12",
           "name": "Galicia",
-          "amount": 981848156
+          "amount": 1028047751
         },
         {
           "code": "CA13",
           "name": "Madrid",
-          "amount": 2814410056
+          "amount": 2946838483
         },
         {
           "code": "CA14",
           "name": "Murcia",
-          "amount": 823324912
+          "amount": 862065401
         },
         {
           "code": "CA15",
           "name": "Navarra",
-          "amount": 214130874
+          "amount": 224206526
         },
         {
           "code": "CA16",
           "name": "País Vasco",
-          "amount": 722899192
+          "amount": 756914278
         },
         {
           "code": "CA17",
           "name": "La Rioja",
-          "amount": 131134411
+          "amount": 137304772
         },
         {
           "code": "CA18",
           "name": "Ceuta",
-          "amount": 91296109
+          "amount": 95591930
         },
         {
           "code": "CA19",
           "name": "Melilla",
-          "amount": 92126074
+          "amount": 96460947
         }
       ]
     }
@@ -108,8 +108,8 @@
       "source": "Eurostat (lfst_r_lfu3pers + gov_10a_exp GF1005)",
       "type": "api",
       "url": "https://ec.europa.eu/eurostat/databrowser/product/view/lfst_r_lfu3pers",
-      "date": "2023-12-31",
-      "note": "Gasto en desempleo distribuido por parados NUTS2 (19 CCAA, 2023). Nacional: 22.995 M€"
+      "date": "2024-12-31",
+      "note": "Gasto en desempleo distribuido por parados NUTS2 (19 CCAA, 2024). Nacional: 24.077 M€"
     }
   }
 }
