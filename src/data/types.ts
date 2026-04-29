@@ -171,7 +171,17 @@ export interface CcaaDeficitData {
   source: string;
   note?: string;
   latestYear: number;
+  years?: number[];
   data: Record<string, number>; // code -> deficit in millions (negative means deficit, positive means surplus)
+  byYear?: Record<
+    string,
+    {
+      entries: Array<{ code: string; value: number }>;
+      date?: string;
+      month?: number | null;
+    }
+  >;
+  sourceAttribution?: Record<string, DataSourceAttribution>;
 }
 
 export interface CcaaDebtData {

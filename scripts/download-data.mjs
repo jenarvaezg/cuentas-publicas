@@ -293,13 +293,19 @@ const SOURCE_REGISTRY = [
     name: "ccaaDeficit",
     fileName: "ccaa-deficit.json",
     download: downloadCcaaDeficitData,
-    metaExtractor: (r) => ({
-      lastRealDataDate: pickLatestDate([
-        r.latestYear,
-        ...getAttributionDates(r.sourceAttribution),
-      ]),
-      latestYear: r.latestYear || null,
-    }),
+    metaExtractor: (r) => {
+      const latestPeriodDate = r.byYear?.[String(r.latestYear)]?.date;
+      const attributionDates = getAttributionDates(r.sourceAttribution);
+
+      return {
+        lastRealDataDate: pickLatestDate([
+          latestPeriodDate,
+          ...attributionDates,
+          latestPeriodDate || attributionDates.length > 0 ? null : r.latestYear,
+        ]),
+        latestYear: r.latestYear || null,
+      };
+    },
   },
   {
     name: "ccaaForalFlows",
@@ -331,14 +337,20 @@ const SOURCE_REGISTRY = [
     name: "pensionsRegional",
     fileName: "pensions-regional.json",
     download: downloadRegionalPensionsData,
-    metaExtractor: (r) => ({
-      lastRealDataDate: pickLatestDate([
-        r.latestYear,
-        ...getAttributionDates(r.sourceAttribution),
-      ]),
-      latestYear: r.latestYear || null,
-      communities: r.byYear?.[String(r.latestYear)]?.entries?.length || 0,
-    }),
+    metaExtractor: (r) => {
+      const latestPeriodDate = r.byYear?.[String(r.latestYear)]?.date;
+      const attributionDates = getAttributionDates(r.sourceAttribution);
+
+      return {
+        lastRealDataDate: pickLatestDate([
+          latestPeriodDate,
+          ...attributionDates,
+          latestPeriodDate || attributionDates.length > 0 ? null : r.latestYear,
+        ]),
+        latestYear: r.latestYear || null,
+        communities: r.byYear?.[String(r.latestYear)]?.entries?.length || 0,
+      };
+    },
   },
   {
     name: "unemploymentRegional",

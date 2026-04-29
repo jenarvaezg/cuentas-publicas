@@ -592,6 +592,32 @@ describe("aeat source script", () => {
       expect(result.national["2024"]).toBeUndefined();
     });
 
+    it("no cuenta meses nacionales sin valores aunque exista la fila en el Excel", async () => {
+      mockFetchBothOk();
+
+      const completeYear = buildCompleteYear(2025);
+      const partialYear = [
+        buildNationalRow(2026, 1),
+        buildNationalRow(2026, 2),
+        ...Array.from({ length: 10 }, (_, i) => {
+          const month = i + 3;
+          const row = new Array(200).fill("");
+          row[0] = 2026;
+          row[1] = month;
+          row[2] = `Mes ${month}`;
+          return row;
+        }),
+      ];
+
+      mockXlsxBoth([...completeYear, ...partialYear], [buildDelegacionesHeader()]);
+
+      const result = await downloadTaxRevenueData();
+
+      expect(result.years).toEqual([2025]);
+      expect(result.latestYear).toBe(2025);
+      expect(result.national["2026"]).toBeUndefined();
+    });
+
     it("omite año CCAA si el concepto 'total' tiene menos de 12 meses", async () => {
       mockFetchBothOk();
 
@@ -616,6 +642,30 @@ describe("aeat source script", () => {
 
       expect(result.ccaa["2023"]).toBeDefined(); // complete
       expect(result.ccaa["2024"]).toBeUndefined(); // incomplete — omitted
+    });
+
+    it("no cuenta meses CCAA con celdas vacías aunque exista la fila", async () => {
+      mockFetchBothOk();
+
+      const header = ["Ejercicio", "Mes", "Concepto", "Nacional", "D.E. Madrid"];
+      const rows = [header];
+
+      for (let m = 1; m <= 12; m++) {
+        rows.push([2023, m, "Total Ingresos netos", 100, 100]);
+      }
+      for (let m = 1; m <= 12; m++) {
+        rows.push([2024, m, "Total Ingresos netos", "", ""]);
+      }
+
+      mockXlsxBoth(
+        [...buildCompleteYear(2023), ...buildCompleteYear(2024)],
+        rows,
+      );
+
+      const result = await downloadTaxRevenueData();
+
+      expect(result.ccaa["2023"]).toBeDefined();
+      expect(result.ccaa["2024"]).toBeUndefined();
     });
   });
 

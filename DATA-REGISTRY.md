@@ -2,7 +2,7 @@
 
 Inventario técnico de todos los datos del dashboard: clasificación, fuentes, fragilidad y estado. Para wishlist, recomendaciones y roadmap, ver [`ROADMAP.md`](ROADMAP.md).
 
-> **Última auditoría**: 23 febrero 2026
+> **Última auditoría**: 29 abril 2026
 
 ## Resumen Ejecutivo
 
@@ -273,6 +273,7 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 1. Detección dinámica de columnas por cabecera en la hoja de series nacionales.
 2. Fallback automático a índices legacy cuando faltan cabeceras esperadas.
 3. Test unitario de desplazamiento de columnas + test de integridad de `tax-revenue.json`.
+4. Filtrado de filas mensuales vacías: los Excels de AEAT pueden publicar el año en curso con meses futuros sin valores; esas filas no cuentan como año cerrado.
 
 **Desfase**: ~1 mes (datos publicados con retraso de un mes).
 
@@ -373,12 +374,12 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 
 | Dato | Clasificación | Método | Frecuencia | Fragilidad |
 |------|---------------|--------|------------|------------|
-| Déficit/Superávit (B.9) por CCAA | **AUTOMATIZADO** | XLS `COFOG_A_Detalle_CCAA_YYYY.xlsx`, fila `B.9. Capacidad (+) / Necesidad (-)` | Anual | MEDIA |
+| Déficit/Superávit (B.9) por CCAA | **AUTOMATIZADO** | XLS mensual acumulado `M_CCAA_Sub_Det_YYYY.xlsx`, fila `B.9. Capacidad (+) / Necesidad (-)` | Mensual acumulado | MEDIA |
 
 **URL documento**:
-- `https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-A/COFOG_A_Detalle_CCAA_YYYY.xlsx`
+- `https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-M/M_CCAA_Sub_Det_YYYY.xlsx`
 
-**Cobertura**: 17/17 CCAA en el corte SEC 2010.
+**Cobertura**: 17/17 CCAA en el corte SEC 2010. El JSON conserva `latestYear` por compatibilidad y añade `byYear[year].date`/`month` para identificar el último mes real del acumulado.
 
 **Fallback**: Debido a los fuertes bloqueos anti-scraping en los servidores de la IGAE (que retornan ocasionalmente redirects HTML o bloquean los IPs de CI), el script cuenta con un robusto dataset de fallback local 2023 con trazabilidad en `sourceAttribution`.
 

@@ -1,8 +1,9 @@
 {
   "success": true,
-  "lastUpdated": "2026-03-30T09:21:01.567Z",
-  "latestYear": 2025,
+  "lastUpdated": "2026-04-29T10:21:04.942Z",
+  "latestYear": 2026,
   "years": [
+    2026,
     2025,
     2024,
     2023,
@@ -10,23 +11,23 @@
     2021
   ],
   "data": {
-    "CA01": 1310,
-    "CA02": 70,
-    "CA03": 438,
-    "CA04": 130,
-    "CA05": 720,
-    "CA06": 172,
-    "CA07": 444,
-    "CA08": 31,
-    "CA09": 701,
-    "CA10": -1844,
-    "CA11": 127,
-    "CA12": 457,
-    "CA13": -199,
-    "CA14": -342,
-    "CA15": 621,
-    "CA16": 534,
-    "CA17": 36
+    "CA01": 29,
+    "CA02": -43,
+    "CA03": 26,
+    "CA04": -80,
+    "CA05": -27,
+    "CA06": -41,
+    "CA07": -120,
+    "CA08": -114,
+    "CA09": -64,
+    "CA10": -434,
+    "CA11": -62,
+    "CA12": 10,
+    "CA13": -236,
+    "CA14": -114,
+    "CA15": -164,
+    "CA16": 67,
+    "CA17": -6
   },
   "byYear": {
     "2021": {
@@ -99,7 +100,9 @@
           "code": "CA17",
           "value": -2
         }
-      ]
+      ],
+      "date": "2021-12-31",
+      "month": 12
     },
     "2022": {
       "entries": [
@@ -171,7 +174,9 @@
           "code": "CA17",
           "value": -65
         }
-      ]
+      ],
+      "date": "2022-12-31",
+      "month": 12
     },
     "2023": {
       "entries": [
@@ -243,7 +248,9 @@
           "code": "CA17",
           "value": -62
         }
-      ]
+      ],
+      "date": "2023-12-31",
+      "month": 12
     },
     "2024": {
       "entries": [
@@ -315,87 +322,166 @@
           "code": "CA17",
           "value": -2
         }
-      ]
+      ],
+      "date": "2024-12-31",
+      "month": 12
     },
     "2025": {
       "entries": [
         {
           "code": "CA01",
-          "value": 1310
+          "value": 315
         },
         {
           "code": "CA02",
-          "value": 70
-        },
-        {
-          "code": "CA03",
-          "value": 438
-        },
-        {
-          "code": "CA04",
-          "value": 130
-        },
-        {
-          "code": "CA05",
-          "value": 720
-        },
-        {
-          "code": "CA06",
-          "value": 172
-        },
-        {
-          "code": "CA07",
-          "value": 444
-        },
-        {
-          "code": "CA08",
-          "value": 31
-        },
-        {
-          "code": "CA09",
-          "value": 701
-        },
-        {
-          "code": "CA10",
-          "value": -1844
-        },
-        {
-          "code": "CA11",
-          "value": 127
-        },
-        {
-          "code": "CA12",
-          "value": 457
-        },
-        {
-          "code": "CA13",
           "value": -199
         },
         {
+          "code": "CA03",
+          "value": 163
+        },
+        {
+          "code": "CA04",
+          "value": 53
+        },
+        {
+          "code": "CA05",
+          "value": 48
+        },
+        {
+          "code": "CA06",
+          "value": 54
+        },
+        {
+          "code": "CA07",
+          "value": -244
+        },
+        {
+          "code": "CA08",
+          "value": -83
+        },
+        {
+          "code": "CA09",
+          "value": -1733
+        },
+        {
+          "code": "CA10",
+          "value": -3962
+        },
+        {
+          "code": "CA11",
+          "value": -37
+        },
+        {
+          "code": "CA12",
+          "value": 157
+        },
+        {
+          "code": "CA13",
+          "value": -1061
+        },
+        {
           "code": "CA14",
-          "value": -342
+          "value": -702
         },
         {
           "code": "CA15",
-          "value": 621
+          "value": 575
         },
         {
           "code": "CA16",
-          "value": 534
+          "value": 70
         },
         {
           "code": "CA17",
-          "value": 36
+          "value": -64
         }
-      ]
+      ],
+      "date": "2025-12-31",
+      "month": 12
+    },
+    "2026": {
+      "entries": [
+        {
+          "code": "CA01",
+          "value": 29
+        },
+        {
+          "code": "CA02",
+          "value": -43
+        },
+        {
+          "code": "CA03",
+          "value": 26
+        },
+        {
+          "code": "CA04",
+          "value": -80
+        },
+        {
+          "code": "CA05",
+          "value": -27
+        },
+        {
+          "code": "CA06",
+          "value": -41
+        },
+        {
+          "code": "CA07",
+          "value": -120
+        },
+        {
+          "code": "CA08",
+          "value": -114
+        },
+        {
+          "code": "CA09",
+          "value": -64
+        },
+        {
+          "code": "CA10",
+          "value": -434
+        },
+        {
+          "code": "CA11",
+          "value": -62
+        },
+        {
+          "code": "CA12",
+          "value": 10
+        },
+        {
+          "code": "CA13",
+          "value": -236
+        },
+        {
+          "code": "CA14",
+          "value": -114
+        },
+        {
+          "code": "CA15",
+          "value": -164
+        },
+        {
+          "code": "CA16",
+          "value": 67
+        },
+        {
+          "code": "CA17",
+          "value": -6
+        }
+      ],
+      "date": "2026-01-31",
+      "month": 1
     }
   },
   "source": "igae-cn-regional",
   "sourceAttribution": {
     "balances": {
-      "source": "IGAE — Cuentas Regionales (2025)",
-      "url": "https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-M/M_CCAA_Sub_Det_2025.xlsx",
+      "source": "IGAE — Cuentas Regionales (enero 2026)",
+      "url": "https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-M/M_CCAA_Sub_Det_2026.xlsx",
       "type": "xlsx",
+      "date": "2026-01-31",
       "note": "Capacidad (+) / Necesidad (-) de financiación (B.9). Mensual acumulado SEC 2010."
     }
   }

@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-30T09:21:23.297Z",
+  "lastUpdated": "2026-04-29T10:21:08.269Z",
   "years": [
     1995,
     1996,
@@ -906,32 +906,32 @@
       }
     },
     "2025": {
-      "total": 301355,
-      "irpf": 133282,
-      "iva": 94416,
-      "sociedades": 35942,
-      "irnr": 4738,
-      "iiee": 21309,
-      "resto": 11669,
+      "total": 325356,
+      "irpf": 142466,
+      "iva": 99532,
+      "sociedades": 42266,
+      "irnr": 5397,
+      "iiee": 23083,
+      "resto": 12612,
       "iieeBreakdown": {
-        "alcohol": 740,
-        "cerveza": 309,
-        "productosIntermedios": 22,
-        "hidrocarburos": 11483,
-        "tabaco": 6696,
-        "electricidad": 1466,
-        "envasesPlastico": 557,
+        "alcohol": 793,
+        "cerveza": 336,
+        "productosIntermedios": 23,
+        "hidrocarburos": 12366,
+        "tabaco": 7340,
+        "electricidad": 1587,
+        "envasesPlastico": 599,
         "carbon": 9,
         "mediosTransporte": 0
       },
       "restoBreakdown": {
-        "medioambientales": 2067,
-        "traficoExterior": 2711,
-        "primasSeguros": 2548,
-        "transaccionesFinancieras": 306,
-        "serviciosDigitales": 407,
+        "medioambientales": 2212,
+        "traficoExterior": 2977,
+        "primasSeguros": 2769,
+        "transaccionesFinancieras": 339,
+        "serviciosDigitales": 410,
         "juego": 44,
-        "tasas": 785
+        "tasas": 942
       }
     }
   },
@@ -4067,6 +4067,180 @@
           "irnr": 4
         }
       ]
+    },
+    "2025": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "total": 23627,
+          "irpf": 12038,
+          "iva": 6241,
+          "sociedades": 3833,
+          "iiee": 295,
+          "irnr": 370
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "total": 6594,
+          "irpf": 2929,
+          "iva": 2085,
+          "sociedades": 1085,
+          "iiee": 221,
+          "irnr": 20
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "total": 3353,
+          "irpf": 1614,
+          "iva": 1307,
+          "sociedades": 279,
+          "iiee": 15,
+          "irnr": 18
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "total": 8038,
+          "irpf": 3763,
+          "iva": 2156,
+          "sociedades": 1498,
+          "iiee": 18,
+          "irnr": 283
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "total": 4783,
+          "irpf": 3367,
+          "iva": 263,
+          "sociedades": 767,
+          "iiee": 45,
+          "irnr": 133
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "total": 3674,
+          "irpf": 1920,
+          "iva": 680,
+          "sociedades": 592,
+          "iiee": 40,
+          "irnr": 358
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "total": 6846,
+          "irpf": 3529,
+          "iva": 2028,
+          "sociedades": 1153,
+          "iiee": -23,
+          "irnr": 26
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "total": 5343,
+          "irpf": 2505,
+          "iva": 1723,
+          "sociedades": 947,
+          "iiee": 20,
+          "irnr": 11
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "total": 61222,
+          "irpf": 26357,
+          "iva": 20964,
+          "sociedades": 7866,
+          "iiee": 2108,
+          "irnr": 974
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "total": 24461,
+          "irpf": 10565,
+          "iva": 8065,
+          "sociedades": 4052,
+          "iiee": 435,
+          "irnr": 327
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "total": 2170,
+          "irpf": 1200,
+          "iva": 502,
+          "sociedades": 345,
+          "iiee": 11,
+          "irnr": 5
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "total": 12321,
+          "irpf": 5268,
+          "iva": 4018,
+          "sociedades": 2328,
+          "iiee": 113,
+          "irnr": 279
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "total": 144168,
+          "irpf": 55441,
+          "iva": 47742,
+          "sociedades": 15300,
+          "iiee": 19123,
+          "irnr": 2181
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "total": 4553,
+          "irpf": 2358,
+          "iva": 992,
+          "sociedades": 1039,
+          "iiee": 49,
+          "irnr": 34
+        },
+        {
+          "code": "CA15",
+          "name": "Navarra",
+          "total": -1224,
+          "irpf": 185,
+          "iva": -1345,
+          "sociedades": 34,
+          "iiee": -115,
+          "irnr": 6
+        },
+        {
+          "code": "CA16",
+          "name": "País Vasco",
+          "total": 3343,
+          "irpf": 1788,
+          "iva": -1190,
+          "sociedades": 902,
+          "iiee": 741,
+          "irnr": 357
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "total": 1258,
+          "irpf": 598,
+          "iva": 456,
+          "sociedades": 201,
+          "iiee": -11,
+          "irnr": 4
+        }
+      ]
     }
   },
   "sourceAttribution": {
@@ -4078,7 +4252,7 @@
       "note": "Series mensuales agregadas anualmente, miles de euros → millones"
     },
     "delegaciones": {
-      "source": "AEAT — Ingresos por Delegaciones (2007-2024)",
+      "source": "AEAT — Ingresos por Delegaciones (2007-2025)",
       "type": "xlsx",
       "url": "https://sede.agenciatributaria.gob.es/static_files/Sede/Tema/Estadisticas/Recaudacion_Tributaria/Informes_mensuales/Ingresos_por_Delegaciones.xlsx",
       "date": "2025-12-31",

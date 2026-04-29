@@ -1,6 +1,6 @@
 {
-  "lastDownload": "2026-03-30T09:21:38.231Z",
-  "duration": 50232,
+  "lastDownload": "2026-04-29T10:21:27.562Z",
+  "duration": 24301,
   "status": {
     "debt": true,
     "demographics": true,
@@ -27,36 +27,36 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:48.756Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
-      "lastRealDataDate": "2026-01-01",
-      "dataPoints": 374
+      "lastUpdated": "2026-04-29T10:21:03.378Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
+      "lastRealDataDate": "2026-01-31",
+      "dataPoints": 375
     },
     "demographics": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:50.461Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:04.094Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2025-12-31"
     },
     "pensions": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:49.632Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:09.237Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "criticalFallback": false,
       "criticalFallbackReason": null,
-      "lastRealDataDate": "2026-02-01",
+      "lastRealDataDate": "2026-03-01",
       "dataPoints": 12
     },
     "budget": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:52.140Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:03.720Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2024-12-31",
       "years": 30
     },
@@ -64,8 +64,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:49.915Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:03.471Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2025-12-31",
       "year": 2025
     },
@@ -73,26 +73,26 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:48.976Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
-      "lastRealDataDate": "2025-09-30",
-      "quarter": "2025-Q3"
+      "lastUpdated": "2026-04-29T10:21:03.357Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
+      "lastRealDataDate": "2025-12-31",
+      "quarter": "2025-Q4"
     },
     "revenue": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:48.900Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
-      "lastRealDataDate": "2024-12-31",
-      "latestYear": 2024
+      "lastUpdated": "2026-04-29T10:21:03.529Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
+      "lastRealDataDate": "2025-12-31",
+      "latestYear": 2025
     },
     "taxRevenue": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:21:23.297Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:08.269Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2025-12-31",
       "latestYear": 2025,
       "years": 31
@@ -101,8 +101,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:21:00.474Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:13.203Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2023-12-31",
       "latestYear": 2023,
       "years": 5
@@ -111,8 +111,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:21:38.214Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:27.539Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "years": 13
@@ -121,17 +121,17 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:21:01.567Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
-      "lastRealDataDate": "2025-12-31",
-      "latestYear": 2025
+      "lastUpdated": "2026-04-29T10:21:04.942Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
+      "lastRealDataDate": "2026-01-31",
+      "latestYear": 2026
     },
     "ccaaForalFlows": {
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:50.867Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:04.093Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "communities": 2
@@ -140,8 +140,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:50.114Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:03.474Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "communities": 17
@@ -150,9 +150,9 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:50.112Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
-      "lastRealDataDate": "2026-12-31",
+      "lastUpdated": "2026-04-29T10:21:04.407Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
+      "lastRealDataDate": "2026-03-01",
       "latestYear": 2026,
       "communities": 17
     },
@@ -160,8 +160,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:50.115Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:03.472Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "communities": 19
@@ -170,8 +170,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:48.111Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:03.307Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2024-12-31",
       "latestYear": 2024,
       "nodes": 0,
@@ -181,8 +181,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:52.170Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:04.091Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2023-12-31",
       "referenceYear": 2023
     },
@@ -190,8 +190,8 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:50.515Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
+      "lastUpdated": "2026-04-29T10:21:03.530Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
       "lastRealDataDate": "2025-12-31",
       "referenceYear": 2025
     },
@@ -199,11 +199,11 @@
       "success": true,
       "fallbackDetected": false,
       "fallbackKeys": [],
-      "lastUpdated": "2026-03-30T09:20:49.186Z",
-      "lastFetchAt": "2026-03-30T09:21:38.231Z",
-      "lastRealDataDate": "2024-12-31",
-      "latestYear": 2024,
-      "years": 30
+      "lastUpdated": "2026-04-29T10:21:03.476Z",
+      "lastFetchAt": "2026-04-29T10:21:27.562Z",
+      "lastRealDataDate": "2025-12-31",
+      "latestYear": 2025,
+      "years": 31
     }
   }
 }

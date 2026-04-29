@@ -1,104 +1,104 @@
 {
-  "lastUpdated": "2026-03-30T09:20:50.115Z",
+  "lastUpdated": "2026-04-29T10:21:03.472Z",
   "latestYear": 2024,
   "byYear": {
     "2024": {
-      "total": 24077000000,
+      "total": 24077000001,
       "entries": [
         {
           "code": "CA01",
           "name": "Andalucía",
-          "amount": 5929306684
+          "amount": 5911705697
         },
         {
           "code": "CA02",
           "name": "Aragón",
-          "amount": 477959648
+          "amount": 505873629
         },
         {
           "code": "CA03",
           "name": "Asturias",
-          "amount": 404093157
+          "amount": 387713366
         },
         {
           "code": "CA04",
           "name": "Illes Balears",
-          "amount": 544004981
+          "amount": 556645618
         },
         {
           "code": "CA05",
           "name": "Canarias",
-          "amount": 1394773154
+          "amount": 1477926424
         },
         {
           "code": "CA06",
           "name": "Cantabria",
-          "amount": 194659929
+          "amount": 193856683
         },
         {
           "code": "CA07",
           "name": "Castilla y León",
-          "amount": 924634664
+          "amount": 904664520
         },
         {
           "code": "CA08",
           "name": "Castilla-La Mancha",
-          "amount": 1202720277
+          "amount": 1254529676
         },
         {
           "code": "CA09",
           "name": "Cataluña",
-          "amount": 3246649534
+          "amount": 3295563607
         },
         {
           "code": "CA10",
           "name": "C. Valenciana",
-          "amount": 2944231430
+          "amount": 2923543402
         },
         {
           "code": "CA11",
           "name": "Extremadura",
-          "amount": 666536454
+          "amount": 684037152
         },
         {
           "code": "CA12",
           "name": "Galicia",
-          "amount": 1028047751
+          "amount": 984053447
         },
         {
           "code": "CA13",
           "name": "Madrid",
-          "amount": 2946838483
+          "amount": 2837692585
         },
         {
           "code": "CA14",
           "name": "Murcia",
-          "amount": 862065401
+          "amount": 884355724
         },
         {
           "code": "CA15",
           "name": "Navarra",
-          "amount": 224206526
+          "amount": 242782417
         },
         {
           "code": "CA16",
           "name": "País Vasco",
-          "amount": 756914278
+          "amount": 730193505
         },
         {
           "code": "CA17",
           "name": "La Rioja",
-          "amount": 137304772
+          "amount": 124622153
         },
         {
           "code": "CA18",
           "name": "Ceuta",
-          "amount": 95591930
+          "amount": 92312706
         },
         {
           "code": "CA19",
           "name": "Melilla",
-          "amount": 96460947
+          "amount": 84927690
         }
       ]
     }

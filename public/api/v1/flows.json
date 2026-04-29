@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-30T09:20:48.111Z",
+  "lastUpdated": "2026-04-29T10:21:03.307Z",
   "latestYear": 2024,
   "years": [
     2012,
@@ -4098,14 +4098,14 @@
           "id": "GASTO_PENSIONES",
           "label": "Pensiones",
           "group": "expense_specific",
-          "amount": 226751,
+          "amount": 227243,
           "format": "currency"
         },
         {
           "id": "COFOG_10_RESTO",
           "label": "Resto Protección Social",
           "group": "expense_cofog",
-          "amount": 70781,
+          "amount": 70289,
           "format": "currency"
         }
       ],
@@ -4261,14 +4261,14 @@
           "id": "l_21",
           "source": "CONSOLIDADO",
           "target": "GASTO_PENSIONES",
-          "amount": 226751,
+          "amount": 227243,
           "label": ""
         },
         {
           "id": "l_22",
           "source": "CONSOLIDADO",
           "target": "COFOG_10_RESTO",
-          "amount": 70781,
+          "amount": 70289,
           "label": ""
         }
       ]

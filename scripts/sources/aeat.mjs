@@ -195,6 +195,14 @@ function toNum(val) {
   return isNaN(n) ? 0 : n
 }
 
+function hasCellValue(val) {
+  return val !== null && val !== undefined && String(val).trim() !== ''
+}
+
+function hasAnyDataCell(row, colIndices) {
+  return colIndices.some(colIdx => hasCellValue(row[colIdx]))
+}
+
 /**
  * Normalize cell text to robustly compare labels with accents/punctuation differences.
  */
@@ -370,6 +378,7 @@ function parseNationalSheet(ws) {
     const yearStr = String(yearVal)
     const month = toNum(row[1])
     if (month < 1 || month > 12) continue
+    if (!hasAnyDataCell(row, Object.values(cols))) continue
 
     if (!yearAccum[yearStr]) {
       yearAccum[yearStr] = { months: new Set(), sums: {} }
@@ -528,6 +537,9 @@ function parseDelegacionesSheet(ws) {
     if (!yearAccum[yearStr]) yearAccum[yearStr] = {}
 
     for (const [colIdx, caInfo] of Object.entries(ccaaColMap)) {
+      const rawValue = row[parseInt(colIdx)]
+      if (!hasCellValue(rawValue)) continue
+
       const caCode = caInfo.code
       if (!yearAccum[yearStr][caCode]) {
         yearAccum[yearStr][caCode] = { info: caInfo, concepts: {} }
@@ -536,7 +548,7 @@ function parseDelegacionesSheet(ws) {
         yearAccum[yearStr][caCode].concepts[conceptKey] = { months: new Set(), sum: 0 }
       }
       yearAccum[yearStr][caCode].concepts[conceptKey].months.add(month)
-      yearAccum[yearStr][caCode].concepts[conceptKey].sum += toNum(row[parseInt(colIdx)])
+      yearAccum[yearStr][caCode].concepts[conceptKey].sum += toNum(rawValue)
     }
   }
 
@@ -701,6 +713,8 @@ export async function downloadTaxRevenueData(fetcher = fetchWithRetry) {
 
   const latestYear = years[years.length - 1]
   const isFallbackNational = national === REFERENCE_NATIONAL
+  const ccaaYears = Object.keys(ccaa).map(Number).sort((a, b) => a - b)
+  const latestCcaaYear = ccaaYears.at(-1)
 
   const result = {
     lastUpdated: new Date().toISOString(),
@@ -723,10 +737,10 @@ export async function downloadTaxRevenueData(fetcher = fetchWithRetry) {
       delegaciones: {
         source: Object.keys(ccaa).length === 0
           ? 'Sin datos CCAA disponibles'
-          : `AEAT — Ingresos por Delegaciones (${Object.keys(ccaa).sort()[0]}-${Object.keys(ccaa).sort().at(-1)})`,
+          : `AEAT — Ingresos por Delegaciones (${ccaaYears[0]}-${latestCcaaYear})`,
         type: Object.keys(ccaa).length === 0 ? 'fallback' : 'xlsx',
         url: AEAT_DELEGACIONES_URL,
-        date: `${latestYear}-12-31`,
+        date: `${latestCcaaYear ?? latestYear}-12-31`,
         note: Object.keys(ccaa).length === 0
           ? 'Datos CCAA no disponibles'
           : 'Ingresos netos por Delegación Especial, miles de euros → millones',

@@ -7,6 +7,20 @@ const IGAE_DEFICIT_BASE_URL =
 
 const IGAE_DEFICIT_MIN_YEAR = 2021;
 const IGAE_DEFICIT_MAX_TRAILING_MISSES = 1;
+const MONTH_NAMES = [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
+];
 
 // Reference fallback data for CCAA capacity/need of financing (Capacidad (+) / Necesidad (-) de financiación)
 // Valores en millones de euros, cierre 2023 base (datos provisionales/avance IGAE).
@@ -61,7 +75,22 @@ function buildYearUrl(year) {
   return `${IGAE_DEFICIT_BASE_URL}${year}.xlsx`;
 }
 
-function parseCcaaSheet(sheetName, workbookSheet) {
+function getMonthEndDate(year, month) {
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+}
+
+function detectMonthFromColumn(rows, columnIndex, fallbackMonth) {
+  for (const row of rows.slice(0, 20)) {
+    const normalized = normalizeText(String(row?.[columnIndex] ?? "").trim()).toLowerCase();
+    const monthIndex = MONTH_NAMES.findIndex((monthName) => monthName === normalized);
+    if (monthIndex >= 0) return monthIndex + 1;
+  }
+
+  return fallbackMonth >= 1 && fallbackMonth <= 12 ? fallbackMonth : null;
+}
+
+function parseCcaaSheet(year, workbookSheet) {
   const rows = XLSX.utils.sheet_to_json(workbookSheet, { header: 1, defval: "" });
   if (rows.length < 10) return null;
 
@@ -76,10 +105,12 @@ function parseCcaaSheet(sheetName, workbookSheet) {
 
   // Find the last numeric column in the B.9 row which represents the accumulated data for the latest month in that year
   let lastNumericValue = null;
+  let lastNumericColumn = -1;
   for (let i = b9Row.length - 1; i >= 1; i--) {
     const val = Number(b9Row[i]);
     if (!isNaN(val) && b9Row[i] !== "" && b9Row[i] !== null) {
       lastNumericValue = val;
+      lastNumericColumn = i;
       break;
     }
   }
@@ -88,7 +119,13 @@ function parseCcaaSheet(sheetName, workbookSheet) {
     return null;
   }
 
-  return lastNumericValue;
+  const month = detectMonthFromColumn(rows, lastNumericColumn, lastNumericColumn - 1);
+
+  return {
+    value: lastNumericValue,
+    month,
+    date: month ? getMonthEndDate(year, month) : `${year}-12-31`,
+  };
 }
 
 function parseYearWorkbook(year, workbook) {
@@ -113,8 +150,9 @@ function parseYearWorkbook(year, workbook) {
   }
 
   const entries = [];
+  const periodDates = [];
+  const periodMonths = [];
   for (const [sheetName, ccaaCode] of Object.entries(sheetToCcaa)) {
-    const sheet = workbook.Sheets[sheetName.replace("Tabla", "Tabla")]; // exact case
     // Ensure we handle case insensitivity if needed, though usually it matches exactly
     const actualSheetName = workbook.SheetNames.find(n => n.toLowerCase() === sheetName.toLowerCase());
 
@@ -123,12 +161,14 @@ function parseYearWorkbook(year, workbook) {
       continue;
     }
 
-    const value = parseCcaaSheet(actualSheetName, workbook.Sheets[actualSheetName]);
-    if (value !== null) {
+    const parsed = parseCcaaSheet(year, workbook.Sheets[actualSheetName]);
+    if (parsed !== null) {
       entries.push({
         code: ccaaCode,
-        value: value
+        value: parsed.value,
       });
+      if (parsed.date) periodDates.push(parsed.date);
+      if (parsed.month) periodMonths.push(parsed.month);
     }
   }
 
@@ -139,7 +179,10 @@ function parseYearWorkbook(year, workbook) {
   // Sort by CCAA code for consistency
   entries.sort((a, b) => a.code.localeCompare(b.code));
 
-  return entries;
+  const date = periodDates.sort().at(-1);
+  const month = periodMonths.sort((a, b) => b - a)[0] ?? null;
+
+  return { entries, date, month };
 }
 
 async function downloadWorkbook(year, url, fetcher) {
@@ -169,9 +212,10 @@ export async function fetchCcaaDeficit(fetcher = fetchWithRetry) {
     const url = buildYearUrl(year);
     try {
       const workbook = await downloadWorkbook(year, url, fetcher);
-      const entries = parseYearWorkbook(year, workbook);
-      byYear[String(year)] = { entries };
-      console.log(`    ${year}: ${entries.length} CCAA procesadas`);
+      const yearData = parseYearWorkbook(year, workbook);
+      byYear[String(year)] = yearData;
+      const monthLabel = yearData.month ? ` (${MONTH_NAMES[yearData.month - 1]})` : "";
+      console.log(`    ${year}${monthLabel}: ${yearData.entries.length} CCAA procesadas`);
       hits++;
       misses = 0;
     } catch (error) {
@@ -201,7 +245,9 @@ export async function fetchCcaaDeficit(fetcher = fetchWithRetry) {
       years: [fallbackInfo.latestYear],
       byYear: {
         [fallbackInfo.latestYear]: {
-          entries: Object.entries(fallbackInfo.data).map(([code, value]) => ({ code, value }))
+          entries: Object.entries(fallbackInfo.data).map(([code, value]) => ({ code, value })),
+          date: `${fallbackInfo.latestYear}-12-31`,
+          month: 12,
         }
       },
       source: "igae-cn-regional",
@@ -215,6 +261,10 @@ export async function fetchCcaaDeficit(fetcher = fetchWithRetry) {
   byYear[String(latestYear)].entries.forEach(e => {
     latestDataMap[e.code] = e.value;
   });
+  const latestYearData = byYear[String(latestYear)];
+  const latestMonthLabel = latestYearData.month
+    ? `${MONTH_NAMES[latestYearData.month - 1]} ${latestYear}`
+    : String(latestYear);
 
   return {
     success: true,
@@ -226,12 +276,13 @@ export async function fetchCcaaDeficit(fetcher = fetchWithRetry) {
     source: "igae-cn-regional",
     sourceAttribution: {
       balances: {
-        source: `IGAE — Cuentas Regionales (${latestYear})`,
+        source: `IGAE — Cuentas Regionales (${latestMonthLabel})`,
         url: buildYearUrl(latestYear),
         type: "xlsx",
-        note: "Capacidad (+) / Necesidad (-) de financiación (B.9). Mensual acumulado SEC 2010."
-      }
-    }
+        date: latestYearData.date ?? `${latestYear}-12-31`,
+        note: "Capacidad (+) / Necesidad (-) de financiación (B.9). Mensual acumulado SEC 2010.",
+      },
+    },
   };
 }
 

@@ -1,28 +1,28 @@
 {
-  "lastUpdated": "2026-03-30T09:20:49.632Z",
+  "lastUpdated": "2026-04-29T10:21:09.237Z",
   "pipeline": {
     "liveDataUsed": true,
     "criticalFallback": false,
     "fallbackReason": null
   },
   "current": {
-    "monthlyPayroll": 16196490399,
-    "monthlyPayrollSS": 14272490399,
+    "monthlyPayroll": 16231664785,
+    "monthlyPayrollSS": 14307664785,
     "monthlyPayrollClasesPasivas": 1659000000,
     "monthlyPayrollPNC": 265000000,
-    "annualExpense": 226750865586,
-    "totalPensions": 10446888,
-    "averagePensionRetirement": 1566.81,
-    "affiliates": 22983154,
-    "pensioners": 10446888,
-    "contributorsPerPensioner": 2.2000000382889144,
-    "expensePerSecond": 7185.301340596243,
-    "socialContributions": 199698000000,
-    "contributoryDeficit": 27052865586,
+    "annualExpense": 227243306990,
+    "totalPensions": 10463537,
+    "averagePensionRetirement": 1568.46,
+    "affiliates": 23019781,
+    "pensioners": 10463537,
+    "contributorsPerPensioner": 2.1999999617720087,
+    "expensePerSecond": 7200.905867049458,
+    "socialContributions": 212999000000,
+    "contributoryDeficit": 14244306990,
     "reserveFund": 7500000000,
     "cumulativeDeficit": {
-      "base": -455979000000,
-      "baseDate": "2024-12-31",
+      "base": -493095000000,
+      "baseDate": "2025-12-31",
       "source": "eurostat",
       "startYear": 2009
     }
@@ -95,32 +95,32 @@
       "averagePensionRetirement": 1588.83
     },
     {
-      "date": "2026-02-01",
-      "monthlyPayroll": 16196490399,
-      "totalPensions": 10446888,
-      "averagePensionRetirement": 1566.81
+      "date": "2026-03-01",
+      "monthlyPayroll": 16231664785,
+      "totalPensions": 10463537,
+      "averagePensionRetirement": 1568.46
     }
   ],
   "regression": {
-    "slope": 0.029476413345512462,
-    "intercept": -35807254933.9429,
-    "lastDataTimestamp": 1769904000000,
-    "expensePerSecond": 0.000013076716443492992
+    "slope": 0.0293822430453821,
+    "intercept": -35650628988.604,
+    "lastDataTimestamp": 1772323200000,
+    "expensePerSecond": 0.000013034939369132933
   },
   "sourceAttribution": {
     "monthlyPayroll": {
-      "source": "Seg. Social — Pensiones en vigor (febrero 2026)",
+      "source": "Seg. Social — Pensiones en vigor (marzo 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-02-01",
-      "note": "Datos Excel Seg. Social febrero 2026"
+      "date": "2026-03-01",
+      "note": "Datos Excel Seg. Social marzo 2026"
     },
     "monthlyPayrollSS": {
-      "source": "Seg. Social — Excel REG (febrero 2026)",
+      "source": "Seg. Social — Excel REG (marzo 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-02-01",
-      "note": "Datos Excel Seg. Social febrero 2026"
+      "date": "2026-03-01",
+      "note": "Datos Excel Seg. Social marzo 2026"
     },
     "monthlyPayrollClasesPasivas": {
       "source": "Estimación Clases Pasivas",
@@ -139,23 +139,23 @@
       "note": "Nómina mensual × 14 pagas"
     },
     "totalPensions": {
-      "source": "Seg. Social — Excel REG (febrero 2026)",
+      "source": "Seg. Social — Excel REG (marzo 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-02-01",
-      "note": "Datos Excel Seg. Social febrero 2026"
+      "date": "2026-03-01",
+      "note": "Datos Excel Seg. Social marzo 2026"
     },
     "averagePensionRetirement": {
-      "source": "Seg. Social — Excel REG (febrero 2026)",
+      "source": "Seg. Social — Excel REG (marzo 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-02-01",
-      "note": "Datos Excel Seg. Social febrero 2026"
+      "date": "2026-03-01",
+      "note": "Datos Excel Seg. Social marzo 2026"
     },
     "affiliates": {
       "source": "Derivado ratio cotizantes/pensionista (2025)",
       "type": "cross-reference",
-      "note": "Ratio 2.2 × 10.446.888 pensiones"
+      "note": "Ratio 2.2 × 10.463.537 pensiones"
     },
     "contributorsPerPensioner": {
       "source": "SS — ratio cotizantes/pensionista (2025)",
@@ -163,11 +163,11 @@
       "note": "Ratio 2.2 (2025)"
     },
     "socialContributions": {
-      "source": "Eurostat gov_10a_main D61REC (2024)",
+      "source": "Eurostat gov_10a_main D61REC (2025)",
       "type": "cross-reference",
       "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
-      "date": "2024-12-31",
-      "note": "Cotizaciones sociales 2024: 199.698 M€ (Eurostat)"
+      "date": "2025-12-31",
+      "note": "Cotizaciones sociales 2025: 212.999 M€ (Eurostat)"
     },
     "contributoryDeficit": {
       "source": "Cálculo derivado (cross-reference)",
@@ -182,11 +182,11 @@
       "note": "Fondo de reserva 2025: 7500 M€"
     },
     "cumulativeDeficit": {
-      "source": "Eurostat gov_10a_main S1314 (2009-2024)",
+      "source": "Eurostat gov_10a_main S1314 (2009-2025)",
       "type": "cross-reference",
       "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
-      "date": "2024-12-31",
-      "note": "Suma déficits anuales S1314 desde 2009: -456B€"
+      "date": "2025-12-31",
+      "note": "Suma déficits anuales S1314 desde 2009: -493B€"
     }
   }
 }

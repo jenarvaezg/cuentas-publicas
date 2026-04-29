@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-30T09:20:49.186Z",
-  "latestYear": 2024,
+  "lastUpdated": "2026-04-29T10:21:03.476Z",
+  "latestYear": 2025,
   "years": [
     1995,
     1996,
@@ -31,7 +31,8 @@
     2021,
     2022,
     2023,
-    2024
+    2024,
+    2025
   ],
   "byYear": {
     "1995": {
@@ -213,6 +214,12 @@
       "pensionExpenditure": 234430,
       "ssBalance": -34732,
       "pensionToGDP": 14.7
+    },
+    "2025": {
+      "socialContributions": 212999,
+      "pensionExpenditure": 250115,
+      "ssBalance": -37116,
+      "pensionToGDP": 14.8
     }
   },
   "pensionToGDP": {
@@ -247,7 +254,8 @@
         "2021": 16.2,
         "2022": 14.5,
         "2023": 14.6,
-        "2024": 14.7
+        "2024": 14.7,
+        "2025": 14.8
       },
       "years": [
         1995,
@@ -279,7 +287,8 @@
         2021,
         2022,
         2023,
-        2024
+        2024,
+        2025
       ]
     },
     "eu27": {
@@ -313,7 +322,8 @@
         "2021": 12.6,
         "2022": 11.9,
         "2023": 11.9,
-        "2024": 12.2
+        "2024": 12.2,
+        "2025": 12.3
       },
       "years": [
         1995,
@@ -345,7 +355,8 @@
         2021,
         2022,
         2023,
-        2024
+        2024,
+        2025
       ]
     }
   },
@@ -598,8 +609,8 @@
       "source": "Eurostat",
       "type": "api",
       "url": "https://ec.europa.eu/eurostat/databrowser/view/gov_10a_main/",
-      "date": "2024-12-31",
-      "note": "Cotizaciones D61REC, prestaciones D62PAY y ratio sobre PIB (subsector S1314, 30 años)"
+      "date": "2025-12-31",
+      "note": "Cotizaciones D61REC, prestaciones D62PAY y ratio sobre PIB (subsector S1314, 31 años)"
     }
   }
 }

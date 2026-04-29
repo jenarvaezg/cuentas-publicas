@@ -1,6 +1,6 @@
 # API pública (versionada)
 
-Fecha de actualización de esta documentación: **23 febrero 2026**.
+Fecha de actualización de esta documentación: **29 abril 2026**.
 
 El proyecto expone una API estática versionada en JSON bajo:
 
@@ -100,10 +100,18 @@ Déficit o superávit oficial por Comunidad Autónoma según Contabilidad Nacion
 ```json
 {
   latestYear: number,
+  years: number[],
   data: {
     [ccaaCode]: number     // CA01...CA17 in MIO_EUR
   },
-  sourceAttribution: { ccaaDeficit: DataSourceAttribution }
+  byYear: {
+    [year]: {
+      entries: [{ code: string, value: number }],
+      date: string,        // último mes con dato acumulado, e.g. "2026-01-31"
+      month: number        // 1-12
+    }
+  },
+  sourceAttribution: { balances: DataSourceAttribution }
 }
 ```
 
