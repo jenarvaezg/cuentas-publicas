@@ -51,10 +51,9 @@ Leyenda: `✅` hecho, `🟡` parcial, `⏳` pendiente.
   - ✅ Ratios de dependencia (old-age, youth, total) derivados de la pirámide
   - ✅ Comparativas internacionales (natalidad, mortalidad, esperanza de vida, fecundidad) — gráfico de barras horizontales con 8 países EU + media UE-27, datos Eurostat
   - ✅ Inflación anual (IPC): variación interanual del IPC con sparkline y tendencia
-  - ⏳ Desglose provincial
-  - ⏳ Proyecciones demográficas (INE a 20-30 años, poner diferentes estimaciones historicas para demostrar como se suelen equivocar https://x.com/rdomenechv/status/2014716812143816827, https://x.com/ocdeenespanol/status/2014020615791898800)
+  - ✅ Desglose provincial (52 provincias, Padrón INE — `ine.mjs` `provincialPopulation`)
+  - ✅ Proyecciones demográficas (INE a 20-30 años — `ine.mjs` `projections`; pendiente comparativa de proyecciones históricas fallidas tipo https://x.com/rdomenechv/status/2014716812143816827)
   - ⏳ Permitir comparar diferentes proyecciones entre paises
-  - ✅ Comparativas internacionales (natalidad, mortalidad, esperanza de vida, fecundidad) — gráfico de barras horizontales con 8 países EU + media UE-27, datos Eurostat
   - ⏳ Datos de flujos migratorios (entradas/salidas)
   - ⏳ Poblacion actual y diferentes estimados, teniendo en cuenta flujos migratorios y natalidad/mortalidad
 

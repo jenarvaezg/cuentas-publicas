@@ -8,7 +8,35 @@ import type {
   TaxRevenueData,
   UnemploymentRegionalData,
 } from "@/data/types";
-import { buildCcaaGraph } from "@/utils/buildCcaaGraph";
+import { createFiscalProjection, type FlowGraph } from "@/lib/fiscal-projection";
+
+/**
+ * Legacy-shape adapter for tests previously written against `buildCcaaGraph`.
+ * Routes through `createFiscalProjection(...).focusOn(ccaaCode)`.
+ */
+type LegacyInput = {
+  ccaaCode: string;
+  nationalYearData: FlowsYearData;
+  taxRevenue: TaxRevenueData | null;
+  ccaaSpending: CcaaSpendingData | null;
+  ccaaForalFlows: CcaaForalFlowsData | null;
+  pensionsRegional: PensionsRegionalData | null;
+  unemploymentRegional: UnemploymentRegionalData | null;
+  regionalAccounts: RegionalAccountsData | null;
+};
+
+const buildCcaaGraph = (input: LegacyInput): FlowGraph | null =>
+  createFiscalProjection({
+    yearData: input.nationalYearData,
+    taxRevenue: input.taxRevenue,
+    ccaaSpending: input.ccaaSpending,
+    ccaaForalFlows: input.ccaaForalFlows,
+    pensionsRegional: input.pensionsRegional,
+    unemploymentRegional: input.unemploymentRegional,
+    regionalAccounts: input.regionalAccounts,
+    demographics: null,
+    labels: { superavit: "Superávit" },
+  }).focusOn(input.ccaaCode);
 
 // ── Fixture factories ──────────────────────────────────────────────────────
 
@@ -605,5 +633,67 @@ describe("buildCcaaGraph", () => {
         .reduce((s, l) => s + l.amount, 0);
       expect(consNode?.amount).toBe(totalIn);
     });
+  });
+});
+
+// ── Additional modes (national + exclude) ────────────────────────────────
+
+const makeProjectionInputs = (ccaaCode = "CA13") => ({
+  yearData: makeNationalYearData(),
+  taxRevenue: makeTaxRevenue(ccaaCode),
+  ccaaSpending: makeCcaaSpending(ccaaCode),
+  ccaaForalFlows: makeForalFlows("CA15"),
+  pensionsRegional: makePensionsRegional(ccaaCode),
+  unemploymentRegional: makeUnemploymentRegional(ccaaCode),
+  regionalAccounts: makeRegionalAccounts(ccaaCode),
+  demographics: null,
+  labels: { superavit: "Superávit" },
+});
+
+describe("fiscal projection — national mode", () => {
+  it("returns a graph with the same node ids as the input yearData", () => {
+    const inputs = makeProjectionInputs();
+    const graph = createFiscalProjection(inputs).national();
+    const inputIds = inputs.yearData.nodes.map((n) => n.id).sort();
+    const outputIds = graph.nodes.map((n) => n.id).sort();
+    expect(outputIds).toEqual(inputIds);
+  });
+
+  it("does not mutate the input yearData", () => {
+    const inputs = makeProjectionInputs();
+    const originalFirstAmount = inputs.yearData.nodes[0].amount;
+    const projection = createFiscalProjection(inputs);
+    const graph = projection.national();
+    graph.nodes[0].amount = -999;
+    expect(inputs.yearData.nodes[0].amount).toBe(originalFirstAmount);
+  });
+});
+
+describe("fiscal projection — exclude mode", () => {
+  it("exclude([]) returns a graph equivalent to national()", () => {
+    const projection = createFiscalProjection(makeProjectionInputs());
+    const national = projection.national();
+    const excludedEmpty = projection.exclude([]);
+    expect(excludedEmpty.nodes.map((n) => n.amount)).toEqual(national.nodes.map((n) => n.amount));
+  });
+
+  it("excluding a CCAA decreases or keeps node amounts (never increases)", () => {
+    const inputs = makeProjectionInputs("CA13");
+    const projection = createFiscalProjection(inputs);
+    const baseline = projection.national();
+    const excluded = projection.exclude(["CA13"]);
+
+    for (const baseNode of baseline.nodes) {
+      const excludedNode = excluded.nodes.find((n) => n.id === baseNode.id);
+      if (!excludedNode) continue;
+      expect(excludedNode.amount).toBeLessThanOrEqual(baseNode.amount);
+    }
+  });
+
+  it("annotates touched nodes with whatIfAttribution.originalAmount", () => {
+    const projection = createFiscalProjection(makeProjectionInputs("CA13"));
+    const excluded = projection.exclude(["CA13"]);
+    const touched = excluded.nodes.find((n) => n.whatIfAttribution);
+    expect(touched?.whatIfAttribution?.originalAmount).toBeGreaterThan(0);
   });
 });

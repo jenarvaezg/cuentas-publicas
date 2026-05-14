@@ -55,8 +55,8 @@ function buildYearGraph(yearRevenue, yearBudget, taxNational, pensionPayroll) {
 
   // 1. Deficit (Deuda)
   if (deficit > 0) {
-    addNode("DEFICIT", "Déficit (Nueva Deuda)", "income", deficit);
-    addLink("DEFICIT", "CONSOLIDADO", deficit, "Financiación Vía Deuda");
+    addNode("DEFICIT", "Déficit Público (financiación necesaria)", "income", deficit);
+    addLink("DEFICIT", "CONSOLIDADO", deficit, "Financiación vía deuda");
   }
 
   // 2. Ingresos

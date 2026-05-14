@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "download-data": "node scripts/download-data.mjs",
+    "audit:fallbacks": "node scripts/audit-fallbacks.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",

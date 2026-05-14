@@ -47,6 +47,7 @@ const RevenueDashboardBlock = namedLazy(
   () => import("@/components/RevenueDashboardBlock"),
   "RevenueDashboardBlock",
 );
+const RoadmapSection = namedLazy(() => import("@/components/RoadmapSection"), "RoadmapSection");
 const SustainabilityBlock = namedLazy(
   () => import("@/components/SustainabilityBlock"),
   "SustainabilityBlock",
@@ -427,6 +428,11 @@ function App() {
             <section id="metodologia" className="scroll-mt-28 pt-8">
               <Suspense fallback={<SectionSkeleton />}>
                 <MethodologySection />
+              </Suspense>
+            </section>
+            <section id="roadmap" className="scroll-mt-28 pt-8">
+              <Suspense fallback={<SectionSkeleton />}>
+                <RoadmapSection />
               </Suspense>
             </section>
           </section>

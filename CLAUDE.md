@@ -82,8 +82,27 @@ All fetches use `scripts/lib/fetch-utils.mjs` (retry with exponential backoff + 
 - **Data registry sync**: When adding, removing, or modifying a data source, metric, or hardcoded value in `scripts/sources/`, update `DATA-REGISTRY.md` and `API.md` to reflect the change in the same PR. These files are the single source of truth for what data we have, how it's obtained, and what endpoints are published.
 - **Roadmap sync**: When completing a feature listed in the roadmap/wishlist (`src/components/RoadmapSection.tsx`), move it from the wishlist to the completed items in the appropriate phase (both `es` and `en` copies). Always check the roadmap at the end of a feature implementation.
 - **StatCard tooltip quality**: Every `StatCard` MUST have a `tooltip` prop with a meaningful, plain-language explanation (both `es` and `en`). Tooltips must explain the metric as if talking to a non-expert friend — what it is, why it matters, or what it compares against. NEVER use a generic description like "Este indicador muestra {label}." or just repeat the label. Good example: "Lo que debe cada habitante de España si repartiéramos la deuda por igual entre toda la población." Bad example: "Este indicador muestra deuda per cápita."
+- **Domain language**: see `CONTEXT.md` for the canonical glossary. Key rules that come up constantly:
+  - **"Déficit" a secas está prohibido** en copy nuevo, código y atribuciones. Tres conceptos canónicos: *Déficit público* (B.9 sobre S.13), *Déficit contributivo* (D61REC−D62PAY sobre S.1314), *Déficit contributivo acumulado* (integral desde 2009).
+  - **"Coste de la deuda" solo como copy de UI**. En código, datasets y `sourceAttribution` usar *Intereses de la deuda* (pagos anuales por servicio financiero, sin amortizaciones). El ratio derivado se llama *Tipo medio de la deuda*.
+  - **Cobertura territorial**: la UI opera sobre `CA01`–`CA17`. `CA18`/`CA19` (Ceuta/Melilla) solo existen en datasets nacionales donde excluirlas descuadre totales; declararlo con la bandera `includesCeutaMelilla`. Detalle: ADR-0001.
+- **Roadmap dual update**: `ROADMAP.md` es la fuente única de verdad (ADR-0002). Al cerrar o abrir items, actualizar `ROADMAP.md` **y** `src/components/RoadmapSection.tsx` (ambas variantes `es`/`en`) en el mismo commit. RoadmapSection se renderiza tras la Metodología en `App.tsx`.
 
 ## CI/CD
 
 - `.github/workflows/deploy.yml` — On push to main: lint → test → build → deploy to GitHub Pages.
 - `.github/workflows/update-data.yml` — Weekly (Monday 08:00 UTC): run `download-data`, auto-commit if data changed. Only commits on `success()`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues on `jenarvaezg/cuentas-publicas`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical defaults (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/` at the repo root (neither file exists yet — they'll be created lazily by `/grill-with-docs`). See `docs/agents/domain.md`.

@@ -4,9 +4,9 @@ import type { SpendingCategory } from "@/components/PersonalCalculator";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { SankeyLink, SankeyNode } from "@/data/types";
 import { useData } from "@/hooks/useData";
-import { computeWhatIfSimulation } from "@/hooks/useWhatIfSimulation";
 import { useI18n } from "@/i18n/I18nProvider";
-import { buildCcaaGraph, CCAA_NAMES, CCAA_POPULATION } from "@/utils/buildCcaaGraph";
+import { CCAA_NAMES, CCAA_POPULATION } from "@/lib/ccaa-constants";
+import { createFiscalProjection, type FlowGraph } from "@/lib/fiscal-projection";
 import { FlowsHeader } from "./flows/FlowsHeader";
 import { SankeyView } from "./flows/SankeyView";
 
@@ -189,29 +189,6 @@ export const FlowsSankeyBlock: React.FC = () => {
     return flows.byYear[String(selectedYear)] ?? null;
   }, [flows, selectedYear]);
 
-  const ccaaGraphData = useMemo(() => {
-    if (scope === "national" || !yearData) return null;
-    return buildCcaaGraph({
-      ccaaCode: scope,
-      nationalYearData: yearData,
-      taxRevenue,
-      ccaaSpending,
-      ccaaForalFlows,
-      pensionsRegional,
-      unemploymentRegional,
-      regionalAccounts,
-    });
-  }, [
-    scope,
-    yearData,
-    taxRevenue,
-    ccaaSpending,
-    ccaaForalFlows,
-    pensionsRegional,
-    unemploymentRegional,
-    regionalAccounts,
-  ]);
-
   const ccaaOptions = useMemo(() => {
     if (!ccaaSpending) return [];
     const latest = ccaaSpending.byYear[ccaaSpending.latestYear];
@@ -224,18 +201,8 @@ export const FlowsSankeyBlock: React.FC = () => {
   const { activeNodes, activeLinks } = useMemo(() => {
     if (!yearData) return { activeNodes: [], activeLinks: [] };
 
-    // CCAA mode: use pre-built graph directly (no What-If subtraction)
-    if (scope !== "national" && ccaaGraphData) {
-      return {
-        activeNodes: ccaaGraphData.nodes,
-        activeLinks: ccaaGraphData.links,
-      };
-    }
-
-    return computeWhatIfSimulation({
+    const projection = createFiscalProjection({
       yearData,
-      excludedRegions,
-      whatIfAvailable,
       taxRevenue,
       ccaaSpending,
       ccaaForalFlows,
@@ -243,8 +210,20 @@ export const FlowsSankeyBlock: React.FC = () => {
       unemploymentRegional,
       regionalAccounts,
       demographics,
-      superavitLabel: copy.nodeLabels.SUPERAVIT,
+      labels: { superavit: copy.nodeLabels.SUPERAVIT },
     });
+
+    let graph: FlowGraph | null;
+    if (scope !== "national") {
+      graph = projection.focusOn(scope);
+    } else if (whatIfAvailable && excludedRegions.length > 0) {
+      graph = projection.exclude(excludedRegions);
+    } else {
+      graph = projection.national();
+    }
+
+    if (!graph) return { activeNodes: [], activeLinks: [] };
+    return { activeNodes: graph.nodes, activeLinks: graph.links };
   }, [
     yearData,
     excludedRegions,
@@ -258,7 +237,6 @@ export const FlowsSankeyBlock: React.FC = () => {
     demographics,
     copy.nodeLabels.SUPERAVIT,
     scope,
-    ccaaGraphData,
   ]);
 
   const { filteredNodes, filteredLinks } = useMemo(() => {
