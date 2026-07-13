@@ -38,7 +38,8 @@ export const blockMessages = {
       tabCost: "Coste de la deuda",
       tabPerspective: "Ponlo en perspectiva",
       realtimeLabel: "Pagado en intereses desde que abriste la página",
-      realtimeNote: "Basado en gasto anual estimado en intereses (~39.000 M€, PGE 2025)",
+      realtimeNote:
+        "Basado en el último dato anual de intereses de la deuda pública (Eurostat, sector S.13)",
       annualInterest: "Gasto anual en intereses",
       annualInterestTooltip:
         "Lo que paga el Estado cada año solo por tener deuda acumulada del pasado. Este dinero va a los acreedores, no a servicios públicos.",
@@ -670,7 +671,8 @@ export const blockMessages = {
       tabCost: "Debt cost",
       tabPerspective: "Put it in perspective",
       realtimeLabel: "Interest paid since you opened this page",
-      realtimeNote: "Based on estimated annual interest spending (~€39B, 2025 budget)",
+      realtimeNote:
+        "Based on the latest annual public debt interest figure (Eurostat, S.13 sector)",
       annualInterest: "Annual interest spending",
       annualInterestTooltip:
         "How much the government pays every year just for having borrowed money in the past — this money goes to creditors, not to public services.",

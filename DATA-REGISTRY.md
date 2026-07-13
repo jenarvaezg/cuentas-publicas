@@ -22,7 +22,7 @@ El dashboard utiliza 9 fuentes de datos oficiales (BdE, INE, SS, IGAE, Eurostat,
 | Desglose por subsector (Estado, CCAA, CCLL, SS) | **AUTOMATIZADO** | CSV `be11b.csv` columnas | Mensual | MEDIA — keyword matching en headers |
 | Ratio deuda/PIB | **AUTOMATIZADO** | CSV `be1101.csv` col 11 (deuda PDE) / col 12 (PIB) | Trimestral | MEDIA — keyword matching en headers |
 | Variación interanual | **DERIVADO** | (mes actual - mismo mes año anterior) / anterior × 100 | Mensual | BAJA |
-| Gasto en intereses | **HARDCODEADO** (estimación PGE 2025) | 39.000 M€ — sin CSV disponible, fallback en script | Anual | MEDIA — actualizar con cada PGE |
+| Gasto en intereses | **AUTOMATIZADO** (Eurostat D41PAY) | `gov_10a_main` sector S.13; fallback PGE si API falla | Anual | BAJA |
 | Pendiente regresión (€/segundo) | **DERIVADO** | Regresión lineal últimos 24 meses | Mensual | BAJA |
 | Serie histórica | **AUTOMATIZADO** | CSV completo | 373 puntos (dic 1994 - dic 2025) | BAJA |
 
@@ -330,11 +330,12 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 | Aportación neta Navarra (pagos + ajustes fiscales) | **SEMI-AUTOMATIZADO** | HTML scraping Cuadro nº 64, tabla de flujos financieros del Convenio Económico | Anual | ALTA — scraping HTML |
 | Cupo líquido provisional País Vasco | **SEMI-AUTOMATIZADO** | HTML scraping nota de prensa CMCE, regex sobre cifra | Anual | MUY ALTA — regex sobre prosa |
 | Flujo neto Navarra (aportación - ajustes) | **DERIVADO** | paymentToState - adjustmentsWithState | Anual | BAJA |
-| Recaudación tributaria (Haciendas Forales) | **HARDCODEADO** | Búsqueda manual en memorias e informes de recaudación (Diputaciones + Navarra) | Anual | ALTA — actualización manual |
+| Recaudación tributaria (Haciendas Forales) | **SEMI-AUTOMATIZADO** | Navarra: scraping memoria (recaudación líquida en miles de € → M€). País Vasco: fallback manual hasta CMCE publicada | Anual | MEDIA |
 
-**URLs** (variables — dependientes de edición anual):
-- Navarra: `https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico`
-- Euskadi: `https://www.euskadi.eus/noticia/2024/la-cmce-acuerda-modificacion-del-concierto-economico-...`
+**URLs** (Navarra auto-detecta `memoria-YYYY` del año en curso hacia atrás; Euskadi por mapa anual):
+- Navarra flujos: `https://www.navarra.es/es/web/memoria-{YYYY}/cuadro-nº-64.-flujos-financieros-convenio-economico`
+- Navarra recaudación: `https://www.navarra.es/es/web/memoria-{YYYY}/2.4.1-cifras-de-la-recaudacion-liquida`
+- Euskadi: nota CMCE por año (mapa en script; 2024 publicada)
 
 **Cobertura**: 2 comunidades forales (Navarra y País Vasco), año 2024. No equivalente metodológicamente a la liquidación de régimen común (`ccaa-fiscal-balance.json`).
 
@@ -477,7 +478,7 @@ El script genera nodos y enlaces que permiten representar un Sankey. Se basa exc
 | SMI | 1.221€/mes (2026) | Cada enero (BOE) | `ine.mjs` -> valor hardcodeado `smi: 1_221` |
 | Clases Pasivas | 1.659 M€/mes | Cuando haya datos | `seguridad-social.mjs` -> `REFERENCE_DATA` |
 | Déficit acumulado (base) | Calculado auto (Eurostat S1314 desde 2009) | No requiere actualización manual | `seguridad-social.mjs` -> `enrichPensionWithSustainability()` |
-| Gasto en intereses | 39.000 M€ (PGE 2025) | Con cada PGE | `bde.mjs` -> `REFERENCE_INTEREST_EXPENSE` |
+| Gasto en intereses | Eurostat D41PAY (fallback PGE) | Anual | `bde.mjs` -> `fetchInterestExpense` |
 | Serie hist. pensiones | 11 puntos interpolados + 1 punto actual | Con cada descarga exitosa | `seguridad-social.mjs` |
 
 ### DERIVADOS (calculados a partir de otros datos)
