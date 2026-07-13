@@ -82,6 +82,27 @@ describe('bde source script', () => {
     expect(result.regression.debtPerSecond).toBeGreaterThan(0)
   })
 
+  it('buildDebtResult usa intereses Eurostat cuando están disponibles', () => {
+    const monthlyData = {
+      totalDebt: [{ date: '2026-04-01', value: 1_735_000_000_000 }],
+      debtBySubsector: {},
+      debtToGDP: [],
+    }
+
+    const result = buildDebtResult(monthlyData, null, null, {
+      amount: 40_314_000_000,
+      year: 2025,
+      source: 'Eurostat — gov_10a_main (D41PAY)',
+      type: 'api',
+      url: 'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_main',
+      date: '2025-12-31',
+      note: 'Intereses de la deuda del sector público (40.314 M€, 2025)',
+    })
+
+    expect(result.current.interestExpense).toBe(40_314_000_000)
+    expect(result.sourceAttribution.interestExpense.type).toBe('api')
+  })
+
   it('buildDebtResult no pisa CSV mensual con API más antigua', () => {
     const monthlyData = {
       totalDebt: [

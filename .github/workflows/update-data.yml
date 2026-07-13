@@ -41,15 +41,25 @@ jobs:
             const meta = JSON.parse(fs.readFileSync(path, 'utf8'));
             const now = new Date();
             const sourceThresholdDays = {
-              debt: 70,          // mensual con cierto lag oficial
-              pensions: 70,      // mensual (scraping SS)
-              ccaaDebt: 140,     // trimestral
-              taxRevenue: 90,    // mensual agregado anual
-              demographics: 450, // mezcla de series anuales/trimestrales con retraso
-              budget: 800,       // anual (IGAE)
-              eurostat: 800,     // anual (Eurostat)
-              revenue: 800,      // anual (Eurostat)
-              ccaaSpending: 800  // anual (IGAE CCAA detalle)
+              debt: 100,              // mensual BdE (~2-3 meses de lag oficial)
+              pensions: 70,           // mensual (scraping SS)
+              ccaaDebt: 140,          // trimestral
+              taxRevenue: 200,        // anual AEAT (cierre con retraso)
+              demographics: 450,      // mezcla de series anuales/trimestrales
+              budget: 800,            // anual (IGAE COFOG)
+              eurostat: 800,          // anual (Eurostat)
+              revenue: 800,           // anual (Eurostat)
+              ccaaSpending: 800,      // anual (IGAE CCAA detalle)
+              ccaaFiscalBalance: 800, // liquidación anual Hacienda (gran lag)
+              ccaaForalFlows: 450,    // memoria anual Navarra/Euskadi
+              ccaaDeficit: 90,        // mensual IGAE CCAA
+              regionalAccounts: 450,  // anual Eurostat NUTS2
+              pensionsRegional: 70,   // mensual SS regional
+              unemploymentRegional: 450, // anual Eurostat (gasto desempleo)
+              flowsSankey: 800,       // derivado anual
+              socialEconomy: 450,     // anual INE cuenta satélite
+              livingConditions: 450,  // anual INE ECV
+              ssSustainability: 450,  // anual Eurostat + Ageing Report
             };
             const staleSources = [];
             let ssCriticalFallback = null;

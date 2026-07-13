@@ -26,7 +26,11 @@ export async function downloadDebtData(fetcher = fetchWithRetry) {
     const latestApi = apiData.status === 'fulfilled' ? apiData.value : null
 
     // Build result by combining all sources
-    const result = buildDebtResult(monthlyData, quarterlyData, latestApi)
+    const interestData = await fetchInterestExpense(fetcher).catch((error) => {
+      console.warn(`  ⚠️ Intereses de la deuda: ${error.message}. Usando estimación PGE.`)
+      return null
+    })
+    const result = buildDebtResult(monthlyData, quarterlyData, latestApi, interestData)
 
     console.log(`✅ Deuda descargada: ${result.current.totalDebt?.toLocaleString('es-ES') || 'N/A'}€`)
     console.log(`   Deuda/PIB: ${result.current.debtToGDP?.toFixed(2) || 'N/A'}%`)
@@ -378,9 +382,52 @@ export function extractLatestFromApi(apiData) {
 }
 
 /**
+ * Fetch annual interest expense from Eurostat (D41PAY, S.13)
+ */
+export async function fetchInterestExpense(fetcher = fetchWithRetry) {
+  const url =
+    'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_main?geo=ES&unit=MIO_EUR&na_item=D41PAY&sector=S13&sinceTimePeriod=2015'
+
+  console.log('  Descargando intereses de la deuda (Eurostat D41PAY)...')
+  const response = await fetcher(url, {}, { maxRetries: 2, timeoutMs: 30000 })
+  const payload = await response.json()
+  const timeIndex = payload?.dimension?.time?.category?.index
+  const values = payload?.value
+
+  if (!timeIndex || !values) {
+    throw new Error('Respuesta Eurostat inválida para D41PAY')
+  }
+
+  const years = Object.keys(timeIndex)
+    .filter((year) => values[timeIndex[year]] != null)
+    .map(Number)
+    .sort((a, b) => a - b)
+
+  if (years.length === 0) {
+    throw new Error('Sin años con intereses D41PAY')
+  }
+
+  const year = years[years.length - 1]
+  const millions = values[timeIndex[String(year)]]
+  const amount = Math.round(millions * 1_000_000)
+
+  console.log(`    Intereses ${year}: ${millions.toLocaleString('es-ES')} M€`)
+
+  return {
+    amount,
+    year,
+    source: 'Eurostat — gov_10a_main (D41PAY)',
+    type: 'api',
+    url,
+    date: `${year}-12-31`,
+    note: `Intereses de la deuda del sector público (${millions.toLocaleString('es-ES')} M€, ${year})`,
+  }
+}
+
+/**
  * Build final debt result object
  */
-export function buildDebtResult(monthlyData, quarterlyData, apiData) {
+export function buildDebtResult(monthlyData, quarterlyData, apiData, interestData = null) {
   const now = new Date().toISOString()
 
   // Combine all historical data
@@ -444,9 +491,9 @@ export function buildDebtResult(monthlyData, quarterlyData, apiData) {
     debtToGDP = gdpData[gdpData.length - 1].value
   }
 
-  // Interest expense — no CSV source available, use PGE 2025 estimate as reference
+  // Interest expense — Eurostat D41PAY (annual), fallback PGE estimate
   const REFERENCE_INTEREST_EXPENSE = 39_000_000_000
-  const interestExpense = REFERENCE_INTEREST_EXPENSE
+  const interestExpense = interestData?.amount ?? REFERENCE_INTEREST_EXPENSE
 
   // Calculate regression for extrapolation
   const regressionPoints = historical.slice(-24).map(p => ({
@@ -502,12 +549,20 @@ export function buildDebtResult(monthlyData, quarterlyData, apiData) {
       type: 'derived',
       note: 'Variación % último dato vs mismo mes año anterior'
     },
-    interestExpense: {
-      source: 'Estimación PGE 2025',
-      type: 'fallback',
-      url: 'https://www.sepg.pap.hacienda.gob.es/sitios/sepg/es-ES/Presupuestos/PGE/Paginas/PGE2025.aspx',
-      note: '~39.000 M€ (estimación ~2,3% coste medio)'
-    }
+    interestExpense: interestData
+      ? {
+          source: interestData.source,
+          type: interestData.type,
+          url: interestData.url,
+          date: interestData.date,
+          note: interestData.note,
+        }
+      : {
+          source: 'Estimación PGE 2025',
+          type: 'fallback',
+          url: 'https://www.sepg.pap.hacienda.gob.es/sitios/sepg/es-ES/Presupuestos/PGE/Paginas/PGE2025.aspx',
+          note: '~39.000 M€ (estimación ~2,3% coste medio)',
+        },
   }
 
   return {
