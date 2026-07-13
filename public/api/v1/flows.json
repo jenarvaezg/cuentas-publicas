@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-29T10:21:03.307Z",
+  "lastUpdated": "2026-07-13T13:01:47.620Z",
   "latestYear": 2024,
   "years": [
     2012,
@@ -29,7 +29,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 119094,
           "format": "currency"
@@ -188,7 +188,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 119094,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -351,7 +351,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 76805,
           "format": "currency"
@@ -510,7 +510,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 76805,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -673,7 +673,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 62716,
           "format": "currency"
@@ -832,7 +832,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 62716,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -995,7 +995,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 57248,
           "format": "currency"
@@ -1154,7 +1154,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 57248,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -1317,7 +1317,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 47401,
           "format": "currency"
@@ -1476,7 +1476,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 47401,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -1639,7 +1639,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 35903,
           "format": "currency"
@@ -1798,7 +1798,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 35903,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -1961,7 +1961,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 30943,
           "format": "currency"
@@ -2120,7 +2120,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 30943,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -2283,7 +2283,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 38422,
           "format": "currency"
@@ -2442,7 +2442,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 38422,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -2605,7 +2605,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 111897,
           "format": "currency"
@@ -2771,7 +2771,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 111897,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -2941,7 +2941,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 82174,
           "format": "currency"
@@ -3107,7 +3107,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 82174,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -3277,7 +3277,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 63105,
           "format": "currency"
@@ -3443,7 +3443,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 63105,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -3613,7 +3613,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 50027,
           "format": "currency"
@@ -3779,7 +3779,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 50027,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",
@@ -3949,7 +3949,7 @@
         },
         {
           "id": "DEFICIT",
-          "label": "Déficit (Nueva Deuda)",
+          "label": "Déficit Público (financiación necesaria)",
           "group": "income",
           "amount": 51267,
           "format": "currency"
@@ -4115,7 +4115,7 @@
           "source": "DEFICIT",
           "target": "CONSOLIDADO",
           "amount": 51267,
-          "label": "Financiación Vía Deuda"
+          "label": "Financiación vía deuda"
         },
         {
           "id": "l_1",

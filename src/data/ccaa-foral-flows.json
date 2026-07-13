@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-29T10:21:04.093Z",
+  "lastUpdated": "2026-07-13T13:03:49.058Z",
   "years": [
     2024
   ],
@@ -48,11 +48,11 @@
       "type": "api",
       "url": "https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico",
       "date": "2024-12-31",
-      "note": "Navarra: Cuadro nº 64 (Aportación neta y ajustes fiscales). Euskadi: nota CMCE 2024 (cupo líquido provisional)."
+      "note": "Datos en vivo de Euskadi. Fallback local 2024 para Navarra."
     },
     "navarra": {
       "source": "Gobierno de Navarra — Cuadro nº 64",
-      "type": "api",
+      "type": "fallback",
       "url": "https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico",
       "date": "2024-12-31"
     },

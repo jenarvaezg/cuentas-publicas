@@ -1,6 +1,6 @@
 {
   "success": true,
-  "lastUpdated": "2026-04-29T10:21:04.942Z",
+  "lastUpdated": "2026-07-13T13:01:53.166Z",
   "latestYear": 2026,
   "years": [
     2026,
@@ -11,23 +11,23 @@
     2021
   ],
   "data": {
-    "CA01": 29,
-    "CA02": -43,
-    "CA03": 26,
-    "CA04": -80,
-    "CA05": -27,
-    "CA06": -41,
-    "CA07": -120,
-    "CA08": -114,
-    "CA09": -64,
-    "CA10": -434,
-    "CA11": -62,
-    "CA12": 10,
-    "CA13": -236,
-    "CA14": -114,
-    "CA15": -164,
-    "CA16": 67,
-    "CA17": -6
+    "CA01": -262,
+    "CA02": -209,
+    "CA03": -56,
+    "CA04": -610,
+    "CA05": -802,
+    "CA06": -111,
+    "CA07": -347,
+    "CA08": -273,
+    "CA09": -2056,
+    "CA10": -1007,
+    "CA11": -229,
+    "CA12": -477,
+    "CA13": -988,
+    "CA14": -440,
+    "CA15": 294,
+    "CA16": 195,
+    "CA17": -44
   },
   "byYear": {
     "2021": {
@@ -404,84 +404,84 @@
       "entries": [
         {
           "code": "CA01",
-          "value": 29
+          "value": -262
         },
         {
           "code": "CA02",
-          "value": -43
+          "value": -209
         },
         {
           "code": "CA03",
-          "value": 26
+          "value": -56
         },
         {
           "code": "CA04",
-          "value": -80
+          "value": -610
         },
         {
           "code": "CA05",
-          "value": -27
+          "value": -802
         },
         {
           "code": "CA06",
-          "value": -41
+          "value": -111
         },
         {
           "code": "CA07",
-          "value": -120
+          "value": -347
         },
         {
           "code": "CA08",
-          "value": -114
+          "value": -273
         },
         {
           "code": "CA09",
-          "value": -64
+          "value": -2056
         },
         {
           "code": "CA10",
-          "value": -434
+          "value": -1007
         },
         {
           "code": "CA11",
-          "value": -62
+          "value": -229
         },
         {
           "code": "CA12",
-          "value": 10
+          "value": -477
         },
         {
           "code": "CA13",
-          "value": -236
+          "value": -988
         },
         {
           "code": "CA14",
-          "value": -114
+          "value": -440
         },
         {
           "code": "CA15",
-          "value": -164
+          "value": 294
         },
         {
           "code": "CA16",
-          "value": 67
+          "value": 195
         },
         {
           "code": "CA17",
-          "value": -6
+          "value": -44
         }
       ],
-      "date": "2026-01-31",
-      "month": 1
+      "date": "2026-04-30",
+      "month": 4
     }
   },
   "source": "igae-cn-regional",
   "sourceAttribution": {
     "balances": {
-      "source": "IGAE — Cuentas Regionales (enero 2026)",
+      "source": "IGAE — Cuentas Regionales (abril 2026)",
       "url": "https://www.igae.pap.hacienda.gob.es/sitios/igae/es-ES/Contabilidad/ContabilidadNacional/Publicaciones/Documents/CCAA-M/M_CCAA_Sub_Det_2026.xlsx",
       "type": "xlsx",
-      "date": "2026-01-31",
+      "date": "2026-04-30",
       "note": "Capacidad (+) / Necesidad (-) de financiación (B.9). Mensual acumulado SEC 2010."
     }
   }

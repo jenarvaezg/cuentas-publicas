@@ -1,24 +1,24 @@
 {
-  "lastUpdated": "2026-04-29T10:21:09.237Z",
+  "lastUpdated": "2026-07-13T13:01:49.512Z",
   "pipeline": {
     "liveDataUsed": true,
     "criticalFallback": false,
     "fallbackReason": null
   },
   "current": {
-    "monthlyPayroll": 16231664785,
-    "monthlyPayrollSS": 14307664785,
+    "monthlyPayroll": 16321518820,
+    "monthlyPayrollSS": 14397518820,
     "monthlyPayrollClasesPasivas": 1659000000,
     "monthlyPayrollPNC": 265000000,
-    "annualExpense": 227243306990,
-    "totalPensions": 10463537,
-    "averagePensionRetirement": 1568.46,
-    "affiliates": 23019781,
-    "pensioners": 10463537,
-    "contributorsPerPensioner": 2.1999999617720087,
-    "expensePerSecond": 7200.905867049458,
+    "annualExpense": 228501263480,
+    "totalPensions": 10498828,
+    "averagePensionRetirement": 1572.77,
+    "affiliates": 23097422,
+    "pensioners": 10498828,
+    "contributorsPerPensioner": 2.200000038099491,
+    "expensePerSecond": 7240.768102770807,
     "socialContributions": 212999000000,
-    "contributoryDeficit": 14244306990,
+    "contributoryDeficit": 15502263480,
     "reserveFund": 7500000000,
     "cumulativeDeficit": {
       "base": -493095000000,
@@ -95,32 +95,32 @@
       "averagePensionRetirement": 1588.83
     },
     {
-      "date": "2026-03-01",
-      "monthlyPayroll": 16231664785,
-      "totalPensions": 10463537,
-      "averagePensionRetirement": 1568.46
+      "date": "2026-06-01",
+      "monthlyPayroll": 16321518820,
+      "totalPensions": 10498828,
+      "averagePensionRetirement": 1572.77
     }
   ],
   "regression": {
-    "slope": 0.0293822430453821,
-    "intercept": -35650628988.604,
-    "lastDataTimestamp": 1772323200000,
-    "expensePerSecond": 0.000013034939369132933
+    "slope": 0.02899372722231153,
+    "intercept": -35003735817.24746,
+    "lastDataTimestamp": 1780272000000,
+    "expensePerSecond": 0.000012862580839872534
   },
   "sourceAttribution": {
     "monthlyPayroll": {
-      "source": "Seg. Social — Pensiones en vigor (marzo 2026)",
+      "source": "Seg. Social — Pensiones en vigor (junio 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-03-01",
-      "note": "Datos Excel Seg. Social marzo 2026"
+      "date": "2026-06-01",
+      "note": "Datos Excel Seg. Social junio 2026"
     },
     "monthlyPayrollSS": {
-      "source": "Seg. Social — Excel REG (marzo 2026)",
+      "source": "Seg. Social — Excel REG (junio 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-03-01",
-      "note": "Datos Excel Seg. Social marzo 2026"
+      "date": "2026-06-01",
+      "note": "Datos Excel Seg. Social junio 2026"
     },
     "monthlyPayrollClasesPasivas": {
       "source": "Estimación Clases Pasivas",
@@ -139,23 +139,23 @@
       "note": "Nómina mensual × 14 pagas"
     },
     "totalPensions": {
-      "source": "Seg. Social — Excel REG (marzo 2026)",
+      "source": "Seg. Social — Excel REG (junio 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-03-01",
-      "note": "Datos Excel Seg. Social marzo 2026"
+      "date": "2026-06-01",
+      "note": "Datos Excel Seg. Social junio 2026"
     },
     "averagePensionRetirement": {
-      "source": "Seg. Social — Excel REG (marzo 2026)",
+      "source": "Seg. Social — Excel REG (junio 2026)",
       "type": "csv",
       "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas/EST23/EST24",
-      "date": "2026-03-01",
-      "note": "Datos Excel Seg. Social marzo 2026"
+      "date": "2026-06-01",
+      "note": "Datos Excel Seg. Social junio 2026"
     },
     "affiliates": {
       "source": "Derivado ratio cotizantes/pensionista (2025)",
       "type": "cross-reference",
-      "note": "Ratio 2.2 × 10.463.537 pensiones"
+      "note": "Ratio 2.2 × 10.498.828 pensiones"
     },
     "contributorsPerPensioner": {
       "source": "SS — ratio cotizantes/pensionista (2025)",
