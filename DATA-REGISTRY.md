@@ -338,6 +338,8 @@ Derived metrics: dependency ratios (old-age, youth, total), immigration share (t
 
 **Cobertura**: 2 comunidades forales (Navarra y País Vasco), año 2024. No equivalente metodológicamente a la liquidación de régimen común (`ccaa-fiscal-balance.json`).
 
+**Resiliencia**: Navarra y Euskadi se descargan en paralelo e independientes. Si una fuente falla (timeout, HTML roto), se usa fallback local solo para esa comunidad; la otra conserva datos en vivo. El pipeline solo marca fallback global si ambas caen.
+
 **Método**:
 1. Navarra: descarga HTML del Cuadro nº 64 (Memoria del Convenio Económico), extrae tabla HTML, localiza filas "Total Pagos Aportación Neta" y "Total Ajustes fiscales" por label, parsea cifras en miles de € y convierte a M€.
 2. Euskadi: descarga HTML de la nota de prensa de la CMCE, busca regex `CUPO LÍQUIDO PROV M€` seguido de cifra en formato español. Solo se obtiene el cupo líquido; ajustes no publicados.
