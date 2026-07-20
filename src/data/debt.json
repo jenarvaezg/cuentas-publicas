@@ -1,16 +1,16 @@
 {
-  "lastUpdated": "2026-07-13T13:01:48.440Z",
+  "lastUpdated": "2026-07-20T11:06:42.665Z",
   "current": {
-    "totalDebt": 1735879720000,
+    "totalDebt": 1729395955000,
     "debtBySubsector": {
-      "estado": 1582135015000,
-      "ccaa": 350523178000,
-      "ccll": 20829035000,
-      "ss": 136176602000
+      "estado": 1575039253000,
+      "ccaa": 343013235000,
+      "ccll": 21022037000,
+      "ss": 136176225000
     },
     "debtToGDP": 101.61816350148176,
-    "yearOverYearChange": 4.372440302737077,
-    "interestExpense": 39000000000
+    "yearOverYearChange": 3.9702346794223886,
+    "interestExpense": 40314000000
   },
   "historical": [
     {
@@ -1520,26 +1520,30 @@
     {
       "date": "2026-04-01",
       "totalDebt": 1735879720000
+    },
+    {
+      "date": "2026-05-01",
+      "totalDebt": 1729395955000
     }
   ],
   "regression": {
-    "slope": 2.163035791206234,
-    "intercept": -2106664031658.8289,
-    "lastDataTimestamp": 1775001600000,
-    "debtPerSecond": 2163.035791206234
+    "slope": 2.1284505717985183,
+    "intercept": -2046594099819.386,
+    "lastDataTimestamp": 1777593600000,
+    "debtPerSecond": 2128.4505717985185
   },
   "sourceAttribution": {
     "totalDebt": {
       "source": "BdE — CSV be11b",
       "type": "csv",
       "url": "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv",
-      "date": "2026-04-01"
+      "date": "2026-05-01"
     },
     "debtBySubsector": {
       "source": "BdE — CSV be11b",
       "type": "csv",
       "url": "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv",
-      "date": "2026-04-01"
+      "date": "2026-05-01"
     },
     "debtToGDP": {
       "source": "BdE — CSV be1101",
@@ -1553,10 +1557,11 @@
       "note": "Variación % último dato vs mismo mes año anterior"
     },
     "interestExpense": {
-      "source": "Estimación PGE 2025",
-      "type": "fallback",
-      "url": "https://www.sepg.pap.hacienda.gob.es/sitios/sepg/es-ES/Presupuestos/PGE/Paginas/PGE2025.aspx",
-      "note": "~39.000 M€ (estimación ~2,3% coste medio)"
+      "source": "Eurostat — gov_10a_main (D41PAY)",
+      "type": "api",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_main?geo=ES&unit=MIO_EUR&na_item=D41PAY&sector=S13&sinceTimePeriod=2015",
+      "date": "2025-12-31",
+      "note": "Intereses de la deuda del sector público (40.314 M€, 2025)"
     }
   }
 }

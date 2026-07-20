@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-13T13:03:49.058Z",
+  "lastUpdated": "2026-07-20T11:10:04.236Z",
   "years": [
     2024
   ],
@@ -51,7 +51,7 @@
       "note": "Datos en vivo de Euskadi. Fallback local 2024 para Navarra."
     },
     "navarra": {
-      "source": "Gobierno de Navarra — Cuadro nº 64",
+      "source": "Gobierno de Navarra — Cuadro nº 64 + recaudación líquida",
       "type": "fallback",
       "url": "https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico",
       "date": "2024-12-31"
