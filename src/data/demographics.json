@@ -1,8 +1,8 @@
 {
-  "lastUpdated": "2026-07-20T11:06:42.476Z",
+  "lastUpdated": "2026-08-03T11:32:07.397Z",
   "population": 49687120,
-  "activePopulation": 25001600,
-  "gdp": 1711913000000,
+  "activePopulation": 25274300,
+  "gdp": 1736755000000,
   "averageSalary": 29540,
   "smi": 1221,
   "cpi": {
@@ -51,14 +51,14 @@
       "source": "INE — EPA (serie EPA387794)",
       "type": "api",
       "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=65080",
-      "date": "2025-12-31"
+      "date": "2026-03-31"
     },
     "gdp": {
       "source": "INE — Contabilidad Nacional Trimestral (serie CNTR6597)",
       "type": "api",
       "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=30679",
-      "date": "2025-12-31",
-      "note": "Suma 4 trimestres: 2025-03-31 a 2025-12-31"
+      "date": "2026-03-31",
+      "note": "Suma 4 trimestres: 2025-06-30 a 2026-03-31"
     },
     "averageSalary": {
       "source": "INE — Encuesta Anual Estructura Salarial (serie EAES741)",

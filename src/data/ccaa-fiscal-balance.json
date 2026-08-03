@@ -1,13 +1,14 @@
 {
-  "lastUpdated": "2026-07-20T11:06:56.458Z",
+  "lastUpdated": "2026-08-03T11:32:19.752Z",
   "years": [
     2019,
     2020,
     2021,
     2022,
-    2023
+    2023,
+    2024
   ],
-  "latestYear": 2023,
+  "latestYear": 2024,
   "byYear": {
     "2019": {
       "entries": [
@@ -1478,6 +1479,300 @@
         "transfers": 8402.005,
         "netBalance": 5187.86
       }
+    },
+    "2024": {
+      "entries": [
+        {
+          "code": "CA01",
+          "name": "Andalucía",
+          "cededTaxes": 1057.452,
+          "transfers": 480.809,
+          "netBalance": -576.643,
+          "transferToTaxRatio": 0.455,
+          "cededTaxesBreakdown": {
+            "irpf": 834.105,
+            "iva": 168.384,
+            "iiee": 54.963
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -168.726,
+            "fondoSuficiencia": 5.043,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 644.492
+          }
+        },
+        {
+          "code": "CA02",
+          "name": "Aragón",
+          "cededTaxes": 157.149,
+          "transfers": 47.394,
+          "netBalance": -109.755,
+          "transferToTaxRatio": 0.302,
+          "cededTaxesBreakdown": {
+            "irpf": 114.445,
+            "iva": 39.574,
+            "iiee": 3.13
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -15.52,
+            "fondoSuficiencia": 2.785,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 60.129
+          }
+        },
+        {
+          "code": "CA03",
+          "name": "Asturias",
+          "cededTaxes": -50.577,
+          "transfers": 270.522,
+          "netBalance": 321.099,
+          "transferToTaxRatio": -5.349,
+          "cededTaxesBreakdown": {
+            "irpf": -42.717,
+            "iva": -7.288,
+            "iiee": -0.572
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": 78.22,
+            "fondoSuficiencia": 1.874,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 190.428
+          }
+        },
+        {
+          "code": "CA04",
+          "name": "Illes Balears",
+          "cededTaxes": 152.809,
+          "transfers": 895.661,
+          "netBalance": 742.852,
+          "transferToTaxRatio": 5.861,
+          "cededTaxesBreakdown": {
+            "irpf": 308.369,
+            "iva": -170.802,
+            "iiee": 15.242
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -11.887,
+            "fondoSuficiencia": -7.216,
+            "fondoCompetitividad": 914.764,
+            "fondoCooperacion": 0
+          }
+        },
+        {
+          "code": "CA05",
+          "name": "Canarias",
+          "cededTaxes": 208.791,
+          "transfers": 902.217,
+          "netBalance": 693.426,
+          "transferToTaxRatio": 4.321,
+          "cededTaxesBreakdown": {
+            "irpf": 206.966,
+            "iva": 0,
+            "iiee": 1.825
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -100.998,
+            "fondoSuficiencia": 0.638,
+            "fondoCompetitividad": 842.71,
+            "fondoCooperacion": 159.867
+          }
+        },
+        {
+          "code": "CA06",
+          "name": "Cantabria",
+          "cededTaxes": -47.39,
+          "transfers": 162.856,
+          "netBalance": 210.246,
+          "transferToTaxRatio": -3.437,
+          "cededTaxesBreakdown": {
+            "irpf": -27.66,
+            "iva": -21.464,
+            "iiee": 1.734
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": 46.768,
+            "fondoSuficiencia": 4.935,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 111.153
+          }
+        },
+        {
+          "code": "CA07",
+          "name": "Castilla y León",
+          "cededTaxes": 226.533,
+          "transfers": 495.003,
+          "netBalance": 268.47,
+          "transferToTaxRatio": 2.185,
+          "cededTaxesBreakdown": {
+            "irpf": 185.77,
+            "iva": 18.722,
+            "iiee": 22.041
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": 46.965,
+            "fondoSuficiencia": 4.358,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 443.68
+          }
+        },
+        {
+          "code": "CA08",
+          "name": "Castilla-La Mancha",
+          "cededTaxes": 138.505,
+          "transfers": 217.689,
+          "netBalance": 79.184,
+          "transferToTaxRatio": 1.572,
+          "cededTaxesBreakdown": {
+            "irpf": 144.754,
+            "iva": -25.347,
+            "iiee": 19.098
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": 71.88,
+            "fondoSuficiencia": 0.795,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 145.014
+          }
+        },
+        {
+          "code": "CA09",
+          "name": "Cataluña",
+          "cededTaxes": 925.903,
+          "transfers": 1822.709,
+          "netBalance": 896.806,
+          "transferToTaxRatio": 1.969,
+          "cededTaxesBreakdown": {
+            "irpf": 820.304,
+            "iva": 53.556,
+            "iiee": 52.043
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": 250.497,
+            "fondoSuficiencia": 8.927,
+            "fondoCompetitividad": 1563.285,
+            "fondoCooperacion": 0
+          }
+        },
+        {
+          "code": "CA10",
+          "name": "C. Valenciana",
+          "cededTaxes": 548.783,
+          "transfers": 1935.004,
+          "netBalance": 1386.221,
+          "transferToTaxRatio": 3.526,
+          "cededTaxesBreakdown": {
+            "irpf": 480.618,
+            "iva": 21.677,
+            "iiee": 46.488
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": 211.214,
+            "fondoSuficiencia": -14.531,
+            "fondoCompetitividad": 1389.836,
+            "fondoCooperacion": 348.485
+          }
+        },
+        {
+          "code": "CA11",
+          "name": "Extremadura",
+          "cededTaxes": 88.699,
+          "transfers": 172.917,
+          "netBalance": 84.218,
+          "transferToTaxRatio": 1.949,
+          "cededTaxesBreakdown": {
+            "irpf": 37.967,
+            "iva": 36.591,
+            "iiee": 14.141
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -42.844,
+            "fondoSuficiencia": 4.481,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 211.28
+          }
+        },
+        {
+          "code": "CA12",
+          "name": "Galicia",
+          "cededTaxes": 410.38,
+          "transfers": 376.445,
+          "netBalance": -33.935,
+          "transferToTaxRatio": 0.917,
+          "cededTaxesBreakdown": {
+            "irpf": 368.241,
+            "iva": 74.066,
+            "iiee": -31.927
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -137.461,
+            "fondoSuficiencia": 6.001,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 507.905
+          }
+        },
+        {
+          "code": "CA13",
+          "name": "Madrid",
+          "cededTaxes": 1425.812,
+          "transfers": -219.74,
+          "netBalance": -1645.552,
+          "transferToTaxRatio": -0.154,
+          "cededTaxesBreakdown": {
+            "irpf": 893.385,
+            "iva": 551.145,
+            "iiee": -18.718
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -376.569,
+            "fondoSuficiencia": -7.566,
+            "fondoCompetitividad": 164.395,
+            "fondoCooperacion": 0
+          }
+        },
+        {
+          "code": "CA14",
+          "name": "Murcia",
+          "cededTaxes": 170.43,
+          "transfers": 290.327,
+          "netBalance": 119.897,
+          "transferToTaxRatio": 1.703,
+          "cededTaxesBreakdown": {
+            "irpf": 153.707,
+            "iva": 5.636,
+            "iiee": 11.087
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": 11.82,
+            "fondoSuficiencia": -2.022,
+            "fondoCompetitividad": 173.799,
+            "fondoCooperacion": 106.73
+          }
+        },
+        {
+          "code": "CA17",
+          "name": "La Rioja",
+          "cededTaxes": 13.622,
+          "transfers": 11.09,
+          "netBalance": -2.532,
+          "transferToTaxRatio": 0.814,
+          "cededTaxesBreakdown": {
+            "irpf": -1.177,
+            "iva": 9.94,
+            "iiee": 4.859
+          },
+          "transfersBreakdown": {
+            "fondoGarantia": -7.543,
+            "fondoSuficiencia": 2.137,
+            "fondoCompetitividad": 0,
+            "fondoCooperacion": 16.496
+          }
+        }
+      ],
+      "totals": {
+        "cededTaxes": 5426.901,
+        "transfers": 7860.903,
+        "netBalance": 2434.002
+      }
     }
   },
   "coverage": {
@@ -1488,10 +1783,10 @@
   },
   "sourceAttribution": {
     "balances": {
-      "source": "Ministerio de Hacienda — Cuadros liquidación CCAA (2019-2023)",
+      "source": "Ministerio de Hacienda — Cuadros liquidación CCAA (2019-2024)",
       "type": "xlsx",
       "url": "https://www.hacienda.gob.es/es-ES/CDI/Paginas/SistemasFinanciacionDeuda/InformacionCCAAs/Informes%20financiacion%20comunidades%20autonomas2.aspx",
-      "date": "2023-12-31",
+      "date": "2024-12-31",
       "note": "Impuestos cedidos (IRPF, IVA, IIEE) y transferencias (Fondo de Garantía, Suficiencia, Competitividad y Cooperación). Miles de euros convertidos a millones."
     }
   }
