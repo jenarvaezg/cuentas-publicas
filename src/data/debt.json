@@ -1,15 +1,15 @@
 {
-  "lastUpdated": "2026-08-17T08:50:03.441Z",
+  "lastUpdated": "2026-08-24T08:54:15.607Z",
   "current": {
-    "totalDebt": 1729395955000,
+    "totalDebt": 1762649578000,
     "debtBySubsector": {
-      "estado": 1575039253000,
-      "ccaa": 343013235000,
-      "ccll": 21022037000,
-      "ss": 136176225000
+      "estado": 1601527478000,
+      "ccaa": 355039267000,
+      "ccll": 21437061000,
+      "ss": 136177828000
     },
     "debtToGDP": 101.61816350148176,
-    "yearOverYearChange": 3.9702346794223886,
+    "yearOverYearChange": 4.242929847040938,
     "interestExpense": 40314000000
   },
   "historical": [
@@ -1524,26 +1524,30 @@
     {
       "date": "2026-05-01",
       "totalDebt": 1729395955000
+    },
+    {
+      "date": "2026-06-01",
+      "totalDebt": 1762649578000
     }
   ],
   "regression": {
-    "slope": 2.1284505717985183,
-    "intercept": -2046594099819.386,
-    "lastDataTimestamp": 1777593600000,
-    "debtPerSecond": 2128.4505717985185
+    "slope": 2.2762220480408955,
+    "intercept": -2305091281094.5796,
+    "lastDataTimestamp": 1780272000000,
+    "debtPerSecond": 2276.2220480408955
   },
   "sourceAttribution": {
     "totalDebt": {
       "source": "BdE — CSV be11b",
       "type": "csv",
       "url": "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv",
-      "date": "2026-05-01"
+      "date": "2026-06-01"
     },
     "debtBySubsector": {
       "source": "BdE — CSV be11b",
       "type": "csv",
       "url": "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be11b.csv",
-      "date": "2026-05-01"
+      "date": "2026-06-01"
     },
     "debtToGDP": {
       "source": "BdE — CSV be1101",
