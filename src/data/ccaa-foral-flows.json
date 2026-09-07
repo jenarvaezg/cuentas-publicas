@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-31T16:05:21.904Z",
+  "lastUpdated": "2026-09-07T14:08:11.008Z",
   "years": [
     2024
   ],
@@ -14,7 +14,7 @@
           "paymentToState": 698.644,
           "adjustmentsWithState": 1375.927,
           "netFlowToState": -677.283,
-          "taxRevenue": 5433,
+          "taxRevenue": 5433.034,
           "detail": {
             "paymentLabel": "Total Pagos Aportación Neta",
             "adjustmentsLabel": "Total Ajustes fiscales",
@@ -48,11 +48,11 @@
       "type": "api",
       "url": "https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico",
       "date": "2024-12-31",
-      "note": "Datos en vivo de Euskadi. Fallback local 2024 para Navarra."
+      "note": "Navarra: Cuadro nº 64 + recaudación líquida (2024). Euskadi: nota CMCE 2024 (cupo líquido provisional)."
     },
     "navarra": {
       "source": "Gobierno de Navarra — Cuadro nº 64 + recaudación líquida",
-      "type": "fallback",
+      "type": "api",
       "url": "https://www.navarra.es/es/web/memoria-2024/cuadro-n%C2%BA-64.-flujos-financieros-convenio-economico",
       "date": "2024-12-31"
     },
